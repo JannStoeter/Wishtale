@@ -11,6 +11,7 @@ export function excluded(p,item){
   const known=[];
   p.wishes.filter(w=>w.vis!=='privat').forEach(w=>known.push({k:w.kw,why:w.status==='selbst'?`${p.name} hat das schon (${w.t}).`:`Steht schon auf ${gen(p.name)} Liste (${w.t}).`}));
   (p.gifts||p.history||[]).forEach(g=>known.push({k:g.kw||[],why:`${p.name} hat das schon bekommen.`}));
+  (p.hidden||[]).forEach(h=>known.push({k:h.kw||[],why:`Dafür hat ${p.name} schon gesorgt.`}));
   const hit=known.find(x=>overlap(item.kw,x.k));
   if(hit) return hit.why;
   if(p.nogos.some(n=>overlap(item.kw,kwOf(n)))) return `${p.name} möchte das nicht geschenkt bekommen.`;

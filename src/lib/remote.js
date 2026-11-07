@@ -197,6 +197,7 @@ export async function fetchPublic(handle) {
       w.bought = !!(r.reserved && r.mine && r.bought);
       return w;
     }),
+    hidden: (data.hidden || []).map(h => ({ kw: h.kw || [] })),
     gifts: data.gifts.map((g, i) => ({ what: g.what, from: g.from, when: g.when, kw: g.kw && g.kw.length ? g.kw : kwOf(g.what), liked: 'ja', a: 'gift', tone: i % 6 })),
   };
 }

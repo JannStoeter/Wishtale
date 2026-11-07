@@ -77,6 +77,7 @@ export function Modal(){
     <div class="fld"><span class="lb">Wie wichtig ist es dir?</span><div class="radios">${[1,2,3].map(n=>`<label><input type="radio" name="prio" value="${n}" ${n===(d.prio||2)?'checked':''}><span>${PRIO[n]}</span></label>`).join('')}</div></div>
     <div class="fld"><label for="wi">Bild (optional${S.ui.editWish&&d.img?', ein neues ersetzt das alte':''})</label><input id="wi" name="img" type="file" accept="image/*" class="inp"></div>
     <div class="fld"><label for="wv">Wer sieht das?</label><select id="wv" name="vis" class="sel">${[['alle','Alle mit Profilzugriff'],['giver','Nur Schenkende'],['privat','Privat, nur ich']].map(([v,l])=>`<option value="${v}" ${(d.vis||'alle')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+    <div class="fld"><label class="chk"><input type="checkbox" name="plan" value="1" ${d.status==='plan'?'checked':''}><span>Das möchte ich mir selbst erfüllen</span></label><span class="muted" style="font-size:13.5px">Niemand sieht diesen Wunsch. Wishtale schlägt deinen Freunden dafür nichts vor und nutzt ihn nur, um deinen Geschmack besser zu verstehen.</span></div>
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" type="submit">${S.ui.editWish?'Änderungen speichern':'Wunsch speichern'}</button></div>
    </form></div></div>`;
   return `<div class="scrim" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
