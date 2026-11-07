@@ -63,6 +63,9 @@
     "api/inspect.js": {
       "maxDuration": 20
     },
+    "api/ideas.js": {
+      "maxDuration": 60
+    },
     "api/zettel.js": {
       "maxDuration": 60
     },

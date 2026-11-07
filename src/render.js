@@ -1,3 +1,4 @@
+import { loadIdeas } from './lib/ideas.js';
 import { S, saveState, setDemo, ensureDraft } from './state.js';
 import { $, esc } from './lib/util.js';
 import { Header, BottomNav, GuestHeader, LoginHeader, LegalFoot } from './views/shared.js';
@@ -96,7 +97,7 @@ function startGuest(handle){
   if(S.guest&&S.guest.handle===handle&&S.guest.status!=='error'){return}
   S.guest={handle,status:'loading',person:null};
   fetchPublic(handle)
-    .then(p=>{if(S.guest?.handle!==handle)return;S.guest={handle,status:'ready',person:p};if(S.ui.view==='gast')render(true)})
+    .then(p=>{if(S.guest?.handle!==handle)return;S.guest={handle,status:'ready',person:p};if(S.ui.view==='gast')render(true);loadIdeas(handle,()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()})})
     .catch(e=>{console.error(e);if(S.guest?.handle!==handle)return;S.guest={handle,status:S.people[handle]?'ready':'error',person:null};if(S.ui.view==='gast')render(true)});
 }
 export function refreshGuest(){
