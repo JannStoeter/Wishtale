@@ -52,6 +52,7 @@ export async function readZettel(input, fetchImpl = fetch) {
     body: JSON.stringify({ model: MODEL(), max_tokens: 3000, temperature: 0, system: SYSTEM, messages: [{ role: 'user', content }] }),
   });
   const j = await r.json().catch(() => ({}));
+  if (!r.ok) console.error('anthropic', r.status, j.error?.type, String(j.error?.message || '').slice(0, 200));
   if (!r.ok) throw new HttpError(502, r.status === 429 ? 'Gerade ist viel los. Bitte versuche es in einer Minute noch einmal.' : 'Das Einlesen hat leider nicht geklappt. Bitte versuche es noch einmal.');
   return sanitize((j.content || []).filter(c => c.type === 'text').map(c => c.text).join(''));
 }
