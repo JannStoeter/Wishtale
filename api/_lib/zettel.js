@@ -49,7 +49,7 @@ export async function readZettel(input, fetchImpl = fetch) {
   const r = await fetchImpl('https://api.anthropic.com/v1/messages', {
     method: 'POST', signal: AbortSignal.timeout(50000),
     headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: MODEL(), max_tokens: 3000, temperature: 0, system: SYSTEM, messages: [{ role: 'user', content }] }),
+    body: JSON.stringify({ model: MODEL(), max_tokens: 3000, system: SYSTEM, messages: [{ role: 'user', content }] }),
   });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) console.error('anthropic', r.status, j.error?.type, String(j.error?.message || '').slice(0, 200));

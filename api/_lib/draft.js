@@ -81,7 +81,7 @@ export async function draft(input, fetchImpl = fetch) {
   const r = await fetchImpl('https://api.anthropic.com/v1/messages', {
     method: 'POST', signal: AbortSignal.timeout(50000),
     headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: MODEL(), max_tokens: 2500, temperature: 0.7, system: SYSTEM, messages: [{ role: 'user', content: user }] }),
+    body: JSON.stringify({ model: MODEL(), max_tokens: 2500, system: SYSTEM, messages: [{ role: 'user', content: user }] }),
   });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new HttpError(502, r.status === 401 ? 'Der Schlüssel für den Schreibassistenten wurde abgelehnt. Prüfe ANTHROPIC_API_KEY in Vercel.' : r.status === 429 ? 'Der Schreibassistent ist gerade überlastet. Bitte versuche es gleich noch einmal.' : `Der Schreibassistent hat einen Fehler gemeldet (${j.error?.message || r.status}).`);
