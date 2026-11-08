@@ -1,4 +1,4 @@
-import { send, fail, HttpError } from './_lib/auth.js';
+import { send, fail, HttpError, requireUser } from './_lib/auth.js';
 import { ideasFor, OCCASIONS } from './_lib/ideas.js';
 
 const seen = new Map(); // einfache Bremse pro Instanz: höchstens 20 Abrufe in 10 Minuten je Adresse
@@ -15,8 +15,10 @@ export default async function handler(req, res) {
     const mode = ['self', 'wish'].includes(req.query?.mode) ? req.query.mode : 'gift';
     const wid = String(req.query?.w || '');
     if (mode === 'wish' && !/^[0-9a-f-]{36}$/i.test(wid)) throw new HttpError(400, 'Ungültiger Wunsch.');
-    const out = await ideasFor(h, occ, fetch, { mode, wid });
-    res.status(200).setHeader('Cache-Control', out.off || !out.ideas.length ? 'public, s-maxage=300' : 'public, s-maxage=21600, stale-while-revalidate=86400');
+    // Eigene Ansicht (mode=self mit Anmeldung): auch Privates fließt ein, das Ergebnis bleibt nur im eigenen Browser.
+    const own = mode === 'self' && /^Bearer /.test(req.headers?.authorization || '') ? await requireUser(req) : null;
+    const out = await ideasFor(h, occ, fetch, { mode, wid, token: own?.token });
+    res.status(200).setHeader('Cache-Control', own ? 'private, max-age=21600' : out.off || !out.ideas.length ? 'public, s-maxage=300' : 'public, s-maxage=21600, stale-while-revalidate=86400');
     return res.json(out);
   } catch (e) { return fail(res, e); }
 }

@@ -1,5 +1,6 @@
 /* KI-Ideen (api/ideas.js). Ohne Schlüssel oder bei Fehlern bleibt die Liste leer, die übrigen Vorschläge bleiben. */
 import { S } from '../state.js';
+import { sb } from './supabase.js';
 
 const HID = 'wishtale:idea-hidden';
 const hidden = () => { try { return JSON.parse(localStorage.getItem(HID) || '[]'); } catch { return []; } };
@@ -12,9 +13,12 @@ export function loadIdeas(key, params, done) {
   if (S.ui.aiMap[key]) return;
   const e = S.ui.aiMap[key] = { list: [], loaded: false };
   const q = new URLSearchParams({ occ: S.ui.occ || 'ohne', ...params });
-  fetch('/api/ideas?' + q)
+  (params.mode === 'self' ? sb.auth.getSession().then(({ data }) => (data.session ? { authorization: 'Bearer ' + data.session.access_token } : {})) : Promise.resolve({}))
+    .then(headers => fetch('/api/ideas?' + q, { headers }))
     .then(r => (r.ok ? r.json() : { ideas: [] }))
     .then(j => { e.list = Array.isArray(j.ideas) ? j.ideas : []; e.loaded = true; done && done(); })
-    .catch(() => {});
+    .catch(() => { e.loaded = true; done && done(); });
 }
+/** 'none' | 'loading' | 'ready' | 'empty' */
+export const aiStatus = key => { const e = (S.ui.aiMap || {})[key]; return !e ? 'none' : !e.loaded ? 'loading' : e.list.some(i => !isHidden(i)) ? 'ready' : 'empty'; };
 export const ideasOf = key => ((S.ui.aiMap || {})[key]?.list || []).filter(i => !isHidden(i));

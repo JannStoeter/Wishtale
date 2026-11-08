@@ -13,6 +13,7 @@ import { track } from './lib/track.js';
 import { saveGift, removeGift } from './lib/given.js';
 import { readZettelRemote } from './lib/zettel.js';
 import { hideIdea, ideasOf, loadIdeas } from './lib/ideas.js';
+import { saveSignal } from './lib/signals.js';
 import { render, route, refreshGuest } from './render.js';
 import { guestRpc } from './lib/remote.js';
 import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
@@ -195,12 +196,18 @@ async readlink(el,ev){
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===t.label.toLowerCase()))S.me.wishes.unshift(W({t:t.label,c:t.c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:t.a,tone:t.tone,kw:t.kw}));
   toast(`Notiert: ${t.label} hast du schon. Solche Vorschläge blenden wir aus. Unter „Das habe ich schon“ im Profil kannst du es wieder entfernen.`);render();
  },
- ideano(el){hideIdea(el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
+ ideano(el){hideIdea(el.dataset.t);if(el.dataset.self)saveSignal('no',el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
+ aihave(el){
+  const i=ideasOf('self:'+(S.me.handle||'')).find(x=>x.t===el.dataset.t);if(!i)return;
+  const c=guessCategory(i.t,'wohnen');
+  if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===i.t.toLowerCase()))S.me.wishes.unshift(W({t:i.t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
+  saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das hast du schon. Solche Ideen zeigen wir dir nicht mehr.');render();
+ },
  aiadd(el){
   const i=ideasOf('self:'+(S.me.handle||'')).find(x=>x.t===el.dataset.t);if(!i)return;
   const c=guessCategory(i.t,'wohnen');
   S.me.wishes.unshift(W({t:i.t,c,kind:i.exp?'erlebnis':'produkt',prio:2,price:i.to||null,a:i.exp?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
-  hideIdea(i.t);toast('Schön, das steht jetzt auf deiner Wunschliste.');render();
+  saveSignal('yes',i.t);hideIdea(i.t);toast('Schön, das steht jetzt auf deiner Wunschliste.');render();
  },
  givenreact(el){
   const g=S.given.find(x=>x.id===el.dataset.id);if(!g)return;

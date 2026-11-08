@@ -1,4 +1,5 @@
 import { loadIdeas } from './lib/ideas.js';
+import { signalCount } from './lib/signals.js';
 import { S, saveState, setDemo, ensureDraft } from './state.js';
 import { $, esc } from './lib/util.js';
 import { Header, BottomNav, GuestHeader, LoginHeader, LegalFoot } from './views/shared.js';
@@ -32,7 +33,7 @@ export function render(top){
   const oldSheet=document.querySelector('.sheet');
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
-  if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas('self:'+S.me.handle,{h:S.me.handle,mode:'self'},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
+  if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas('self:'+S.me.handle,{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
   const body=VIEWS[v]();
   if(v==='login'||v==='recovery'){
     $('#app').innerHTML=LoginHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot();
