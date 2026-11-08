@@ -5,8 +5,8 @@
  */
 import { HttpError } from './auth.js';
 
-export const aiConfigured = () => !!process.env.ANTHROPIC_API_KEY;
-const MODEL = () => process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5';
+import { aiConfigured, complete } from './llm.js';
+export { aiConfigured };
 
 const SYSTEM = `Du liest Wunschzettel für Wishtale, eine deutsche App für Wunschlisten. Ein Wunschzettel kann handgeschrieben, gedruckt, ein Foto oder ein eingefügter Text sein, oft von einem Kind.
 
@@ -46,14 +46,7 @@ export async function readZettel(input, fetchImpl = fetch) {
     .filter(i => ['image/jpeg', 'image/png', 'image/webp'].includes(i?.media) && typeof i.data === 'string' && /^[A-Za-z0-9+/=]+$/.test(i.data) && i.data.length < 3_500_000);
   if (!text && !images.length) throw new HttpError(400, 'Bitte lade ein Foto hoch oder füge den Text des Wunschzettels ein.');
   const content = [...images.map(i => ({ type: 'image', source: { type: 'base64', media_type: i.media, data: i.data } })), { type: 'text', text: text ? `Wunschzettel (Text):\n"""\n${text}\n"""` : 'Lies den Wunschzettel auf dem Bild.' }];
-  const r = await fetchImpl('https://api.anthropic.com/v1/messages', {
-    method: 'POST', signal: AbortSignal.timeout(50000),
-    headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: MODEL(), max_tokens: 3000, system: SYSTEM, messages: [{ role: 'user', content }] }),
-  });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) console.error('anthropic', r.status, j.error?.type, String(j.error?.message || '').slice(0, 200));
-  if (!r.ok) throw new HttpError(502, r.status === 429 ? 'Gerade ist viel los. Bitte versuche es in einer Minute noch einmal.' : 'Das Einlesen hat leider nicht geklappt. Bitte versuche es noch einmal.');
-  if (input.onUsage) await input.onUsage(j.usage || {});
-  return sanitize((j.content || []).filter(c => c.type === 'text').map(c => c.text).join(''));
+  const r = await complete({ tier: 'main', system: SYSTEM, content, maxTokens: 3000 }, fetchImpl);
+  if (input.onUsage) await input.onUsage(r.usage, r.model);
+  return sanitize(r.text);
 }

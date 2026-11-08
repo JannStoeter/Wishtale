@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     const feature = mode === 'self' ? 'ideas.self' : mode === 'wish' ? 'ideas.wish' : 'ideas.guest';
     const payer = own?.id || await ownerOf(h); // der Verbrauch geht auf das Konto, um dessen Profil es geht
     if (payer && !can(await entitlementsOf(payer), feature)) { res.status(200).setHeader('Cache-Control', 'public, s-maxage=600'); return res.json({ ideas: [], locked: true }); }
-    const out = await ideasFor(h, occ, fetch, { mode, wid, token: own?.token, onUsage: u => payer && recordUsage(payer, feature, u) });
+    const out = await ideasFor(h, occ, fetch, { mode, wid, token: own?.token, onUsage: (u, model) => payer && recordUsage(payer, `${feature}:${model}`, u) });
     res.status(200).setHeader('Cache-Control', own ? 'private, max-age=21600' : out.off || !out.ideas.length ? 'public, s-maxage=300' : 'public, s-maxage=21600, stale-while-revalidate=86400');
     return res.json(out);
   } catch (e) { return fail(res, e); }

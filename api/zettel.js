@@ -12,6 +12,6 @@ export default async function handler(req, res) {
     const { id } = await requireUser(req);
     if (limited(id)) throw new HttpError(429, 'Das waren gerade etwas viele Zettel. Bitte versuche es in ein paar Minuten noch einmal.');
     if (!can(await entitlementsOf(id), 'zettel')) throw new HttpError(402, 'Das Einlesen von Wunschzetteln gehört zu Wishtale Plus.');
-    return send(res, 200, await readZettel({ ...(req.body || {}), onUsage: u => recordUsage(id, 'zettel', u) }));
+    return send(res, 200, await readZettel({ ...(req.body || {}), onUsage: (u, model) => recordUsage(id, `zettel:${model}`, u) }));
   } catch (e) { return fail(res, e); }
 }
