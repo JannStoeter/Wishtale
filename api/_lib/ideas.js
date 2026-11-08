@@ -122,7 +122,7 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
     if (!w) throw new HttpError(404, 'Wunsch nicht gefunden.');
     ctx.wunsch = { titel: clip(w.title, 160), notiz: clip(w.note, 200), budget: w.budget || w.price || null };
     ctx.wunschliste = ctx.wunschliste.filter(t => t !== w.title);
-    for (const t of toks(w.title)) avoid.weak.delete(t);
+    avoid.weak.clear(); // bei Produktvorschlägen zu einem Wunsch sind Doppelungen mit anderen Wünschen derselben Art gewollt
     system += WISH;
   }
   const r = await fetchImpl('https://api.anthropic.com/v1/messages', {
