@@ -1,5 +1,6 @@
 import { send, fail, HttpError, requireUser } from './_lib/auth.js';
 import { ideasFor, OCCASIONS } from './_lib/ideas.js';
+import { entitlementsOf, can, recordUsage, ownerOf } from './_lib/entitlements.js';
 
 const seen = new Map(); // einfache Bremse pro Instanz: höchstens 20 Abrufe in 10 Minuten je Adresse
 const limited = ip => { const now = Date.now(), l = (seen.get(ip) || []).filter(t => now - t < 600000); l.push(now); seen.set(ip, l); return l.length > 20; };
@@ -17,7 +18,10 @@ export default async function handler(req, res) {
     if (mode === 'wish' && !/^[0-9a-f-]{36}$/i.test(wid)) throw new HttpError(400, 'Ungültiger Wunsch.');
     // Eigene Ansicht (mode=self mit Anmeldung): auch Privates fließt ein, das Ergebnis bleibt nur im eigenen Browser.
     const own = mode === 'self' && /^Bearer /.test(req.headers?.authorization || '') ? await requireUser(req) : null;
-    const out = await ideasFor(h, occ, fetch, { mode, wid, token: own?.token });
+    const feature = mode === 'self' ? 'ideas.self' : mode === 'wish' ? 'ideas.wish' : 'ideas.guest';
+    const payer = own?.id || await ownerOf(h); // der Verbrauch geht auf das Konto, um dessen Profil es geht
+    if (payer && !can(await entitlementsOf(payer), feature)) { res.status(200).setHeader('Cache-Control', 'public, s-maxage=600'); return res.json({ ideas: [], locked: true }); }
+    const out = await ideasFor(h, occ, fetch, { mode, wid, token: own?.token, onUsage: u => payer && recordUsage(payer, feature, u) });
     res.status(200).setHeader('Cache-Control', own ? 'private, max-age=21600' : out.off || !out.ideas.length ? 'public, s-maxage=300' : 'public, s-maxage=21600, stale-while-revalidate=86400');
     return res.json(out);
   } catch (e) { return fail(res, e); }

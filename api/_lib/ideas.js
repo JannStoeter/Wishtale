@@ -135,5 +135,6 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   if (!r.ok) throw new HttpError(502, 'Die Ideen lassen sich gerade nicht laden.');
   const text = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('');
   try { sanitize(text, avoid); } catch (e) { console.error('ideen-antwort', j.stop_reason, j.content?.map(c => c.type).join(','), text.length, text.slice(0, 300)); throw e; }
+  if (opts.onUsage) await opts.onUsage(j.usage || {});
   return { ideas: sanitize(text, avoid).slice(0, opts.mode === 'wish' ? 4 : 8) };
 }
