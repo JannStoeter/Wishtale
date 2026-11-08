@@ -613,3 +613,8 @@ mark.todo{background:#F5D98B;color:#3A2A00;padding:0 4px;border-radius:4px}
 .choice:hover{border-color:var(--accent)}.choice.main{display:grid;grid-template-columns:1fr;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
 .choice b{font:400 26px var(--disp)}.choice span:not(.pill){color:var(--muted);font-size:15.5px;line-height:1.5}.choice .pill{justify-self:start}
 .nudge{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;margin:0 0 16px}.nudge>span:nth-child(2){flex:1 1 260px}
+
+/* Mein Plan */
+.plist{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.plist li{position:relative;padding-left:22px;line-height:1.45}
+.plist li::before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:50%;background:var(--gold,#b98a2c)}

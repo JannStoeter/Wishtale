@@ -33,7 +33,7 @@ export function ProductBlock(pr,opts={}){
 export function IdeasBlock(list){
   if(!list.length)return '';
   return `<div class="prod"><div class="prodhd"><span class="eyebrow">Ideen zu diesem Wunsch</span></div>
-   ${list.map(i=>`<a class="idea" href="${searchUrl.amazon(i.t)}" target="_blank" rel="${REL}"><span>${esc(i.t)}</span><span class="muted">Preisrahmen ca. ${money(i.p)}</span></a>`).join('')}
+   ${list.map(i=>`<a class="idea" href="${searchUrl.amazon(i.q||i.t)}" target="_blank" rel="${REL}"><span>${esc(i.t)}</span><span class="muted">Preisrahmen ca. ${money(i.p)}</span></a>`).join('')}
    <span class="ad">Anzeige · Amazon-Suche</span></div>`;
 }
 

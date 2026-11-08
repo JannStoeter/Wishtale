@@ -66,6 +66,18 @@
     "api/ideas.js": {
       "maxDuration": 60
     },
+    "api/catalog-gen.js": {
+      "maxDuration": 60
+    },
+    "api/checkout.js": {
+      "maxDuration": 20
+    },
+    "api/portal.js": {
+      "maxDuration": 20
+    },
+    "api/stripe-webhook.js": {
+      "maxDuration": 20
+    },
     "api/zettel.js": {
       "maxDuration": 60
     },

@@ -14,6 +14,7 @@ import { saveGift, removeGift } from './lib/given.js';
 import { readZettelRemote } from './lib/zettel.js';
 import { hideIdea, ideasOf, loadIdeas } from './lib/ideas.js';
 import { saveSignal } from './lib/signals.js';
+import { startCheckout, openPortal } from './lib/plan.js';
 import { render, route, refreshGuest } from './render.js';
 import { guestRpc } from './lib/remote.js';
 import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
@@ -204,6 +205,14 @@ async readlink(el,ev){
    if(ok){S.ui.chosen[w.id]={t:i.t,url,price:i.to||null};remember(p,w,{status:'reserved',what:i.t,url,price:i.to||w.price||null});toast(`Reserviert: ${i.t}. Du kannst es jederzeit hier wiederfinden.`)}
    render();
   });
+ },
+ buy(el){
+  if(!S.plan||S.plan.busy)return;
+  S.plan.busy=true;S.plan.error='';render();
+  startCheckout(el.dataset.code).then(r=>{location.href=r.url}).catch(e=>{S.plan.busy=false;S.plan.error=e.message;render()});
+ },
+ portal(){
+  openPortal().then(r=>{location.href=r.url}).catch(e=>{S.plan.error=e.message;render()});
  },
  ideano(el){hideIdea(el.dataset.t);if(el.dataset.self)saveSignal('no',el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
  aihave(el){

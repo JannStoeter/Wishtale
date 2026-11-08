@@ -43,5 +43,5 @@ export async function requireUser(req, fetchImpl = fetch) {
   if (!u.ok) throw new HttpError(401, 'Die Anmeldung ist abgelaufen. Bitte melde dich neu an.');
   const j = await u.json().catch(() => ({}));
   if (!j.id) throw new HttpError(401, 'Bitte melde dich an.');
-  return { id: j.id, token };
+  return { id: j.id, email: j.email || '', token };
 }

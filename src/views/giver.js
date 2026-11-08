@@ -145,7 +145,7 @@ export function RecCard(g){
   return `<article class="rec">${art(it.a,CATS.find(c=>c.id===it.c).t)}<div>
    <h3>${esc(it.t)}</h3>
    <p class="why">${why.slice(0,3).join(' ')}</p>
-   <div class="row" style="gap:6px"><span class="chip" title="Schätzung, kein Live-Preis">Preisrahmen ca. ${money(it.p)}</span><span class="chip ${it.k==='erlebnis'?'gold':''}">${it.k==='erlebnis'?'Erlebnis':'Geschenk'}</span>${it.k==='ding'?`<a class="btn amz sm" href="${searchUrl.amazon(it.t)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Bei Amazon suchen</a>`:''}<button class="chip ${saved?'on':''}" data-act="save" data-id="${it.id}" aria-pressed="${!!saved}">${saved?'Gemerkt':'Merken'}</button></div></div></article>`;
+   <div class="row" style="gap:6px"><span class="chip" title="Schätzung, kein Live-Preis">Preisrahmen ca. ${money(it.p)}</span><span class="chip ${it.k==='erlebnis'?'gold':''}">${it.k==='erlebnis'?'Erlebnis':'Geschenk'}</span>${it.k==='ding'?`<a class="btn amz sm" href="${searchUrl.amazon(it.q||it.t)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Bei Amazon suchen</a>`:''}<button class="chip ${saved?'on':''}" data-act="save" data-id="${it.id}" aria-pressed="${!!saved}">${saved?'Gemerkt':'Merken'}</button></div></div></article>`;
 }
 export function StyleBlock(p){
   const out=(p.style||[]).map(x=>{

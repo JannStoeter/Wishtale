@@ -5,6 +5,7 @@ export const S={
  auth:{user:null,demo:false,sync:'idle',syncError:'',error:''},
  guest:null,
  promo:null,
+ plan:null,
  given:[],
  me:{
   id:'me',name:'Lena',tone:2,

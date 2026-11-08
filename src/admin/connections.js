@@ -18,6 +18,15 @@ export async function mount(el) {
     ${step('2. In Vercel eintragen', 'Projekt <b>wishtale</b> › Settings › Environment Variables: <code>ANTHROPIC_API_KEY</code> mit dem Schlüssel. Danach „Redeploy“.')}
    </ol>
    <p class="hint">Optional: <code>ANTHROPIC_MODEL</code> legt das Modell fest. Ohne Eintrag nutzt das CMS <code>claude-sonnet-5-5</code>. Die Texte, die du eingibst, gehen an Anthropic. Gib dort keine personenbezogenen Daten Dritter ein.</p></div>
+  <div class="card"><h2>Zahlungen (Stripe) ${st ? pill(st.payments && st.payments.configured) : ''}</h2>
+   <p class="muted">Damit lassen sich Pläne und Einzelaktionen buchen. Ohne diese Schlüssel bleibt Bezahlen ausgeschaltet, und alle Nutzer behalten, was sie haben. Rechte entstehen erst, wenn Stripe die Zahlung bestätigt.</p>
+   <ol class="steps">
+    ${step('1. Stripe-Konto', 'Konto auf <b>stripe.com</b> anlegen und die Firmen- und Bankdaten hinterlegen. Zum Testen gibt es den Testmodus mit Testkarten.')}
+    ${step('2. Schlüssel', 'Unter Entwickler › API-Schlüssel den <b>geheimen Schlüssel</b> kopieren. In Vercel als <code>STRIPE_SECRET_KEY</code> eintragen ' + (st ? pill(st.payments && st.payments.secret, 'Gesetzt', 'Fehlt') : '') + '.')}
+    ${step('3. Webhook', 'Unter Entwickler › Webhooks einen Endpunkt <code>https://wishtale.de/api/stripe-webhook</code> anlegen. Ereignisse: <code>checkout.session.completed</code>, <code>invoice.paid</code>, <code>customer.subscription.deleted</code>. Das Signing-Secret als <code>STRIPE_WEBHOOK_SECRET</code> in Vercel eintragen ' + (st ? pill(st.payments && st.payments.webhook, 'Gesetzt', 'Fehlt') : '') + '.')}
+    ${step('4. Kundenportal', 'Unter Einstellungen › Billing › Kundenportal aktivieren, damit Nutzer ihr Abo selbst verwalten und kündigen können.')}
+   </ol>
+   <p class="hint">Vor dem ersten Verkauf brauchst du AGB, eine Widerrufsbelehrung samt Hinweis zum vorzeitigen Erlöschen bei digitalen Inhalten, einen Kündigungsbutton und einen Datenschutz-Abschnitt zu Stripe. Außerdem muss das Projekt auf einem Vercel-Plan laufen, der kommerzielle Nutzung erlaubt.</p></div>
   <div class="card"><h2>Instagram ${st ? pill(st.instagram.configured, st.instagram.username ? 'Verbunden mit @' + esc(st.instagram.username) : 'Verbunden') : ''}</h2>
    ${st?.instagram.error ? `<p class="banner warn2" role="alert">${esc(st.instagram.error)}</p>` : ''}
    <p class="muted">Damit postest du Beiträge direkt aus dem Studio. Der einfachste Weg ist der „Instagram-Login“: Du brauchst nur dein berufliches Instagram-Konto und ein Meta-Entwicklerkonto, aber <b>keine Facebook-Seite</b>.</p>

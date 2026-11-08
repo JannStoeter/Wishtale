@@ -43,7 +43,7 @@ export function productFor(person, w) {
   const catHit = brandHit || [...match].sort((a, b) => b.q - a.q)[0];
   if (catHit && w.kind !== 'frei') return fromProduct(catHit, 'katalog');
   const cat = !wanted(w).length && !isSpecific(w) && CATALOG.find(i => i.k === 'ding' && overlap(w.kw, i.kw));
-  if (cat && w.kind !== 'frei') return { t: cat.t, url: searchUrl.amazon(cat.t), host: 'amazon.de', range: cat.p, a: cat.a, source: 'katalog', direct: false };
+  if (cat && w.kind !== 'frei') return { t: cat.t, url: searchUrl.amazon(cat.q || cat.t), host: 'amazon.de', range: cat.p, a: cat.a, source: 'katalog', direct: false };
   if (w.kind === 'erlebnis' || w.kind === 'frei') return null; // dafür gibt es Ideen (ideasFor)
   return { t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'erzeugt', direct: false };
 }
@@ -83,7 +83,7 @@ export function offersFor(person, w) {
     return { main: { ...main, id: mp ? mp.id : 'main' }, alts, over: 0 };
   }
   const alts = w.kind === 'frei'
-    ? ideasFor(person, w, 3).map(i => ({ t: i.t, url: searchUrl.amazon(i.t), host: 'amazon.de', range: i.p, a: i.a, source: 'idee', direct: false, id: i.id }))
+    ? ideasFor(person, w, 3).map(i => ({ t: i.t, url: searchUrl.amazon(i.q || i.t), host: 'amazon.de', range: i.p, a: i.a, source: 'idee', direct: false, id: i.id }))
     : [];
   return { main: main ? { ...main, id: 'main' } : null, alts, over: 0 };
 }
@@ -154,7 +154,7 @@ export function worldOffers(person, cid, n = 6) {
     out.push({
       sc: g.sc,
       offer: {
-        t: g.it.t, url: exp ? nearby(g.it.t) : searchUrl.amazon(g.it.t), host: exp ? 'google.de' : 'amazon.de', cta: exp ? 'In der Nähe suchen' : null,
+        t: g.it.t, url: exp ? nearby(g.it.q || g.it.t) : searchUrl.amazon(g.it.q || g.it.t), host: exp ? 'google.de' : 'amazon.de', cta: exp ? 'In der Nähe suchen' : null,
         range: exp ? null : g.it.p, a: g.it.a, source: 'idee', direct: false, id: g.it.id, exp, why: g.why.slice(0, 2).map(strip),
       },
     });

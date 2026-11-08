@@ -7,6 +7,7 @@ import { sb } from './supabase.js';
 import { withAmazonTag } from './shops.js';
 import { setWeights } from './weights.js';
 import { setCatalogOff } from './catalog.js';
+import { loadDbCatalog } from './dbcatalog.js';
 
 let cache = null;
 export async function loadPromo() {
@@ -18,6 +19,7 @@ export async function loadPromo() {
       sb.from('settings').select('key,value').in('key', ['category_weights', 'catalog_disabled']),
     ]);
     if (!st.error && st.data) for (const r of st.data) { if (r.key === 'category_weights') setWeights(r.value); if (r.key === 'catalog_disabled') setCatalogOff(r.value); }
+    await loadDbCatalog();
     cache = { campaigns: c.error ? [] : c.data, products: p.error ? [] : p.data };
   } catch { cache = { campaigns: [], products: [] }; }
   return cache;

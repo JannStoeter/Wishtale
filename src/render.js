@@ -7,6 +7,8 @@ import { Start, Profil } from './views/profile.js';
 import { Wuensche } from './views/wishes.js';
 import { Historie } from './views/history.js';
 import { Entdecken } from './views/inspiration.js';
+import { Plan } from './views/plan.js';
+import { loadPlan } from './lib/plan.js';
 import { Gast } from './views/giver.js';
 import { Login, Recovery } from './views/auth.js';
 import { fetchPublic, scheduleSync } from './lib/remote.js';
@@ -14,7 +16,7 @@ import { loadPinterest, pinConsent } from './lib/social.js';
 import { Modal } from './views/modals.js';
 import { track } from './lib/track.js';
 
-export const VIEWS={start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,gast:Gast,login:Login,recovery:Recovery};
+export const VIEWS={plan:Plan,start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,gast:Gast,login:Login,recovery:Recovery};
 const DEFAULT_VIEW='profil';
 
 let lastModalKey='';
@@ -34,6 +36,7 @@ export function render(top){
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
   if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas('self:'+S.me.handle,{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
+  if(v==='plan'&&S.auth.user)loadPlan(()=>{if(S.ui.view==='plan'&&!S.ui.modal)render()});
   const body=VIEWS[v]();
   if(v==='login'||v==='recovery'){
     $('#app').innerHTML=LoginHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot();
