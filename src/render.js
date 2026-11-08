@@ -32,6 +32,7 @@ export function render(top){
   const oldSheet=document.querySelector('.sheet');
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
+  if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas('self:'+S.me.handle,{h:S.me.handle,mode:'self'},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
   const body=VIEWS[v]();
   if(v==='login'||v==='recovery'){
     $('#app').innerHTML=LoginHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot();
@@ -97,7 +98,7 @@ function startGuest(handle){
   if(S.guest&&S.guest.handle===handle&&S.guest.status!=='error'){return}
   S.guest={handle,status:'loading',person:null};
   fetchPublic(handle)
-    .then(p=>{if(S.guest?.handle!==handle)return;S.guest={handle,status:'ready',person:p};if(S.ui.view==='gast')render(true);loadIdeas(handle,()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()})})
+    .then(p=>{if(S.guest?.handle!==handle)return;S.guest={handle,status:'ready',person:p};if(S.ui.view==='gast')render(true);loadIdeas('guest:'+handle,{h:handle},()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()})})
     .catch(e=>{console.error(e);if(S.guest?.handle!==handle)return;S.guest={handle,status:S.people[handle]?'ready':'error',person:null};if(S.ui.view==='gast')render(true)});
 }
 export function refreshGuest(){

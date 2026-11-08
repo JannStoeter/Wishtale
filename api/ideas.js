@@ -12,7 +12,10 @@ export default async function handler(req, res) {
     const occ = OCCASIONS.includes(req.query?.occ) ? req.query.occ : 'ohne';
     const ip = String(req.headers?.['x-forwarded-for'] || '').split(',')[0].trim() || 'x';
     if (limited(ip)) throw new HttpError(429, 'Bitte versuche es in ein paar Minuten noch einmal.');
-    const out = await ideasFor(h, occ);
+    const mode = ['self', 'wish'].includes(req.query?.mode) ? req.query.mode : 'gift';
+    const wid = String(req.query?.w || '');
+    if (mode === 'wish' && !/^[0-9a-f-]{36}$/i.test(wid)) throw new HttpError(400, 'Ungültiger Wunsch.');
+    const out = await ideasFor(h, occ, fetch, { mode, wid });
     res.status(200).setHeader('Cache-Control', out.off || !out.ideas.length ? 'public, s-maxage=300' : 'public, s-maxage=21600, stale-while-revalidate=86400');
     return res.json(out);
   } catch (e) { return fail(res, e); }

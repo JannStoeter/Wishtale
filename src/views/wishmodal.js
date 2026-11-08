@@ -6,6 +6,8 @@ import { art, artIllu } from '../lib/art.js';
 import { offersFor } from '../lib/products.js';
 import { cat, crea, occL, PRIO } from '../data/content.js';
 import { priceLine } from './product.js';
+import { ideasOf } from '../lib/ideas.js';
+import { searchUrl } from '../lib/shops.js';
 import { RememberNote } from './given.js';
 
 const REL = 'noopener noreferrer sponsored nofollow';
@@ -29,6 +31,13 @@ function Offer(pr, w, ctx, role) {
     ${guestFree ? `<button class="btn pri sm" data-act="choose" data-wid="${w.id}" data-pid="${esc(pr.id)}">Diesen wählen</button>` : ''}
    </div>
   </div>`;
+}
+
+/** Varianten von der KI zu einem ungenauen Wunsch (api/ideas.js, mode=wish). */
+function AiVariants(w) {
+  const list = ideasOf('wish:' + w.id);
+  if (!list.length) return '';
+  return `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">Weitere Ideen von Wishtale zu diesem Wunsch</p>${list.map(i => `<div class="offer suggest"><div class="obody"><span class="eyebrow">Vorschlag</span><strong class="ot">${esc(i.t)}</strong>${i.to ? `<span class="muted" style="font-size:13px">${i.from ? `ca. ${i.from} bis ${i.to} €` : `bis ca. ${i.to} €`}</span>` : ''}<span class="why">${esc(i.why)}</span></div><div class="oa"><a class="btn amz sm" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${REL}">Bei Amazon suchen ${ic('arrow', 'sm')}</a></div></div>`).join('')}</section>`;
 }
 
 /** Macht klar, was ein Vorschlag von Wishtale ist und was ein Wunsch der Person selbst. */
@@ -85,6 +94,7 @@ export function WishModal() {
    ${Suggest(p, w, o, ctx)}
    ${o.main ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
    ${o.alts.length ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
+   ${AiVariants(w)}
    ${o.over ? `<p class="muted" style="font-size:13px">${o.over} Produkt${o.over > 1 ? 'e' : ''} über dem Budget ausgeblendet.</p>` : ''}
    <p class="disc">Die Links zu Amazon sind Partnerlinks (Anzeige). Dir entstehen dadurch keine Mehrkosten. Maßgeblich ist immer der Preis bei Amazon. Vorschläge von Wishtale wählen wir nach den Kriterien des Wunsches aus. Wir testen und bewerten die Produkte nicht.</p>
    <div class="row wm-foot">${footer}<span style="flex:1"></span><button class="btn ghost" data-act="close">Schließen</button></div>

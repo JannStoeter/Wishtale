@@ -8,6 +8,7 @@ import { WishCard } from './card.js';
 import { AMAZON_DISCLOSURE, searchUrl, voucherLink } from '../lib/shops.js';
 import { instagramUrl } from '../lib/social.js';
 import { PastGifts } from './given.js';
+import { ideasOf } from '../lib/ideas.js';
 
 /* Gast-Ansicht: ein Freund öffnet den Link und sieht nur dieses eine Profil. */
 export function Gast(){
@@ -101,13 +102,13 @@ export function WishList(p,{preview=false}={}){
 const AI_REL='noopener noreferrer sponsored nofollow';
 /* Ideen von der KI (api/ideas.js): Produktarten mit Suchbegriff, klar als Vorschlag von Wishtale gekennzeichnet. */
 export function AiIdeas(p){
-  const a=S.ui.ai;if(!a||a.handle!==(p.handle||p.id)||!a.list.length)return '';
+  const list=ideasOf('guest:'+(p.handle||p.id));if(!list.length)return '';
   const price=i=>i.from&&i.to?`ca. ${i.from} bis ${i.to} €`:i.to?`bis ca. ${i.to} €`:'';
   return `<section class="sect curated" id="ideen-ki"><p class="eyebrow">Vorschläge von Wishtale</p><h2 style="font-size:clamp(28px,3.6vw,40px)">Ideen, die zu ${esc(p.name)} passen</h2>
    <p class="muted" style="font-size:14.5px;margin:6px 0 16px">Diese Ideen schreibt Wishtale nach dem, was wir über ${esc(p.name)} wissen. Es sind Anregungen und keine ausgewählten Produkte: ${esc(p.name)} hat sich dafür nichts Bestimmtes gewünscht.</p>
-   <div class="recs grid">${a.list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
+   <div class="recs grid">${list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
     <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${price(i)?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${price(i)}</span>`:''}</div>
-    <div class="row" style="margin-top:8px"><a class="btn amz sm" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon suchen (Anzeige)'}</a></div></div></article>`).join('')}</div></section>`;
+    <div class="row" style="margin-top:8px"><a class="btn amz sm" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon suchen (Anzeige)'}</a><button class="btn ghost sm" data-act="ideano" data-t="${esc(i.t)}">Passt nicht</button></div></div></article>`).join('')}</div></section>`;
 }
 export function Curated(p,openWishes){
   const few=openWishes<4;

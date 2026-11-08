@@ -6,6 +6,8 @@ import { CATS, cat } from '../data/content.js';
 import { priceLine } from './product.js';
 import { safeUrl } from '../lib/promo.js';
 import { money } from '../lib/util.js';
+import { searchUrl } from '../lib/shops.js';
+import { ideasOf } from '../lib/ideas.js';
 
 const REL='noopener noreferrer sponsored nofollow';
 
@@ -66,6 +68,18 @@ function Promo(){
   return AppPromo()+fs;
 }
 
+const AI_REL='noopener noreferrer sponsored nofollow';
+/* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto. */
+function AiSelf(){
+  const h=S.me.handle;if(!h||!S.auth.user)return '';
+  const list=ideasOf('self:'+h);if(!list.length)return '';
+  return `<section class="psec" style="margin-bottom:18px"><p class="eyebrow">Vorschläge von Wishtale</p><h3 aria-level="2">Ideen, die zu dir passen</h3>
+   <p class="muted" style="font-size:14.5px;margin:6px 0 12px">Wishtale schreibt sie nach dem, was du über dich angegeben hast. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.</p>
+   <div class="recs grid">${list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
+    <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${i.to?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`}</span>`:''}</div>
+    <div class="row" style="margin-top:8px"><button class="btn pri sm" data-act="aiadd" data-t="${esc(i.t)}">Auf meine Wunschliste</button><a class="btn amz sm" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon ansehen (Anzeige)'}</a><button class="btn ghost sm" data-act="ideano" data-t="${esc(i.t)}">Passt nicht</button></div></div></article>`).join('')}</div></section>`;
+}
+
 export function Entdecken(){
   const m=S.me;
   const ids=m.cats.length?m.cats:CATS.slice(0,4).map(c=>c.id);
@@ -82,6 +96,7 @@ export function Entdecken(){
    <div class="pagehead"><p class="eyebrow">Inspiration</p><h1>Ideen aus deinen Welten</h1>
     <p class="muted" style="max-width:620px">${m.cats.length?'Wir haben für jede deiner Welten ein paar Dinge herausgesucht, die zu deinen Interessen und Marken passen. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.':'Sobald du in deinem Profil ein paar Welten auswählst, schlagen wir dir hier passende Dinge vor. Bis dahin findest du ein paar Anregungen aus beliebten Bereichen.'}</p></div>
    ${Promo()}
+   ${AiSelf()}
    ${secs.length?secs.join(''):`<section class="psec" style="margin-bottom:18px"><p class="eyebrow">Zum Anfangen</p><h3 aria-level="2">Beliebte Wunschideen</h3><p class="muted">Sobald du in deinem Profil Interessen und Marken angibst, wird es persönlicher. Bis dahin ein paar Anregungen.</p><div class="offers" style="margin-top:10px">${popularOffers(4).map(o=>Card(o,'wohnen',mine.has(o.t.toLowerCase()))).join('')}</div></section>`}
    <p class="disc" style="margin-top:18px"><b>Anzeige:</b> Links zu Amazon sind Partnerlinks. ${'Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.'} Preise sind Richtwerte und können abweichen.</p>
   </div>`;

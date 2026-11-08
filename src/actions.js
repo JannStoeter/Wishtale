@@ -2,7 +2,7 @@ import { S, W, switchTo, resetState, guestPerson, saveState } from './state.js';
 import { $, toast, kwOf, nid, money, overlap } from './lib/util.js';
 import { CATALOG, PRIO, cat } from './data/content.js';
 import { check } from './logic.js';
-import { offersFor, worldOffers, popularOffers, ownedTypeFor } from './lib/products.js';
+import { offersFor, worldOffers, popularOffers, ownedTypeFor, isSpecific } from './lib/products.js';
 import { guessCategory } from './lib/category.js';
 import { parseAmazonInput, searchUrl } from './lib/shops.js';
 import { parsePinterest, parseInstagram, givePinConsent, revokePinConsent } from './lib/social.js';
@@ -12,6 +12,7 @@ import { hidePromo } from './views/inspiration.js';
 import { track } from './lib/track.js';
 import { saveGift, removeGift } from './lib/given.js';
 import { readZettelRemote } from './lib/zettel.js';
+import { hideIdea, ideasOf, loadIdeas } from './lib/ideas.js';
 import { render, route, refreshGuest } from './render.js';
 import { guestRpc } from './lib/remote.js';
 import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
@@ -61,6 +62,12 @@ function remember(p,w,patch){
   if(!p||!w||p.managed)return;
   const ref=(p.handle||p.id)+':'+w.id;
   saveGift({ref,recipient:p.name,handle:p.handle||'',wishTitle:w.t,what:w.t,occasion:'',price:w.price||null,...patch}).then(()=>render()).catch(()=>{});
+}
+/* KI-Varianten zu einem Wunsch ohne eigenen Link (nur echte Profile, nur für ungenaue Wünsche). */
+function wishVariants(id,ctx){
+  const p=ctx==='guest'?guestPerson():S.me,w=p&&p.wishes.find(x=>x.id===id);
+  if(!w||!p.handle||!p.remote&&ctx==='guest'||w.link||w.kind==='erlebnis'||isSpecific(w)||!/^[0-9a-f-]{36}$/i.test(String(id)))return;
+  loadIdeas('wish:'+id,{h:p.handle,mode:'wish',w:id},()=>{if(S.ui.modal==='wishdetail'&&S.ui.pickId===id)render()});
 }
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
@@ -188,6 +195,13 @@ async readlink(el,ev){
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===t.label.toLowerCase()))S.me.wishes.unshift(W({t:t.label,c:t.c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:t.a,tone:t.tone,kw:t.kw}));
   toast(`Notiert: ${t.label} hast du schon. Solche Vorschläge blenden wir aus. Unter „Das habe ich schon“ im Profil kannst du es wieder entfernen.`);render();
  },
+ ideano(el){hideIdea(el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
+ aiadd(el){
+  const i=ideasOf('self:'+(S.me.handle||'')).find(x=>x.t===el.dataset.t);if(!i)return;
+  const c=guessCategory(i.t,'wohnen');
+  S.me.wishes.unshift(W({t:i.t,c,kind:i.exp?'erlebnis':'produkt',prio:2,price:i.to||null,a:i.exp?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
+  hideIdea(i.t);toast('Schön, das steht jetzt auf deiner Wunschliste.');render();
+ },
  givenreact(el){
   const g=S.given.find(x=>x.id===el.dataset.id);if(!g)return;
   const o=['','ja','teils','nein'];saveGift({id:g.id,reaction:o[(o.indexOf(g.reaction||'')+1)%4]||null}).then(()=>render());
@@ -204,7 +218,7 @@ async readlink(el,ev){
   });
  },
  aside(){S.ui.asideOpen=!S.ui.asideOpen;render()},
- wopen(el){S.ui.pickId=el.dataset.id;S.ui.wishCtx=el.dataset.ctx||'guest';S.ui.modal='wishdetail';render();setTimeout(()=>document.querySelector('.sheet [data-act=close]')?.focus({preventScroll:true}),30)},
+ wopen(el){S.ui.pickId=el.dataset.id;wishVariants(el.dataset.id,el.dataset.ctx||'guest');S.ui.wishCtx=el.dataset.ctx||'guest';S.ui.modal='wishdetail';render();setTimeout(()=>document.querySelector('.sheet [data-act=close]')?.focus({preventScroll:true}),30)},
  try(el){const p=guestPerson();S.ui.idea=el.dataset.v;S.ui.ideaRes=check(p,el.dataset.v);render()},
  oadd(el){
   const o=[...worldOffers(S.me,el.dataset.cid,12),...popularOffers(12)].find(x=>String(x.id)===el.dataset.id);if(!o)return;
