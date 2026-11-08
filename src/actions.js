@@ -2,7 +2,7 @@ import { S, W, switchTo, resetState, guestPerson, saveState } from './state.js';
 import { $, toast, kwOf, nid, money, overlap } from './lib/util.js';
 import { CATALOG, PRIO, cat } from './data/content.js';
 import { check } from './logic.js';
-import { offersFor, worldOffers, popularOffers, ownedTypeFor, isSpecific } from './lib/products.js';
+import { offersFor, worldOffers, popularOffers, ownedTypeFor } from './lib/products.js';
 import { guessCategory } from './lib/category.js';
 import { parseAmazonInput, searchUrl } from './lib/shops.js';
 import { parsePinterest, parseInstagram, givePinConsent, revokePinConsent } from './lib/social.js';
@@ -67,8 +67,8 @@ function remember(p,w,patch){
 /* KI-Varianten zu einem Wunsch ohne eigenen Link (nur echte Profile, nur für ungenaue Wünsche). */
 function wishVariants(id,ctx){
   const p=ctx==='guest'?guestPerson():S.me,w=p&&p.wishes.find(x=>x.id===id);
-  if(!w||!p.handle||!p.remote&&ctx==='guest'||w.link||w.kind==='erlebnis'||isSpecific(w)||!/^[0-9a-f-]{36}$/i.test(String(id)))return;
-  loadIdeas('wish:'+id,{h:p.handle,mode:'wish',w:id},()=>{if(S.ui.modal==='wishdetail'&&S.ui.pickId===id)render()});
+  if(!w||!p.handle||!p.remote&&ctx==='guest'||w.link||w.kind==='erlebnis'||!/^[0-9a-f-]{36}$/i.test(String(id)))return;
+  loadIdeas('wish:'+id,{h:p.handle,mode:'wish',w:id,t:w.t.slice(0,80)},()=>{if(S.ui.modal==='wishdetail'&&S.ui.pickId===id)render()});
 }
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
@@ -195,6 +195,15 @@ async readlink(el,ev){
   const t=ownedTypeFor(el.dataset.id);if(!t)return;
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===t.label.toLowerCase()))S.me.wishes.unshift(W({t:t.label,c:t.c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:t.a,tone:t.tone,kw:t.kw}));
   toast(`Notiert: ${t.label} hast du schon. Solche Vorschläge blenden wir aus. Unter „Das habe ich schon“ im Profil kannst du es wieder entfernen.`);render();
+ },
+ aichoose(el){
+  const p=guestPerson(),w=p&&p.wishes.find(x=>x.id===el.dataset.wid);if(!w)return;
+  const i=ideasOf('wish:'+w.id).find(x=>x.t===el.dataset.t);if(!i)return;
+  const url=searchUrl.amazon(i.q);
+  reserveFlow(p,w).then(ok=>{
+   if(ok){S.ui.chosen[w.id]={t:i.t,url,price:i.to||null};remember(p,w,{status:'reserved',what:i.t,url,price:i.to||w.price||null});toast(`Reserviert: ${i.t}. Du kannst es jederzeit hier wiederfinden.`)}
+   render();
+  });
  },
  ideano(el){hideIdea(el.dataset.t);if(el.dataset.self)saveSignal('no',el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
  aihave(el){
