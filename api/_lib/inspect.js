@@ -185,7 +185,35 @@ export function extractProduct(html, pageUrl = '') {
   return { title, price, currency: price ? (String(currency).toUpperCase() || 'EUR') : '', brand, size, description: desc, host, source, hasImage: !!image };
 }
 
+/**
+ * Shopify-Shops (und viele andere) legen die gewählte Variante in den Link (?variant=…). Das öffentliche Produkt-JSON nennt sie genau:
+ * Titel, Größe und Preis der Variante. Ohne diese Angabe stünde oft die erste Variante im Seitenquelltext (zum Beispiel die kleinste Größe).
+ */
+export function applyVariant(product, json, variantId) {
+  let data; try { data = JSON.parse(json); } catch { return product; }
+  const v = (data.variants || []).find(x => String(x.id) === String(variantId));
+  if (!v) return product;
+  const vt = String(v.title || '').trim();
+  const named = vt && !/^default title$/i.test(vt) ? vt : '';
+  const out = { ...product };
+  if (data.title) out.title = clean(data.title, 160) + (named ? ` (${clean(named, 60)})` : '');
+  const cents = Number(v.price);
+  if (Number.isFinite(cents) && cents > 0) { out.price = String(v.price).includes('.') ? cents : cents / 100; out.currency = out.currency || 'EUR'; }
+  const size = findSize(named, v.option1, v.option2);
+  if (size) out.size = size; else if (named) out.size = clean(named, 60);
+  out.source = (out.source || 'jsonld') + '+variante';
+  return out;
+}
+
 export async function inspect(raw, doRequest = request) {
   const page = await fetchPage(raw, doRequest);
-  return { ...extractProduct(page.html, page.url), url: page.url };
+  let product = extractProduct(page.html, page.url);
+  try {
+    const u = new URL(page.url), vid = u.searchParams.get('variant'), m = /^(\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?products\/[^/?#]+)/i.exec(u.pathname);
+    if (vid && /^\d{5,20}$/.test(vid) && m) {
+      const js = await fetchPage(`${u.origin}${m[1]}.js`, doRequest);
+      product = applyVariant(product, js.html, vid);
+    }
+  } catch { /* ohne Variante weiter */ }
+  return { ...product, url: page.url };
 }

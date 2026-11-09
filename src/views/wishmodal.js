@@ -6,7 +6,8 @@ import { art, artIllu } from '../lib/art.js';
 import { offersFor } from '../lib/products.js';
 import { cat, crea, occL, PRIO } from '../data/content.js';
 import { priceLine } from './product.js';
-import { ideasOf } from '../lib/ideas.js';
+import { ideasOf, aiStatus } from '../lib/ideas.js';
+import { AiLoading } from './ailoading.js';
 import { isSpecific } from '../lib/products.js';
 import { searchUrl } from '../lib/shops.js';
 import { RememberNote } from './given.js';
@@ -36,13 +37,15 @@ function Offer(pr, w, ctx, role) {
 
 /** Varianten von der KI zu einem ungenauen Wunsch (api/ideas.js, mode=wish). */
 function AiVariants(w, ctx) {
+  const st = aiStatus('wish:' + w.id);
+  if (st === 'loading') return `<section class="wm-sec">${AiLoading('Deine individuellen Empfehlungen werden erstellt …')}</section>`;
   const list = ideasOf('wish:' + w.id);
   if (!list.length) return '';
   const guestFree = ctx === 'guest' && !w.res && !w.bought;
   const sim = isSpecific(w);
   return `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${sim ? 'Ähnliche Produkte, falls es das Gewünschte nicht gibt' : 'Passende Produkte von Wishtale'}</p>${list.map(i => {
     const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === i.t;
-    return `<div class="offer suggest ${chosen ? 'chosen' : ''}"><div class="obody"><span class="eyebrow">Vorschlag von Wishtale</span><strong class="ot">${esc(i.t)}</strong>${i.to ? `<span class="muted" style="font-size:13px">${i.from ? `ca. ${i.from} bis ${i.to} €` : `bis ca. ${i.to} €`}, grobe Schätzung</span>` : ''}<span class="why">${esc(i.why)}</span>${chosen ? `<span class="chip ok">${ic('check', 'sm')}Deine Wahl</span>` : ''}</div><div class="oa"><a class="btn amz sm" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${REL}">Bei Amazon suchen ${ic('arrow', 'sm')}</a>${guestFree ? `<button class="btn pri sm" data-act="aichoose" data-wid="${w.id}" data-t="${esc(i.t)}">Diesen wählen</button>` : ''}</div></div>`;
+    return `<div class="aivar ${chosen ? 'chosen' : ''}"><div><span class="eyebrow">Vorschlag von Wishtale</span><strong class="ot">${esc(i.t)}</strong>${i.to ? `<span class="muted" style="font-size:13px;display:block">${i.from ? `ca. ${i.from} bis ${i.to} €` : `bis ca. ${i.to} €`}, grobe Schätzung</span>` : ''}<span class="why" style="display:block;margin-top:4px">${esc(i.why)}</span>${chosen ? `<span class="chip ok" style="margin-top:6px">${ic('check', 'sm')}Deine Wahl</span>` : ''}</div><div class="oa"><a class="btn amz sm" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${REL}">Bei Amazon suchen ${ic('arrow', 'sm')}</a>${guestFree ? `<button class="btn pri sm" data-act="aichoose" data-wid="${w.id}" data-t="${esc(i.t)}">Diesen wählen</button>` : ''}</div></div>`;
   }).join('')}</section>`;
 }
 
@@ -99,7 +102,7 @@ export function WishModal() {
    ${state}
    ${Suggest(p, w, o, ctx)}
    ${o.main ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
-   ${o.alts.length && !ideasOf('wish:' + w.id).length ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
+   ${o.alts.length && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
    ${AiVariants(w, ctx)}
    ${o.over ? `<p class="muted" style="font-size:13px">${o.over} Produkt${o.over > 1 ? 'e' : ''} über dem Budget ausgeblendet.</p>` : ''}
    <p class="disc">Die Links zu Amazon sind Partnerlinks (Anzeige). Dir entstehen dadurch keine Mehrkosten. Maßgeblich ist immer der Preis bei Amazon. Vorschläge von Wishtale wählen wir nach den Kriterien des Wunsches aus. Wir testen und bewerten die Produkte nicht.</p>

@@ -7,7 +7,9 @@ import { priceLine } from './product.js';
 import { safeUrl } from '../lib/promo.js';
 import { money } from '../lib/util.js';
 import { searchUrl } from '../lib/shops.js';
-import { ideasOf, aiStatus } from '../lib/ideas.js';
+import { ideasOf, aiStatus, skey } from '../lib/ideas.js';
+import { AiLoading } from './ailoading.js';
+import { PriceFilter } from './giver.js';
 
 const REL='noopener noreferrer sponsored nofollow';
 
@@ -72,7 +74,7 @@ const AI_REL='noopener noreferrer sponsored nofollow';
 /* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto. */
 function AiSelf(){
   const h=S.me.handle;if(!h||!S.auth.user)return '';
-  const list=ideasOf('self:'+h);if(!list.length)return '';
+  const list=ideasOf(skey(h));if(!list.length)return '';
   return `<section class="psec" style="margin-bottom:18px"><p class="eyebrow">Vorschläge von Wishtale</p><h3 aria-level="2">Ideen, die zu dir passen</h3>
    <p class="muted" style="font-size:14.5px;margin:6px 0 12px">Wishtale schreibt sie nach dem, was du über dich angegeben hast. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.</p>
    <div class="recs grid">${list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
@@ -84,8 +86,9 @@ export function Entdecken(){
   const m=S.me;
   const ids=m.cats.length?m.cats:CATS.slice(0,4).map(c=>c.id);
   const mine=new Set(m.wishes.map(w=>w.t.toLowerCase()));
-  const st=m.handle&&S.auth.user?aiStatus('self:'+m.handle):'none';
-  const secs=(st==='ready'?[]:ids).map(id=>{
+  const st=m.handle&&S.auth.user?aiStatus(skey(m.handle)):'none';
+  const useCatalog=st==='empty'||st==='none';   // Katalog nur, wenn die KI nichts liefert, nie währenddessen
+  const secs=(useCatalog?ids:[]).map(id=>{
     const c=cat(id),list=worldOffers(m,id,3);
     if(!list.length)return '';
     return `<section class="psec" style="margin-bottom:18px">
@@ -97,9 +100,10 @@ export function Entdecken(){
    <div class="pagehead"><p class="eyebrow">Inspiration</p><h1>Ideen aus deinen Welten</h1>
     <p class="muted" style="max-width:620px">${m.cats.length?'Wir haben für jede deiner Welten ein paar Dinge herausgesucht, die zu deinen Interessen und Marken passen. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.':'Sobald du in deinem Profil ein paar Welten auswählst, schlagen wir dir hier passende Dinge vor. Bis dahin findest du ein paar Anregungen aus beliebten Bereichen.'}</p></div>
    ${Promo()}
+   ${m.handle&&S.auth.user?PriceFilter():''}
    ${AiSelf()}
-   ${st==='loading'?'<p class="muted" role="status" style="margin:8px 0 18px">Wishtale denkt über Ideen für dich nach …</p>':''}
-   ${st==='ready'?'':secs.length?secs.join(''):`<section class="psec" style="margin-bottom:18px"><p class="eyebrow">Zum Anfangen</p><h3 aria-level="2">Beliebte Wunschideen</h3><p class="muted">Sobald du in deinem Profil Interessen und Marken angibst, wird es persönlicher. Bis dahin ein paar Anregungen.</p><div class="offers" style="margin-top:10px">${popularOffers(4).map(o=>Card(o,'wohnen',mine.has(o.t.toLowerCase()))).join('')}</div></section>`}
+   ${st==='loading'?`<section class="psec" style="margin-bottom:18px">${AiLoading('Deine individuellen Empfehlungen werden erstellt …')}</section>`:''}
+   ${!useCatalog?'':secs.length?secs.join(''):`<section class="psec" style="margin-bottom:18px"><p class="eyebrow">Zum Anfangen</p><h3 aria-level="2">Beliebte Wunschideen</h3><p class="muted">Sobald du in deinem Profil Interessen und Marken angibst, wird es persönlicher. Bis dahin ein paar Anregungen.</p><div class="offers" style="margin-top:10px">${popularOffers(4).map(o=>Card(o,'wohnen',mine.has(o.t.toLowerCase()))).join('')}</div></section>`}
    <p class="disc" style="margin-top:18px"><b>Anzeige:</b> Links zu Amazon sind Partnerlinks. ${'Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.'} Preise sind Richtwerte und können abweichen.</p>
   </div>`;
 }

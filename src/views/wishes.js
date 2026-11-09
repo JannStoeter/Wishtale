@@ -17,11 +17,11 @@ export function VisIcon(k){const x=V[k];return `<span class="pill" title="${x.l}
 export function densSeg(){return `<div class="seg" role="group" aria-label="Darstellung"><button class="${!S.ui.big?'on':''}" data-act="dens" data-v="0">Kompakt</button><button class="${S.ui.big?'on':''}" data-act="dens" data-v="1">Groß</button></div>`}
 export function Wuensche(){
   const m=S.me,u=S.ui;
-  let list=m.wishes.filter(w=>u.wf==='alle'||(u.wf==='offen'?w.status==='offen':w.status==='selbst'));
+  let list=m.wishes.filter(w=>u.wf==='alle'||(u.wf==='offen'?(w.status==='offen'||w.status==='plan'):w.status==='selbst'));
   if(u.wc!=='alle')list=list.filter(w=>w.c===u.wc);
   list=[...list].sort((a,b)=>b.prio-a.prio);
   const used=[...new Set(m.wishes.map(w=>w.c))];
-  const open=m.wishes.filter(w=>w.status==='offen').length;
+  const open=m.wishes.filter(w=>w.status==='offen'||w.status==='plan').length;
   return `<div class="wrap">
    ${AppPromo()}
    ${Nudge(m)}
@@ -36,7 +36,7 @@ export function Wuensche(){
    </div>
    <h2 class="vh">Deine Wünsche</h2>
    <div class="wgrid ${u.big?'big':''}">${list.map(w=>WishCard(w,m,{
-      meta:(w.kind==='kategorie'?`<span class="chip gold">Kategorie${w.budget?' bis '+money(w.budget):''}</span>`:'')+(w.kind==='erlebnis'?'<span class="chip">Erlebnis</span>':'')+(w.kind==='frei'?'<span class="chip">Freier Wunsch</span>':'')+(w.via?`<span class="chip gold">via ${esc(crea(w.via).handle)}</span>`:'')+w.occ.map(o=>`<span class="chip">${occL(o)}</span>`).join(''),
+      meta:(w.status==='plan'?'<span class="chip ok">Nur für dich</span>':'')+(w.kind==='kategorie'?`<span class="chip gold">Kategorie${w.budget?' bis '+money(w.budget):''}</span>`:'')+(w.kind==='erlebnis'?'<span class="chip">Erlebnis</span>':'')+(w.kind==='frei'?'<span class="chip">Freier Wunsch</span>':'')+(w.via?`<span class="chip gold">via ${esc(crea(w.via).handle)}</span>`:'')+w.occ.map(o=>`<span class="chip">${occL(o)}</span>`).join(''),
       status:m.managed&&(w.res||w.bought)?{text:w.bought?'Gekauft':'Reserviert',tone:w.bought?'me':'res'}:null,
       taken:false,
       ctx:'own'

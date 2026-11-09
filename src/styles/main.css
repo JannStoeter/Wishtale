@@ -618,3 +618,24 @@ mark.todo{background:#F5D98B;color:#3A2A00;padding:0 4px;border-radius:4px}
 .plist{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
 .plist li{position:relative;padding-left:22px;line-height:1.45}
 .plist li::before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:50%;background:var(--gold,#b98a2c)}
+
+/* KI-Wartezustand */
+.aiload{padding:6px 0 4px}
+.aiload-h{display:flex;align-items:center;gap:12px;font-size:1.05rem}
+.aiload-dots{display:inline-flex;gap:5px}
+.aiload-dots i{width:9px;height:9px;border-radius:50%;background:var(--gold,#b98a2c);animation:aiload 1.2s ease-in-out infinite}
+.aiload-dots i:nth-child(2){animation-delay:.15s}.aiload-dots i:nth-child(3){animation-delay:.3s}
+.aiload-cards{display:grid;gap:10px}
+.aiload-cards div{height:84px;border-radius:14px;background:linear-gradient(100deg,rgba(0,0,0,.05) 30%,rgba(0,0,0,.09) 50%,rgba(0,0,0,.05) 70%);background-size:300% 100%;animation:ailoadbar 1.6s linear infinite}
+@keyframes aiload{0%,80%,100%{transform:scale(.6);opacity:.45}40%{transform:scale(1);opacity:1}}
+@keyframes ailoadbar{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@media (prefers-reduced-motion:reduce){.aiload-dots i,.aiload-cards div{animation:none}}
+/* Link zuerst im Wunschformular */
+.linkfirst{background:var(--cream-2,#f3ecdc);border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:14px 16px;margin-bottom:16px}
+.linkfirst .lf-t{display:block;font-family:var(--serif,Georgia,serif);font-size:1.35rem;line-height:1.2}
+.linkfirst .lf-row{display:flex;gap:8px;flex-wrap:wrap}.linkfirst .lf-row .inp{flex:1 1 220px;min-width:0}
+/* KI-Varianten im Wunsch-Fenster */
+.aivar{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px 16px;border:1px dashed rgba(0,0,0,.18);border-radius:16px;background:var(--cream,#faf7f0);margin-bottom:10px}
+.aivar .ot{display:block;font-family:var(--serif,Georgia,serif);font-size:1.2rem;line-height:1.2;margin:2px 0}
+.aivar .oa{display:grid;gap:8px;justify-items:stretch;min-width:150px}
+@media (max-width:560px){.aivar{grid-template-columns:1fr}.aivar .oa{grid-auto-flow:column;grid-auto-columns:1fr}}

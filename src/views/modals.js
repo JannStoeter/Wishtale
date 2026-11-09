@@ -1,7 +1,7 @@
 import { ZettelModal } from './zettel.js';
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
-import { CATS, OCC, PRIO } from '../data/content.js';
+import { CATS, PRIO } from '../data/content.js';
 import { WishModal } from './wishmodal.js';
 import { GivenModal, GiftGivenModal } from './given.js';
 import { WorldModal } from './world.js';
@@ -63,20 +63,20 @@ export function Modal(){
   if(m==='wish')return `<div class="scrim" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <h2 id="mt">${S.ui.editWish?'Wunsch bearbeiten':'Neuer Wunsch'}</h2>
    <form data-form="wish">
+    <div class="linkfirst"><p class="eyebrow">Schnellstart</p><label for="wl" class="lf-t">Hast du dein Produkt schon gefunden?</label>
+     <p class="muted" style="margin:2px 0 8px;font-size:14px">Füge den Link ein. Wishtale liest Name, Preis und Größe aus und trägt sie unten für dich ein.</p>
+     <div class="lf-row"><input id="wl" name="link" class="inp" placeholder="Link zum Produkt, zum Beispiel shop.de/produkt" autocomplete="off" inputmode="url" value="${esc(d.link||'')}"><button type="button" class="btn pri" data-act="readlink">Link lesen</button></div>
+     <p id="wlstat" class="hint" role="status" aria-live="polite">Funktioniert bei den meisten Shops. Bei Amazon nutze „Bei Amazon stöbern“ weiter unten.</p></div>
     <div class="fld"><label for="wt">Was wünschst du dir?</label><input id="wt" name="t" class="inp" required placeholder="Produkt, Erlebnis oder eine Idee" autocomplete="off" value="${esc(d.t||'')}"></div>
     <div class="fld"><span class="lb">Art</span><div class="radios">${[['produkt','Produkt'],['kategorie','Nur Kategorie'],['erlebnis','Erlebnis'],['frei','Freier Wunsch']].map(([v,l],i)=>`<label><input type="radio" name="kind" value="${v}" ${(d.kind||'produkt')===v?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
     <div class="fld"><label for="wb">Budget bis in Euro (optional, für Kategorie-Wünsche)</label><input id="wb" name="budget" type="number" min="1" inputmode="numeric" class="inp" placeholder="z. B. 100" value="${d.budget||''}"></div>
-    <div class="fld"><span class="lb">Besonders passend zu (optional)</span><div class="radios">${OCC.map(o=>`<label><input type="checkbox" name="occ" value="${o.id}" ${(d.occ||[]).includes(o.id)?'checked':''}><span>${o.l}</span></label>`).join('')}</div></div>
     <div class="fld"><label for="wp">Preis in Euro (optional)</label><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="z. B. 69,90" value="${d.price?String(d.price).replace('.',','):''}"></div>
     ${S.ui.editWish?'':`<div class="fld"><span class="lb">Produkt bei Amazon suchen?</span><div><button type="button" class="btn amz sm" data-act="azopen">Bei Amazon stöbern ${ic('arrow','sm')}</button></div></div>`}
-    <div class="fld"><label for="wl">Link (optional)</label><input id="wl" name="link" class="inp" placeholder="z. B. shop.de/produkt" autocomplete="off" value="${esc(d.link||'')}">
-     <div class="row" style="margin:6px 0 0;gap:8px"><button type="button" class="btn sec sm" data-act="readlink">Angaben aus dem Link lesen</button></div>
-     <p id="wlstat" class="hint" role="status" aria-live="polite">Wir lesen Name, Preis und Größe aus dem Link. Bei Amazon nutze „Bei Amazon stöbern“.</p></div>
     <div class="fld"><label for="wn">Notiz</label><textarea id="wn" name="note" class="ta" placeholder="Farbe, Größe, Stimmung">${esc(d.note||'')}</textarea></div>
     <div class="fld"><label for="wc2">Kategorie</label><select id="wc2" name="c" class="sel">${CATS.map(c=>`<option value="${c.id}" ${(d.c||'wohnen')===c.id?'selected':''}>${c.n}</option>`).join('')}</select></div>
     <div class="fld"><span class="lb">Wie wichtig ist es dir?</span><div class="radios">${[1,2,3].map(n=>`<label><input type="radio" name="prio" value="${n}" ${n===(d.prio||2)?'checked':''}><span>${PRIO[n]}</span></label>`).join('')}</div></div>
     <div class="fld"><label for="wi">Bild (optional${S.ui.editWish&&d.img?', ein neues ersetzt das alte':''})</label><input id="wi" name="img" type="file" accept="image/*" class="inp"></div>
-    <div class="fld"><label for="wv">Wer sieht das?</label><select id="wv" name="vis" class="sel">${[['alle','Alle mit Profilzugriff'],['giver','Nur Schenkende'],['privat','Privat, nur ich']].map(([v,l])=>`<option value="${v}" ${(d.vis||'alle')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+    <div class="fld"><label for="wv">Wer sieht das?</label><select id="wv" name="vis" class="sel">${[['alle','Für alle mit meinem Link'],['privat','Privat, nur ich']].map(([v,l])=>`<option value="${v}" ${((d.vis==='giver'?'alle':d.vis)||'alle')===v?'selected':''}>${l}</option>`).join('')}</select></div>
     <div class="fld"><label class="chk"><input type="checkbox" name="plan" value="1" ${d.status==='plan'?'checked':''}><span>Das möchte ich mir selbst erfüllen</span></label><span class="muted" style="font-size:13.5px">Niemand sieht diesen Wunsch. Wishtale schlägt deinen Freunden dafür nichts vor und nutzt ihn nur, um deinen Geschmack besser zu verstehen.</span></div>
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" type="submit">${S.ui.editWish?'Änderungen speichern':'Wunsch speichern'}</button></div>
    </form></div></div>`;

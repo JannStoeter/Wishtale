@@ -56,7 +56,7 @@ export const LOOKS=[
  {id:'l6',cid:'hanna',t:'Packliste Wochenende',d:'Ordnung im Rucksack, ohne zu viel mitzunehmen.',scene:'packen',objs:[{k:'suitcase',x:120,y:420,s:1.6,tone:5,pid:'z5'},{k:'compass',x:275,y:380,s:1.4,tone:1,pid:'z4'}]}
 ];
 export const LOOKSCOPE=['Alle','Interior','Küche','Outdoor'];
-export const V={alle:{l:'Alle mit Profilzugriff',i:'globe'},giver:{l:'Für Schenkende',i:'gift'},privat:{l:'Privat',i:'lock'},nur:{l:'Nur für dich',i:'eye'}};
+export const V={alle:{l:'Für alle mit Link',i:'globe'},giver:{l:'Für alle mit Link',i:'globe'},privat:{l:'Privat',i:'lock'},nur:{l:'Nur für dich',i:'eye'}};
 export const PRIO=['','Nice to have','Wichtig','Herzenswunsch'];
 export const FB={love:'Genau mein Geschmack!',happy:'Darüber freue ich mich sehr.',meh:'Schön, aber nicht ganz meins.',have:'Bereits vorhanden.',swap:'Ich würde lieber etwas anderes daraus machen.'};
 

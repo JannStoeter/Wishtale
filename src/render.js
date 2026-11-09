@@ -1,4 +1,4 @@
-import { loadIdeas } from './lib/ideas.js';
+import { loadIdeas, gkey, skey } from './lib/ideas.js';
 import { signalCount } from './lib/signals.js';
 import { S, saveState, setDemo, ensureDraft } from './state.js';
 import { $, esc } from './lib/util.js';
@@ -35,7 +35,7 @@ export function render(top){
   const oldSheet=document.querySelector('.sheet');
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
-  if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas('self:'+S.me.handle,{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
+  if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
   if(v==='plan'&&S.auth.user)loadPlan(()=>{if(S.ui.view==='plan'&&!S.ui.modal)render()});
   const body=VIEWS[v]();
   if(v==='login'||v==='recovery'){
@@ -102,7 +102,7 @@ function startGuest(handle){
   if(S.guest&&S.guest.handle===handle&&S.guest.status!=='error'){return}
   S.guest={handle,status:'loading',person:null};
   fetchPublic(handle)
-    .then(p=>{if(S.guest?.handle!==handle)return;S.guest={handle,status:'ready',person:p};if(S.ui.view==='gast')render(true);loadIdeas('guest:'+handle,{h:handle},()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()})})
+    .then(p=>{if(S.guest?.handle!==handle)return;S.guest={handle,status:'ready',person:p};if(S.ui.view==='gast')render(true);loadIdeas(gkey(handle),{h:handle},()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()})})
     .catch(e=>{console.error(e);if(S.guest?.handle!==handle)return;S.guest={handle,status:S.people[handle]?'ready':'error',person:null};if(S.ui.view==='gast')render(true)});
 }
 export function refreshGuest(){

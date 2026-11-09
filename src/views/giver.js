@@ -1,14 +1,15 @@
 import { S, initials, guestPerson } from '../state.js';
 import { esc, ic, money, kwOf, gen } from '../lib/util.js';
 import { art } from '../lib/art.js';
-import { CATS, OCC, ABOUT, cat, crea, cprod, occL, occTip } from '../data/content.js';
+import { CATS, ABOUT, cat, crea, cprod } from '../data/content.js';
 import { ownedOf, excluded, recommend } from '../logic.js';
 import { densSeg } from './wishes.js';
 import { WishCard } from './card.js';
 import { AMAZON_DISCLOSURE, searchUrl, voucherLink } from '../lib/shops.js';
 import { instagramUrl } from '../lib/social.js';
 import { PastGifts } from './given.js';
-import { ideasOf, aiStatus } from '../lib/ideas.js';
+import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
+import { AiLoading } from './ailoading.js';
 
 /* Gast-Ansicht: ein Freund öffnet den Link und sieht nur dieses eine Profil. */
 export function Gast(){
@@ -33,7 +34,7 @@ export function GuestPage(p,{preview=false}={}){
      ${preview?'':PastGifts(p)}
      ${wl.html}
      ${preview?'':AiIdeas(p)}
-     ${['ready','loading'].includes(aiStatus('guest:'+(p.handle||p.id)))&&!preview?'':Curated(p,wl.open)}
+     ${['ready','loading'].includes(aiStatus(gkey(p.handle||p.id)))&&!preview?'':Curated(p,wl.open)}
      ${preview?'':`<details class="sect ideacheck" id="ideen"><summary><h3>Eigene Idee prüfen</h3></summary><p class="muted" style="font-size:14.5px;margin:4px 0 12px">Du hast selbst eine Idee? Wir schauen für dich nach, ob sie zu den Wünschen von ${esc(p.name)} passt und ob ${esc(p.name)} das schon hat oder lieber nicht möchte.</p>${Ideen(p)}</details>`}
      <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis bei Amazon.</p>
     </div>
@@ -43,7 +44,7 @@ export function GuestPage(p,{preview=false}={}){
 
 /* Kopfbereich: Über mich, Interessen, Marken und No-Gos auf einen Blick, daneben der Anlass. */
 export function ProfileHead(p,{preview=false}={}){
-  const u=S.ui,about=p.about||ABOUT[p.id]||'';
+  const about=p.about||ABOUT[p.id]||'';
   const hide=k=>preview&&p.vis&&p.vis[k]==='privat';
   const row=(l,items,cls='')=>items.length?`<div class="pfact"><span class="eyebrow">${l}</span><div class="chips">${items.map(x=>`<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div></div>`:'';
   return `<section class="phead" aria-label="Profil von ${esc(p.name)}">
@@ -52,7 +53,7 @@ export function ProfileHead(p,{preview=false}={}){
     ${about?`<p class="about"><span class="eyebrow" style="display:block;margin-bottom:4px">Über ${esc(p.name)}</span>${esc(about)}</p>`:''}
     <div class="pfacts">${hide('interests')?'':row('Interessen',p.interests)}${hide('brands')?'':row('Lieblingsmarken',p.brands)}${hide('nogos')?'':row('Bitte nicht',p.nogos,'warn')}</div>
    </div>
-   <div class="occ pocc"><p class="eyebrow">Wofür suchst du etwas?</p><div class="seg" role="group" aria-label="Anlass">${[['none','Ohne Anlass'],...OCC.map(o=>[o.id,o.l])].map(([k,l])=>`<button class="${u.occ===k?'on':''}" data-act="occ" data-v="${k}">${l}</button>`).join('')}</div><p class="muted tip">${occTip(u.occ)}</p></div>
+   ${PriceFilter()}
   </section>`;
 }
 
@@ -73,10 +74,16 @@ export function Facts(p,{preview=false}={}){
    +block('Wenn nichts passt',alts);
 }
 
+/* Preisrahmen für die Ideen: viele Geschenke liegen um 20 Euro, nicht um 100. */
+export function PriceFilter(){
+  const pb=S.ui.pb||0;
+  return `<div class="occ pocc"><p class="eyebrow">Wie viel möchtest du ausgeben?</p><div class="seg" role="group" aria-label="Preisrahmen">${[[0,'Egal'],[20,'Bis 20 €'],[50,'Bis 50 €'],[100,'Bis 100 €']].map(([k,l])=>`<button class="${pb===k?'on':''}" data-act="pb" data-v="${k}">${l}</button>`).join('')}</div></div>`;
+}
+
 /* Die Wunschliste: steht direkt unter dem Profilkopf. */
 export function WishList(p,{preview=false}={}){
-  const oc=S.ui.occ,only=S.ui.onlyOpen&&!preview;
-  const rel=w=>(!w.occ.length||oc==='none')?1:(w.occ.includes(oc)?2:0);
+  const only=S.ui.onlyOpen&&!preview;
+  const rel=()=>1;
   const all=p.wishes.filter(w=>w.status==='offen'&&w.vis!=='privat').sort((a,b)=>rel(b)-rel(a)||b.prio-a.prio);
   const vw=all.map(w0=>preview?{...w0,res:null,bought:false}:w0);
   const shown=only?vw.filter(w=>w.res!=='other'):vw;
@@ -86,14 +93,14 @@ export function WishList(p,{preview=false}={}){
     if(w.bought)status={text:'Von dir gekauft',tone:'me'};
     else if(isMine)status={text:'Von dir reserviert',tone:'me'};
     else if(taken)status={text:'Reserviert',tone:'res'};
-    const meta=(w.via?`<span class="chip gold">Tipp</span>`:'')+(r===2&&w.occ.length?`<span class="chip gold">Für ${occL(oc)}</span>`:'')+(r===0?`<span class="chip">Eher: ${w.occ.map(occL).join(', ')}</span>`:'')+(w.kind==='kategorie'?`<span class="chip">bis ${w.budget?money(w.budget):'offen'}</span>`:'');
+    const meta=(w.via?`<span class="chip gold">Tipp</span>`:'')+(w.kind==='kategorie'?`<span class="chip">bis ${w.budget?money(w.budget):'offen'}</span>`:'');
     return WishCard(w,p,{ctx:preview?'preview':'guest',meta,status,taken:taken||(w.bought&&!isMine),dim:r===0&&!taken});
   };
   const free=vw.filter(w=>w.res!=='other').length;
   const html=`<section id="wunschliste" aria-label="Wunschliste von ${esc(p.name)}">
    <div class="row" style="justify-content:space-between;margin-bottom:8px"><div><p class="eyebrow">Wunschliste</p><h2 style="font-size:clamp(30px,4vw,44px)">${only?`${shown.length} offene`:all.length} Wünsche von ${esc(p.name)}</h2></div>
     <div class="row" style="gap:8px">${preview?'':`<div class="seg" role="group" aria-label="Filter"><button class="${!only?'on':''}" data-act="onlyopen" data-v="0">Alle</button><button class="${only?'on':''}" data-act="onlyopen" data-v="1">Nur offene${free!==all.length?` (${free})`:''}</button></div>`}${densSeg()}</div></div>
-   <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} pflegt die Wünsche und sieht, was reserviert ist. ${esc(p.name)} bekommt davon nichts mit.`:`Deine Reservierung bleibt anonym. ${esc(p.name)} erfährt nie, was reserviert oder gekauft wurde, damit die Überraschung bleibt.`}${oc!=='none'?` Wünsche, die gut zu ${occL(oc)} passen, stehen ganz oben.`:''}</p>
+   <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} pflegt die Wünsche und sieht, was reserviert ist. ${esc(p.name)} bekommt davon nichts mit.`:`Deine Reservierung bleibt anonym. ${esc(p.name)} erfährt nie, was reserviert oder gekauft wurde, damit die Überraschung bleibt.`}</p>
    <div class="wgrid ${S.ui.big?'big':''}">${shown.map(cardOf).join('')||`<p class="muted">Alle Wünsche sind schon vergeben. Schau dir unten die Ideen an.</p>`}</div></section>`;
   return {html,open:free};
 }
@@ -102,7 +109,9 @@ export function WishList(p,{preview=false}={}){
 const AI_REL='noopener noreferrer sponsored nofollow';
 /* Ideen von der KI (api/ideas.js): Produktarten mit Suchbegriff, klar als Vorschlag von Wishtale gekennzeichnet. */
 export function AiIdeas(p){
-  const list=ideasOf('guest:'+(p.handle||p.id));if(!list.length)return '';
+  const st=aiStatus(gkey(p.handle||p.id));
+  if(st==='loading')return `<section class="sect curated" id="ideen-ki">${AiLoading(`Wishtale erstellt individuelle Empfehlungen für ${esc(p.name)} …`)}</section>`;
+  const list=ideasOf(gkey(p.handle||p.id));if(!list.length)return '';
   const price=i=>i.from&&i.to?`ca. ${i.from} bis ${i.to} €`:i.to?`bis ca. ${i.to} €`:'';
   return `<section class="sect curated" id="ideen-ki"><p class="eyebrow">Vorschläge von Wishtale</p><h2 style="font-size:clamp(28px,3.6vw,40px)">Ideen, die zu ${esc(p.name)} passen</h2>
    <p class="muted" style="font-size:14.5px;margin:6px 0 16px">Diese Ideen schreibt Wishtale nach dem, was wir über ${esc(p.name)} wissen. Es sind Anregungen und keine ausgewählten Produkte: ${esc(p.name)} hat sich dafür nichts Bestimmtes gewünscht.</p>
