@@ -47,13 +47,14 @@ function accord(t) {
   if (c.empfehlung && c.empfehlung === g.empfehlung && c.empfehlung !== 'keine') return { cls: 'ok', text: `Beide empfehlen Option ${c.empfehlung}.` };
   return { cls: 'warn2', text: `Uneinig: Claude empfiehlt ${c.empfehlung || '–'}, ChatGPT empfiehlt ${g.empfehlung || '–'}.` };
 }
+const ART = { entscheidung: 'Entscheidung', befund: 'Befund', aufgabe: 'Aufgabe' };
 const optLabel = (t, k) => { const o = t.optionen.find(x => x.key === k); return o ? `${o.key}: ${o.label}` : k; };
 
 function list(el, filter, title, lead) {
   const rows = topics.filter(filter);
   el.innerHTML = `<div class="head"><div><h1>${title}</h1><p class="muted">${lead}</p></div></div>
    <div class="tablewrap"><table><thead><tr><th>Entscheidung</th><th>Stand der KIs</th><th>Dein Urteil</th><th>Bauen</th></tr></thead><tbody>${rows.map(t => { const a = accord(t), s = stateOf(t); return `<tr>
-    <td><a href="#t/${esc(t.id)}"><b>${esc(t.titel)}</b></a><br><span class="muted">${esc(t.id)} · ${t.art === 'befund' ? 'Befund' : 'Entscheidung'}</span></td>
+    <td><a href="#t/${esc(t.id)}"><b>${esc(t.titel)}</b></a><br><span class="muted">${esc(t.id)} · ${ART[t.art] || 'Entscheidung'}</span></td>
     <td><span class="pill ${a.cls}">${esc(a.text)}</span></td><td><span class="pill ${s.cls}">${esc(s.label)}</span></td><td>${buildPill(verdicts[t.id]) || '<span class="muted">–</span>'}</td></tr>`; }).join('') || '<tr><td colspan="4" class="muted">Hier ist nichts.</td></tr>'}</tbody></table></div>`;
 }
 
@@ -72,14 +73,14 @@ function prompt(t, autor) {
   const file = `docs/tribunal/${t.id}/${autor}${round > 1 ? '-' + round : ''}.md`;
   return `Du bist ${AUTOR[autor]} im Wishtale-Repository. Lies AGENTS.md und docs/tribunal/README.md.\n\nAufgabe: Gib deine unabhängige Position zur Entscheidung „${t.titel}“ ab.\n1. Lies docs/tribunal/${t.id}/frage.md.\n` +
     (hasMine ? `2. Du hast schon eine Position abgegeben. Lies jetzt die Position von ${AUTOR[other]} (docs/tribunal/${t.id}/${other}*.md) und schreibe eine zweite Runde: bleibst du bei deiner Empfehlung, und was überzeugt dich nicht?\n` : `2. Lies die Position von ${AUTOR[other]} noch nicht, bevor du deine abgelegt hast.\n`) +
-    `3. Schreibe ${file} im Format aus der README (Front matter mit autor, datum, empfehlung, sicherheit, aufwand, kosten; Abschnitte Begründung, Risiken, Gegenargument).\n4. Committe und pushe nur diese Datei. Trenne Belegtes, Vermutetes und nicht Geprüftes.`;
+    `3. Schreibe ${file} im Format aus der README (Front matter mit autor, datum, empfehlung, sicherheit, aufwand, kosten; Abschnitte Begründung, Risiken, Gegenargument).\n4. Lege dafür den Branch tribunal/${autor}-${t.id.slice(0, 3)} an, committe nur diese Datei und öffne einen Pull Request nach main. Ändere nichts anderes, auch keinen Code, und schreibe nicht direkt in main.\n5. Trenne Belegtes, Vermutetes und nicht Geprüftes.`;
 }
 
 function topic(el, id) {
   const t = topics.find(x => x.id === id);
   if (!t) { el.innerHTML = '<p class="muted">Diese Entscheidung gibt es nicht.</p>'; return; }
   const a = accord(t), v = verdicts[t.id];
-  el.innerHTML = `<p><a href="#offen">← Zurück</a></p><div class="head"><div><h1>${esc(t.titel)}</h1><p class="muted">${esc(t.id)} · ${t.art === 'befund' ? 'Befund' : 'Entscheidung'}${t.von ? ' · gestellt von ' + esc(AUTOR[t.von] || t.von) : ''}${t.erstellt ? ' · ' + esc(t.erstellt) : ''}</p></div></div>
+  el.innerHTML = `<p><a href="#offen">← Zurück</a></p><div class="head"><div><h1>${esc(t.titel)}</h1><p class="muted">${esc(t.id)} · ${ART[t.art] || 'Entscheidung'}${t.von ? ' · gestellt von ' + esc(AUTOR[t.von] || t.von) : ''}${t.erstellt ? ' · ' + esc(t.erstellt) : ''}</p></div></div>
    <section class="card"><div class="md">${md(t.frage)}</div>${t.optionen.length ? `<h3>Optionen</h3><ul>${t.optionen.map(o => `<li><b>${esc(o.key)}</b>: ${esc(o.label)}</li>`).join('')}</ul>` : ''}</section>
    <div class="banner ${a.cls === 'ok' ? '' : a.cls}" role="status"><b>${esc(a.text)}</b></div>
    <div class="cols">${position(t, 'claude')}${position(t, 'chatgpt')}</div>

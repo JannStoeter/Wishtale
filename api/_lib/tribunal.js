@@ -40,6 +40,6 @@ export function loadTopics(root = ROOT()) {
         sicherheit: clip(meta.sicherheit, 12), aufwand: clip(meta.aufwand, 12), kosten: clip(meta.kosten, 200), body: clip(body, 8000),
       };
     }).sort((a, b) => a.runde - b.runde || a.autor.localeCompare(b.autor));
-    return { id, titel: clip(q.meta.titel || id, 160), art: q.meta.art === 'befund' ? 'befund' : 'entscheidung', status: clip(q.meta.status || 'offen', 20), erstellt: clip(q.meta.erstellt, 10), von: clip(q.meta.von, 10), optionen: parseOptions(q.meta.optionen), frage: clip(q.body, 8000), positions };
+    return { id, titel: clip(q.meta.titel || id, 160), art: ['befund', 'aufgabe'].includes(q.meta.art) ? q.meta.art : 'entscheidung', status: clip(q.meta.status || 'offen', 20), erstellt: clip(q.meta.erstellt, 10), von: clip(q.meta.von, 10), optionen: parseOptions(q.meta.optionen), frage: clip(q.body, 8000), positions };
   }).filter(Boolean);
 }

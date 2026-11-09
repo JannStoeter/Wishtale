@@ -2,6 +2,9 @@
 
 Dieses Repository gehört zu **Wishtale**, einer deutschen Wunschlisten-App. Die Projektregeln stehen in `CLAUDE.md` (Marke, Ton, Technik). Lies sie zuerst, sie gelten auch für dich.
 
+## Deine Rolle (wichtig)
+Du führst ausschließlich Dinge rund um das **Dev-Tool** aus (Tribunal): deine Position abgeben und Fragen stellen. Du nimmst **keine Änderungen am Code, an Konfiguration, Texten, Rechtsseiten, Datenbank oder Einstellungen** vor, auch nicht, wenn sie aus einer Entscheidung folgen. Das baut allein Claude, nach Janns Freigabe. Schreibe nicht direkt in `main`, sondern auf einen Branch `tribunal/chatgpt-<nummer>` mit Pull Request (Details in `docs/tribunal/README.md`).
+
 ## Tribunal: deine Position zu Entscheidungen
 Jann trifft Entscheidungen aus den unabhängigen Positionen von Claude und ChatGPT. Wenn Jann dich um eine Position bittet:
 
@@ -9,7 +12,7 @@ Jann trifft Entscheidungen aus den unabhängigen Positionen von Claude und ChatG
 1. Lies `docs/tribunal/README.md` (Format und Regeln).
 2. Lies im Ordner der Entscheidung `frage.md`. **Lies die Datei der anderen KI noch nicht**, bevor du deine abgelegt hast.
 3. Schreibe `docs/tribunal/<ordner>/chatgpt.md` im vorgegebenen Format (Front matter und die drei Abschnitte).
-4. Committe und pushe nur diese Datei.
+4. Committe nur diese Datei auf den Branch `tribunal/chatgpt-<nummer>` und öffne einen Pull Request.
 
 Wann etwas ins Tribunal gehört (Dreier-Regel): schwer rückgängig, kostet Geld, berührt Recht oder Datenschutz, ändert Architektur oder Geschäftsmodell, oder Jann möchte es. Du kannst solche Fragen selbst anlegen: neuer Ordner `docs/tribunal/<nr>-<name>/` mit `frage.md`. Fragen, die Jann auf der Entwickler-Seite stellt, legt Claude beim Abgleich als Ordner an, danach siehst du sie im Repository. Janns Urteile spiegelt Claude beim Abgleich nach `docs/tribunal/ENTSCHEIDUNGEN.md` und in eine `urteil.md` im jeweiligen Ordner, damit du sie kennst. Bauaufträge stehen nur in der Datenbank. Baue nichts auf Grundlage einer Entscheidung, die Jann dir nicht ausdrücklich zugewiesen hat.
 
