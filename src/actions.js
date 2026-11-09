@@ -139,7 +139,12 @@ const A={
   else if(navigator.clipboard?.writeText){navigator.clipboard.writeText(url).then(done,()=>toast(url))}
   else toast(url);
  },
- azopen(){S.ui.az={q:'',text:'',res:null,title:'',price:'',c:'wohnen',searched:false};S.ui.modal='amazon';render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
+ azopen(){
+  /* Steht im Wunschformular schon ein Name, suchen wir damit direkt bei Amazon und tragen ihn im Fenster ein. */
+  const q=(document.querySelector('form[data-form=wish] [name=t]')?.value||'').trim().slice(0,120);
+  S.ui.az={q,text:'',res:null,title:'',price:'',c:'wohnen',searched:!!q};S.ui.modal='amazon';
+  if(q)window.open(searchUrl.amazon(q),'_blank','noopener');
+render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
  azq(el){S.ui.az.q=el.dataset.v;render()},
  azclip(){
   if(!navigator.clipboard?.readText){toast('Dein Browser lässt das Einfügen per Knopf leider nicht zu. Füge den Link bitte mit Strg+V (am Handy mit langem Tippen) in das Feld ein.');return}
