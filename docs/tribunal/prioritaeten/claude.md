@@ -26,3 +26,4 @@ Skala: 1 = jetzt, 2 = als Nächstes, 3 = später, 4 = Backlog. Maßstab: Was sch
 - 014: 4 | Solange die Nutzung klein ist, überwiegen Datenschutz und Sicherheit die Ersparnis.
 - 021: 4 | Das Signal der Profilinhaber reicht vorerst, Gäste-Daten bräuchten einen eigenen Datenschutz-Entwurf.
 - 023: 2 | Die Landingpage ist die Eingangstür zum Marktstart, ein klarerer Einstieg kostet wenig und wirkt sofort, auch ohne Messdaten.
+- 025: 3 | Platzhalter genügt zum Start, saubere Bildquellen kommen mit Awin und der Amazon-Schnittstelle.
