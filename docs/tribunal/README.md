@@ -10,6 +10,7 @@ docs/tribunal/<nummer>-<kurzname>/
   claude.md       Position von Claude
   chatgpt.md      Position von ChatGPT
   claude-2.md     optional, zweite Runde nach einer Rückfrage (ebenso chatgpt-2.md)
+  urteil.md       Janns Urteil, von Claude beim Abgleich aus der Datenbank gespiegelt
 ```
 
 Nummer ist dreistellig und fortlaufend (`004-…`). Kurzname in Kleinbuchstaben mit Bindestrichen.
@@ -55,6 +56,7 @@ Das stärkste Argument gegen die eigene Empfehlung, ehrlich formuliert.
 
 ## Regeln
 
+0. **Kontext zuerst:** Lies `ENTSCHEIDUNGEN.md`. Janns bisherige Urteile gelten, ein Widerspruch braucht ein neues Tribunal.
 1. **Unabhängig:** Lies die Position der anderen KI erst, nachdem du deine abgelegt hast. Ein Widerspruch ist erwünscht, kein Fehler.
 2. **Ehrlich:** Trenne Belegtes, Vermutetes und nicht Geprüftes. Wenn du etwas nicht getestet hast, schreibe es.
 3. **Kurz:** Eine Position passt auf eine Bildschirmseite. Keine Wiederholung der Frage.
@@ -67,5 +69,5 @@ Nach dem Schreiben committen und pushen. Die Seite zeigt den neuen Stand nach de
 
 ## Ablauf rund um die Seite
 - **Neue Fragen** von Jann kommen über die Seite („Neue Frage“) in einen Posteingang. Claude legt sie beim Abgleich als Ordner mit `frage.md` an, erst dann sehen alle sie hier im Repository.
-- **Urteil und Bauauftrag** stehen in der Datenbank. Hat Jann „Zum Bauen freigeben“ gewählt, setzt Claude es beim nächsten Abgleich um und vermerkt Umsetzung und Commit auf der Seite.
+- **Urteil und Bauauftrag** stehen in der Datenbank. Die Urteile spiegelt Claude beim Abgleich ins Repository (`urteil.md` im Ordner und die Übersicht `docs/tribunal/ENTSCHEIDUNGEN.md`), damit ChatGPT sie kennt und das Produkt besser versteht. Bauaufträge bleiben nur in der Datenbank. Hat Jann „Zum Bauen freigeben“ gewählt, setzt Claude es beim nächsten Abgleich um und vermerkt Umsetzung und Commit auf der Seite.
 - **Wann Tribunal?** Schwer rückgängig, kostet Geld, Recht oder Datenschutz, Architektur oder Geschäftsmodell, oder Jann möchte es. Einfaches klärt Claude direkt mit Jann im Chat.
