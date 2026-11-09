@@ -204,7 +204,21 @@ render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
 async readlink(el,ev){
   const auto=ev===true,f=document.querySelector('form[data-form=wish]');if(!f)return;
   const raw=f.elements.link.value.trim(),st=document.getElementById('wlstat'),say=t=>{if(st){st.textContent=t;st.className='hint'}},mark=(k,t)=>{if(st){st.textContent=t;st.className='hint '+k}};
-  if(!raw){say('Füge zuerst einen Link ein.');return}
+  if(!raw){say('Füge zuerst einen Link oder einen Titel ein.');return}
+  if(!/https?:\/\//i.test(raw)&&/\s/.test(raw)){ // kein Link, sondern Text (zum Beispiel der kopierte Amazon-Titel): die KI erkennt das Produkt
+    say('Wir lesen den Text …');
+    try{
+      const r=await readZettelRemote({text:raw}),w=(r.wishes||[])[0];
+      if(!w){mark('attn','Daraus konnten wir leider keinen Wunsch herauslesen. Trage den Namen bitte unten selbst ein.');return}
+      const t=f.elements.t,pr=f.elements.price,nt=f.elements.note;
+      t.value=w.t.slice(0,160);
+      if(w.price&&!pr.value.trim())pr.value=w.price.toFixed(2).replace('.',',');
+      if(w.note&&nt&&!nt.value.trim())nt.value=w.note;
+      f.elements.link.value='';
+      mark('ok',`✓ Erkannt: ${w.t}${w.price?` für ${w.price.toFixed(2).replace('.',',')} €`:''}. Bitte prüfe die Angaben, einen Link kannst du später ergänzen.${(r.wishes||[]).length>1?' Der Text enthält mehrere Produkte, für ganze Listen nutze „Liste einlesen“.':''}`);
+    }catch(e){mark('attn',e.message||'Das hat nicht geklappt.')}
+    return;
+  }
   if(isAmazon(raw)){
     say('Wir übernehmen den Amazon-Link …');
     const r=await amazonRead(raw);
