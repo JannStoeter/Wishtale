@@ -4,10 +4,18 @@ import '@fontsource-variable/schibsted-grotesk/index.css';
 import './admin.css';
 import { adminState, signIn, signOut, count } from './api.js';
 import { $, esc, toast } from './util.js';
+import { mountShell } from './shell.js';
 
-const TABS = [['start', 'Übersicht'], ['auswertung', 'Auswertung'], ['produkte', 'Produkte'], ['aktionen', 'Aktionen'], ['katalog', 'Katalog'], ['konten', 'Konten und Pläne'], ['angebote', 'Angebote'], ['kosten', 'Kosten'], ['instagram', 'Instagram'], ['ads', 'Google Ads'], ['texte', 'Seitentexte'], ['verbindungen', 'Verbindungen']];
+const GROUPS = [
+  { title: '', items: [['start', 'Übersicht', 'home']] },
+  { title: 'Inhalt', items: [['produkte', 'Produkte', 'box'], ['katalog', 'Katalog', 'book'], ['aktionen', 'Aktionen', 'spark'], ['texte', 'Seitentexte', 'text']] },
+  { title: 'Marketing', items: [['instagram', 'Instagram', 'cam'], ['ads', 'Google Ads', 'ads'], ['auswertung', 'Auswertung', 'chart']] },
+  { title: 'Konten und Geld', items: [['konten', 'Konten und Pläne', 'users'], ['angebote', 'Angebote', 'tag'], ['kosten', 'Kosten', 'coins']] },
+  { title: 'System', items: [['verbindungen', 'Verbindungen', 'plug']] },
+];
 const MODS = { katalog: () => import('./katalog.js'), konten: () => import('./konten.js'), angebote: () => import('./angebote.js'), kosten: () => import('./kosten.js'), auswertung: () => import('./usage.js'), produkte: () => import('./products.js'), aktionen: () => import('./campaigns.js'), instagram: () => import('./instagram.js'), ads: () => import('./ads.js'), texte: () => import('./texts.js'), verbindungen: () => import('./connections.js') };
 const root = $('#root');
+let shell = null;
 
 function loginView(msg) {
   root.innerHTML = `<main id="main" class="login"><div class="card"><p class="eyebrow">Wishtale CMS</p><h1>Anmelden</h1><p class="muted">Nur für freigegebene Konten.</p>${msg ? `<p class="banner" role="alert">${esc(msg)}</p>` : ''}
@@ -33,8 +41,9 @@ async function statusPills(el) {
 }
 
 async function show() {
-  const key = (location.hash.replace('#', '') || 'start'), el = $('#view');
-  document.querySelectorAll('nav a').forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === '#' + key ? 'page' : 'false'));
+  const key = (location.hash.replace('#', '') || 'start'), el = shell.view;
+  shell.current(MODS[key] ? key : 'start');
+  el.onclick = el.onsubmit = el.onchange = null;
   try { key === 'start' || !MODS[key] ? await dashboard(el) : await (await MODS[key]()).mount(el); }
   catch (e) { el.innerHTML = `<div class="banner warn2" role="alert"><b>Das konnte nicht geladen werden.</b> ${esc(e.message || e)}<br>Falls die Datenbank-Änderung <code>0005_cms.sql</code> noch fehlt, wende sie zuerst an.</div>`; console.error(e); }
 }
@@ -43,8 +52,7 @@ async function boot() {
   const st = await adminState().catch(() => ({ state: 'out' }));
   if (st.state === 'out') return loginView();
   if (st.state === 'denied') { root.innerHTML = `<main id="main" class="login"><div class="card"><h1>Kein Zugriff</h1><p class="muted">Das Konto ${esc(st.user.email || '')} ist nicht als Administrator freigegeben.</p><button class="btn pri" id="lo">Abmelden</button></div></main>`; $('#lo').onclick = async () => { await signOut(); loginView(); }; return; }
-  root.innerHTML = `<header class="bar"><a class="mark" href="#start">wishtale<i></i> <span>CMS</span></a><nav aria-label="CMS">${TABS.map(([k, l]) => `<a href="#${k}">${l}</a>`).join('')}</nav><button class="btn ghost sm" id="so">Abmelden</button></header><main id="main"><div id="view"></div></main>`;
-  $('#so').onclick = async () => { await signOut(); loginView(); };
+  shell = mountShell(root, { app: 'cms', groups: GROUPS, user: st.user, onSignOut: async () => { await signOut(); loginView(); } });
   window.addEventListener('hashchange', show); show();
 }
 boot().catch(e => { console.error(e); loginView('Die Verbindung hat nicht geklappt.'); });

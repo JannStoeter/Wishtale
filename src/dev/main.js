@@ -7,11 +7,12 @@ import { adminState, signIn, signOut } from '../admin/api.js';
 import { sb } from '../lib/supabase.js';
 import { $, esc, toast, fmtDate } from '../admin/util.js';
 import { md } from './md.js';
+import { mountShell } from '../admin/shell.js';
 
 const root = $('#root');
 const AUTOR = { claude: 'Claude', chatgpt: 'ChatGPT' };
 const LV = { hoch: 'hoch', mittel: 'mittel', niedrig: 'niedrig', klein: 'klein', groß: 'groß' };
-let topics = [], verdicts = {}, requests = [];
+let topics = [], verdicts = {}, requests = [], shell = null;
 
 function loginView(msg) {
   root.innerHTML = `<main id="main" class="login"><div class="card"><p class="eyebrow">Wishtale Entwickler</p><h1>Anmelden</h1><p class="muted">Nur für freigegebene Konten.</p>${msg ? `<p class="banner" role="alert">${esc(msg)}</p>` : ''}
@@ -149,17 +150,19 @@ function guide(el) {
 }
 
 async function show() {
-  const key = location.hash.replace('#', '') || 'offen', el = $('#view');
-  document.querySelectorAll('nav a').forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === '#' + (key.startsWith('t/') ? 'offen' : key) ? 'page' : 'false'));
+  const key = location.hash.replace('#', '') || 'offen', el = shell.view;
+  shell.current(key.startsWith('t/') ? 'offen' : key);
   el.onsubmit = el.onclick = null;
   try {
     if (!topics.length) await load();
+    shell.badge('offen', topics.filter(t => stateOf(t).k === 'offen').length + requests.filter(r => r.status === 'neu').length);
+    shell.badge('bauen', Object.values(verdicts).filter(v => v.build === 'freigegeben').length);
     if (key.startsWith('t/')) topic(el, key.slice(2));
     else if (key === 'entschieden') list(el, t => stateOf(t).k !== 'offen', 'Entschieden', 'Was du schon beantwortet oder vertagt hast.');
     else if (key === 'anleitung') guide(el);
     else if (key === 'neu') newQuestion(el);
     else if (key === 'bauen') queue(el);
-    else { list(el, t => stateOf(t).k === 'offen', 'Offene Entscheidungen', 'Hier wartet etwas auf dein Urteil. Ein Klick zeigt Claude und ChatGPT nebeneinander.'); el.insertAdjacentHTML('afterbegin', inbox()); el.onclick = async e => { const b = e.target.closest('[data-a=req-drop]'); if (!b) return; const { error } = await sb.from('tribunal_requests').update({ status: 'verworfen' }).eq('id', b.dataset.id); if (error) return toast(error.message, true); await load(); show(); }; }
+    else { list(el, t => stateOf(t).k === 'offen', 'Offene Entscheidungen', 'Hier wartet etwas auf dein Urteil. Ein Klick zeigt Claude und ChatGPT nebeneinander.'); el.querySelector('.head').insertAdjacentHTML('afterend', inbox()); el.onclick = async e => { const b = e.target.closest('[data-a=req-drop]'); if (!b) return; const { error } = await sb.from('tribunal_requests').update({ status: 'verworfen' }).eq('id', b.dataset.id); if (error) return toast(error.message, true); await load(); show(); }; }
   } catch (e) { el.innerHTML = `<div class="banner warn2" role="alert"><b>Das konnte nicht geladen werden.</b> ${esc(e.message || e)}<br>Auf einer Vorschau ohne Server-Funktionen (npm run dev) geht das nicht, auf der echten Seite schon.</div>`; }
 }
 
@@ -167,8 +170,10 @@ async function boot() {
   const st = await adminState().catch(() => ({ state: 'out' }));
   if (st.state === 'out') return loginView();
   if (st.state === 'denied') { root.innerHTML = `<main id="main" class="login"><div class="card"><h1>Kein Zugriff</h1><p class="muted">Das Konto ${esc(st.user.email || '')} ist nicht als Administrator freigegeben.</p><button class="btn" id="so">Abmelden</button></div></main>`; $('#so').onclick = async () => { await signOut(); loginView(); }; return; }
-  root.innerHTML = `<header class="bar"><a class="mark" href="#offen">wishtale<i></i> <span>Entwickler</span></a><nav aria-label="Entwickler">${[['offen', 'Offen'], ['neu', 'Neue Frage'], ['bauen', 'Bauliste'], ['entschieden', 'Entschieden'], ['anleitung', 'Anleitung']].map(([k, l]) => `<a href="#${k}">${l}</a>`).join('')}<a href="../cms/">CMS</a></nav><button class="btn ghost sm" id="so">Abmelden</button></header><main id="main"><div id="view" class="view"></div></main>`;
-  $('#so').onclick = async () => { await signOut(); loginView(); };
+  shell = mountShell(root, { app: 'dev', user: st.user, onSignOut: async () => { await signOut(); loginView(); }, groups: [
+    { title: 'Entscheiden', items: [['offen', 'Offen', 'list'], ['neu', 'Neue Frage', 'plus'], ['bauen', 'Bauliste', 'hammer'], ['entschieden', 'Entschieden', 'check']] },
+    { title: 'Hilfe', items: [['anleitung', 'Anleitung', 'info']] },
+  ] });
   window.addEventListener('hashchange', show); show();
 }
 boot().catch(e => { console.error(e); loginView('Die Verbindung hat nicht geklappt.'); });
