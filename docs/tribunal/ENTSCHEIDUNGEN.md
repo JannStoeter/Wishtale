@@ -42,3 +42,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 020 Stripe im Testmodus verbinden und Kauf testen (Aufgabe)
 - 021 Soll Wishtale aus Rückmeldungen von Gästen lernen? (Entscheidung)
 - 022 Vielfalt der KI-Ideen schärfen (Aufgabe)
+- 023 Wie wird die Landingpage klarer und stärker auf Anmeldungen ausgerichtet? (Entscheidung, von Jann)
