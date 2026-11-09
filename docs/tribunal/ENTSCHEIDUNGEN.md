@@ -21,3 +21,4 @@ Stand: 2026-11-09
 ## Offen (noch kein Urteil)
 - 001 Wie viel KI gehört in den kostenlosen Plan?
 - 002 Zweiter Affiliate-Partner: Awin jetzt oder später?
+- 004 Was soll Wishtale Plus kosten, und in welcher Form?
