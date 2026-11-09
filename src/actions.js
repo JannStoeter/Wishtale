@@ -203,7 +203,7 @@ render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
  pinconsent(){givePinConsent();render()},
 async readlink(el,ev){
   const auto=ev===true,f=document.querySelector('form[data-form=wish]');if(!f)return;
-  const raw=f.elements.link.value.trim(),st=document.getElementById('wlstat'),say=t=>{if(st)st.textContent=t};
+  const raw=f.elements.link.value.trim(),st=document.getElementById('wlstat'),say=t=>{if(st){st.textContent=t;st.className='hint'}},mark=(k,t)=>{if(st){st.textContent=t;st.className='hint '+k}};
   if(!raw){say('Füge zuerst einen Link ein.');return}
   if(isAmazon(raw)){
     say('Wir übernehmen den Amazon-Link …');
@@ -211,9 +211,11 @@ async readlink(el,ev){
     if(r.error){say(r.error);return}
     f.elements.link.value=r.url;
     if(r.title&&!f.elements.t.value.trim())f.elements.t.value=r.title;
-    say(`Amazon-Link übernommen${r.title?' und den Namen aus dem Link entnommen':''}. Den Preis gibt Amazon nicht automatisch heraus, trage ihn gern selbst ein oder lass ihn offen.`);
-    const nm=f.elements.t.value.trim();
-    if(nm&&!S.ui.wishImg){try{const im=await fetchProductImage(null,nm);showWishImg({blob:im.blob,preview:im.preview,src:im.src});say('Amazon-Link übernommen und ein passendes Bild im Netz gefunden. Bitte prüfe, ob es zum Produkt passt, du kannst es entfernen.')}catch(e){console.warn('Bildsuche:',e.message)}}
+    const nm=f.elements.t.value.trim(),tf=f.elements.t;
+    tf.classList.remove('attn');
+    if(nm){mark('ok',`✓ Amazon-Link gespeichert, Name übernommen. Den Preis gibt Amazon nicht heraus, trage ihn gern selbst ein oder lass ihn offen.`)}
+    else{mark('attn','✓ Amazon-Link gespeichert. Amazon verrät uns den Namen nicht, bitte trage ihn jetzt im Feld „Was wünschst du dir?“ ein, mehr ist nicht nötig.');tf.classList.add('attn');tf.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>tf.focus({preventScroll:true}),350)}
+    if(nm&&!S.ui.wishImg){try{const im=await fetchProductImage(null,nm);showWishImg({blob:im.blob,preview:im.preview,src:im.src});mark('ok','✓ Amazon-Link gespeichert und ein passendes Bild im Netz gefunden. Bitte prüfe, ob es zum Produkt passt, du kannst es entfernen.')}catch(e){console.warn('Bildsuche:',e.message)}}
     return;
   }
   say('Wir lesen den Link …');
@@ -309,6 +311,7 @@ document.addEventListener('change',async e=>{
   if(e.target.name!=='img'||!e.target.closest('form[data-form=wish]')||!e.target.files||!e.target.files[0])return;
   try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:''})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
 });
+document.addEventListener('input',e=>{if(e.target.name==='t'&&e.target.classList?.contains('attn'))e.target.classList.remove('attn')});
 document.addEventListener('input',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;$('#budv').textContent=money(S.ui.budget)}});
 document.addEventListener('change',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;render()}});
 document.addEventListener('input',e=>{const f=e.target.dataset?.az;if(f&&S.ui.az)S.ui.az[f]=e.target.value});
