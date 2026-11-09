@@ -28,10 +28,11 @@ async function boot(){
     }else if(adopted){
       history.replaceState(null,'',location.pathname+'#wuensche');
       if(adopted==='quick')setTimeout(()=>{toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()},500);
-      else setTimeout(()=>toast('Dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.'),400);
+      else setTimeout(()=>toast(fromLink?'Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.':'Dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.'),400);
     }else if(fromLink||!location.hash||['#login','#anmelden','#registrieren','#demo'].includes(location.hash)){
       const a=S.accounts.me;
       history.replaceState(null,'',location.pathname+(a&&!a.interests.length&&!a.wishes.length?'#start':'#profil'));
+      if(fromLink)setTimeout(()=>toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.'),500);
     }
   }else if(fromLink){
     history.replaceState(null,'',location.pathname+'#anmelden');
@@ -45,6 +46,7 @@ async function boot(){
     // nicht direkt in der Callback-Funktion auf Supabase warten (Deadlock-Gefahr), daher setTimeout
     setTimeout(async()=>{
       if(event==='SIGNED_IN'&&sess&&!S.auth.user){
+        const waiting=!!S.ui.authSent&&S.ui.authSent.kind!=='reset';
         await enter(sess.user);
         await migrateGiven().catch(()=>0);await loadGiven().catch(()=>{});
         if(location.hash==='#neues-passwort'){route();return}
@@ -53,7 +55,8 @@ async function boot(){
         location.hash=adopted?'#wuensche':a&&!a.interests.length&&!a.wishes.length?'#start':'#profil';
         route();
         if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
-        else if(adopted)toast('Dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
+        else if(adopted)toast('Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
+        else if(waiting)toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.');
       }else if(event==='SIGNED_OUT'&&S.auth.user){
         S.auth.user=null;location.hash='#anmelden';location.reload();
       }
