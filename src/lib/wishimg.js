@@ -25,12 +25,13 @@ export async function downscale(source) {
 }
 
 /** Holt das Vorschaubild einer Produktseite über unseren Server (api/inspect) und verkleinert es. */
-export async function fetchProductImage(imageUrl) {
+export async function fetchProductImage(imageUrl, query) {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) throw new Error('Bitte melde dich an.');
-  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ imageUrl }) });
+  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify(query ? { imageQuery: query } : { imageUrl }) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(j.error || 'Das Bild konnte nicht geladen werden.');
+  if (!j.image) throw new Error('Kein Bild gefunden.');
   const d = await downscale(`data:${j.image.type};base64,${j.image.data}`);
   return { ...d, src: j.image.source };
 }

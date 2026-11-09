@@ -207,6 +207,8 @@ async readlink(el,ev){
     f.elements.link.value=r.url;
     if(r.title&&!f.elements.t.value.trim())f.elements.t.value=r.title;
     say(`Amazon-Link übernommen${r.title?' und den Namen aus dem Link entnommen':''}. Den Preis gibt Amazon nicht automatisch heraus, trage ihn gern selbst ein oder lass ihn offen.`);
+    const nm=f.elements.t.value.trim();
+    if(nm&&!S.ui.wishImg){try{const im=await fetchProductImage(null,nm);showWishImg({blob:im.blob,preview:im.preview,src:im.src});say('Amazon-Link übernommen und ein passendes Bild im Netz gefunden. Bitte prüfe, ob es zum Produkt passt, du kannst es entfernen.')}catch(e){console.warn('Bildsuche:',e.message)}}
     return;
   }
   say('Wir lesen den Link …');
