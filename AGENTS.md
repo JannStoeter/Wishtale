@@ -10,6 +10,8 @@ Jann trifft Entscheidungen aus den unabhängigen Positionen von Claude und ChatG
 3. Schreibe `docs/tribunal/<ordner>/chatgpt.md` im vorgegebenen Format (Front matter und die drei Abschnitte).
 4. Committe und pushe nur diese Datei.
 
+Wann etwas ins Tribunal gehört (Dreier-Regel): schwer rückgängig, kostet Geld, berührt Recht oder Datenschutz, ändert Architektur oder Geschäftsmodell, oder Jann möchte es. Du kannst solche Fragen selbst anlegen: neuer Ordner `docs/tribunal/<nr>-<name>/` mit `frage.md`. Fragen, die Jann auf der Entwickler-Seite stellt, legt Claude beim Abgleich als Ordner an, danach siehst du sie im Repository. Entscheidungen und Bauaufträge stehen nur in der Datenbank, nicht im Repository. Baue nichts auf Grundlage einer Entscheidung, die Jann dir nicht ausdrücklich zugewiesen hat.
+
 ## Allgemein
 - Antworte und schreibe auf Deutsch, warm und in ganzen Sätzen (siehe Tonregeln in `CLAUDE.md`).
 - Vor dem Pushen: `npx eslint src` und `npm run build`.

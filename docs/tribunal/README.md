@@ -64,3 +64,8 @@ Das stärkste Argument gegen die eigene Empfehlung, ehrlich formuliert.
 7. **Rückfragen:** Jann kann auf der Seite einen Prompt für die zweite Runde kopieren. Die Antwort kommt als `…-2.md`.
 
 Nach dem Schreiben committen und pushen. Die Seite zeigt den neuen Stand nach dem nächsten Deploy.
+
+## Ablauf rund um die Seite
+- **Neue Fragen** von Jann kommen über die Seite („Neue Frage“) in einen Posteingang. Claude legt sie beim Abgleich als Ordner mit `frage.md` an, erst dann sehen alle sie hier im Repository.
+- **Urteil und Bauauftrag** stehen in der Datenbank. Hat Jann „Zum Bauen freigeben“ gewählt, setzt Claude es beim nächsten Abgleich um und vermerkt Umsetzung und Commit auf der Seite.
+- **Wann Tribunal?** Schwer rückgängig, kostet Geld, Recht oder Datenschutz, Architektur oder Geschäftsmodell, oder Jann möchte es. Einfaches klärt Claude direkt mit Jann im Chat.
