@@ -26,9 +26,9 @@ export function Wuensche(){
    ${AppPromo()}
    ${Nudge(m)}
    <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1>${m.managed?`${open} Wünsche von ${esc(m.name)}.`:`${open} Dinge, über die ich mich freuen würde.`}</h1></div>
+   <div class="importcard"><div><p class="eyebrow">Schon eine Liste?</p><h2>Wishtale liest sie für dich ein</h2><p class="muted">Ob Amazon-Wunschliste, Notizen oder der Wunschzettel deines Kindes: Füge den Text ein oder lade ein Foto hoch, und Wishtale macht daraus einzelne Wünsche, die du vor dem Speichern prüfst.</p></div><button class="btn pri" data-act="modal" data-v="zettel">${ic('plus','sm')}Liste einlesen</button></div>
    <div class="banner" style="margin-bottom:8px">${ic('lock')}<span>${m.managed?`Als Elternteil siehst du, was reserviert oder gekauft ist. ${esc(m.name)} sieht es nicht.`:'Die Überraschung bleibt: Du siehst nie, ob jemand einen deiner Wünsche reserviert oder gekauft hat.'}</span></div>
    <p class="muted" style="font-size:14px;margin-bottom:16px">Du musst nicht jedes Produkt kennen. Schreib zum Beispiel „Hochwertige Pfanne bis 100 €“, dann suchen wir für deine Freunde passende Vorschläge heraus. Auch ohne Link finden wir bei Amazon etwas Passendes.</p>
-   <p style="margin:-6px 0 16px"><button class="btn ghost sm" data-act="modal" data-v="zettel">Du hast schon einen Wunschzettel? Lade ihn hoch</button></p>
    <div class="row" style="justify-content:space-between;margin-bottom:16px">
      <div class="seg" role="group" aria-label="Status">${[['offen','Offen'],['selbst','Selbst gekauft'],['alle','Alle']].map(([k,l])=>`<button class="${u.wf===k?'on':''}" data-act="wf" data-v="${k}">${l}</button>`).join('')}</div>
      <div class="seg" role="group" aria-label="Kategorie"><button class="${u.wc==='alle'?'on':''}" data-act="wc" data-v="alle">Alle</button>${used.map(c=>`<button class="${u.wc===c?'on':''}" data-act="wc" data-v="${c}">${cat(c).n}</button>`).join('')}</div>

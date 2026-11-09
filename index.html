@@ -25,13 +25,19 @@
     <div>
       <p class="eyebrow" style="margin-bottom:18px" data-edit="hero.p1">Wishtale</p>
       <h1 data-edit="hero.h11">Die Wunschliste, die <em>dich</em> kennt.</h1>
-      <p class="sub" data-edit="hero.p2">Sammle deine Wünsche und erzähle, was du magst. Deine Freunde sehen alles auf einer Seite und finden Geschenke, die wirklich passen, während die Überraschung für dich erhalten bleibt.</p>
+      <p class="sub" data-edit="hero.p2">Lies deine Amazon-Liste oder deinen Wunschzettel einfach ein und erzähle, was du magst. Deine Freunde finden auf einer Seite Geschenke, die wirklich passen, und die Überraschung bleibt für dich erhalten.</p>
       <div class="row"><a class="btn pri" href="app/#start">Mein Wishtale erstellen <svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" href="app/#p/jonas" data-edit="hero.link1">Beispielprofil ansehen</a></div>
     </div>
-    <div class="stage" id="stage" role="group" aria-roledescription="Vorführung" aria-label="So sieht Wishtale aus, vier Beispielansichten">
+    <div class="stage" id="stage" role="group" aria-roledescription="Vorführung" aria-label="So sieht Wishtale aus, fünf Beispielansichten">
       <div class="sbar"><span class="sdots" aria-hidden="true"><i></i><i></i><i></i></span><b>wishtale</b><span class="sdemo" data-edit="hero.demo">Beispiel mit erfundener Person</span><button type="button" class="spause" id="spause" aria-label="Vorführung anhalten">Anhalten</button></div>
       <div class="sscenes">
-        <section class="vs on" data-label="Wunsch eintippen" aria-label="Wunsch eintippen">
+        <section class="vs on" data-label="Liste einlesen" aria-label="Liste einlesen">
+          <p class="eyebrow">Amazon-Wunschliste einfügen</p>
+          <div class="spaste" aria-hidden="true"><span>Hario V60 Keramik Kaffeefilter Dripper Größe 02, weiß, 1-4 Tassen, Pour Over Handfilter</span><span>4,7 ★★★★★ (12.481) · 24,90 € · Auf Lager · In den Einkaufswagen</span><span>Fellow Stagg EKG Elektrischer Wasserkocher mit Temperaturwahl, 0,9 L, Mattschwarz</span><span>4,5 ★★★★☆ (3.210) · 179,00 € · Prime · In den Einkaufswagen</span></div>
+          <p class="eyebrow" style="margin:14px 0 8px">Wishtale macht daraus einzelne Wünsche</p>
+          <div class="srecs"><div class="rec"><span class="imgbox art"><img src="{{photo:kettle:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Aus deiner Amazon-Liste</span><p class="rh">Hario V60 Keramik Dripper, Größe 02</p><p class="why">Weiß, für 1 bis 4 Tassen</p><div class="row" style="gap:6px"><span class="chip">24,90 €</span><span class="chip ok">Wunsch angelegt</span></div></div></div><div class="rec"><span class="imgbox art"><img src="{{photo:teapot:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Aus deiner Amazon-Liste</span><p class="rh">Fellow Stagg EKG Wasserkocher, 0,9 L</p><p class="why">Mattschwarz, mit Temperaturwahl</p><div class="row" style="gap:6px"><span class="chip">179,00 €</span><span class="chip ok">Wunsch angelegt</span></div></div></div><div class="rec"><span class="imgbox art"><img src="{{photo:game:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Aus deiner Amazon-Liste</span><p class="rh">Catan, das Brettspiel</p><p class="why">Basisspiel, ab 10 Jahren</p><div class="row" style="gap:6px"><span class="chip">29,99 €</span><span class="chip ok">Wunsch angelegt</span></div></div></div></div>
+        </section>
+        <section class="vs" data-label="Wunsch eintippen" aria-label="Wunsch eintippen">
           <p class="eyebrow">Neuer Wunsch</p>
           <div class="sinput"><span class="typed" id="typed" data-full="Pfanne ohne Beschichtung">Pfanne ohne Beschichtung</span><i class="caret" aria-hidden="true"></i></div>
           <p class="eyebrow" style="margin:16px 0 8px">Passende Produkte von Wishtale</p>
@@ -58,7 +64,7 @@
           <div class="chips" style="margin-top:8px"><span class="chip ok">Siebträgermaschine</span><span class="chip ok">Gusseisenpfanne</span><span class="chip ok">Pastamaschine</span><span class="chip warn">Nicht: Duftkerzen</span></div>
         </section>
       </div>
-      <div class="stabs"><div class="stab-row" role="group" aria-label="Ansicht wählen"><button type="button" class="stab on" data-i="0" aria-pressed="true">Wunsch</button><button type="button" class="stab" data-i="1" aria-pressed="false">Inspiration</button><button type="button" class="stab" data-i="2" aria-pressed="false">Wunschliste</button><button type="button" class="stab" data-i="3" aria-pressed="false">Profil</button></div></div>
+      <div class="stabs"><div class="stab-row" role="group" aria-label="Ansicht wählen"><button type="button" class="stab on" data-i="0" aria-pressed="true">Einlesen</button><button type="button" class="stab" data-i="1" aria-pressed="false">Wunsch</button><button type="button" class="stab" data-i="2" aria-pressed="false">Ideen</button><button type="button" class="stab" data-i="3" aria-pressed="false">Liste</button><button type="button" class="stab" data-i="4" aria-pressed="false">Profil</button></div></div>
       <p class="vh" id="slive" aria-live="polite"></p>
     </div>
   </div></section>

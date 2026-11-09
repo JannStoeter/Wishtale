@@ -15,7 +15,7 @@ document.querySelectorAll('.art[data-kind]').forEach(el=>el.insertAdjacentHTML('
   let cur=0,timer=null,typer=null,paused=reduce,visible=true;
   const full=typed?typed.dataset.full:'';
   const type=()=>{if(!typed)return;clearInterval(typer);if(reduce){typed.textContent=full;return}typed.textContent='';let n=0;typer=setInterval(()=>{n++;typed.textContent=full.slice(0,n);if(n>=full.length)clearInterval(typer)},55)};
-  const show=(i,announce)=>{cur=(i+scenes.length)%scenes.length;scenes.forEach((s,k)=>s.classList.toggle('on',k===cur));tabs.forEach((t,k)=>{t.classList.toggle('on',k===cur);t.setAttribute('aria-pressed',k===cur)});if(cur===0)type();if(announce&&live)live.textContent=scenes[cur].dataset.label};
+  const show=(i,announce)=>{cur=(i+scenes.length)%scenes.length;scenes.forEach((s,k)=>s.classList.toggle('on',k===cur));tabs.forEach((t,k)=>{t.classList.toggle('on',k===cur);t.setAttribute('aria-pressed',k===cur)});if(scenes[cur].querySelector('#typed'))type();if(announce&&live)live.textContent=scenes[cur].dataset.label};
   const stop=()=>{clearInterval(timer);timer=null};
   const start=()=>{stop();if(paused||!visible||reduce)return;timer=setInterval(()=>show(cur+1),cur===0?6500:5500)};
   const restart=()=>{stop();start()};

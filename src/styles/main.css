@@ -677,10 +677,20 @@ mark.todo{background:#F5D98B;color:#3A2A00;padding:0 4px;border-radius:4px}
 .pav{width:48px;height:48px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--disp);font-size:24px;flex:none}
 .shave{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.shave .imgbox{aspect-ratio:4/3;border-radius:10px;overflow:hidden;display:block}
 .stabs{padding:10px 12px 14px;border-top:1px solid var(--line)}
-.stab-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.stab,.spause{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:7px 4px;cursor:pointer;white-space:nowrap}
+.stab-row{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.stab,.spause{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:7px 2px;cursor:pointer;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:480px){.stab{font-size:11.5px}}
 .spause{padding:4px 10px;font-size:12px}
 .stab.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .stab:focus-visible,.spause:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.vs,.vs.on{transition:none}.caret{animation:none}.js .vs.on .rec,.js .vs.on .wcard{animation:none}}
 .trust .step h3{margin-bottom:8px}
+
+.importcard{display:grid;gap:14px;align-items:center;padding:18px 20px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);margin-bottom:16px}
+.importcard h2{font-size:26px;margin:2px 0 6px;color:inherit}
+.importcard p{color:inherit}
+.importcard .eyebrow{color:#E9C77B}
+.importcard .muted{color:#D6DDCB;font-size:14.5px;max-width:640px}
+.importcard .btn.pri{background:var(--accent-ink);color:var(--accent);justify-self:start}
+@media(min-width:760px){.importcard{grid-template-columns:1fr auto}}
+.spaste{display:grid;gap:4px;padding:10px 12px;border:1px dashed var(--line);border-radius:12px;background:var(--bg);font-size:12px;color:var(--muted);line-height:1.35;max-height:132px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
