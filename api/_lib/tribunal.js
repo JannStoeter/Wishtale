@@ -43,3 +43,20 @@ export function loadTopics(root = ROOT()) {
     return { id, titel: clip(q.meta.titel || id, 160), art: ['befund', 'aufgabe'].includes(q.meta.art) ? q.meta.art : 'entscheidung', status: clip(q.meta.status || 'offen', 20), erstellt: clip(q.meta.erstellt, 10), von: clip(q.meta.von, 10), optionen: parseOptions(q.meta.optionen), frage: clip(q.body, 8000), positions };
   }).filter(Boolean);
 }
+
+/** Prioritätenlisten von Claude und ChatGPT: Zeilen „- <nr>: <1-4> | <Grund>“ in docs/tribunal/prioritaeten/<autor>.md */
+export function loadPriorities(root = ROOT()) {
+  const out = {};
+  for (const autor of ['claude', 'chatgpt']) {
+    try {
+      const { meta, body } = parseDoc(readFileSync(join(root, 'prioritaeten', `${autor}.md`), 'utf8'));
+      const items = {};
+      for (const line of body.split('\n')) {
+        const m = /^\s*[-*]\s*(\d{3})\s*:\s*([1-4])\s*(?:\|\s*(.*))?$/.exec(line);
+        if (m) items[m[1]] = { prio: +m[2], grund: clip(m[3] || '', 300) };
+      }
+      out[autor] = { datum: clip(meta.datum, 10), items };
+    } catch { /* Datei fehlt noch */ }
+  }
+  return out;
+}

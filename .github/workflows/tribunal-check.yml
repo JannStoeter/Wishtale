@@ -19,7 +19,7 @@ jobs:
           BASE=$(git merge-base origin/${{ github.base_ref }} HEAD)
           CHANGED=$(git diff --name-only "$BASE" HEAD)
           echo "Geänderte Dateien:"; echo "$CHANGED"
-          BAD=$(echo "$CHANGED" | grep -vE '^docs/tribunal/[0-9]{3}-[a-z0-9-]+/(chatgpt(-[0-9]+)?\.md|frage\.md)$' || true)
+          BAD=$(echo "$CHANGED" | grep -vE '^docs/tribunal/([0-9]{3}-[a-z0-9-]+/(chatgpt(-[0-9]+)?\.md|frage\.md)|prioritaeten/chatgpt\.md)$' || true)
           if [ -n "$BAD" ]; then
-            echo "::error::Erlaubt sind nur chatgpt.md, chatgpt-2.md und neue frage.md in einem Themenordner. Nicht erlaubt:"; echo "$BAD"; exit 1
+            echo "::error::Erlaubt sind nur chatgpt.md, chatgpt-2.md und neue frage.md in einem Themenordner sowie prioritaeten/chatgpt.md. Nicht erlaubt:"; echo "$BAD"; exit 1
           fi

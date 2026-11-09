@@ -16,6 +16,9 @@ Jann trifft Entscheidungen aus den unabhängigen Positionen von Claude und ChatG
 
 Wann etwas ins Tribunal gehört (Dreier-Regel): schwer rückgängig, kostet Geld, berührt Recht oder Datenschutz, ändert Architektur oder Geschäftsmodell, oder Jann möchte es. Du kannst solche Fragen selbst anlegen: neuer Ordner `docs/tribunal/<nr>-<name>/` mit `frage.md`. Fragen, die Jann auf der Entwickler-Seite stellt, legt Claude beim Abgleich als Ordner an, danach siehst du sie im Repository. Janns Urteile spiegelt Claude beim Abgleich nach `docs/tribunal/ENTSCHEIDUNGEN.md` und in eine `urteil.md` im jeweiligen Ordner, damit du sie kennst. Bauaufträge stehen nur in der Datenbank. Baue nichts auf Grundlage einer Entscheidung, die Jann dir nicht ausdrücklich zugewiesen hat.
 
+## Prioritätenliste
+Auf Wunsch von Jann schreibst du außerdem deine Prioritätenliste nach `docs/tribunal/prioritaeten/chatgpt.md` (Format und Skala in `docs/tribunal/README.md`). Lies die Liste von Claude erst, nachdem du deine abgelegt hast. Einreichen wie eine Position: Branch `tribunal/chatgpt-prioritaeten`, nur diese Datei, Pull Request.
+
 ## Allgemein
 - Antworte und schreibe auf Deutsch, warm und in ganzen Sätzen (siehe Tonregeln in `CLAUDE.md`).
 - Vor dem Pushen: `npx eslint src` und `npm run build`.
