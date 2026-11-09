@@ -90,7 +90,7 @@ export function WishModal() {
 
   return `<div class="scrim" data-act="closebg"><div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="mt">
    <div class="wm-top">
-    <span class="wm-img">${art((o.main && o.main.a) || w.a || cat(w.c).a, (o.main && o.main.tone) != null ? o.main.tone : (w.tone || 0))}</span>
+    <span class="wm-img">${w.img ? `<img src="${w.img}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">` : art((o.main && o.main.a) || w.a || cat(w.c).a, (o.main && o.main.tone) != null ? o.main.tone : (w.tone || 0))}</span>
     <div>
      <p class="eyebrow">${esc(meta.join(' · '))}</p>
      <h2 id="mt">${esc(w.t)}</h2>

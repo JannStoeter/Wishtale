@@ -5,6 +5,7 @@
  *  - fetchPublic(): Gast-Ansicht, läuft über die RPC-Funktion public_profile (sieht jeder Besucher gleich)
  *  - Gast-Aktionen: reserve / release / bought über RPC, mit zufälligem Browser-Token
  */
+import { safeImg } from './wishimg.js';
 import { sb } from './supabase.js';
 import { S, W } from '../state.js';
 import { kwOf } from './util.js';
@@ -18,11 +19,12 @@ export const wishToRow = (w, profileId) => ({
   id: w.id, profile_id: profileId, title: w.t, kind: w.kind, prio: w.prio, note: w.note || '', link: w.link || '',
   price: w.price || null, budget: w.budget || null, category: w.c || 'wohnen', occ: w.occ || [], vis: w.vis || 'alle',
   status: w.status || 'offen', via: w.via || null, pid: w.pid || null, kw: w.kw || [], art: w.a || null, tone: w.tone || 0,
+  img_url: /^https:\/\//.test(w.img || '') ? w.img : '', img_src: String(w.imgSrc || '').slice(0, 120),
 });
 export const wishFromRow = r => W({
   id: r.id, t: r.title, kind: r.kind, prio: r.prio, note: r.note, link: r.link, price: num(r.price), budget: r.budget,
   c: r.category, occ: r.occ || [], vis: r.vis || 'alle', status: r.status || 'offen', via: r.via || undefined, pid: r.pid || undefined,
-  kw: r.kw && r.kw.length ? r.kw : kwOf(r.title), a: r.art || undefined, tone: r.tone || 0,
+  kw: r.kw && r.kw.length ? r.kw : kwOf(r.title), a: r.art || undefined, tone: r.tone || 0, img: safeImg(r.img_url), imgSrc: r.img_src || '',
 });
 const giftToRow = (g, profileId) => ({
   id: g.id, profile_id: profileId, what: g.what, from_name: g.from, when_label: g.when || '',

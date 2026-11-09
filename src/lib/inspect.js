@@ -15,6 +15,8 @@ export async function inspectLink(raw) {
   return j.product;
 }
 
+/** Produktbild über den Server holen (Bytes als Base64). Siehe wishimg.js. */
+
 /** „49,90“ für das Preisfeld, nur bei Euro */
 export const priceField = p => (p.price && (!p.currency || p.currency === 'EUR') ? p.price.toFixed(2).replace('.', ',') : '');
 

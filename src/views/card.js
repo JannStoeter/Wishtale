@@ -9,7 +9,7 @@ import { cat, PRIO } from '../data/content.js';
 
 /** Bild zum Wunsch: eigenes Foto, sonst passend zum vorgeschlagenen Produkt, sonst zur Kategorie. */
 export function WishArt(w,pr){
-  if(w.img)return `<span class="imgbox art"><img src="${w.img}" alt=""></span>`;
+  if(w.img)return `<span class="imgbox art"><img src="${w.img}" alt="" loading="lazy" decoding="async"></span>`;
   return art((pr&&pr.a)||w.a||cat(w.c).a,pr&&pr.tone!=null?pr.tone:(w.tone??0));
 }
 

@@ -1,4 +1,5 @@
 import { ZettelModal } from './zettel.js';
+import { imgBoxHtml } from '../lib/wishimg.js';
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
 import { CATS, PRIO } from '../data/content.js';
@@ -75,6 +76,7 @@ export function Modal(){
     <div class="fld"><label for="wn">Notiz</label><textarea id="wn" name="note" class="ta" placeholder="Farbe, Größe, Stimmung">${esc(d.note||'')}</textarea></div>
     <div class="fld"><label for="wc2">Kategorie</label><select id="wc2" name="c" class="sel">${CATS.map(c=>`<option value="${c.id}" ${(d.c||'wohnen')===c.id?'selected':''}>${c.n}</option>`).join('')}</select></div>
     <div class="fld"><span class="lb">Wie wichtig ist es dir?</span><div class="radios">${[1,2,3].map(n=>`<label><input type="radio" name="prio" value="${n}" ${n===(d.prio||2)?'checked':''}><span>${PRIO[n]}</span></label>`).join('')}</div></div>
+    <div id="wimg" class="wimg">${imgBoxHtml(d.img?{preview:d.img,src:d.imgSrc}:null)}</div>
     <div class="fld"><label for="wi">Bild (optional${S.ui.editWish&&d.img?', ein neues ersetzt das alte':''})</label><input id="wi" name="img" type="file" accept="image/*" class="inp"></div>
     <div class="fld"><label for="wv">Wer sieht das?</label><select id="wv" name="vis" class="sel">${[['alle','Für alle mit meinem Link'],['privat','Privat, nur ich']].map(([v,l])=>`<option value="${v}" ${((d.vis==='giver'?'alle':d.vis)||'alle')===v?'selected':''}>${l}</option>`).join('')}</select></div>
     <div class="fld"><label class="chk"><input type="checkbox" name="plan" value="1" ${d.status==='plan'?'checked':''}><span>Das möchte ich mir selbst erfüllen</span></label><span class="muted" style="font-size:13.5px">Niemand sieht diesen Wunsch. Wishtale schlägt deinen Freunden dafür nichts vor und nutzt ihn nur, um deinen Geschmack besser zu verstehen.</span></div>

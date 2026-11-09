@@ -182,7 +182,9 @@ export function extractProduct(html, pageUrl = '') {
   if (!size) size = findSize(title, desc);
   if (!title) throw new HttpError(422, 'Auf dieser Seite haben wir kein Produkt gefunden.');
   let host = ''; try { host = new URL(pageUrl).hostname.replace(/^www\./, ''); } catch { /* ohne Host */ }
-  return { title, price, currency: price ? (String(currency).toUpperCase() || 'EUR') : '', brand, size, description: desc, host, source, hasImage: !!image };
+  let imageUrl = '';
+  try { const iu = new URL(String(image || ''), pageUrl || undefined); if (iu.protocol === 'https:') imageUrl = iu.href.slice(0, 600); } catch { /* ohne Bild */ }
+  return { title, price, currency: price ? (String(currency).toUpperCase() || 'EUR') : '', brand, size, description: desc, host, source, hasImage: !!imageUrl, imageUrl };
 }
 
 /**
@@ -216,4 +218,54 @@ export async function inspect(raw, doRequest = request) {
     }
   } catch { /* ohne Variante weiter */ }
   return { ...product, url: page.url };
+}
+
+/* ---------- Produktbild holen ---------- */
+const IMG_MAX = 2_500_000;
+/** Bilder von Amazon dürfen wir nicht übernehmen (Teilnahmebedingungen, Bilder nur über die offizielle Schnittstelle). */
+const AMAZON_IMG = /(^|\.)(amazon|amzn|media-amazon|ssl-images-amazon)\.|(^|\.)(amzn\.(to|eu))$/i;
+
+export function checkImageUrl(raw) {
+  let u;
+  try { u = new URL(String(raw)); } catch { throw new HttpError(400, 'Das ist keine gültige Bildadresse.'); }
+  if (u.protocol !== 'https:' || (u.port && u.port !== '443') || u.username || u.password) throw new HttpError(400, 'Dieses Bild können wir nicht laden.');
+  const host = u.hostname.toLowerCase();
+  if (net.isIP(host) || host === 'localhost' || !host.includes('.') || /\.(local|internal|localhost|lan|home)$/.test(host)) throw new HttpError(400, 'Dieses Bild können wir nicht laden.');
+  if (AMAZON_IMG.test(host)) throw new HttpError(422, 'Bilder von Amazon dürfen wir nicht übernehmen.');
+  return u;
+}
+
+/** Ein einzelner Abruf eines Bildes ohne Weiterleitung, nur zu öffentlichen Adressen (wie request). */
+export function requestImage(u, test = {}) {
+  return new Promise((resolve, reject) => {
+    const req = https.request(u, {
+      method: 'GET', lookup: test.lookup || safeLookup, timeout: TIMEOUT,
+      headers: { 'user-agent': 'Mozilla/5.0 (compatible; WishtaleLinkReader/1.0; +https://wishtale.de)', accept: 'image/jpeg,image/png,image/webp', 'accept-encoding': 'identity' },
+    }, res => {
+      const status = res.statusCode || 0;
+      if (status >= 300 && status < 400 && res.headers.location) { res.resume(); return resolve({ status, location: res.headers.location }); }
+      const type = String(res.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
+      if (status !== 200 || !/^image\/(jpeg|png|webp)$/.test(type) || +res.headers['content-length'] > IMG_MAX) { res.resume(); return resolve({ status, type, body: null }); }
+      const chunks = []; let n = 0;
+      res.on('data', c => { n += c.length; if (n > IMG_MAX) { req.destroy(); resolve({ status, type, body: null }); } else chunks.push(c); });
+      res.on('end', () => resolve({ status, type, body: Buffer.concat(chunks) }));
+      res.on('error', reject);
+    });
+    req.on('timeout', () => req.destroy(new Error('timeout')));
+    req.on('error', reject);
+    req.end();
+  });
+}
+
+/** Holt ein Produktbild als Base64. Der Browser verkleinert es und lädt es in unseren eigenen Speicher. */
+export async function fetchImage(raw, doRequest = requestImage) {
+  let u = checkImageUrl(raw);
+  for (let hop = 0; hop <= 3; hop++) {
+    let r;
+    try { r = await doRequest(u); } catch { throw new HttpError(502, 'Das Bild konnte nicht geladen werden.'); }
+    if (r.location) { u = checkImageUrl(new URL(r.location, u).href); continue; }
+    if (!r.body || !r.body.length) throw new HttpError(422, 'Dieses Bild lässt sich nicht übernehmen.');
+    return { type: r.type, data: r.body.toString('base64'), source: u.hostname.replace(/^www\./, '') };
+  }
+  throw new HttpError(422, 'Das Bild leitet zu oft weiter.');
 }

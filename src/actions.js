@@ -15,12 +15,15 @@ import { readZettelRemote } from './lib/zettel.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
+import { downscale, fetchProductImage, finalImage, imgBoxHtml } from './lib/wishimg.js';
 import { render, route, refreshGuest } from './render.js';
 import { guestRpc } from './lib/remote.js';
 import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
 
 export const MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 export 
+/* ---- Produktbild im Wunschformular ---- */
+function showWishImg(wi){S.ui.wishImg=wi;const b=document.getElementById('wimg');if(b)b.innerHTML=wi&&!wi.remove?imgBoxHtml(wi):''}
 /* ---- Amazon stöbern ---- */
 const parsePrice=v=>{const n=parseFloat(String(v||'').replace(/\./g,'').replace(',','.'));return Number.isFinite(n)&&n>0?n:null};
 function azApply(r){
@@ -113,9 +116,9 @@ const A={
  selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Deine Freunde sehen jetzt, dass du das schon hast.':'Der Wunsch ist wieder offen.');render()},
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
  delw(el){S.ui.modal=null;S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
- modal(el){if(el.dataset.v==='wish')S.ui.editWish=null;if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  close(){S.ui.modal=null;S.ui.editWish=null;render()},
- wedit(el){S.ui.editWish=el.dataset.id;S.ui.modal='wish';render();setTimeout(()=>document.getElementById('wt')?.focus({preventScroll:true}),30)},
+ wedit(el){S.ui.editWish=el.dataset.id;S.ui.wishImg=null;S.ui.modal='wish';render();setTimeout(()=>document.getElementById('wt')?.focus({preventScroll:true}),30)},
  resend(){
   const em=S.ui.authSent?.email;if(!em)return;S.ui.authBusy=true;render();
   resendSignup(em).then(({error})=>{S.ui.authBusy=false;S.ui.authResent=error?friendly(error):'Die Mail ist unterwegs. Das kann einen Moment dauern.';render()}).catch(()=>{S.ui.authBusy=false;S.ui.authResent='Das hat nicht geklappt. Bitte versuche es gleich noch einmal.';render()});
@@ -214,8 +217,12 @@ async readlink(el,ev){
     const pf=priceField(p);if(pf&&(!auto||!pr.value.trim()))pr.value=pf;
     if(p.size&&!/gr(ö|oe)ße:/i.test(nt.value)&&(!auto||!nt.value.trim()))nt.value=(nt.value.trim()?nt.value.trim()+'\n':'')+`Größe: ${p.size}`;
     say(`Gefunden: ${summary(p)}. Bitte prüfe die Angaben, der Preis kann sich ändern.${p.price&&p.currency&&p.currency!=='EUR'?' Der Preis steht nicht in Euro, bitte passe ihn an.':''}`);
+    if(p.imageUrl&&!S.ui.wishImg){
+      try{const im=await fetchProductImage(p.imageUrl);showWishImg({blob:im.blob,preview:im.preview,src:im.src});say(`Gefunden: ${summary(p)} und das Produktbild. Bitte prüfe die Angaben, der Preis kann sich ändern.`)}catch(e){console.warn('Produktbild:',e.message)}
+    }
   }catch(e){say(e.message||'Das hat nicht geklappt.')}
  },
+ wimgdel(){const f=document.querySelector('form[data-form=wish]');if(f&&f.elements.img)f.elements.img.value='';showWishImg({remove:true})},
  ihave(el){
   const t=ownedTypeFor(el.dataset.id);if(!t)return;
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===t.label.toLowerCase()))S.me.wishes.unshift(W({t:t.label,c:t.c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:t.a,tone:t.tone,kw:t.kw}));
@@ -291,6 +298,10 @@ async readlink(el,ev){
  suggest(el){S.ui.pickId=el.dataset.id;S.ui.wishCtx='guest';S.ui.modal='wishdetail';render()}
 };
 document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const f=A[t.dataset.act];if(f)f(t,e)});
+document.addEventListener('change',async e=>{
+  if(e.target.name!=='img'||!e.target.closest('form[data-form=wish]')||!e.target.files||!e.target.files[0])return;
+  try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:''})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
+});
 document.addEventListener('input',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;$('#budv').textContent=money(S.ui.budget)}});
 document.addEventListener('change',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;render()}});
 document.addEventListener('input',e=>{const f=e.target.dataset?.az;if(f&&S.ui.az)S.ui.az[f]=e.target.value});
@@ -417,17 +428,18 @@ document.addEventListener('submit',e=>{
     S.ui.modal=null;toast('Das Geschenk ist eingetragen.');render();
   }
   if(kind==='wish'){
-    amazonLink((fd.get('link')||'').trim()).then(link=>{const file=fd.get('img'),done=img=>{
+    Promise.all([amazonLink((fd.get('link')||'').trim()),finalImage()]).then(([link,fi])=>{const done=(img,imgSrc,removed)=>{
       const c=fd.get('c'),t=fd.get('t').trim(),k=fd.get('kind'),plan=fd.get('plan')==='1';
       if(S.ui.editWish){
         const w=S.me.wishes.find(x=>x.id===S.ui.editWish);
-        if(w){const keep=w.c===c&&w.kind===k;Object.assign(w,{t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:img||w.img||null,...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
+        if(w){const keep=w.c===c&&w.kind===k;Object.assign(w,{t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:removed?null:(img||w.img||null),imgSrc:removed?'':(img?(imgSrc||''):(w.imgSrc||'')),...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
-      S.me.wishes.unshift(W({t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img}));
+      S.me.wishes.unshift(W({t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
       S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';toast('Der Wunsch ist gespeichert.');render();
     };
-    if(file&&file.size){const r=new FileReader();r.onload=()=>done(r.result);r.onerror=()=>done(null);r.readAsDataURL(file)}else done(null);
+    if(fi.failed)toast('Das Bild konnte nicht gespeichert werden. Der Wunsch ist ohne Bild gespeichert, du kannst es später erneut versuchen.');
+    S.ui.wishImg=null;done(fi.img,fi.src,fi.removed);
     });
   }
 });
