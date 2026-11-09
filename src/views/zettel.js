@@ -18,7 +18,9 @@ export function ZettelModal() {
    <p class="muted" style="margin:6px 0 12px">Mach ein Foto vom Wunschzettel oder füge den Text ein. Wishtale liest die einzelnen Wünsche heraus, und du prüfst sie, bevor etwas gespeichert wird. Das Foto wird nur zum Lesen verwendet und nicht gespeichert.</p>
    <form data-form="zettel" style="display:grid;gap:12px">
     <div class="fld"><label for="zt-f">Foto oder Scan (bis zu 4 Bilder)</label><input id="zt-f" name="files" type="file" accept="image/*" multiple class="inp"></div>
-    <div class="fld"><label for="zt-t">Oder der Text</label><textarea id="zt-t" name="text" class="ta" maxlength="6000" placeholder="z. B. Lego Technik Bagger, Siku Traktor …"></textarea></div>
+    <div class="fld"><label for="zt-t">Oder der Text</label><textarea id="zt-t" name="text" class="ta" maxlength="20000" placeholder="z. B. Lego Technik Bagger, Siku Traktor …"></textarea></div>
+    <details class="muted" style="font-size:14px"><summary style="cursor:pointer;color:var(--ink)">So liest du eine Amazon-Wunschliste ein</summary>
+     <p style="margin:8px 0 0">Amazon bietet keinen Export an, aber so geht es trotzdem: Öffne deine Wunschliste auf amazon.de, scrolle bis ganz nach unten, damit alles geladen ist, markiere die ganze Seite (Strg+A beziehungsweise Cmd+A), kopiere sie und füge sie oben bei „Der Text“ ein. Am Handy genügen Screenshots der Liste, die du oben als Bilder hochlädst. Wishtale sucht die Produktnamen und Preise heraus, Links und Bilder kommen nicht mit. Dein Name und deine Adresse bei Amazon gehören nicht dazu, lass sie gern weg.</p></details>
     ${z.error ? `<p role="alert" style="color:var(--bad,#a33)">${esc(z.error)}</p>` : ''}
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" type="submit" ${z.busy ? 'disabled' : ''}>${z.busy ? 'Wishtale liest …' : `${ic('check', 'sm')}Wünsche herauslesen`}</button></div>
    </form></div></div>`;
