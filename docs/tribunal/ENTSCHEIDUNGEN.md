@@ -28,6 +28,7 @@ Stand: 2026-11-09
 | 030 | Fehlerbehebung: Amazon-Suche leer, Marke „Toni“ falsch gedeutet (Meldung von Jann) | **A: Name übernehmen und Amazon direkt öffnen, KI-Prompt auf Markenwelt schärfen.** | ja, `9f98f20` |
 | 031 | Amazon-Wunschliste komplett einlesen (Frage und Anweisung von Jann) | **A: Eingefügter Text oder Screenshots, KI liest Produkte und Preise.** Kein Scraping. | ja, `e1dfb21` |
 | 032 | „Liste einlesen“ stärker hervorheben (Anweisung von Jann) | **A: Erste Szene der Vorführung, Hero-Text, große Karte in der App.** | ja, `9d53ba5` |
+| 033 | Anmeldung nach der Bestätigungsmail (Meldung von Jann) | **A (teilweise):** Hinweis „angemeldet“ in der App gebaut, Weiterleitung muss Jann in Supabase setzen (034). | App ja, `6645363` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
@@ -52,3 +53,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 022 Vielfalt der KI-Ideen schärfen (Aufgabe)
 - 025 Woher kommen Bilder, wenn die Shopseite keins liefert (Amazon, idealo)? (Entscheidung)
 - 027 Brave-Suchschlüssel setzen, sobald die Kosten es erlauben (Aufgabe, von Jann)
+- 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
