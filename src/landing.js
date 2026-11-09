@@ -7,16 +7,24 @@ import { illustration } from './lib/art.js';
 
 document.querySelectorAll('.art[data-kind]').forEach(el=>el.insertAdjacentHTML('afterbegin',illustration(el.dataset.kind)));
 
-const ROTATION=[
-  ['Kaffeewaage','Jonas liebt Kaffee und hat schon eine Siebträgermaschine.'],
-  ['Keramik-Schnupperkurs','Lena möchte Keramik gern ausprobieren.'],
-  ['Wildkräuter-Wanderung','Mira wandert gern. Ein Erlebnis statt noch eines Gegenstands.']
-];
-const t=document.getElementById('rot-t'),w=document.getElementById('rot-w');
-if(t&&w&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
-  let i=0;
-  setInterval(()=>{i=(i+1)%ROTATION.length;t.textContent=ROTATION[i][0];w.textContent=ROTATION[i][1]},4200);
-}
+/* Vorführung im Einstieg: vier Ansichten, wechselt von selbst, lässt sich anhalten und per Tab wählen. */
+(function(){
+  const stage=document.getElementById('stage');if(!stage)return;
+  const scenes=[...stage.querySelectorAll('.vs')],tabs=[...stage.querySelectorAll('.stab')],typed=document.getElementById('typed'),live=document.getElementById('slive'),pause=document.getElementById('spause');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cur=0,timer=null,typer=null,paused=reduce,visible=true;
+  const full=typed?typed.dataset.full:'';
+  const type=()=>{if(!typed)return;clearInterval(typer);if(reduce){typed.textContent=full;return}typed.textContent='';let n=0;typer=setInterval(()=>{n++;typed.textContent=full.slice(0,n);if(n>=full.length)clearInterval(typer)},55)};
+  const show=(i,announce)=>{cur=(i+scenes.length)%scenes.length;scenes.forEach((s,k)=>s.classList.toggle('on',k===cur));tabs.forEach((t,k)=>{t.classList.toggle('on',k===cur);t.setAttribute('aria-pressed',k===cur)});if(cur===0)type();if(announce&&live)live.textContent=scenes[cur].dataset.label};
+  const stop=()=>{clearInterval(timer);timer=null};
+  const start=()=>{stop();if(paused||!visible||reduce)return;timer=setInterval(()=>show(cur+1),cur===0?6500:5500)};
+  const restart=()=>{stop();start()};
+  tabs.forEach(t=>t.addEventListener('click',()=>{show(+t.dataset.i,true);restart()}));
+  if(pause){pause.textContent=reduce?'Abspielen':'Anhalten';pause.addEventListener('click',()=>{paused=!paused;pause.textContent=paused?'Abspielen':'Anhalten';pause.setAttribute('aria-label',paused?'Vorführung abspielen':'Vorführung anhalten');if(paused)stop();else{show(cur+1,true);start()}})}
+  stage.addEventListener('focusin',()=>stop());stage.addEventListener('focusout',()=>start());
+  if('IntersectionObserver' in window)new IntersectionObserver(es=>{visible=es[0].isIntersecting;visible?start():stop()},{threshold:.2}).observe(stage);
+  type();start();
+})();
 
 /* Geschichte: Schritt für Schritt einblenden, sobald er sichtbar wird. Ohne JavaScript bleibt alles sichtbar. */
 document.documentElement.classList.add('js');

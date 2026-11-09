@@ -28,35 +28,39 @@
       <p class="sub" data-edit="hero.p2">Sammle deine Wünsche und erzähle, was du magst. Deine Freunde sehen alles auf einer Seite und finden Geschenke, die wirklich passen, während die Überraschung für dich erhalten bleibt.</p>
       <div class="row"><a class="btn pri" href="app/#start">Mein Wishtale erstellen <svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" href="app/#p/jonas" data-edit="hero.link1">Beispielprofil ansehen</a></div>
     </div>
-    <div class="hprev" role="img" aria-label="Vorschau eines Beispielprofils mit Wünschen und einem Vorschlag von Wishtale">
-      <p class="pdemo" data-edit="hero.demo">Beispielprofil, die Person ist erfunden</p>
-      <div class="phead"><span class="pav" aria-hidden="true">J</span><div><strong data-edit="hero.pname">Jonas</strong><small class="muted" data-edit="hero.psub">liebt Kaffee, kocht gern für Freunde</small></div></div>
-      <p class="eyebrow" data-edit="hero.plabel1">Wünsche</p>
-      <div class="mini-row"><div class="mini"><span class="art t0 a" data-kind="grinder" aria-hidden="true"></span><b data-edit="hero.pw1">Handkaffeemühle</b><small data-edit="hero.pws1">Keramik-Mahlwerk</small></div><div class="mini"><span class="art t3" data-kind="teapot" aria-hidden="true"></span><b data-edit="hero.pw2">Wasserkocher</b><small data-edit="hero.pws2">mit Temperaturwahl</small></div></div>
-      <div class="chips" style="margin-top:12px"><span class="chip on" data-edit="hero.pc1">Kaffee brühen</span><span class="chip" data-edit="hero.pc2">Hario</span><span class="chip ok" data-edit="hero.pc3">Siebträgermaschine schon da</span></div>
-      <div class="float" aria-live="off"><div class="eyebrow"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/></svg><span data-edit="hero.pvor">Vorschlag von Wishtale</span></div><strong id="rot-t">Kaffeewaage</strong><p id="rot-w">Jonas liebt Kaffee und hat schon eine Siebträgermaschine.</p></div>
+    <div class="stage" id="stage" role="group" aria-roledescription="Vorführung" aria-label="So sieht Wishtale aus, vier Beispielansichten">
+      <div class="sbar"><span class="sdots" aria-hidden="true"><i></i><i></i><i></i></span><b>wishtale</b><span class="sdemo" data-edit="hero.demo">Beispiel mit erfundener Person</span><button type="button" class="spause" id="spause" aria-label="Vorführung anhalten">Anhalten</button></div>
+      <div class="sscenes">
+        <section class="vs on" data-label="Wunsch eintippen" aria-label="Wunsch eintippen">
+          <p class="eyebrow">Neuer Wunsch</p>
+          <div class="sinput"><span class="typed" id="typed" data-full="Pfanne ohne Beschichtung">Pfanne ohne Beschichtung</span><i class="caret" aria-hidden="true"></i></div>
+          <p class="eyebrow" style="margin:16px 0 8px">Passende Produkte von Wishtale</p>
+          <div class="srecs"><div class="rec"><span class="imgbox art"><img src="{{photo:pan:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Vorschlag von Wishtale</span><p class="rh">Edelstahlpfanne, 28 cm</p><p class="why">Ohne Beschichtung und gut für scharfes Anbraten.</p><div class="row" style="gap:6px"><span class="chip">Geschenk</span><span class="chip">ca. 60 bis 110 €</span></div></div></div><div class="rec"><span class="imgbox art"><img src="{{photo:pot:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Vorschlag von Wishtale</span><p class="rh">Gusseisen-Bräter</p><p class="why">Falls es auch ein Topf sein darf: hält ein Leben lang.</p><div class="row" style="gap:6px"><span class="chip">Geschenk</span><span class="chip">ca. 40 bis 90 €</span></div></div></div><div class="rec"><span class="imgbox art"><img src="{{photo:cooking:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Vorschlag von Wishtale</span><p class="rh">Kochkurs: Pfannengerichte</p><p class="why">Ein Erlebnis statt noch eines Gegenstands.</p><div class="row" style="gap:6px"><span class="chip gold">Erlebnis</span><span class="chip">ca. 70 bis 120 €</span></div></div></div></div>
+        </section>
+        <section class="vs" data-label="Inspiration" aria-label="Inspiration">
+          <p class="eyebrow">Vorschläge von Wishtale</p><p class="stitle rh">Ideen, die zu dir passen</p>
+          <div class="srecs"><div class="rec"><span class="imgbox art"><img src="{{photo:mug:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Vorschlag von Wishtale</span><p class="rh">Kaffee-Probierset kleiner Röstereien</p><p class="why">Passt, weil du deinen Kaffee gern selbst brühst.</p><div class="row" style="gap:6px"><span class="chip">Geschenk</span><span class="chip">ca. 20 bis 35 €</span></div><div class="row" style="margin-top:8px"><span class="btn pri sm">Auf meine Wunschliste</span><span class="btn ghost sm">Passt nicht</span></div></div></div><div class="rec"><span class="imgbox art"><img src="{{photo:cooking:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Vorschlag von Wishtale</span><p class="rh">Backkurs mit Sauerteig</p><p class="why">Etwas mit den Händen, das du ausprobieren möchtest.</p><div class="row" style="gap:6px"><span class="chip gold">Erlebnis</span><span class="chip">ca. 60 bis 120 €</span></div><div class="row" style="margin-top:8px"><span class="btn pri sm">Auf meine Wunschliste</span><span class="btn ghost sm">Passt nicht</span></div></div></div><div class="rec"><span class="imgbox art"><img src="{{photo:knife:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div><span class="eyebrow">Vorschlag von Wishtale</span><p class="rh">Japanisches Kochmesser</p><p class="why">Zu deinen Lieblingsmarken und zum Kochen für Freunde.</p><div class="row" style="gap:6px"><span class="chip">Geschenk</span><span class="chip">ca. 80 bis 150 €</span></div><div class="row" style="margin-top:8px"><span class="btn pri sm">Auf meine Wunschliste</span><span class="btn ghost sm">Passt nicht</span></div></div></div></div>
+        </section>
+        <section class="vs" data-label="Wunschliste" aria-label="Wunschliste">
+          <p class="eyebrow">Wünsche von Jonas</p>
+          <div class="wgrid swish"><div class="wcard compact"><div class="wmedia"><span class="imgbox art"><img src="{{photo:grinder:500}}" alt="" width="500" height="375" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div class="top"><span class="tag">Genuss</span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span></div><span class="wstate ok"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>Reserviert</span></div><div class="wbody"><p class="wt rh">Hochwertige Kaffeemühle</p><p class="wp">Vorschlag: Handmühle mit Keramik</p></div></div><div class="wcard compact"><div class="wmedia"><span class="imgbox art"><img src="{{photo:knife:500}}" alt="" width="500" height="375" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div class="top"><span class="tag">Kochen</span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span></div></div><div class="wbody"><p class="wt rh">Japanisches Messerset</p><p class="wp">Vorschlag: Santoku, 17 cm</p></div></div><div class="wcard compact"><div class="wmedia"><span class="imgbox art"><img src="{{photo:kettle:500}}" alt="" width="500" height="375" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div class="top"><span class="tag">Kochen</span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span></div></div><div class="wbody"><p class="wt rh">Wasserkocher mit Temperaturwahl</p><p class="wp">Vorschläge ansehen</p></div></div><div class="wcard compact"><div class="wmedia"><span class="imgbox art"><img src="{{photo:cooking:500}}" alt="" width="500" height="375" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><div class="top"><span class="tag">Erlebnisse</span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span></div></div><div class="wbody"><p class="wt rh">Wochenend-Kochkurs: frische Pasta</p><p class="wp">Erlebnis</p></div></div></div>
+          <p class="eyebrow" style="margin:14px 0 6px">Von Wishtale · Ideen, die zu Jonas passen</p>
+          <div class="chips"><span class="chip">Kaffee-Probierset</span><span class="chip">Keramikkurs</span><span class="chip">Hirnholz-Schneidebrett</span><span class="chip gold">Cupping-Workshop</span></div>
+        </section>
+        <section class="vs" data-label="Profil" aria-label="Profil">
+          <div class="phead2"><span class="pav" aria-hidden="true">J</span><div><strong>Jonas</strong><small class="muted">34, Produktdesigner, kocht gern für Freunde</small></div></div>
+          <p class="eyebrow" style="margin:14px 0 6px">Interessen und Marken</p>
+          <div class="chips"><span class="chip on">Kaffee brühen</span><span class="chip on">Kochen</span><span class="chip on">Einrichten</span><span class="chip">Hario</span><span class="chip">Stelton</span><span class="chip">Fellow</span></div>
+          <p class="eyebrow" style="margin:14px 0 6px">Möchte ich ausprobieren</p>
+          <div class="chips"><span class="chip gold">Kochkurs</span><span class="chip gold">Keramikkurs</span></div>
+          <p class="eyebrow" style="margin:14px 0 6px">Schon vorhanden</p>
+          <div class="shave"><span class="imgbox art"><img src="{{photo:mug:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="imgbox art"><img src="{{photo:pan:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="imgbox art"><img src="{{photo:scale:300}}" alt="" width="300" height="225" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"></span></div>
+          <div class="chips" style="margin-top:8px"><span class="chip ok">Siebträgermaschine</span><span class="chip ok">Gusseisenpfanne</span><span class="chip ok">Pastamaschine</span><span class="chip warn">Nicht: Duftkerzen</span></div>
+        </section>
+      </div>
+      <div class="stabs"><div class="stab-row" role="group" aria-label="Ansicht wählen"><button type="button" class="stab on" data-i="0" aria-pressed="true">Wunsch</button><button type="button" class="stab" data-i="1" aria-pressed="false">Inspiration</button><button type="button" class="stab" data-i="2" aria-pressed="false">Wunschliste</button><button type="button" class="stab" data-i="3" aria-pressed="false">Profil</button></div></div>
+      <p class="vh" id="slive" aria-live="polite"></p>
     </div>
-  </div></section>
-
-  <section class="sec-pad duo-sec" id="mehrwert" aria-labelledby="duo-h"><div class="wrap">
-    <p class="eyebrow" data-edit="mehrwert.p1">Mehr als eine Wunschliste</p>
-    <h2 id="duo-h" style="margin:12px 0 14px;max-width:820px" data-edit="mehrwert.h21">Wünsche sagen, was du dir vorstellst. Dein Geschmack sagt, was dir wirklich gefällt.</h2>
-    <p class="duo-lead" data-edit="mehrwert.p2">Eine Wunschliste kennt jeder. Bei Wishtale kommt das dazu, was Freunde sonst mühsam erraten müssten. Beides gehört zusammen und steht auf einer Seite.</p>
-    <div class="duo">
-      <article class="duo-card">
-        <span class="duo-tag" data-edit="mehrwert.tag1">Das kennst du</span>
-        <h3 data-edit="mehrwert.h31">Deine Wünsche</h3>
-        <p class="muted" data-edit="mehrwert.p3">Produkte, Erlebnisse und freie Ideen, die du sammelst. Zu jedem Wunsch zeigen wir deinen Freunden ein passendes Produkt und Reservierungen bleiben anonym.</p>
-        <div class="chips"><span class="chip" data-edit="mehrwert.chip1">Handkaffeemühle</span><span class="chip" data-edit="mehrwert.chip2">Wochenende in den Bergen</span><span class="chip" data-edit="mehrwert.chip3">Etwas Schönes für den Balkon</span></div>
-      </article>
-      <article class="duo-card plus">
-        <span class="duo-tag gold" data-edit="mehrwert.tag2">Das ist neu</span>
-        <h3 data-edit="mehrwert.h32">Dein Geschmack</h3>
-        <p class="muted" data-edit="mehrwert.p4">Was du gern machst, welche Marken du liebst, was du schon hast und was du lieber nicht geschenkt bekommst. Daraus entstehen Vorschläge, auf die selbst du nicht gekommen wärst.</p>
-        <div class="chips"><span class="chip on" data-edit="mehrwert.chip4">Kaffee brühen</span><span class="chip" data-edit="mehrwert.chip5">Hario</span><span class="chip ok" data-edit="mehrwert.chip6">Siebträgermaschine schon da</span><span class="chip warn" data-edit="mehrwert.chip7">Nicht: Duftkerzen</span></div>
-      </article>
-    </div>
-    <p class="duo-sum" data-edit="mehrwert.p5">Zusammen ergibt das Geschenke, die ankommen. Deine Freunde müssen nicht raten und du bekommst nichts doppelt.</p>
   </div></section>
 
   <section class="sec-pad" id="so" aria-labelledby="so-h"><div class="wrap">
@@ -66,28 +70,6 @@
       <div class="step"><div class="n">2</div><h3 data-edit="schritte.h32">Dein Geschmack</h3><p class="muted" data-edit="schritte.p3">Du beantwortest ein paar freundliche Fragen zu dem, was du magst, und trägst ein, was du schon hast. Das fühlt sich eher wie ein Gespräch an als wie ein Formular.</p></div>
       <div class="step"><div class="n">3</div><h3 data-edit="schritte.h33">Clever schenken</h3><p class="muted" data-edit="schritte.p4">Deine Freunde sehen auf einer Seite deine Wünsche und deinen Geschmack. So finden sie etwas, das passt, und müssen nicht raten.</p></div>
     </div>
-  </div></section>
-
-  <section class="sec-pad story" id="tale" aria-labelledby="tale-h"><div class="wrap">
-    <p class="eyebrow" data-edit="tale.p1">Eine kleine Tale</p>
-    <h2 id="tale-h" style="margin-top:12px" data-edit="tale.h21">Lernen wir Jonas kennen</h2>
-    <p class="tale-intro" data-edit="tale.p2">Am Sonntag brüht Jonas sich den perfekten Kaffee und wenn etwas Zeit bleibt, kocht Jonas gern für Freunde. Schauen wir einmal zu, wie Lena für Jonas ein Geschenk findet, das wirklich passt.</p>
-    <ol class="tale-steps">
-      <li class="tstep"><span class="tn">1</span><div class="tcard"><h3 data-edit="tale.h31">Zuerst erzählt Jonas, was Jonas gefällt</h3>
-        <p class="muted" data-edit="tale.p3">Ein paar freundliche Fragen am Anfang, ganz ohne Formular.</p>
-        <div class="chips"><span class="chip on" data-edit="tale.chip1">Kaffee brühen</span><span class="chip" data-edit="tale.chip2">Kochen</span><span class="chip" data-edit="tale.chip3">Einrichten</span></div>
-        <div class="chips"><span class="chip" data-edit="tale.chip4">Hario</span><span class="chip" data-edit="tale.chip5">Fellow</span><span class="chip warn" data-edit="tale.chip6">Nicht: Duftkerzen</span></div></div></li>
-      <li class="tstep"><span class="tn">2</span><div class="tcard"><h3 data-edit="tale.h34">Lena öffnet Jonas’ Link und sieht alles auf einer Seite</h3>
-        <p class="muted" data-edit="tale.p6">Wünsche, Vorlieben und das, was schon da ist, ohne Konto und ohne Nachfragen.</p>
-        <div class="chips"><span class="chip gold" data-edit="tale.chip10">Weihnachten</span><span class="chip" data-edit="tale.chip11">5 Wünsche</span><span class="chip" data-edit="tale.chip12">Nur offene anzeigen</span></div></div></li>
-      <li class="tstep"><span class="tn">3</span><div class="tcard wide"><h3 data-edit="tale.h35">Wishtale zeigt Lena, was zu Jonas passt</h3>
-        <p class="tale-quote" data-edit="tale.p7">Jonas liebt guten Kaffee. Für den perfekten Espresso nimmt sich Jonas am Sonntag gern auch mal etwas mehr Zeit. Um den perfekten Kaffee zu erzeugen, könnten Jonas diese Produkte noch gefallen:</p>
-        <div class="mini-row"><div class="mini"><span class="art t4" data-kind="scale" aria-hidden="true"></span><b data-edit="tale.b3">Kaffeewaage</b><small data-edit="tale.sm3">für den perfekten Espresso</small></div><div class="mini"><span class="art t2" data-kind="ticket" aria-hidden="true"></span><b data-edit="tale.b4">Barista-Kurs</b><small data-edit="tale.sm4">in Jonas’ Nähe</small></div></div>
-        <p class="muted" style="font-size:13.5px;margin-top:10px" data-edit="tale.p8">Die Siebträgermaschine fehlt hier mit Absicht, denn die hat Jonas schon.</p></div></li>
-      <li class="tstep"><span class="tn">4</span><div class="tcard done"><h3 data-edit="tale.h36">Lena entscheidet sich für die Waage und den Kurs. Für Jonas bleibt es eine Überraschung</h3>
-        <p class="muted" data-edit="tale.p9">Für alle anderen Freunde steht dort jetzt „reserviert“ und Jonas sieht davon nichts.</p>
-        <div class="chips"><span class="chip ok"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Von Lena reserviert</span></div></div></li>
-    </ol>
   </div></section>
 
   <section class="sec-pad trust" aria-labelledby="trust-h"><div class="wrap">

@@ -646,12 +646,41 @@ mark.todo{background:#F5D98B;color:#3A2A00;padding:0 4px;border-radius:4px}
 .wimg-row .imgbox{width:84px;height:84px;flex:none;border-radius:12px;overflow:hidden;display:block}.wimg-row .imgbox img{width:100%;height:100%;object-fit:cover;display:block}
 .tiny{font-size:12.5px;line-height:1.3}
 
-/* Einstieg: Vorschau eines Beispielprofils statt Fotocollage */
-.hprev{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:22px 22px 120px;box-shadow:0 30px 60px -34px rgba(31,27,22,.35);max-width:520px;width:100%;justify-self:center}
-.hprev .pdemo{font-size:12.5px;color:var(--muted);margin-bottom:14px}
-.hprev .phead{display:flex;gap:12px;align-items:center;margin-bottom:16px}
-.hprev .phead strong{display:block;font-family:var(--disp);font-weight:400;font-size:26px;line-height:1.1}
-.hprev .pav{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--disp);font-size:22px}
-.hprev .mini .art{aspect-ratio:4/3;border-radius:10px}
-.hprev .float{left:6%;right:6%;bottom:18px}
+/* Einstieg: kleine Vorführung mit vier Ansichten */
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 60px -34px rgba(31,27,22,.4);width:100%;max-width:560px;justify-self:center;overflow:hidden}
+.sbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bg)}
+.sbar b{font-family:var(--disp);font-weight:400;font-size:20px}
+.sdots{display:flex;gap:5px}.sdots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.sdemo{margin-left:auto;font-size:12px;color:var(--muted);text-align:right;line-height:1.2}
+.sscenes{display:grid;padding:16px 16px 12px}
+.vs{grid-area:1/1;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .45s ease,transform .45s ease,visibility 0s .45s;min-width:0}
+.vs.on{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .45s ease}
+.stitle{font-size:26px;margin:4px 0 10px}
+.sinput{display:flex;align-items:center;gap:2px;border:1.5px solid var(--accent);border-radius:14px;padding:12px 14px;background:var(--bg);font-size:16px;min-height:48px;margin-top:6px}
+.caret{width:2px;height:20px;background:var(--accent);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.srecs{display:grid;gap:8px}
+.stage .rec{grid-template-columns:76px 1fr;gap:12px;padding:9px}
+.stage .rec .imgbox,.stage .rec .art{width:76px;height:76px;border-radius:10px;aspect-ratio:auto;overflow:hidden}
+.stage .rh{font-family:var(--disp);font-weight:400}
+.stage .rec .rh{font-size:18px;line-height:1.15;margin:1px 0 2px}
+.stage .rec .why{font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.stage .rec .chip{font-size:11.5px;padding:2px 8px}
+.stage .rec .btn.sm{padding:5px 10px;font-size:11.5px}
+.js .vs.on .rec{animation:rise .5s both}
+.js .vs.on .rec:nth-child(2){animation-delay:.18s}.js .vs.on .rec:nth-child(3){animation-delay:.36s}
+.js .vs.on .wcard{animation:rise .5s both}.js .vs.on .wcard:nth-child(2){animation-delay:.15s}.js .vs.on .wcard:nth-child(3){animation-delay:.3s}.js .vs.on .wcard:nth-child(4){animation-delay:.45s}
+.swish{grid-template-columns:repeat(2,1fr)!important}
+.swish .wcard .imgbox{aspect-ratio:16/10}.swish .wcard .wt{font-size:16px;line-height:1.15}.swish .wcard .wp{font-size:12px}
+.phead2{display:flex;gap:12px;align-items:center}
+.phead2 strong{display:block;font-family:var(--disp);font-weight:400;font-size:28px;line-height:1.1}
+.pav{width:48px;height:48px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--disp);font-size:24px;flex:none}
+.shave{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.shave .imgbox{aspect-ratio:4/3;border-radius:10px;overflow:hidden;display:block}
+.stabs{padding:10px 12px 14px;border-top:1px solid var(--line)}
+.stab-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.stab,.spause{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:7px 4px;cursor:pointer;white-space:nowrap}
+.spause{padding:4px 10px;font-size:12px}
+.stab.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.stab:focus-visible,.spause:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.vs,.vs.on{transition:none}.caret{animation:none}.js .vs.on .rec,.js .vs.on .wcard{animation:none}}
 .trust .step h3{margin-bottom:8px}
