@@ -50,12 +50,47 @@ function accord(t) {
 const ART = { entscheidung: 'Entscheidung', befund: 'Befund', aufgabe: 'Aufgabe' };
 const optLabel = (t, k) => { const o = t.optionen.find(x => x.key === k); return o ? `${o.key}: ${o.label}` : k; };
 
+/* Filter und Sortierung der Listen (bleiben beim Wechsel zwischen den Seiten erhalten) */
+const FKEY = 'wishtale:dev-filter';
+const fdef = { q: '', art: '', ki: '', bauen: '', sort: 'nr', dir: 'desc' };
+let fs = { ...fdef };
+try { fs = { ...fdef, ...JSON.parse(localStorage.getItem(FKEY) || '{}') }; } catch { /* ohne gespeicherten Stand */ }
+const saveF = () => { try { localStorage.setItem(FKEY, JSON.stringify(fs)); } catch { /* nur für diese Sitzung */ } };
+const kiKey = t => { const c = latest(t, 'claude'), g = latest(t, 'chatgpt'); return !c && !g ? 'keine' : !c || !g ? 'wartet' : c.empfehlung && c.empfehlung === g.empfehlung && c.empfehlung !== 'keine' ? 'einig' : 'uneinig'; };
+const KI = { einig: 'Einig', uneinig: 'Uneinig', wartet: 'Eine Position fehlt', keine: 'Noch keine Position' };
+const KIRANK = { uneinig: 0, einig: 1, wartet: 2, keine: 3 };
+const buildKey = t => (verdicts[t.id] && verdicts[t.id].build) || 'nein';
+const BUILD = { nein: 'Nicht freigegeben', freigegeben: 'Zum Bauen freigegeben', umgesetzt: 'Umgesetzt' };
+const BRANK = { freigegeben: 0, umgesetzt: 1, nein: 2 };
+const SORTS = { nr: (a, b) => a.id.localeCompare(b.id), titel: (a, b) => a.titel.localeCompare(b.titel, 'de'), ki: (a, b) => KIRANK[kiKey(a)] - KIRANK[kiKey(b)], urteil: (a, b) => stateOf(a).label.localeCompare(stateOf(b).label, 'de'), bauen: (a, b) => BRANK[buildKey(a)] - BRANK[buildKey(b)] };
+
 function list(el, filter, title, lead) {
-  const rows = topics.filter(filter);
+  const base = topics.filter(filter);
+  const sel = (id, label, val, opts) => `<label class="sr" for="${id}">${label}</label><select id="${id}" class="sel" data-f="${id.slice(3)}"><option value="">${label}: alle</option>${opts.map(([k, l]) => `<option value="${k}" ${val === k ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
   el.innerHTML = `<div class="head"><div><h1>${title}</h1><p class="muted">${lead}</p></div></div>
-   <div class="tablewrap"><table><thead><tr><th>Entscheidung</th><th>Stand der KIs</th><th>Dein Urteil</th><th>Bauen</th></tr></thead><tbody>${rows.map(t => { const a = accord(t), s = stateOf(t); return `<tr>
-    <td><a href="#t/${esc(t.id)}"><b>${esc(t.titel)}</b></a><br><span class="muted">${esc(t.id)} · ${ART[t.art] || 'Entscheidung'}</span></td>
-    <td><span class="pill ${a.cls}">${esc(a.text)}</span></td><td><span class="pill ${s.cls}">${esc(s.label)}</span></td><td>${buildPill(verdicts[t.id]) || '<span class="muted">–</span>'}</td></tr>`; }).join('') || '<tr><td colspan="4" class="muted">Hier ist nichts.</td></tr>'}</tbody></table></div>`;
+   <div class="toolbar" role="search"><label class="sr" for="ft-q">Suchen</label><input id="ft-q" class="inp" type="search" placeholder="Suchen in Titel und Nummer" value="${esc(fs.q)}" data-f="q">
+    ${sel('ft-art', 'Art', fs.art, Object.entries(ART))}${sel('ft-ki', 'Stand der KIs', fs.ki, Object.entries(KI))}${sel('ft-bauen', 'Bauen', fs.bauen, Object.entries(BUILD))}
+    <button class="btn ghost sm" type="button" data-a="freset">Filter zurücksetzen</button><span class="muted" id="fcount" role="status"></span></div>
+   <div id="tbl"></div>`;
+  const th = (k, l) => `<th aria-sort="${fs.sort === k ? (fs.dir === 'asc' ? 'ascending' : 'descending') : 'none'}"><button type="button" class="sortb" data-sort="${k}">${l}<span aria-hidden="true">${fs.sort === k ? (fs.dir === 'asc' ? ' ▲' : ' ▼') : ''}</span></button></th>`;
+  const draw = () => {
+    const q = fs.q.trim().toLowerCase();
+    const rows = base.filter(t => (!q || (t.titel + ' ' + t.id).toLowerCase().includes(q)) && (!fs.art || t.art === fs.art) && (!fs.ki || kiKey(t) === fs.ki) && (!fs.bauen || buildKey(t) === fs.bauen))
+      .sort((a, b) => (SORTS[fs.sort] || SORTS.nr)(a, b) * (fs.dir === 'asc' ? 1 : -1) || a.id.localeCompare(b.id));
+    $('#tbl').innerHTML = `<div class="tablewrap"><table><thead><tr>${th('titel', 'Entscheidung')}${th('ki', 'Stand der KIs')}${th('urteil', 'Dein Urteil')}${th('bauen', 'Bauen')}</tr></thead><tbody>${rows.map(t => { const k = kiKey(t), a = accord(t), s = stateOf(t); return `<tr>
+      <td><a href="#t/${esc(t.id)}"><b>${esc(t.titel)}</b></a><br><span class="muted">${esc(t.id)} · ${ART[t.art] || 'Entscheidung'}</span></td>
+      <td><span class="pill ${a.cls}">${esc(k === 'einig' || k === 'uneinig' ? a.text : KI[k])}</span></td><td><span class="pill ${s.cls}">${esc(s.label)}</span></td><td>${buildPill(verdicts[t.id]) || '<span class="muted">–</span>'}</td></tr>`; }).join('') || '<tr><td colspan="4" class="muted">Nichts gefunden. Setze die Filter zurück, um alles zu sehen.</td></tr>'}</tbody></table></div>`;
+    $('#fcount').textContent = `${rows.length} von ${base.length}`;
+  };
+  draw();
+  const bar = el.querySelector('.toolbar');
+  bar.addEventListener('input', e => { if (e.target.dataset.f === 'q') { fs.q = e.target.value; saveF(); draw(); } });
+  bar.addEventListener('change', e => { if (e.target.dataset.f && e.target.dataset.f !== 'q') { fs[e.target.dataset.f] = e.target.value; saveF(); draw(); } });
+  bar.addEventListener('click', e => { if (e.target.closest('[data-a=freset]')) { fs = { ...fdef, sort: fs.sort, dir: fs.dir }; saveF(); list(el, filter, title, lead); } });
+  el.querySelector('#tbl').addEventListener('click', e => {
+    const b = e.target.closest('[data-sort]'); if (!b) return;
+    fs.dir = fs.sort === b.dataset.sort && fs.dir === 'asc' ? 'desc' : 'asc'; fs.sort = b.dataset.sort; saveF(); draw();
+  });
 }
 
 function position(t, autor) {

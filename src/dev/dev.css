@@ -8,3 +8,7 @@
 .prompt{white-space:pre-wrap;background:rgba(0,0,0,.05);border-radius:10px;padding:12px;font:13px/1.45 ui-monospace,Menlo,monospace;margin:8px 0}
 details{margin:8px 0}summary{cursor:pointer;font-weight:600}
 .reqs{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px}.reqs li{padding:10px 12px;border:1px dashed rgba(0,0,0,.18);border-radius:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 14px}
+.toolbar .inp{max-width:300px}.toolbar .sel{width:auto;min-width:160px;max-width:230px}
+.sortb{all:unset;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit}.sortb:hover{color:var(--ink)}.sortb:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+th[aria-sort=ascending],th[aria-sort=descending]{color:var(--ink)}
