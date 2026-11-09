@@ -4,7 +4,7 @@ import { CATALOG, PRIO, cat } from './data/content.js';
 import { check } from './logic.js';
 import { offersFor, worldOffers, popularOffers, ownedTypeFor } from './lib/products.js';
 import { guessCategory } from './lib/category.js';
-import { parseAmazonInput, searchUrl } from './lib/shops.js';
+import { parseAmazonInput, searchUrl, normUrl } from './lib/shops.js';
 import { parsePinterest, parseInstagram, givePinConsent, revokePinConsent } from './lib/social.js';
 import { sb } from './lib/supabase.js';
 import { inspectLink, priceField, summary } from './lib/inspect.js';
@@ -32,6 +32,22 @@ function azApply(r){
     z.catAuto=true;
   }
   render();
+}
+/* Amazon-Links für Wünsche: Kurzlinks (amzn.to) werden aufgelöst, jeder Produktlink bekommt die Partner-Kennung (nur so zählt ein Kauf). */
+const isAmazon=raw=>/amazon\.|amzn\.|(^|\/\/)a\.co/i.test(raw);
+async function amazonRead(raw){
+  const r=parseAmazonInput(raw);
+  if(!r.short)return r;
+  try{
+    const d=await (await fetch('/api/resolve?u='+encodeURIComponent(r.shortUrl))).json();
+    if(!d.url)throw new Error('x');
+    const r2=parseAmazonInput(d.url);if(!r2.error&&!r2.title)r2.title=r.hint||'';return r2;
+  }catch{return {error:'Diesen Kurzlink konnten wir leider nicht öffnen. Tippe in der Amazon-App auf „Teilen“ und wähle „Link kopieren“, oder öffne das Produkt im Browser und kopiere die Adresse.'}}
+}
+async function amazonLink(raw){
+  if(!raw||!isAmazon(raw))return raw;
+  const r=await amazonRead(raw);
+  return r.url||normUrl(raw)||raw;
 }
 function azParse(text){
   const z=S.ui.az,r=parseAmazonInput(text);
@@ -181,7 +197,15 @@ async readlink(el,ev){
   const auto=ev===true,f=document.querySelector('form[data-form=wish]');if(!f)return;
   const raw=f.elements.link.value.trim(),st=document.getElementById('wlstat'),say=t=>{if(st)st.textContent=t};
   if(!raw){say('Füge zuerst einen Link ein.');return}
-  if(/amazon\.|amzn\.|(^|\/\/)a\.co/i.test(raw)){if(!auto)say('Amazon lässt das automatische Lesen nicht zu. Nutze dafür „Bei Amazon stöbern“.');return}
+  if(isAmazon(raw)){
+    say('Wir übernehmen den Amazon-Link …');
+    const r=await amazonRead(raw);
+    if(r.error){say(r.error);return}
+    f.elements.link.value=r.url;
+    if(r.title&&!f.elements.t.value.trim())f.elements.t.value=r.title;
+    say(`Amazon-Link übernommen${r.title?' und den Namen aus dem Link entnommen':''}. Den Preis gibt Amazon nicht automatisch heraus, trage ihn gern selbst ein oder lass ihn offen.`);
+    return;
+  }
   say('Wir lesen den Link …');
   try{
     const p=await inspectLink(raw);
@@ -393,16 +417,17 @@ document.addEventListener('submit',e=>{
     S.ui.modal=null;toast('Das Geschenk ist eingetragen.');render();
   }
   if(kind==='wish'){
-    const file=fd.get('img'),done=img=>{
+    amazonLink((fd.get('link')||'').trim()).then(link=>{const file=fd.get('img'),done=img=>{
       const c=fd.get('c'),t=fd.get('t').trim(),k=fd.get('kind'),plan=fd.get('plan')==='1';
       if(S.ui.editWish){
         const w=S.me.wishes.find(x=>x.id===S.ui.editWish);
-        if(w){const keep=w.c===c&&w.kind===k;Object.assign(w,{t,c,kind:k,prio:+fd.get('prio'),link:(fd.get('link')||'').trim(),price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:img||w.img||null,...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
+        if(w){const keep=w.c===c&&w.kind===k;Object.assign(w,{t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:img||w.img||null,...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
-      S.me.wishes.unshift(W({t,c,kind:k,prio:+fd.get('prio'),link:(fd.get('link')||'').trim(),price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img}));
+      S.me.wishes.unshift(W({t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img}));
       S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';toast('Der Wunsch ist gespeichert.');render();
     };
     if(file&&file.size){const r=new FileReader();r.onload=()=>done(r.result);r.onerror=()=>done(null);r.readAsDataURL(file)}else done(null);
+    });
   }
 });

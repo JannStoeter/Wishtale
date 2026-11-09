@@ -169,6 +169,7 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   const hash = fingerprint({ model, system, user, mode: opts.mode });
   const hit = await cacheGet(hash, fetchImpl);
   if (hit) return { ideas: opts.mode === 'wish' ? dropSame(hit, ctx.wunsch.titel) : hit, cached: true };
+  if (opts.guard) await opts.guard();
   const r = await complete({ tier, system, content: user, maxTokens: 4000, timeoutMs: 45000 }, fetchImpl);
   const text = r.text;
   try { sanitize(text, avoid); } catch (e) { console.error('ideen-antwort', r.stop, text.length, text.slice(0, 300)); throw e; }
