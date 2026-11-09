@@ -46,3 +46,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 022 Vielfalt der KI-Ideen schärfen (Aufgabe)
 - 023 Wie wird die Landingpage klarer und stärker auf Anmeldungen ausgerichtet? (Entscheidung, von Jann)
 - 025 Woher kommen Bilder, wenn die Shopseite keins liefert (Amazon, idealo)? (Entscheidung)
+- 027 Brave-Suchschlüssel setzen, sobald die Kosten es erlauben (Aufgabe, von Jann)
