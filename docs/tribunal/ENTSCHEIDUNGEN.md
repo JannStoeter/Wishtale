@@ -25,6 +25,7 @@ Stand: 2026-11-09
 | 023 | Landingpage klarer und auf Anmeldungen ausrichten | **B: Schlanker neu aufbauen**, Claude und ChatGPT einig. | ja, `442abf4` |
 | 028 | Überall KI statt reiner Produktliste (Anweisung von Jann) | **A: KI überall, Katalog nur als Rückfall.** Offen: „Eigene Idee prüfen“. | ja, `861d8d0` |
 | 029 | Jonas als echtes Beispielprofil mit Konto (Anweisung von Jann) | **A: Echtes Profil `jonas` (is_demo) mit Konto, KI läuft.** | ja, Datenbank |
+| 030 | Fehlerbehebung: Amazon-Suche leer, Marke „Toni“ falsch gedeutet (Meldung von Jann) | **A: Name übernehmen und Amazon direkt öffnen, KI-Prompt auf Markenwelt schärfen.** | ja, `9f98f20` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
