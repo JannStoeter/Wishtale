@@ -17,6 +17,7 @@ import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
 import { downscale, fetchProductImage, finalImage, imgBoxHtml } from './lib/wishimg.js';
 import { render, route, refreshGuest } from './render.js';
+import { WishPrev, draftKey } from './views/wishprev.js';
 import { guestRpc } from './lib/remote.js';
 import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
 
@@ -90,6 +91,19 @@ function wishVariants(id,ctx){
   if(!w||!p.handle||!p.remote&&ctx==='guest'||w.link||w.kind==='erlebnis'||!/^[0-9a-f-]{36}$/i.test(String(id)))return;
   loadIdeas('wish:'+id,{h:p.handle,mode:'wish',w:id,t:w.t.slice(0,80)},()=>{if(S.ui.modal==='wishdetail'&&S.ui.pickId===id)render()});
 }
+/* Vorschau im Wunschformular: Kategorie raten, passende Produkte laden und im Formular anzeigen, ohne eingetippte Werte zu verlieren. */
+function previewWish(title,msg){
+  const f=document.querySelector('form[data-form=wish]'),box=document.getElementById('wprev');
+  if(!f||!box||S.ui.editWish)return;
+  const t=String(title||'').trim().slice(0,120);
+  if(t.length<3){box.innerHTML='';return}
+  const kind=f.querySelector('input[name=kind]:checked')?.value;
+  const sel=f.elements.c;if(sel&&sel.value==='wohnen'){const g=guessCategory(t,'wohnen');if(g!==sel.value)sel.value=g}
+  S.ui.wprevMsg=msg||'';
+  const draw=()=>{const b=document.getElementById('wprev'),ff=document.querySelector('form[data-form=wish]');if(b&&ff&&ff.elements.t.value.trim().slice(0,120)===t)b.innerHTML=WishPrev(t,ff.elements.c?.value)};
+  if(kind!=='erlebnis'&&kind!=='frei'&&S.me.handle&&/^[a-z0-9-]{3,31}$/.test(S.me.handle))loadIdeas(draftKey(t),{h:S.me.handle,mode:'wish',t},draw);
+  draw();
+}
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
  go(el){const v=el.dataset.v;if(v==='start')S.ui.step=0;location.hash='#'+v;if(location.hash==='#'+v&&S.ui.view===v)render(true)},
@@ -116,7 +130,7 @@ const A={
  selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Deine Freunde sehen jetzt, dass du das schon hast.':'Der Wunsch ist wieder offen.');render()},
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
  delw(el){S.ui.modal=null;S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
- modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wprevMsg=''}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  close(){S.ui.modal=null;S.ui.editWish=null;render()},
  wedit(el){S.ui.editWish=el.dataset.id;S.ui.wishImg=null;S.ui.modal='wish';render();setTimeout(()=>document.getElementById('wt')?.focus({preventScroll:true}),30)},
  resend(){
@@ -215,7 +229,8 @@ async readlink(el,ev){
       if(w.price&&!pr.value.trim())pr.value=w.price.toFixed(2).replace('.',',');
       if(w.note&&nt&&!nt.value.trim())nt.value=w.note;
       f.elements.link.value='';
-      mark('ok',`✓ Erkannt: ${w.t}${w.price?` für ${w.price.toFixed(2).replace('.',',')} €`:''}. Bitte prüfe die Angaben, einen Link kannst du später ergänzen.${(r.wishes||[]).length>1?' Der Text enthält mehrere Produkte, für ganze Listen nutze „Liste einlesen“.':''}`);
+      previewWish(w.t,'✓ Titel gelesen, so sehen Freunde diesen Wunsch');
+      mark('ok',`✓ Titel gelesen: ${w.t}${w.price?` für ${w.price.toFixed(2).replace('.',',')} €`:''}. Bitte prüfe die Angaben, einen Link kannst du später ergänzen.${(r.wishes||[]).length>1?' Der Text enthält mehrere Produkte, für ganze Listen nutze „Liste einlesen“.':''}`);
     }catch(e){mark('attn',e.message||'Das hat nicht geklappt.')}
     return;
   }
@@ -227,7 +242,7 @@ async readlink(el,ev){
     if(r.title&&!f.elements.t.value.trim())f.elements.t.value=r.title;
     const nm=f.elements.t.value.trim(),tf=f.elements.t;
     tf.classList.remove('attn');
-    if(nm){mark('ok',`✓ Amazon-Link gespeichert, Name übernommen. Den Preis gibt Amazon nicht heraus, trage ihn gern selbst ein oder lass ihn offen.`)}
+    if(nm){previewWish(nm);mark('ok',`✓ Amazon-Link gespeichert, Name übernommen. Den Preis gibt Amazon nicht heraus, trage ihn gern selbst ein oder lass ihn offen.`)}
     else{mark('attn','✓ Amazon-Link gespeichert. Amazon verrät uns den Namen nicht, bitte trage ihn jetzt im Feld „Was wünschst du dir?“ ein, mehr ist nicht nötig.');tf.classList.add('attn');tf.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>tf.focus({preventScroll:true}),350)}
     if(nm&&!S.ui.wishImg){try{const im=await fetchProductImage(null,nm);showWishImg({blob:im.blob,preview:im.preview,src:im.src});mark('ok','✓ Amazon-Link gespeichert und ein passendes Bild im Netz gefunden. Bitte prüfe, ob es zum Produkt passt, du kannst es entfernen.')}catch(e){console.warn('Bildsuche:',e.message)}}
     return;
@@ -325,6 +340,7 @@ document.addEventListener('change',async e=>{
   if(e.target.name!=='img'||!e.target.closest('form[data-form=wish]')||!e.target.files||!e.target.files[0])return;
   try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:''})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
 });
+document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?.('form[data-form=wish]')&&!S.ui.editWish&&!e.target.dataset.skip)previewWish(e.target.value)});
 document.addEventListener('input',e=>{if(e.target.name==='t'&&e.target.classList?.contains('attn'))e.target.classList.remove('attn')});
 document.addEventListener('input',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;$('#budv').textContent=money(S.ui.budget)}});
 document.addEventListener('change',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;render()}});

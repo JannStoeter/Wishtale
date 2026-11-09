@@ -1,4 +1,5 @@
 import { ZettelModal } from './zettel.js';
+import { WishPrev } from './wishprev.js';
 import { imgBoxHtml } from '../lib/wishimg.js';
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
@@ -68,6 +69,7 @@ export function Modal(){
      <p class="muted" style="margin:2px 0 8px;font-size:14px">Füge den Link ein oder kopiere den Produkttitel, zum Beispiel von Amazon. Wishtale erkennt selbst, was es ist, und trägt Name, Preis und Größe unten für dich ein.</p>
      <div class="lf-row"><input id="wl" name="link" class="inp" placeholder="Link oder Amazon-Titel einfügen" autocomplete="off" value="${esc(d.link||'')}"><button type="button" class="btn pri" data-act="readlink">Link oder Titel einlesen</button></div>
      <p id="wlstat" class="hint" role="status" aria-live="polite">Funktioniert bei den meisten Shops. Bei Amazon liest Wishtale den Link nicht aus, aber du kannst auch den kopierten Titel einfügen, dann erkennen wir Name und Preis.</p></div>
+    <div id="wprev" aria-live="polite">${S.ui.editWish?'':WishPrev(d.t||'',d.c)}</div>
     <div class="fld"><label for="wt">Was wünschst du dir?</label><input id="wt" name="t" class="inp" required placeholder="Produkt, Erlebnis oder eine Idee" autocomplete="off" value="${esc(d.t||'')}"></div>
     <div class="fld"><span class="lb">Art</span><div class="radios">${[['produkt','Produkt'],['kategorie','Nur Kategorie'],['erlebnis','Erlebnis'],['frei','Freier Wunsch']].map(([v,l],i)=>`<label><input type="radio" name="kind" value="${v}" ${(d.kind||'produkt')===v?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
     <div class="fld"><label for="wb">Budget bis in Euro (optional, für Kategorie-Wünsche)</label><input id="wb" name="budget" type="number" min="1" inputmode="numeric" class="inp" placeholder="z. B. 100" value="${d.budget||''}"></div>

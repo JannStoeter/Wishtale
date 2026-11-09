@@ -155,7 +155,7 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   let system = SYSTEM;
   if (opts.mode === 'self') system += SELF;
   if (opts.mode === 'wish') {
-    const w = (p.wishes || []).find(x => x.id === opts.wid);
+    const w = (p.wishes || []).find(x => x.id === opts.wid) || (opts.draft ? { title: opts.draft, note: '', budget: null, price: null } : null);
     if (!w) throw new HttpError(404, 'Wunsch nicht gefunden.');
     ctx.wunsch = { titel: clip(w.title, 160), notiz: clip(w.note, 200), budget: w.budget || w.price || null };
     ctx.wunschliste = ctx.wunschliste.filter(t => t !== w.title);
