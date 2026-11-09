@@ -36,7 +36,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        landing: resolve(__dirname, 'index.html'), app: resolve(__dirname, 'app/index.html'),
+        landing: resolve(__dirname, 'index.html'), app: resolve(__dirname, 'app/index.html'), dev: resolve(__dirname, 'dev/index.html'),
         impressum: resolve(__dirname, 'impressum.html'), datenschutz: resolve(__dirname, 'datenschutz.html'), barrierefreiheit: resolve(__dirname, 'barrierefreiheit.html'),
         cms: resolve(__dirname, 'cms/index.html'),
       },
