@@ -1,0 +1,8 @@
+# Wishtale
+User-agent: *
+Allow: /
+Disallow: /cms/
+Disallow: /dev/
+Disallow: /api/
+
+Sitemap: https://wishtale.de/sitemap.xml
