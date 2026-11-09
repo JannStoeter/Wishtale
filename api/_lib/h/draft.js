@@ -1,5 +1,5 @@
-import { requireAdmin, send, fail, HttpError } from './_lib/auth.js';
-import { draft } from './_lib/draft.js';
+import { requireAdmin, send, fail, HttpError } from '../auth.js';
+import { draft } from '../draft.js';
 
 /** Schreibassistent (nur Admins). Body: { mode: 'draft' | 'revise', idea, format, goal, current, instruction } */
 export default async function handler(req, res) {

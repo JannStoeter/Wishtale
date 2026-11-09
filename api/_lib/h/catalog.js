@@ -1,6 +1,6 @@
-import { requireAdmin, send, fail } from './_lib/auth.js';
-import { generate } from './_lib/catalog.js';
-import { aiConfigured } from './_lib/llm.js';
+import { requireAdmin, send, fail } from '../auth.js';
+import { generate } from '../catalog.js';
+import { aiConfigured } from '../llm.js';
 
 /** Katalog-Entwürfe schreiben lassen (nur Admins). Body: { world, topic, n, existing: [Titel] }. Speichert nichts, die Entwürfe prüft das CMS. */
 export default async function handler(req, res) {

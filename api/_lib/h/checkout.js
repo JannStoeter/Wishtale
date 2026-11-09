@@ -1,5 +1,5 @@
-import { requireUser, send, fail, HttpError } from './_lib/auth.js';
-import { paymentsConfigured, stripe, db, SITE } from './_lib/stripe.js';
+import { requireUser, send, fail, HttpError } from '../auth.js';
+import { paymentsConfigured, stripe, db, SITE } from '../stripe.js';
 
 /** Startet eine Zahlung für ein Angebot. Body: { offer: 'code' }. Antwort: { url } zur Stripe-Kasse. Nur angemeldete Personen. */
 export default async function handler(req, res) {

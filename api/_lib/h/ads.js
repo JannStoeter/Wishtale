@@ -1,5 +1,5 @@
-import { requireAdmin, rest, send, fail, HttpError } from './_lib/auth.js';
-import { gadsConfigured, campaigns, setStatus, setBudget, createFromPlan } from './_lib/gads.js';
+import { requireAdmin, rest, send, fail, HttpError } from '../auth.js';
+import { gadsConfigured, campaigns, setStatus, setBudget, createFromPlan } from '../gads.js';
 
 /** Google Ads steuern (nur Admins). Body: { action: 'campaigns' | 'status' | 'budget' | 'create', … } */
 export default async function handler(req, res) {

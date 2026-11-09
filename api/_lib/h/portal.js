@@ -1,5 +1,5 @@
-import { requireUser, send, fail, HttpError } from './_lib/auth.js';
-import { paymentsConfigured, stripe, db, SITE } from './_lib/stripe.js';
+import { requireUser, send, fail, HttpError } from '../auth.js';
+import { paymentsConfigured, stripe, db, SITE } from '../stripe.js';
 
 /** Link zum Kundenportal (Abo ansehen, Zahlungsart ändern, kündigen). Nur angemeldete Personen mit früherer Zahlung. */
 export default async function handler(req, res) {
