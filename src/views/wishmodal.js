@@ -67,6 +67,7 @@ export function WishModal() {
   if (!w0) return '';
   const w = ctx === 'preview' ? { ...w0, res: null, bought: false } : w0;
   const o = offersFor(p, w);
+  const aiSt = aiStatus('wish:' + w.id), byAi = !w.link && w.kind !== 'erlebnis' && !isSpecific(w) && (!o.main || o.main.source !== 'link') && (aiSt === 'loading' || aiSt === 'ready'); // KI ersetzt den Katalog-Vorschlag
   const mine = w.res === 'me', taken = w.res === 'other';
   const chosen = S.ui.chosen && S.ui.chosen[w.id];
   const meta = [cat(w.c).n, ...(w.occ || []).map(occL), w.kind === 'kategorie' && w.budget ? `bis ${w.budget} €` : ''].filter(Boolean);
@@ -100,9 +101,9 @@ export function WishModal() {
    </div>
    ${ctx === 'preview' ? `<div class="banner green">${ic('eye')}<span>So sehen Schenkende diesen Wunsch.</span></div>` : ''}
    ${state}
-   ${Suggest(p, w, o, ctx)}
-   ${o.main ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
-   ${o.alts.length && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
+   ${byAi ? '' : Suggest(p, w, o, ctx)}
+   ${o.main && !byAi ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
+   ${o.alts.length && !byAi && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
    ${AiVariants(w, ctx)}
    ${o.over ? `<p class="muted" style="font-size:13px">${o.over} Produkt${o.over > 1 ? 'e' : ''} über dem Budget ausgeblendet.</p>` : ''}
    <p class="disc">Die Links zu Amazon sind Partnerlinks (Anzeige). Dir entstehen dadurch keine Mehrkosten. Maßgeblich ist immer der Preis bei Amazon. Vorschläge von Wishtale wählen wir nach den Kriterien des Wunsches aus. Wir testen und bewerten die Produkte nicht.</p>

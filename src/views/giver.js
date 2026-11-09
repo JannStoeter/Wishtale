@@ -33,8 +33,8 @@ export function GuestPage(p,{preview=false}={}){
     <div class="pmain">
      ${preview?'':PastGifts(p)}
      ${wl.html}
-     ${preview?'':AiIdeas(p)}
-     ${['ready','loading'].includes(aiStatus(gkey(p.handle||p.id)))&&!preview?'':Curated(p,wl.open)}
+     ${AiIdeas(p)}
+     ${['ready','loading'].includes(aiStatus(gkey(p.handle||p.id)))?'':Curated(p,wl.open)}
      ${preview?'':`<details class="sect ideacheck" id="ideen"><summary><h3>Eigene Idee prüfen</h3></summary><p class="muted" style="font-size:14.5px;margin:4px 0 12px">Du hast selbst eine Idee? Wir schauen für dich nach, ob sie zu den Wünschen von ${esc(p.name)} passt und ob ${esc(p.name)} das schon hat oder lieber nicht möchte.</p>${Ideen(p)}</details>`}
      <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis bei Amazon.</p>
     </div>
