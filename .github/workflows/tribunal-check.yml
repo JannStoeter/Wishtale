@@ -1,0 +1,25 @@
+# Prüft Pull Requests für das Tribunal (zum Beispiel von ChatGPT). Es wird nichts übernommen, der Workflow meldet nur Erfolg oder Fehler.
+# Ein Pull Request mit Branch tribunal/<name> darf ausschließlich Positionen und neue Fragen unter docs/tribunal/ enthalten.
+name: Tribunal prüfen
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  check:
+    if: startsWith(github.head_ref, 'tribunal/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Nur Positionen und neue Fragen erlaubt
+        run: |
+          BASE=$(git merge-base origin/${{ github.base_ref }} HEAD)
+          CHANGED=$(git diff --name-only "$BASE" HEAD)
+          echo "Geänderte Dateien:"; echo "$CHANGED"
+          BAD=$(echo "$CHANGED" | grep -vE '^docs/tribunal/[0-9]{3}-[a-z0-9-]+/(chatgpt(-[0-9]+)?\.md|frage\.md)$' || true)
+          if [ -n "$BAD" ]; then
+            echo "::error::Erlaubt sind nur chatgpt.md, chatgpt-2.md und neue frage.md in einem Themenordner. Nicht erlaubt:"; echo "$BAD"; exit 1
+          fi

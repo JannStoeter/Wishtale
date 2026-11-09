@@ -19,6 +19,25 @@ Stand: 2026-11-09
 | 003 | Sichtbarkeit: Stufe „Nur Schenkende“ behalten? | **B: Streichen.** Nur „Für alle mit Link“ und „Privat“. Die KI darf Privates zur Orientierung nutzen, zeigt es Gästen aber nie. | ja, `f700dd4` |
 
 ## Offen (noch kein Urteil)
-- 001 Wie viel KI gehört in den kostenlosen Plan?
-- 002 Zweiter Affiliate-Partner: Awin jetzt oder später?
-- 004 Was soll Wishtale Plus kosten, und in welcher Form?
+Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
+- 001 Wie viel KI gehört in den kostenlosen Plan? (Entscheidung)
+- 002 Zweiter Affiliate-Partner: Awin jetzt oder später? (Entscheidung)
+- 004 Was soll Wishtale Plus kosten, und in welcher Form? (Entscheidung)
+- 005 Marken und „Das möchte ich ausprobieren“ leichter machen (Entscheidung)
+- 006 Profileinstellungen: Umfang der neuen Seite (Entscheidung)
+- 007 Guthaben (Credits) abbuchen: überhaupt anbieten? (Aufgabe)
+- 008 Erinnerungen („Letztes Jahr hast du … geschenkt“, Geburtstage) (Entscheidung)
+- 009 Anlass-Listen (zum Beispiel Hochzeit) als eigene Funktion (Entscheidung)
+- 010 Eltern-Grenze bei Kind-Konten (zum Beispiel 150 €) mit diskretem Hinweis (Entscheidung)
+- 011 Wunschzettel-Aktion für Eltern bewerben (Kind-Konten) (Entscheidung)
+- 012 Rechtstexte und Pflichten vor dem ersten Verkauf (Aufgabe)
+- 013 Vercel-Plan: Hobby oder Pro, wenn Geld fließt (Entscheidung)
+- 014 Anderer KI-Anbieter für einfache Aufgaben (zum Beispiel Kimi) (Entscheidung)
+- 015 Katalog ausbauen und prüfen (Aufgabe)
+- 016 Barrierefreiheit erneut prüfen und beheben (Aufgabe)
+- 017 Missbrauchsschutz für KI-Aufrufe (Aufgabe)
+- 018 Instagram und Google Ads einmal echt testen (Aufgabe)
+- 019 Offene Einrichtung bei Vercel, Supabase und Anthropic (Jann) (Aufgabe)
+- 020 Stripe im Testmodus verbinden und Kauf testen (Aufgabe)
+- 021 Soll Wishtale aus Rückmeldungen von Gästen lernen? (Entscheidung)
+- 022 Vielfalt der KI-Ideen schärfen (Aufgabe)

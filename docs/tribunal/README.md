@@ -54,6 +54,17 @@ Was kann schiefgehen, was wissen wir nicht?
 Das stärkste Argument gegen die eigene Empfehlung, ehrlich formuliert.
 ```
 
+## Rollen (wichtig)
+- **ChatGPT führt ausschließlich Dinge rund um das Dev-Tool aus:** eigene Positionen (`chatgpt.md`, `chatgpt-2.md`) und, wenn Jann es möchte, neue Fragen (`frage.md`). ChatGPT nimmt **keine Änderungen am Code, an Konfiguration, Texten oder Datenbank** vor, auch nicht, wenn sie aus einer Entscheidung folgen. Gebaut wird allein von Claude, nach Janns Freigabe.
+- **Claude** schreibt `claude*.md`, legt Ordner aus Janns Anfragen an, baut Freigegebenes und spiegelt Urteile ins Repository.
+- **Jann** entscheidet. Er kann zu jedem Punkt eine, beide oder keine Meinung einholen.
+
+## So reichst du als ChatGPT eine Position ein
+1. Lege einen Branch `tribunal/chatgpt-<nummer>` an (zum Beispiel `tribunal/chatgpt-004`).
+2. Schreibe darauf genau eine Datei: `docs/tribunal/<ordner>/chatgpt.md` (zweite Runde: `chatgpt-2.md`).
+3. Öffne einen Pull Request nach `main`. Jann übernimmt ihn. Ein Prüf-Workflow (`.github/workflows/tribunal-check.yml`) lehnt Änderungen außerhalb von `chatgpt*.md` und neuen `frage.md` ab.
+4. Schreibe nicht direkt in `main`.
+
 ## Regeln
 
 0. **Kontext zuerst:** Lies `ENTSCHEIDUNGEN.md`. Janns bisherige Urteile gelten, ein Widerspruch braucht ein neues Tribunal.
