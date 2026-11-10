@@ -31,3 +31,4 @@ Skala: 1 = jetzt, 2 = als Nächstes, 3 = später, 4 = Backlog. Maßstab: Was sch
 - 034: 1 | Ohne diese Einstellung landen neue Nutzer nach der Bestätigung bei einer Vercel-Anmeldung und springen ab.
 - 039: 3 | Sinnvoll für das Wachstum über Bekannte, aber erst nach der Dashboard-Einstellung (034) und den Rechtstexten (012) wichtig.
 - 041: 1 | Vor dem Marktstart nötig: Absender, Spam-Risiko und das Versandlimit des Standardversands.
+- 042: 2 | Vor dem ersten Verkauf müssen Vercel Pro und Supabase Pro klar sein, bis dahin kostet das Gratis-Setup nichts.
