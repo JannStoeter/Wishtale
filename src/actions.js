@@ -403,6 +403,16 @@ document.addEventListener('submit',e=>{
   }
   if(kind==='draftname'){A.next();return}
   if(kind==='social'){
+    const raw=String(fd.get('pinterest')||'').trim();
+    if(/(^|\/\/)pin\.it\//i.test(raw)){ // Kurzlink aus der Pinterest-App: der Server verfolgt die Weiterleitung
+      toast('Wir öffnen den Pinterest-Kurzlink …');
+      fetch('/api/resolve?k=pin&u='+encodeURIComponent(/^https?:/i.test(raw)?raw:'https://'+raw)).then(r=>r.json()).then(d=>{
+        if(!d.url)throw new Error('x');
+        if(f.elements.pinterest)f.elements.pinterest.value=d.url;
+        f.requestSubmit();
+      }).catch(()=>toast('Diesen Kurzlink konnten wir leider nicht öffnen. Öffne dein Profil oder Board in Pinterest und kopiere die Adresse aus dem Browser.'));
+      return;
+    }
     const p=parsePinterest(fd.get('pinterest')),i=parseInstagram(fd.get('instagram'));
     if(!p.ok){toast(p.error);return}
     if(!i.ok){toast(i.error);return}
