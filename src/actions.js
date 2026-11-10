@@ -18,6 +18,7 @@ import { startCheckout, openPortal } from './lib/plan.js';
 import { downscale, fetchProductImage, finalImage, imgBoxHtml } from './lib/wishimg.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishPrev, draftKey } from './views/wishprev.js';
+import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
 import { guestRpc } from './lib/remote.js';
 import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
 
@@ -131,7 +132,11 @@ const A={
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
  delw(el){S.ui.modal=null;S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
  modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wprevMsg=''}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
- close(){S.ui.modal=null;S.ui.editWish=null;render()},
+ close(){if(S.ui.modal==='welcome'){markWelcomed();stopWelcome()}S.ui.modal=null;S.ui.editWish=null;render()},
+ wtab(el){showScene(+el.dataset.i,true)},
+ welcomeskip(el,e){if(el.dataset.bg&&e&&e.target!==el)return;A.close()},
+ welcomego(){markWelcomed();stopWelcome();S.ui.editWish=null;S.ui.wishImg=null;S.ui.wprevMsg='';S.ui.modal='wish';render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ welcomeimport(){markWelcomed();stopWelcome();S.ui.zt=null;S.ui.modal='zettel';render()},
  wedit(el){S.ui.editWish=el.dataset.id;S.ui.wishImg=null;S.ui.modal='wish';render();setTimeout(()=>document.getElementById('wt')?.focus({preventScroll:true}),30)},
  resend(){
   const em=S.ui.authSent?.email;if(!em)return;S.ui.authBusy=true;render();

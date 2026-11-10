@@ -7,6 +7,7 @@ import { S } from './state.js';
 import { sb } from './lib/supabase.js';
 import { enter, adoptDraft } from './lib/auth.js';
 import { toast } from './lib/util.js';
+import { maybeWelcome } from './views/welcome.js';
 import { route, render } from './render.js';
 import './actions.js';
 import { loadPromo } from './lib/promo.js';
@@ -40,6 +41,7 @@ async function boot(){
   if(!session)await loadGiven().catch(()=>{});
   window.addEventListener('hashchange',route);
   route();
+  if(session)setTimeout(maybeWelcome,1200);
   loadPromo().then(p=>{S.promo=p;if(['entdecken','gast','profil','wuensche'].includes(S.ui.view)&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()});
 
   sb.auth.onAuthStateChange((event,sess)=>{
@@ -57,6 +59,7 @@ async function boot(){
         if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
         else if(adopted)toast('Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
         else if(waiting)toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.');
+        if(adopted!=='quick')setTimeout(maybeWelcome,1500);
       }else if(event==='SIGNED_OUT'&&S.auth.user){
         S.auth.user=null;location.hash='#anmelden';location.reload();
       }
