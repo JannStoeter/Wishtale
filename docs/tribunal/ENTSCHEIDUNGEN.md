@@ -60,3 +60,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 027 Brave-Suchschlüssel setzen, sobald die Kosten es erlauben (Aufgabe, von Jann)
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 039 Vorbereitete Profile verschenken: Einladung mit Name und ein, zwei Tipps (Entscheidung, von Jann)
+- 041 Bestätigungsmails von unserem eigenen Absender statt von Supabase (Entscheidung, von Jann)
