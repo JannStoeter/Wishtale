@@ -32,6 +32,7 @@ Stand: 2026-11-09
 | 035 | Amazon-Link lesen: unklar, ob übernommen (Meldung von Jann und Joana) | **A: Deutliche Rückmeldung, Namensfeld markiert und fokussiert.** | ja, `fc117f4` |
 | 036 | Link oder Amazon-Titel einlesen (Anweisung von Jann) | **A: Feld erkennt Link oder Text, KI liest den Titel.** | ja, `25a31f9` |
 | 037 | Vorschau schon beim Anlegen eines Wunsches (Rückmeldung von Jann) | **A: Titel gelesen, Produkt wird gesucht, Vorschläge schon im Formular.** | ja, `84e9aa1` |
+| 038 | Pinterest-Kurzlink aus der App wird nicht erkannt (Meldung von Jann) | **A: pin.it serverseitig auflösen.** | ja, `4854398` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
