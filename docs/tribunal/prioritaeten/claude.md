@@ -29,3 +29,4 @@ Skala: 1 = jetzt, 2 = als Nächstes, 3 = später, 4 = Backlog. Maßstab: Was sch
 - 025: 3 | Platzhalter genügt zum Start, saubere Bildquellen kommen mit Awin und der Amazon-Schnittstelle.
 - 027: 4 | Kostet nichts, solange der Schlüssel fehlt; erst sinnvoll, wenn Nutzung oder Einnahmen die Suchkosten tragen.
 - 034: 1 | Ohne diese Einstellung landen neue Nutzer nach der Bestätigung bei einer Vercel-Anmeldung und springen ab.
+- 039: 3 | Sinnvoll für das Wachstum über Bekannte, aber erst nach der Dashboard-Einstellung (034) und den Rechtstexten (012) wichtig.
