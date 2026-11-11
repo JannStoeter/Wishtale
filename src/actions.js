@@ -289,6 +289,12 @@ async readlink(el,ev){
   openPortal().then(r=>{location.href=r.url}).catch(e=>{S.plan.error=e.message;render()});
  },
  ideano(el){hideIdea(el.dataset.t);if(el.dataset.self)saveSignal('no',el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
+ aivhave(el){ // „Habe ich schon“ bei einem Vorschlag zu einem Wunsch: als vorhanden notieren, nie wieder vorschlagen
+  const i=ideasOf('wish:'+el.dataset.wid).find(x=>x.t===el.dataset.t);if(!i)return;
+  const c=guessCategory(i.t,'wohnen');
+  if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===i.t.toLowerCase()))S.me.wishes.unshift(W({t:i.t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
+  saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das ist schon vorhanden. Solche Vorschläge zeigen wir nicht mehr.');render();
+ },
  aihave(el){
   const i=ideasOf(skey(S.me.handle||'')).find(x=>x.t===el.dataset.t);if(!i)return;
   const c=guessCategory(i.t,'wohnen');
