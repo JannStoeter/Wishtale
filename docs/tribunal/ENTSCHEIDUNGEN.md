@@ -65,3 +65,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 041 Bestätigungsmails von unserem eigenen Absender statt von Supabase (Entscheidung, von Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 043 Sicherheitscheck vor dem Launch: Befunde und Reihenfolge (Befund, Auftrag von Jann)
+- 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
