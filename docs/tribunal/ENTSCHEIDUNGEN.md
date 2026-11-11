@@ -34,6 +34,7 @@ Stand: 2026-11-09
 | 037 | Vorschau schon beim Anlegen eines Wunsches (Rückmeldung von Jann) | **A: Titel gelesen, Produkt wird gesucht, Vorschläge schon im Formular.** | ja, `84e9aa1` |
 | 038 | Pinterest-Kurzlink aus der App wird nicht erkannt (Meldung von Jann) | **A: pin.it serverseitig auflösen.** | ja, `4854398` |
 | 040 | Leerzustand positiv und Willkommens-Rundgang (Anweisung von Jann) | **A: Positive Texte, Rundgang beim ersten Login.** | ja, `a496aaf` |
+| 044 | „Habe ich schon“ bei KI-Vorschlägen (Anweisung von Jann) | **A: Knopf am Vorschlag, Produkt wird als vorhanden gemerkt.** | ja, `3cade8a` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
