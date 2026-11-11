@@ -39,6 +39,7 @@ Stand: 2026-11-09
 | 041 | Bestätigungsmails vom eigenen Absender | **A: united domains als SMTP-Server.** Eingerichtet und von Jann getestet. | ja, Einrichtung durch Jann |
 | 043 | Sicherheitscheck vor dem Launch (Auftrag von Jann) | **A: Hoch und Mittel vor dem Launch.** Teil 1 von Claude umgesetzt, Rest bei Jann und offen. | teilweise, `903df74` |
 | 039 | Vorbereitete Profile verschenken (Einladungslink) | **A: Einladungslink ohne vorab angelegtes Konto**, Claude und ChatGPT einig. | ja, `3d8bc76` |
+| 047 | Gast-Ansicht: Wünsche zuerst | **A: Wünsche zuerst, dann „Nicht das Passende dabei?“ mit Preisrahmen nur für Vorschläge**, Claude und ChatGPT einig. | ja, `9db59dc` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
@@ -66,4 +67,3 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
-- 047 Gast-Ansicht: Wünsche zuerst und das Profil als Würze, Fokus auf das Schenken? (Entscheidung, von Jann)
