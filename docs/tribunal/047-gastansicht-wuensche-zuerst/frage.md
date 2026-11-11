@@ -16,5 +16,10 @@ Gemessen am 2026-11-13 auf wishtale.de mit dem Beispielprofil Jonas (Handy 390 �
 ## Nachtrag von Jann (2026-11-13, Wortlaut)
 „Meine Anmerkung im Vorfeld: hat schon und bitte nicht wird nur relevant wenn es keine Geschenke mit in den Wünschen gibt - oder nicht in der Preisrange - daher müsste eigentlich ein ‚nicht das passende dabei? Wir empfehlen außerdem‘ kommen, wo man vorher eben seine Range angibt und wo dann auch Infos kommen - oder sehe ich das falsch?“
 
+## Zweiter Nachtrag von Jann (2026-11-13, Wortlaut)
+„Wenn jemand keine Wünsche hat würde ich schreiben ‚Jonas lässt sich noch inspirieren - hier findest du unsere Tipps‘ oder sowas. Unsere Wünsche sollten vor eigenen Wunsch prüfen kommen. Bei Wünschen vom Nutzer kein Preisrahmen, man sieht es ja. Nur bei Vorschlägen, damit wir keine 500€ Tipps geben aber jemand was für 20 sucht.“
+
+Gemeint ist: Die Vorschläge von Wishtale stehen vor „Eigene Idee prüfen“. Der Preisrahmen gilt nur für die Vorschläge, nicht für die eigenen Wünsche der Person. Ohne Wünsche beginnt die Seite mit einem Satz wie „Jonas lässt sich noch inspirieren, hier findest du unsere Tipps“.
+
 ## Frage
 Was soll ein Gast als Erstes sehen, und wie viel Profil braucht es dafür? Gehören „Hat schon“, „Bitte nicht“ und der Preisrahmen erst in einen zweiten Teil „Nicht das Passende dabei?“?
