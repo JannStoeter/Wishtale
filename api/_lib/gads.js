@@ -10,7 +10,7 @@ const env = () => ({
   refresh: process.env.GOOGLE_ADS_REFRESH_TOKEN || '', customer: (process.env.GOOGLE_ADS_CUSTOMER_ID || '').replace(/\D/g, ''),
   login: (process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID || '').replace(/\D/g, ''), version: process.env.GOOGLE_ADS_API_VERSION || 'v22',
 });
-export const gadsConfigured = () => { const e = env(); return !!(e.dev && e.id && e.secret && e.refresh && e.customer); };
+export const gadsConfigured = () => { const e = env(); return !!(e.id && e.secret && e.refresh && e.customer); }; // Der Entwickler-Token ist nach neueren Google-Regeln optional (Zugriffsstufe hängt am Cloud-Projekt), ohne ihn wird kein Kopf gesendet
 
 async function accessToken(fetchImpl) {
   const e = env();
@@ -22,7 +22,7 @@ async function accessToken(fetchImpl) {
 
 async function api(path, body, fetchImpl) {
   const e = env(), token = await accessToken(fetchImpl);
-  const headers = { authorization: `Bearer ${token}`, 'developer-token': e.dev, 'content-type': 'application/json', ...(e.login ? { 'login-customer-id': e.login } : {}) };
+  const headers = { authorization: `Bearer ${token}`, 'content-type': 'application/json', ...(e.dev ? { 'developer-token': e.dev } : {}), ...(e.login ? { 'login-customer-id': e.login } : {}) };
   const r = await fetchImpl(`https://googleads.googleapis.com/${e.version}/customers/${e.customer}/${path}`, { method: 'POST', headers, body: JSON.stringify(body) });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) {
