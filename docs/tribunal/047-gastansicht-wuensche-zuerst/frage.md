@@ -13,5 +13,8 @@ Heutiger Aufbau der Gast-Ansicht (`src/views/giver.js`, `GuestPage()`): Profilko
 
 Gemessen am 2026-11-13 auf wishtale.de mit dem Beispielprofil Jonas (Handy 390 × 844 Pixel): Der Profilkopf beginnt bei 101 Pixel, die Überschrift der Wunschliste bei 918, die erste Wunschkarte bei 1.087. Auf dem ersten Bildschirm (844 Pixel) ist also kein einziger Wunsch zu sehen, man muss etwa eineinhalb Bildschirme scrollen. Die KI-Ideen beginnen bei 2.790 von 3.630 Pixeln. Am Desktop (1280 × 820) ist die erste Wunschkarte bei 659 Pixeln gerade noch angeschnitten sichtbar, weil die Leiste rechts daneben steht.
 
+## Nachtrag von Jann (2026-11-13, Wortlaut)
+„Meine Anmerkung im Vorfeld: hat schon und bitte nicht wird nur relevant wenn es keine Geschenke mit in den Wünschen gibt - oder nicht in der Preisrange - daher müsste eigentlich ein ‚nicht das passende dabei? Wir empfehlen außerdem‘ kommen, wo man vorher eben seine Range angibt und wo dann auch Infos kommen - oder sehe ich das falsch?“
+
 ## Frage
-Was soll ein Gast als Erstes sehen, und wie viel Profil braucht es dafür?
+Was soll ein Gast als Erstes sehen, und wie viel Profil braucht es dafür? Gehören „Hat schon“, „Bitte nicht“ und der Preisrahmen erst in einen zweiten Teil „Nicht das Passende dabei?“?
