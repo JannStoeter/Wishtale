@@ -2,7 +2,7 @@
 topic: 041-eigener-mail-absender
 status: entschieden
 option: A
-datum: 2026-11-12
-umgesetzt: in Arbeit (Einrichtung durch Jann, siehe Anleitung im Chat)
+datum: 2026-11-13
+umgesetzt: Einrichtung durch Jann, Datenschutz in Commit siehe ENTSCHEIDUNGEN
 ---
-**Janns Entscheidung im Chat: Option A, united domains als SMTP-Server.** Absender „Wishtale <hallo@wishtale.de>“ über `smtps.udag.de`. Claude führt Jann durch die Einrichtung (Postfach, Supabase-SMTP, deutsche Vorlagen, Testanmeldung) und passt danach die Datenschutzerklärung an. Empfehlung aus der Abwägung mit ChatGPT: eigenes Postfach nur für den App-Versand, Passwort nur in Supabase.
+**Janns Entscheidung im Chat: Option A, united domains als SMTP-Server.** Jann hat Postfach, SPF, DKIM und DMARC bei united domains eingerichtet, SMTP (`smtps.udag.de`) und die deutschen Vorlagen in Supabase eingetragen und den Mailversand getestet. Jann (2026-11-13, Wortlaut): „Der Mail Lauf (im Standard über united Domain) ist getestet und funktioniert.“ Datenschutzerklärung Abschnitt 3 nennt jetzt united domains als Versandweg. Offen und bewusst später: eigenes Postfach nur für den App-Versand (Rat von ChatGPT), Versandlimit von united domains erfragen, eine Willkommensmail (hängt an 008), eine Bremse gegen Massenregistrierungen (043, Punkt 11), und falls Mails im Spam landen oder das Volumen wächst der Wechsel auf einen Versanddienst wie Brevo (nur Tausch der SMTP-Daten).
