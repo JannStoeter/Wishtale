@@ -15,4 +15,6 @@ umgesetzt: 903df74
 - Punkt 10 (teilweise): `X-Frame-Options: DENY` und Content-Security-Policy mit `frame-ancestors`, `base-uri`, `object-src`, `form-action`. Eine volle Script-Richtlinie fehlt noch (Inline-Skripte der Seiten).
 - Punkte 15, 16, 17: Name im Profil wird maskiert, `.gitignore` kennt `.env`, Cron-Schlüssel wird zeitsicher verglichen.
 
-**Noch offen:** Punkt 8 (Sichtbarkeit von Alter und „Über mich“, braucht Janns Entscheidung), 11 (Bremse bei Registrierungen, gehört zum Mailversand 041), 12 und 13 (Supabase Pro, Region), und bei Jann: 1 (Sicherungen), 2 (`CRON_SECRET`), 4 (Supabase-Weiterleitung), 5 (Passwort Jonas).
+**Punkt 8 entschieden (Jann, 2026-11-12, Wortlaut: „Zu 8: nein die schwankenden dürfen das sehen“, gemeint sind wohl die Schenkenden):** Alter, „Über mich“ und Name des Elternteils bleiben für alle mit dem Link sichtbar, es wird nichts verborgen. Bewusst akzeptiertes Restrisiko, gemildert durch die schwerer zu erratenden Kürzel (Punkt 7).
+
+**Noch offen:** 11 (Bremse bei Registrierungen, gehört zum Mailversand 041), 12 und 13 (Supabase Pro, Region), und bei Jann: 1 (Sicherungen), 2 (`CRON_SECRET`), 4 (Supabase-Weiterleitung), 5 (Passwort Jonas).
