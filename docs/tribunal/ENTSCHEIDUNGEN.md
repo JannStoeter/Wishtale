@@ -35,6 +35,7 @@ Stand: 2026-11-09
 | 038 | Pinterest-Kurzlink aus der App wird nicht erkannt (Meldung von Jann) | **A: pin.it serverseitig auflösen.** | ja, `4854398` |
 | 040 | Leerzustand positiv und Willkommens-Rundgang (Anweisung von Jann) | **A: Positive Texte, Rundgang beim ersten Login.** | ja, `a496aaf` |
 | 044 | „Habe ich schon“ bei KI-Vorschlägen (Anweisung von Jann) | **A: Knopf am Vorschlag, Produkt wird als vorhanden gemerkt.** | ja, `3cade8a` |
+| 045 | „Hierfür keine Vorschläge generieren“ pro Wunsch (Anweisung von Jann) | **A: Schalter pro Wunsch, Hinweis mit Namen des Nutzers (bei Kindern das Elternteil).** | ja, `c85b1d6` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
