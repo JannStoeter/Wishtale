@@ -3,3 +3,8 @@ dist
 .DS_Store
 *.log
 promo/out/_frames
+
+.env
+.env.*
+!.env.example
+*.pem

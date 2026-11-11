@@ -70,7 +70,7 @@ export function Profil(){
     return `<section class="psec"><div class="hd"><h3 aria-level="2">${title}</h3><span class="row" style="gap:10px">${btn}${VisPill(vk,pv?null:k)}</span></div>${ed?Picker(st):inner}</section>`;
   };
   const chips=(a,cls='')=>a.length?`<div class="chips">${a.map(x=>`<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div>`:'<p class="muted">Noch nichts hinterlegt.</p>';
-  const line=`${m.name} ${m.interests.length?`liebt ${m.interests.slice(0,3).map(esc).join(', ')}`:'hat noch keine Interessen hinterlegt'}. ${m.nogos.length?`Lieber nichts mit ${m.nogos.slice(0,2).map(esc).join(' oder ')}.`:''} ${m.alts.length?`Wenn die Idee fehlt: ${esc(m.alts[0])}.`:''}`;
+  const line=`${esc(m.name)} ${m.interests.length?`liebt ${m.interests.slice(0,3).map(esc).join(', ')}`:'hat noch keine Interessen hinterlegt'}. ${m.nogos.length?`Lieber nichts mit ${m.nogos.slice(0,2).map(esc).join(' oder ')}.`:''} ${m.alts.length?`Wenn die Idee fehlt: ${esc(m.alts[0])}.`:''}`;
   return `<div class="wrap">
    ${pv?'':AppPromo()}
    ${pv?'':`   <div class="pcard"><span class="av t${m.tone}">${initials(m.name)}</span>

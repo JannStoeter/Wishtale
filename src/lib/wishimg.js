@@ -46,6 +46,12 @@ export async function storeImage(blob) {
   return sb.storage.from('wish-images').getPublicUrl(path).data.publicUrl;
 }
 
+/** Entfernt ein Bild aus unserem Speicher (nur im eigenen Ordner möglich). Fehler sind egal, das Bild ist dann nur noch Rest. */
+export function dropImage(url) {
+  const m = /\/storage\/v1\/object\/public\/wish-images\/(.+)$/.exec(String(url || ''));
+  if (m) sb.storage.from('wish-images').remove([decodeURIComponent(m[1])]).catch(() => {});
+}
+
 /** Nur Bilder aus unserem Speicher oder lokale Vorschauen (Demo) werden angezeigt. */
 export const safeImg = u => { const s = String(u || ''); return /^https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/wish-images\//.test(s) || /^data:image\/jpeg;base64,/.test(s) ? s : null; };
 

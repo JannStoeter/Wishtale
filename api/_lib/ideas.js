@@ -58,6 +58,13 @@ export async function learned(profileId, fetchImpl = fetch) {
  * Was ein Profil nicht öffentlich zeigt, die KI aber zur Orientierung nutzen darf (nur mit Dienstschlüssel, nur für Gast-Ideen).
  * Es steuert die Auswahl und wird nie in Begründungen genannt. Ohne Schlüssel oder bei Fehlern: nichts.
  */
+/** Stichwörter der Wünsche „selbst erfüllen“ (privat), nur serverseitig mit dem Dienstschlüssel gelesen und nie in einer Begründung genannt. */
+export async function planKeywords(profileId, fetchImpl = fetch) {
+  const k = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!k || !/^[0-9a-f-]{36}$/i.test(String(profileId))) return [];
+  try { return ((await rest(k, fetchImpl)(`wishes?select=kw&profile_id=eq.${profileId}&status=eq.plan&limit=60`)) || []).map(w => ({ kw: w.kw || [] })); } catch { return []; }
+}
+
 export async function privateExtras(handle, fetchImpl = fetch) {
   const k = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!k) return {};
@@ -148,6 +155,7 @@ export function dropSame(ideas, wishTitle) {
 export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   if (!aiConfigured()) return { ideas: [], off: true };
   const p = opts.token ? await fetchOwn(handle, opts.token, fetchImpl) : await fetchProfile(handle, fetchImpl);
+  if (!p.hidden) p.hidden = await planKeywords(p.id, fetchImpl); // Stichwörter der Wünsche „selbst erfüllen“ liefert die öffentliche Antwort nicht mehr
   const learn = await learned(p.id, fetchImpl);
   const budget = [20, 50, 100].includes(+opts.budget) ? +opts.budget : 0;
   const priv = !opts.token && opts.mode !== 'self' ? await privateExtras(handle, fetchImpl) : {};

@@ -15,7 +15,7 @@ import { readZettelRemote } from './lib/zettel.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
-import { downscale, fetchProductImage, finalImage, imgBoxHtml } from './lib/wishimg.js';
+import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage } from './lib/wishimg.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishPrev, draftKey } from './views/wishprev.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
@@ -131,7 +131,7 @@ const A={
  wf(el){S.ui.wf=el.dataset.v;render()},wc(el){S.ui.wc=el.dataset.v;render()},
  selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Deine Freunde sehen jetzt, dass du das schon hast.':'Der Wunsch ist wieder offen.');render()},
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
- delw(el){S.ui.modal=null;S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
+ delw(el){S.ui.modal=null;const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
  modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wprevMsg=''}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  close(){if(S.ui.modal==='welcome'){markWelcomed();stopWelcome()}S.ui.modal=null;S.ui.editWish=null;render()},
  wtab(el){showScene(+el.dataset.i,true)},
@@ -218,7 +218,7 @@ render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
   w.bought=true;remember(p,w,{status:'bought'});done();render();
  },
  world(el){S.ui.worldId=el.dataset.id;S.ui.worldCtx=el.dataset.ctx||'guest';S.ui.modal='world';render();setTimeout(()=>document.querySelector('.sheet [data-act=close]')?.focus({preventScroll:true}),30)},
- ownedel(el){S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
+ ownedel(el){const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
  pins(el){S.ui.pinsCtx=el.dataset.ctx||'guest';S.ui.modal='pins';render()},
  pinconsent(){givePinConsent();render()},
 async readlink(el,ev){
@@ -322,7 +322,7 @@ async readlink(el,ev){
  pinrevoke(){revokePinConsent();location.reload()},
  delacct(){
   if(!confirm('Möchtest du dein Konto mit allen Wünschen und Einträgen wirklich löschen? Das lässt sich nicht rückgängig machen.'))return;
-  sb.rpc('delete_my_account').then(({data,error})=>{
+  sb.auth.getSession().then(({data:{session}})=>fetch('/api/account?op=delete',{method:'POST',headers:{authorization:'Bearer '+(session?session.access_token:'')}})).then(r=>({data:r.ok,error:r.ok?null:true})).catch(()=>({data:false,error:true})).then(({data,error})=>{
    if(error||!data){toast('Das hat leider nicht geklappt. Bitte versuche es noch einmal oder schreib uns.');return}
    try{Object.keys(localStorage).filter(k=>k.startsWith('wishtale:')||k.startsWith('sb-')).forEach(k=>localStorage.removeItem(k))}catch{/* ignorieren */}
    sb.auth.signOut().catch(()=>{}).finally(()=>{location.hash='#anmelden';location.reload()});
@@ -499,7 +499,7 @@ document.addEventListener('submit',e=>{
       const c=fd.get('c'),t=fd.get('t').trim(),k=fd.get('kind'),plan=fd.get('plan')==='1',noSuggest=fd.get('nosug')==='1';
       if(S.ui.editWish){
         const w=S.me.wishes.find(x=>x.id===S.ui.editWish);
-        if(w){const keep=w.c===c&&w.kind===k;Object.assign(w,{noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:removed?null:(img||w.img||null),imgSrc:removed?'':(img?(imgSrc||''):(w.imgSrc||'')),...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
+        if(w){const keep=w.c===c&&w.kind===k;if(w.img&&(removed||(img&&img!==w.img)))dropImage(w.img);Object.assign(w,{noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:removed?null:(img||w.img||null),imgSrc:removed?'':(img?(imgSrc||''):(w.imgSrc||'')),...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));

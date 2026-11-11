@@ -53,7 +53,7 @@ const accountFromRow = (p, wishes, gifts) => ({
 /* ---------- Handle ---------- */
 const slug = s => (s || 'wishtale').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
   .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 20) || 'wishtale';
-const rand = () => Math.random().toString(36).slice(2, 6);
+const rand = () => { const a = new Uint8Array(6); (globalThis.crypto || window.crypto).getRandomValues(a); return Array.from(a, x => (x % 36).toString(36)).join(''); }; // 6 Zeichen aus Zufallszahlen, kaum zu erraten
 const makeHandle = name => `${slug(name).padEnd(3, 'x')}-${rand()}`;
 
 /* ---------- Laden ---------- */
@@ -204,8 +204,13 @@ export async function fetchPublic(handle) {
   };
 }
 
+const GUEST_OP = { reserve_wish: 'reserve', release_wish: 'release', mark_bought: 'bought' };
+/** Reservieren, Freigeben, „gekauft“: laufen über den Server (je Adresse begrenzt), nicht direkt gegen die Datenbank. */
 export async function guestRpc(fn, wishId) {
-  const { data, error } = await sb.rpc(fn, { p_wish_id: wishId, p_token: guestToken() });
-  if (error) throw error;
-  return data;
+  const op = GUEST_OP[fn];
+  if (!op) throw new Error('Unbekannte Aktion.');
+  const r = await fetch('/api/account?op=' + op, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ wish: wishId, token: guestToken() }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Das hat nicht geklappt.');
+  return j;
 }

@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import { rest, send, fail, HttpError } from './_lib/auth.js';
 import { publish, publishStories, startReel, containerStatus, finish, igConfigured } from './_lib/instagram.js';
 
@@ -9,7 +10,8 @@ import { publish, publishStories, startReel, containerStatus, finish, igConfigur
 export default async function handler(req, res) {
   try {
     const secret = process.env.CRON_SECRET, key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!secret || req.headers.authorization !== `Bearer ${secret}`) throw new HttpError(401, 'Nicht erlaubt.');
+    const got = Buffer.from(String(req.headers.authorization || '')), want = Buffer.from(`Bearer ${secret || ''}`);
+    if (!secret || got.length !== want.length || !timingSafeEqual(got, want)) throw new HttpError(401, 'Nicht erlaubt.');
     if (key) await rest(key)(`rate_limits?window_start=lt.${new Date(Date.now() - 3 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // Zähler der Begrenzung nach 3 Tagen leeren
     if (key) await rest(key)(`idea_cache?created_at=lt.${new Date(Date.now() - 60 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // KI-Zwischenspeicher nach 60 Tagen leeren
     if (key) await rest(key)(`events?ts=lt.${new Date(Date.now() - 400 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // Statistik nach etwa 13 Monaten löschen
