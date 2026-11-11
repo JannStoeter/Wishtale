@@ -32,3 +32,4 @@ Skala: 1 = jetzt, 2 = als Nächstes, 3 = später, 4 = Backlog. Maßstab: Was sch
 - 039: 3 | Sinnvoll für das Wachstum über Bekannte, aber erst nach der Dashboard-Einstellung (034) und den Rechtstexten (012) wichtig.
 - 041: 1 | Vor dem Marktstart nötig: Absender, Spam-Risiko und das Versandlimit des Standardversands.
 - 042: 2 | Vor dem ersten Verkauf müssen Vercel Pro und Supabase Pro klar sein, bis dahin kostet das Gratis-Setup nichts.
+- 043: 1 | Sicherungen, Löschen der Bilder und die Punkte zu Kinderprofilen gehören vor den Launch.

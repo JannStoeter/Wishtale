@@ -19,7 +19,10 @@ export default async function handler(req, res) {
     const draft = String(req.query?.t || '').replace(/\s+/g, ' ').trim().slice(0, 120); // Entwurf: Wunsch, der noch nicht gespeichert ist
     if (mode === 'wish' && !/^[0-9a-f-]{36}$/i.test(wid) && draft.length < 3) throw new HttpError(400, 'Ungültiger Wunsch.');
     // Eigene Ansicht (mode=self mit Anmeldung): auch Privates fließt ein, das Ergebnis bleibt nur im eigenen Browser.
-    const own = mode === 'self' && /^Bearer /.test(req.headers?.authorization || '') ? await requireUser(req) : null;
+    const isDraft = mode === 'wish' && !/^[0-9a-f-]{36}$/i.test(wid);
+    const own = (mode === 'self' || isDraft) && /^Bearer /.test(req.headers?.authorization || '') ? await requireUser(req) : null;
+    // Entwürfe (frei eingegebener Titel) nur für die angemeldete Person selbst, sonst ließe sich die KI mit beliebigem Text auf fremde Kosten aufrufen.
+    if (isDraft && (!own || (await ownerOf(h)) !== own.id)) throw new HttpError(own ? 403 : 401, 'Bitte melde dich an.');
     const feature = mode === 'self' ? 'ideas.self' : mode === 'wish' ? 'ideas.wish' : 'ideas.guest';
     const payer = own?.id || await ownerOf(h); // der Verbrauch geht auf das Konto, um dessen Profil es geht
     if (payer && !can(await entitlementsOf(payer), feature)) { res.status(200).setHeader('Cache-Control', 'public, s-maxage=600'); return res.json({ ideas: [], locked: true }); }
