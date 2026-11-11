@@ -130,10 +130,10 @@ export async function fetchOwn(handle, token, fetchImpl = fetch) {
   const q = rest(token, fetchImpl);
   const [p] = await q(`profiles?select=*&handle=eq.${encodeURIComponent(handle)}&limit=1`);
   if (!p) throw new HttpError(404, 'Profil nicht gefunden.');
-  const wishes = await q(`wishes?select=id,title,note,kw,vis,status,budget,price&profile_id=eq.${p.id}&limit=80`);
+  const wishes = await q(`wishes?select=id,title,note,kw,vis,status,budget,price,no_suggest&profile_id=eq.${p.id}&limit=80`);
   return {
     id: p.id, name: p.name, age: p.age, about: p.about, interests: p.interests, cats: p.cats, brands: p.brands, tries: p.tries, nogos: p.nogos,
-    wishes: wishes.filter(w => w.status === 'offen' || w.status === 'plan').map(w => ({ id: w.id, title: w.title, note: w.note, budget: w.budget, price: w.price })),
+    wishes: wishes.filter(w => w.status === 'offen' || w.status === 'plan').map(w => ({ id: w.id, title: w.title, note: w.note, budget: w.budget, price: w.price, no_suggest: w.no_suggest })),
     gifts: [], hidden: wishes.filter(w => w.status === 'selbst' || w.status === 'plan').map(w => ({ kw: w.kw })),
   };
 }
@@ -155,7 +155,9 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   let system = SYSTEM;
   if (opts.mode === 'self') system += SELF;
   if (opts.mode === 'wish') {
-    const w = (p.wishes || []).find(x => x.id === opts.wid) || (opts.draft ? { title: opts.draft, note: '', budget: null, price: null } : null);
+    const found = (p.wishes || []).find(x => x.id === opts.wid);
+    if (found && (found.no_suggest || found.noSuggest)) return { ideas: [], off: false, noSuggest: true }; // Wunsch der Person: keine Vorschläge
+    const w = found || (opts.draft ? { title: opts.draft, note: '', budget: null, price: null } : null);
     if (!w) throw new HttpError(404, 'Wunsch nicht gefunden.');
     ctx.wunsch = { titel: clip(w.title, 160), notiz: clip(w.note, 200), budget: w.budget || w.price || null };
     ctx.wunschliste = ctx.wunschliste.filter(t => t !== w.title);

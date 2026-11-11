@@ -89,7 +89,7 @@ function remember(p,w,patch){
 /* KI-Varianten zu einem Wunsch ohne eigenen Link (nur echte Profile, nur für ungenaue Wünsche). */
 function wishVariants(id,ctx){
   const p=ctx==='guest'?guestPerson():S.me,w=p&&p.wishes.find(x=>x.id===id);
-  if(!w||!p.handle||!p.remote&&ctx==='guest'||w.link||w.kind==='erlebnis'||!/^[0-9a-f-]{36}$/i.test(String(id)))return;
+  if(!w||w.noSuggest||!p.handle||!p.remote&&ctx==='guest'||w.link||w.kind==='erlebnis'||!/^[0-9a-f-]{36}$/i.test(String(id)))return;
   loadIdeas('wish:'+id,{h:p.handle,mode:'wish',w:id,t:w.t.slice(0,80)},()=>{if(S.ui.modal==='wishdetail'&&S.ui.pickId===id)render()});
 }
 /* Vorschau im Wunschformular: Kategorie raten, passende Produkte laden und im Formular anzeigen, ohne eingetippte Werte zu verlieren. */
@@ -99,6 +99,7 @@ function previewWish(title,msg){
   const t=String(title||'').trim().slice(0,120);
   if(t.length<3){box.innerHTML='';return}
   const kind=f.querySelector('input[name=kind]:checked')?.value;
+  if(f.elements.nosug?.checked){box.innerHTML='';return}
   const sel=f.elements.c;if(sel&&sel.value==='wohnen'){const g=guessCategory(t,'wohnen');if(g!==sel.value)sel.value=g}
   S.ui.wprevMsg=msg||'';
   const draw=()=>{const b=document.getElementById('wprev'),ff=document.querySelector('form[data-form=wish]');if(b&&ff&&ff.elements.t.value.trim().slice(0,120)===t)b.innerHTML=WishPrev(t,ff.elements.c?.value)};
@@ -289,6 +290,11 @@ async readlink(el,ev){
   openPortal().then(r=>{location.href=r.url}).catch(e=>{S.plan.error=e.message;render()});
  },
  ideano(el){hideIdea(el.dataset.t);if(el.dataset.self)saveSignal('no',el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
+ wnosug(el){ // Vorschläge für einen Wunsch aus- oder wieder einschalten
+  const w=S.me.wishes.find(x=>x.id===el.dataset.id);if(!w)return;
+  w.noSuggest=!w.noSuggest;toast(w.noSuggest?'Für diesen Wunsch zeigt Wishtale keine Vorschläge mehr.':'Wishtale darf für diesen Wunsch wieder Vorschläge zeigen.');
+  if(!w.noSuggest)wishVariants(w.id,'own');render();
+ },
  aivhave(el){ // „Habe ich schon“ bei einem Vorschlag zu einem Wunsch: als vorhanden notieren, nie wieder vorschlagen
   const i=ideasOf('wish:'+el.dataset.wid).find(x=>x.t===el.dataset.t);if(!i)return;
   const c=guessCategory(i.t,'wohnen');
@@ -490,13 +496,13 @@ document.addEventListener('submit',e=>{
   }
   if(kind==='wish'){
     Promise.all([amazonLink((fd.get('link')||'').trim()),finalImage()]).then(([link,fi])=>{const done=(img,imgSrc,removed)=>{
-      const c=fd.get('c'),t=fd.get('t').trim(),k=fd.get('kind'),plan=fd.get('plan')==='1';
+      const c=fd.get('c'),t=fd.get('t').trim(),k=fd.get('kind'),plan=fd.get('plan')==='1',noSuggest=fd.get('nosug')==='1';
       if(S.ui.editWish){
         const w=S.me.wishes.find(x=>x.id===S.ui.editWish);
-        if(w){const keep=w.c===c&&w.kind===k;Object.assign(w,{t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:removed?null:(img||w.img||null),imgSrc:removed?'':(img?(imgSrc||''):(w.imgSrc||'')),...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
+        if(w){const keep=w.c===c&&w.kind===k;Object.assign(w,{noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:removed?null:(img||w.img||null),imgSrc:removed?'':(img?(imgSrc||''):(w.imgSrc||'')),...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
-      S.me.wishes.unshift(W({t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
+      S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
       S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';toast('Der Wunsch ist gespeichert.');render();
     };
     if(fi.failed)toast('Das Bild konnte nicht gespeichert werden. Der Wunsch ist ohne Bild gespeichert, du kannst es später erneut versuchen.');
