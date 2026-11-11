@@ -361,7 +361,7 @@ async readlink(el,ev){
  },
  occ(el){S.ui.occ=el.dataset.v;S.ui.budget=el.dataset.v==='danke'?40:100;render()},
  onlyopen(el){S.ui.onlyOpen=el.dataset.v==='1';render()},
- dens(el){S.ui.big=el.dataset.v==='1';render()},
+ wview(el){S.ui.wview=el.dataset.v;render()},
  suggest(el){S.ui.pickId=el.dataset.id;S.ui.wishCtx='guest';S.ui.modal='wishdetail';render()}
 };
 document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const f=A[t.dataset.act];if(f)f(t,e)});
@@ -372,6 +372,7 @@ document.addEventListener('change',async e=>{
 document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?.('form[data-form=wish]')&&!S.ui.editWish&&!e.target.dataset.skip)previewWish(e.target.value)});
 document.addEventListener('input',e=>{if(e.target.name==='t'&&e.target.classList?.contains('attn'))e.target.classList.remove('attn')});
 document.addEventListener('input',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;$('#budv').textContent=money(S.ui.budget)}});
+document.addEventListener('change',e=>{if(e.target.dataset?.sort){S.ui.wsort=e.target.value;render()}});
 document.addEventListener('change',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;render()}});
 document.addEventListener('input',e=>{const f=e.target.dataset?.az;if(f&&S.ui.az)S.ui.az[f]=e.target.value});
 document.addEventListener('change',e=>{

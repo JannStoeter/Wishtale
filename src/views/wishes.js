@@ -1,6 +1,6 @@
 import { S } from '../state.js';
 import { esc, ic, money } from '../lib/util.js';
-import { WishCard } from './card.js';
+import { WishCard, WishRow } from './card.js';
 import { V, cat, occL } from '../data/content.js';
 import { AppPromo } from './inspiration.js';
 import { completeness } from '../lib/tale.js';
@@ -15,12 +15,22 @@ function Nudge(m){
 }
 
 export function VisIcon(k){const x=V[k];return `<span class="pill" title="${x.l}" aria-label="${x.l}">${ic(x.i,'sm')}</span>`}
-export function densSeg(){return `<div class="seg" role="group" aria-label="Darstellung"><button class="${!S.ui.big?'on':''}" data-act="dens" data-v="0">Kompakt</button><button class="${S.ui.big?'on':''}" data-act="dens" data-v="1">Groß</button></div>`}
+/** Kacheln oder Liste: bei vielen Wünschen ist die Liste übersichtlicher (Voreinstellung ab 9 Wünschen). */
+export const useList=n=>S.ui.wview?S.ui.wview==='liste':n>8;
+export function densSeg(n=0){const l=useList(n);return `<div class="seg" role="group" aria-label="Darstellung"><button class="${!l?'on':''}" data-act="wview" data-v="kacheln">Kacheln</button><button class="${l?'on':''}" data-act="wview" data-v="liste">Liste</button></div>`}
+export function sortSeg(){const v=S.ui.wsort||'prio';return `<label class="sortsel"><span class="vh">Sortieren</span><select class="sel sm" data-sort="1" aria-label="Sortieren"><option value="prio" ${v==='prio'?'selected':''}>Wichtigste zuerst</option><option value="preis" ${v==='preis'?'selected':''}>Günstigste zuerst</option><option value="neu" ${v==='neu'?'selected':''}>Neueste zuerst</option></select></label>`}
+const priceOf=w=>w.price||(w.kind==='kategorie'&&w.budget)||null;
+export function sortWishes(list){
+  const v=S.ui.wsort||'prio',idx=new Map(list.map((w,i)=>[w,i]));
+  if(v==='preis')return [...list].sort((a,b)=>(priceOf(a)??1e9)-(priceOf(b)??1e9)||b.prio-a.prio);
+  if(v==='neu')return [...list].reverse();
+  return [...list].sort((a,b)=>b.prio-a.prio||idx.get(a)-idx.get(b));
+}
 export function Wuensche(){
   const m=S.me,u=S.ui;
   let list=m.wishes.filter(w=>u.wf==='alle'||(u.wf==='offen'?(w.status==='offen'||w.status==='plan'):w.status==='selbst'));
   if(u.wc!=='alle')list=list.filter(w=>w.c===u.wc);
-  list=[...list].sort((a,b)=>b.prio-a.prio);
+  list=sortWishes(list);
   const used=[...new Set(m.wishes.map(w=>w.c))];
   const open=m.wishes.filter(w=>w.status==='offen'||w.status==='plan').length;
   return `<div class="wrap">
@@ -33,10 +43,10 @@ export function Wuensche(){
    <div class="row" style="justify-content:space-between;margin-bottom:16px">
      <div class="seg" role="group" aria-label="Status">${[['offen','Offen'],['selbst','Selbst gekauft'],['alle','Alle']].map(([k,l])=>`<button class="${u.wf===k?'on':''}" data-act="wf" data-v="${k}">${l}</button>`).join('')}</div>
      <div class="seg" role="group" aria-label="Kategorie"><button class="${u.wc==='alle'?'on':''}" data-act="wc" data-v="alle">Alle</button>${used.map(c=>`<button class="${u.wc===c?'on':''}" data-act="wc" data-v="${c}">${cat(c).n}</button>`).join('')}</div>
-     ${densSeg()}
+     <div class="row" style="gap:8px">${sortSeg()}${densSeg(list.length)}</div>
    </div>
    <h2 class="vh">Deine Wünsche</h2>
-   <div class="wgrid ${u.big?'big':''}">${list.map(w=>WishCard(w,m,{
+   <div class="${useList(list.length)?'wlist':'wgrid'}">${list.map(w=>(useList(list.length)?WishRow:WishCard)(w,m,{
       meta:(w.status==='plan'?'<span class="chip ok">Nur für dich</span>':'')+(w.kind==='kategorie'?`<span class="chip gold">Kategorie${w.budget?' bis '+money(w.budget):''}</span>`:'')+(w.kind==='erlebnis'?'<span class="chip">Erlebnis</span>':'')+(w.kind==='frei'?'<span class="chip">Freier Wunsch</span>':'')+(w.via?`<span class="chip gold">Tipp von ${esc(viaName(w.via))}</span>`:'')+w.occ.map(o=>`<span class="chip">${occL(o)}</span>`).join(''),
       status:m.managed&&(w.res||w.bought)?{text:w.bought?'Gekauft':'Reserviert',tone:w.bought?'me':'res'}:null,
       taken:false,
