@@ -1,7 +1,7 @@
 ---
 titel: Sicherheitscheck vor dem Launch: Befunde und Reihenfolge
 art: befund
-status: offen
+status: entschieden
 optionen: A=Alle Punkte der Stufen Hoch und Mittel vor dem Launch beheben | B=Nur Stufe Hoch vor dem Launch, Mittel danach | C=Nichts ändern
 erstellt: 2026-11-11
 von: jann

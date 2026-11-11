@@ -37,6 +37,7 @@ Stand: 2026-11-09
 | 044 | „Habe ich schon“ bei KI-Vorschlägen (Anweisung von Jann) | **A: Knopf am Vorschlag, Produkt wird als vorhanden gemerkt.** | ja, `3cade8a` |
 | 045 | „Hierfür keine Vorschläge generieren“ pro Wunsch (Anweisung von Jann) | **A: Schalter pro Wunsch, Hinweis mit Namen des Nutzers (bei Kindern das Elternteil).** | ja, `c85b1d6` |
 | 041 | Bestätigungsmails vom eigenen Absender | **A: united domains als SMTP-Server.** Einrichtung läuft. | in Arbeit |
+| 043 | Sicherheitscheck vor dem Launch (Auftrag von Jann) | **A: Hoch und Mittel vor dem Launch.** Teil 1 von Claude umgesetzt, Rest bei Jann und offen. | teilweise, `903df74` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
@@ -64,5 +65,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 039 Vorbereitete Profile verschenken: Einladung mit Name und ein, zwei Tipps (Entscheidung, von Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
-- 043 Sicherheitscheck vor dem Launch: Befunde und Reihenfolge (Befund, Auftrag von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
