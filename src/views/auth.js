@@ -1,5 +1,6 @@
 import { S, draftHasData } from '../state.js';
 import { esc } from '../lib/util.js';
+import { loadLocal } from '../lib/invite.js';
 
 function Forgot(m,busy){
   const msg=m?`<div class="banner" role="alert" style="margin-bottom:14px"><span>${esc(m.text)}</span></div>`:'';
@@ -55,7 +56,7 @@ export function Login(){
    <div class="seg" role="tablist" style="margin-bottom:16px"><button role="tab" aria-selected="${tab==='in'}" class="${tab==='in'?'on':''}" data-act="authtab" data-v="in">Anmelden</button><button role="tab" aria-selected="${tab==='up'}" class="${tab==='up'?'on':''}" data-act="authtab" data-v="up">Registrieren</button></div>
    ${note}${err}${msg}
    ${tab==='up'?`<form data-form="signup" class="authform">
-     <div class="fld"><label for="an">Dein Vorname</label><input id="an" name="name" class="inp" required maxlength="60" value="${dr?esc(dr.name):''}" autocomplete="given-name"></div>
+     <div class="fld"><label for="an">Dein Vorname</label><input id="an" name="name" class="inp" required maxlength="60" value="${dr&&dr.name?esc(dr.name):esc((loadLocal()||{}).name||'')}" autocomplete="given-name"></div>
      <div class="fld"><label for="ae">E-Mail</label><input id="ae" name="email" type="email" class="inp" required autocomplete="email" value="${esc(S.ui.authEmail||'')}"></div>
      <div class="fld"><label for="ap">Passwort (mindestens 8 Zeichen)</label><input id="ap" name="password" type="password" class="inp" required minlength="8" autocomplete="new-password"></div>
      <button class="btn pri" type="submit" ${busy?'disabled':''}>Konto anlegen</button>

@@ -8,6 +8,7 @@ import { sb } from './lib/supabase.js';
 import { enter, adoptDraft } from './lib/auth.js';
 import { toast } from './lib/util.js';
 import { maybeWelcome } from './views/welcome.js';
+import { adoptInvite } from './lib/invite.js';
 import { route, render } from './render.js';
 import './actions.js';
 import { loadPromo } from './lib/promo.js';
@@ -24,8 +25,12 @@ async function boot(){
     await enter(session.user);
     await migrateGiven().catch(()=>0);await loadGiven().catch(()=>{});
     const adopted=recoveryLink?false:adoptDraft();
+    const invd=recoveryLink?false:await adoptInvite().catch(()=>false);
     if(recoveryLink){
       history.replaceState(null,'',location.pathname+'#neues-passwort');
+    }else if(invd&&invd.n){
+      history.replaceState(null,'',location.pathname+'#wuensche');
+      setTimeout(()=>toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`),500);
     }else if(adopted){
       history.replaceState(null,'',location.pathname+'#wuensche');
       if(adopted==='quick')setTimeout(()=>{toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()},500);
@@ -53,10 +58,12 @@ async function boot(){
         await migrateGiven().catch(()=>0);await loadGiven().catch(()=>{});
         if(location.hash==='#neues-passwort'){route();return}
         const adopted=adoptDraft();
+        const invd=await adoptInvite().catch(()=>false);
         const a=S.accounts.me;
-        location.hash=adopted?'#wuensche':a&&!a.interests.length&&!a.wishes.length?'#start':'#profil';
+        location.hash=adopted||(invd&&invd.n)?'#wuensche':a&&!a.interests.length&&!a.wishes.length?'#start':'#profil';
         route();
         if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
+        else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);
         else if(adopted)toast('Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
         else if(waiting)toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.');
         if(adopted!=='quick')setTimeout(maybeWelcome,1500);

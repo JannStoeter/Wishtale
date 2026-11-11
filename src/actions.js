@@ -18,6 +18,7 @@ import { startCheckout, openPortal } from './lib/plan.js';
 import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage } from './lib/wishimg.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishPrev, draftKey } from './views/wishprev.js';
+import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
 import { guestRpc } from './lib/remote.js';
 import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
@@ -135,6 +136,17 @@ const A={
  modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wprevMsg=''}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  close(){if(S.ui.modal==='welcome'){markWelcomed();stopWelcome()}S.ui.modal=null;S.ui.editWish=null;render()},
  wtab(el){showScene(+el.dataset.i,true)},
+ inviteopen(){S.ui.invm={list:[],link:'',error:'',busy:false};S.ui.modal='invite';render();listInvites().then(l=>{if(S.ui.invm)S.ui.invm.list=l;if(S.ui.modal==='invite')render()}).catch(()=>{})},
+ invitenew(){if(S.ui.invm){S.ui.invm.link='';S.ui.invm.error=''}render()},
+ invitecopy(){
+  const url=S.ui.invm&&S.ui.invm.link;if(!url)return;
+  const done=()=>toast('Der Link ist kopiert. Schick ihn der Person, für die du das Wishtale vorbereitet hast.');
+  if(navigator.share){navigator.share({title:'Ich habe ein Wishtale für dich vorbereitet',url}).catch(()=>{})}
+  else if(navigator.clipboard?.writeText){navigator.clipboard.writeText(url).then(done,()=>toast(url))}
+  else toast(url);
+ },
+ inviterevoke(el){revokeInvite(el.dataset.id).then(()=>{if(S.ui.invm)S.ui.invm.list=S.ui.invm.list.filter(i=>i.id!==el.dataset.id);toast('Die Einladung ist zurückgezogen.');render()}).catch(()=>toast('Das hat nicht geklappt.'))},
+ invitelogin(){const v=S.ui.inv;if(v&&v.data)saveLocal({code:v.code,name:'',keep:(v.data.tips||[]).map(()=>true)})},
  welcomeskip(el,e){if(el.dataset.bg&&e&&e.target!==el)return;A.close()},
  welcomego(){markWelcomed();stopWelcome();S.ui.editWish=null;S.ui.wishImg=null;S.ui.wprevMsg='';S.ui.modal='wish';render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  welcomeimport(){markWelcomed();stopWelcome();S.ui.zt=null;S.ui.modal='zettel';render()},
@@ -417,6 +429,21 @@ document.addEventListener('submit',e=>{
       render();
     }).catch(e=>{S.ui.authBusy=false;S.ui.authMsg={type:'error',text:friendly(e)};render()});
     return;
+  }
+  if(kind==='invitemake'){
+    const z=S.ui.invm||(S.ui.invm={list:[]});z.error='';z.busy=true;render();
+    createInvite((fd.get('name')||'').trim(),[fd.get('tip1'),fd.get('tip2')].map(x=>(x||'').trim()).filter(Boolean))
+      .then(t=>{z.busy=false;z.link=inviteLink(t);return listInvites().then(l=>{z.list=l}).catch(()=>{})})
+      .catch(e=>{z.busy=false;z.error=e.message||'Das hat nicht geklappt.'}).finally(()=>{if(S.ui.modal==='invite')render()});
+    return;
+  }
+  if(kind==='inviteaccept'){
+    const v=S.ui.inv;if(!v||!v.data)return;
+    const picked=fd.getAll('tip'),keep=(v.data.tips||[]).map((_,i)=>picked.includes(String(i)));
+    const name=(fd.get('name')||'').trim().slice(0,40);
+    v.name=name;v.keep=keep;saveLocal({code:v.code,name,keep});
+    if(S.auth.user){adoptInvite().then(r=>{toast(r&&r.n?`Die Tipps von ${r.from} stehen jetzt auf deiner Wunschliste.`:'Die Einladung ist eingelöst.');location.hash='#wuensche';render(true)});return}
+    location.hash='#registrieren';return;
   }
   if(kind==='draftname'){A.next();return}
   if(kind==='social'){

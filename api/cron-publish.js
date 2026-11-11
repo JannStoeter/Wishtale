@@ -15,6 +15,8 @@ export default async function handler(req, res) {
     if (key) await rest(key)(`rate_limits?window_start=lt.${new Date(Date.now() - 3 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // Zähler der Begrenzung nach 3 Tagen leeren
     if (key) await rest(key)(`idea_cache?created_at=lt.${new Date(Date.now() - 60 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // KI-Zwischenspeicher nach 60 Tagen leeren
     if (key) await rest(key)(`events?ts=lt.${new Date(Date.now() - 400 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // Statistik nach etwa 13 Monaten löschen
+    if (key) await rest(key)(`invites?expires_at=lt.${new Date(Date.now() - 7 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // abgelaufene Einladungen nach einer Woche löschen
+    if (key) await rest(key)(`invites?used_at=lt.${new Date(Date.now() - 30 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // eingelöste nach 30 Tagen
     if (!key || !igConfigured()) return send(res, 200, { ok: true, skipped: 'nicht verbunden' });
     const db = rest(key);
     const due = await db(`social_posts?status=eq.ready&scheduled_for=lte.${new Date().toISOString()}&select=*&order=scheduled_for.asc&limit=3`);

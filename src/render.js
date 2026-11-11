@@ -11,12 +11,14 @@ import { Plan } from './views/plan.js';
 import { loadPlan } from './lib/plan.js';
 import { Gast } from './views/giver.js';
 import { Login, Recovery } from './views/auth.js';
+import { Einladung } from './views/invite.js';
+import { peekInvite } from './lib/invite.js';
 import { fetchPublic, scheduleSync } from './lib/remote.js';
 import { loadPinterest, pinConsent } from './lib/social.js';
 import { Modal } from './views/modals.js';
 import { track } from './lib/track.js';
 
-export const VIEWS={plan:Plan,start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,gast:Gast,login:Login,recovery:Recovery};
+export const VIEWS={plan:Plan,start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,gast:Gast,login:Login,recovery:Recovery,einladung:Einladung};
 const DEFAULT_VIEW='profil';
 
 let lastModalKey='';
@@ -39,7 +41,7 @@ export function render(top){
   if(v==='profil'&&S.ui.preview&&S.auth.user&&S.me.handle)loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.view==='profil'&&S.ui.preview&&!S.ui.modal)render()});
   if(v==='plan'&&S.auth.user)loadPlan(()=>{if(S.ui.view==='plan'&&!S.ui.modal)render()});
   const body=VIEWS[v]();
-  if(v==='login'||v==='recovery'){
+  if(v==='login'||v==='recovery'||v==='einladung'){
     $('#app').innerHTML=LoginHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot();
     window.scrollTo(0,0);
     return;
@@ -77,9 +79,11 @@ export function route(){
   let h=location.hash.replace('#','');
   if(h==='login')h='anmelden';  // alter Link
   const guest=h.match(/^p\/([\w-]+)$/);
+  const inv=h.match(/^einladung\/([0-9a-f]{16,100})$/i);
   const anon=!S.auth.user;
   if(!(anon&&h==='start')&&S.ui.acct==='draft')S.ui.acct='me';
-  if(guest){
+  if(inv){S.ui.view='einladung';startInvite(inv[1])}
+  else if(guest){
     S.ui.person=guest[1];S.ui.view='gast';startGuest(guest[1]);
   }
   else if(!anon&&h==='neues-passwort'){S.ui.view='recovery'}
@@ -99,6 +103,12 @@ export function route(){
 }
 
 /* Gast-Profil aus der Datenbank laden. Gibt es das Handle dort nicht, greifen die lokalen Demo-Profile. */
+function startInvite(code){
+  if(S.ui.inv&&S.ui.inv.code===code&&S.ui.inv.status!=='bad')return;
+  S.ui.inv={code,status:'loading',data:null,keep:[],name:undefined};
+  peekInvite(code).then(d=>{if(S.ui.inv?.code!==code)return;S.ui.inv=d?{code,status:'ok',data:d,keep:(d.tips||[]).map(()=>true),name:undefined}:{code,status:'bad'};if(S.ui.view==='einladung')render(true)})
+   .catch(()=>{if(S.ui.inv?.code!==code)return;S.ui.inv={code,status:'bad'};if(S.ui.view==='einladung')render(true)});
+}
 function startGuest(handle){
   if(S.guest&&S.guest.handle===handle&&S.guest.status!=='error'){return}
   S.guest={handle,status:'loading',person:null};

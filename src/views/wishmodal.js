@@ -4,9 +4,10 @@ import { esc, ic, gen } from '../lib/util.js';
 import { criteriaText } from '../lib/fit.js';
 import { art, artIllu } from '../lib/art.js';
 import { offersFor } from '../lib/products.js';
-import { cat, crea, occL, PRIO } from '../data/content.js';
+import { cat, occL, PRIO } from '../data/content.js';
 import { priceLine } from './product.js';
 import { ideasOf, aiStatus } from '../lib/ideas.js';
+import { viaName } from '../lib/invite.js';
 import { AiLoading } from './ailoading.js';
 import { isSpecific } from '../lib/products.js';
 import { searchUrl } from '../lib/shops.js';
@@ -97,7 +98,7 @@ export function WishModal() {
      <p class="eyebrow">${esc(meta.join(' · '))}</p>
      <h2 id="mt">${esc(w.t)}</h2>
      ${w.note ? `<p class="muted" style="margin-top:6px">${esc(w.note)}</p>` : ''}
-     ${w.via ? `<span class="chip gold" style="margin-top:8px">Tipp von ${esc(crea(w.via).handle)}</span>` : ''}
+     ${w.via ? `<span class="chip gold" style="margin-top:8px">Tipp von ${esc(viaName(w.via))}</span>` : ''}
     </div>
    </div>
    ${ctx === 'preview' ? `<div class="banner green">${ic('eye')}<span>So sehen Schenkende diesen Wunsch.</span></div>` : ''}

@@ -2,6 +2,7 @@ import { sb } from './supabase.js';
 import { S, draftHasData, ensureDraft, clearDraft } from '../state.js';
 import { loadMine } from './remote.js';
 import { utmFromUrl } from './track.js';
+import { invitePayload } from './invite.js';
 
 /** Ziel nach dem Klick auf den Link in der Mail: immer die App der Seite, auf der man sich angemeldet hat. */
 export const redirectUrl = () => location.origin + '/app/';
@@ -29,7 +30,7 @@ const draftPayload = () => {
   return { interests: cut(d.interests), cats: cut(d.cats), brands: cut(d.brands), tries: cut(d.tries), nogos: cut(d.nogos), alts: cut(d.alts), quick: !!d.quick };
 };
 export const signUp = (name, email, password) =>
-  sb.auth.signUp({ email, password, options: { data: { full_name: name, draft: draftPayload(), utm: utmFromUrl() }, emailRedirectTo: redirectUrl() } });
+  sb.auth.signUp({ email, password, options: { data: { full_name: name, draft: draftPayload(), utm: utmFromUrl(), invite: invitePayload() }, emailRedirectTo: redirectUrl() } });
 export const resendSignup = email =>
   sb.auth.resend({ type: 'signup', email, options: { emailRedirectTo: redirectUrl() } });
 export const magicLink = email =>

@@ -1,9 +1,10 @@
 import { S } from '../state.js';
 import { esc, ic, money } from '../lib/util.js';
 import { WishCard } from './card.js';
-import { V, cat, crea, occL } from '../data/content.js';
+import { V, cat, occL } from '../data/content.js';
 import { AppPromo } from './inspiration.js';
 import { completeness } from '../lib/tale.js';
+import { viaName } from '../lib/invite.js';
 
 /** Freundlicher Hinweis, solange das Profil noch dünn ist. Verschwindet für eine Woche, wenn man „Später“ wählt. */
 function Nudge(m){
@@ -36,7 +37,7 @@ export function Wuensche(){
    </div>
    <h2 class="vh">Deine Wünsche</h2>
    <div class="wgrid ${u.big?'big':''}">${list.map(w=>WishCard(w,m,{
-      meta:(w.status==='plan'?'<span class="chip ok">Nur für dich</span>':'')+(w.kind==='kategorie'?`<span class="chip gold">Kategorie${w.budget?' bis '+money(w.budget):''}</span>`:'')+(w.kind==='erlebnis'?'<span class="chip">Erlebnis</span>':'')+(w.kind==='frei'?'<span class="chip">Freier Wunsch</span>':'')+(w.via?`<span class="chip gold">via ${esc(crea(w.via).handle)}</span>`:'')+w.occ.map(o=>`<span class="chip">${occL(o)}</span>`).join(''),
+      meta:(w.status==='plan'?'<span class="chip ok">Nur für dich</span>':'')+(w.kind==='kategorie'?`<span class="chip gold">Kategorie${w.budget?' bis '+money(w.budget):''}</span>`:'')+(w.kind==='erlebnis'?'<span class="chip">Erlebnis</span>':'')+(w.kind==='frei'?'<span class="chip">Freier Wunsch</span>':'')+(w.via?`<span class="chip gold">Tipp von ${esc(viaName(w.via))}</span>`:'')+w.occ.map(o=>`<span class="chip">${occL(o)}</span>`).join(''),
       status:m.managed&&(w.res||w.bought)?{text:w.bought?'Gekauft':'Reserviert',tone:w.bought?'me':'res'}:null,
       taken:false,
       ctx:'own'
