@@ -19,7 +19,7 @@ import { Modal } from './views/modals.js';
 import { track } from './lib/track.js';
 
 export const VIEWS={plan:Plan,start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,gast:Gast,login:Login,recovery:Recovery,einladung:Einladung};
-const DEFAULT_VIEW='profil';
+const DEFAULT_VIEW='wuensche';
 
 let lastModalKey='';
 function afterRender(){
@@ -87,7 +87,7 @@ export function route(){
     S.ui.person=guest[1];S.ui.view='gast';startGuest(guest[1]);
   }
   else if(!anon&&h==='neues-passwort'){S.ui.view='recovery'}
-  else if(anon&&h==='demo'){setDemo(true);history.replaceState(null,'',location.pathname+'#profil');S.ui.view='profil'}
+  else if(anon&&h==='demo'){setDemo(true);history.replaceState(null,'',location.pathname+'#wuensche');S.ui.view='wuensche'}
   else if(anon&&h==='start'){setDemo(false);ensureDraft();S.ui.acct='draft';S.ui.view='start'}
   else if(anon&&(h==='registrieren'||h==='anmelden'||h==='passwort-vergessen'||!S.auth.demo)){
     // Anmelden und Registrieren sind eigene Seiten und beenden die Demo

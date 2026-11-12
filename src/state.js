@@ -134,7 +134,7 @@ export function saveState(){
 }
 export function resetState(){
   try{localStorage.removeItem(KEY)}catch{}
-  location.hash='#profil';location.reload();
+  location.hash='#wuensche';location.reload();
 }
 
 /** Person, deren Profil gerade als Gast geöffnet ist (Beispielprofile oder ein Konto aus diesem Browser). */

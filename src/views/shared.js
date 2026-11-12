@@ -3,7 +3,7 @@ import { ic, esc } from '../lib/util.js';
 import { V } from '../data/content.js';
 
 export function Header(v){
-  const items=[['profil','Profil'],['wuensche','Wünsche'],['historie','Historie'],['entdecken','Inspiration']];
+  const items=[['wuensche','Wünsche'],['entdecken','Inspiration'],['profil','Profil'],['historie','Historie']];
   return `<header class="hdr"><div class="wrap">
    <a class="mark" href="../" aria-label="wishtale, zur Startseite">wishtale<i></i></a>
    <nav class="nav" aria-label="Hauptnavigation">${items.map(([k,l])=>`<button class="${v===k?'on':''}" data-act="go" data-v="${k}">${l}</button>`).join('')}</nav>
@@ -11,7 +11,7 @@ export function Header(v){
   </div></header>`;
 }
 export function BottomNav(v){
-  const items=[['profil','user','Profil'],['wuensche','star','Wünsche'],['historie','clock','Historie'],['entdecken','spark','Inspiration']];
+  const items=[['wuensche','star','Wünsche'],['entdecken','spark','Inspiration'],['profil','user','Profil'],['historie','clock','Historie']];
   return `<nav class="btm" aria-label="Hauptnavigation">${items.map(([k,i,l])=>`<button class="${v===k?'on':''}" data-act="go" data-v="${k}">${ic(i)}${l}</button>`).join('')}</nav>`;
 }
 export const Legend=()=>`<div class="legend">${Object.values(V).map(x=>`<span>${ic(x.i,'sm')}${x.l}</span>`).join('')}</div>`;

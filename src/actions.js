@@ -117,7 +117,7 @@ const A={
   S.ui.step++;render(true)},prev(){S.ui.step--;render(true)},
  finish(){
   if(!S.auth.user){S.me.name=(S.me.name||'').trim();saveState();S.ui.step=0;location.hash='#registrieren';return}
-  toast('Geschafft! Dein Wishtale ist startklar.');location.hash='#profil'},
+  toast('Geschafft! Dein Wishtale ist startklar.');location.hash='#wuensche'},
  pedit(el){S.ui.editK=S.ui.editK===el.dataset.k?null:el.dataset.k;render()},
  edit(){S.ui.step=S.auth.user?1:0;location.hash='#start'},
  quick(){
@@ -413,7 +413,7 @@ document.addEventListener('submit',e=>{
     if(pw!==pw2){S.ui.authMsg={type:'error',text:'Die beiden Passwörter sind nicht gleich.'};render();return}
     S.ui.authBusy=true;S.ui.authMsg=null;render();
     setPassword(pw).then(({error})=>{S.ui.authBusy=false;if(error){S.ui.authMsg={type:'error',text:friendly(error)};render();return}
-      toast('Dein neues Passwort ist gespeichert.');location.hash='#profil'}).catch(e=>{S.ui.authBusy=false;S.ui.authMsg={type:'error',text:friendly(e)};render()});
+      toast('Dein neues Passwort ist gespeichert.');location.hash='#wuensche'}).catch(e=>{S.ui.authBusy=false;S.ui.authMsg={type:'error',text:friendly(e)};render()});
     return;
   }
   if(kind==='signin'||kind==='signup'||kind==='magic'){
