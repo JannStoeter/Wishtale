@@ -58,6 +58,7 @@ Stand: 2026-11-09
 | 063 | Amazon-Direktlink über Websuche | **Anweisung: nach Passt direkter Produktlink mit Partner-Kennung, Schwelle 85 Prozent** | ja, `0cd1891` |
 | 064 | Animation beim Prüfen | **Anweisung: Lupe, Glanz und Schritte beim Produktabgleich** | ja, `b4fd258` |
 | 065 | Vorschlag übernehmen | **Anweisung: Knopf Dieses Produkt übernehmen im Wunsch-Detail, mit Rückgängig** | ja, `19adc42` |
+| 066 | Abgleich mit Trefferzeilen | **Anweisung: Händler-Trefferzeilen als Beleg, Sets und Supportseiten ausgeschlossen** | ja, `3e975bc` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
