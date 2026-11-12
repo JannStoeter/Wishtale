@@ -1,7 +1,7 @@
 ---
 titel: Geführtes Onboarding zum Wiederaufrufen?
 art: entscheidung
-status: offen
+status: entschieden
 optionen: A=Checkliste „Erste Schritte“ auf der Wunschliste (erster Wunsch, Profil ergänzen, Link teilen, Kind-Konto oder Einladung), jederzeit wieder aufrufbar im Konto-Menü | B=Geführter Rundgang Schritt für Schritt mit gemeinsam angelegtem Wunsch | C=So lassen (Willkommens-Rundgang beim ersten Anmelden)
 erstellt: 2026-11-12
 von: jann

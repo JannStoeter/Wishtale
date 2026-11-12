@@ -50,6 +50,7 @@ Stand: 2026-11-09
 | 056 | Wunschliste wieder konkret, Amazon bei Shop-Links | **Anweisung: Tipp von Wishtale in der Zeile, Bei Amazon zu finden, Shop-Links zusätzlich mit Amazon** | ja, `1b75176` |
 | 057 | Produktbild von der Herstellerseite | **Anweisung: zuerst Hersteller- oder Shopseite per Websuche, dann Bildersuche; braucht den Brave-Schlüssel (027)** | ja, `f97b13c` |
 | 027 | Brave-Schlüssel setzen | **A: Schlüssel von Jann eingetragen, live geprüft (Tonies, Schlummerwal, AirPods)** | ja, `4b13088` |
+| 055 | Geführtes Onboarding | **A: Checkliste Erste Schritte, ausblendbar und wieder aufrufbar**, Claude (ChatGPT noch nicht gefragt) | ja, `de6e4ab` |
 | 058 | Bestimmtes Produkt ohne Link | **Anweisung: genauer Wunsch ohne Link ist das gewünschte Produkt, kein Vorschlag** | ja, `3516819` |
 | 059 | Vorschläge beim Thema, Kategorien | **Anweisung: keine fremden Wünsche als Vorschlag, Spielzeug & Basteln, Kategorie aus der Erkennung** | ja, `d349cdc` |
 | 060 | Landingpage: Höhen der Vorführung | **Anweisung: gleiche Höhe, alles auf dem ersten Bildschirm** | ja, `1e7da77` |
@@ -87,4 +88,3 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
-- 055 Geführtes Onboarding zum Wiederaufrufen? (Entscheidung, von Jann)
