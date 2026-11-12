@@ -16,7 +16,7 @@ import { findDupe } from './lib/dupes.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
-import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage, storeImage } from './lib/wishimg.js';
+import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage, storeImage, findAmazonLink } from './lib/wishimg.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishRec, draftKey, concrete, altPrice } from './views/wishprev.js';
 import { ZmRow } from './views/zettel.js';
@@ -143,11 +143,22 @@ function zettelMatch(){
 /** Nach dem Speichern: Bilder zu den genauer gemachten Wünschen im Hintergrund holen. */
 function zettelImages(list){
   list.forEach(async({w,cand})=>{
+    if(!w.link)findAmazonLink(cand.t).then(r=>{if(r&&!w.link){w.link=r.url;render()}}).catch(()=>{});
     try{const im=await fetchProductImage(cand.img||null,cand.img?undefined:(cand.q||cand.t));
       let url=im.preview,src=im.src||'';
       if(S.auth.user&&S.me.dbId&&im.blob){try{url=await storeImage(im.blob)}catch{return}}
       w.img=url;w.imgSrc=src;render()}catch{/* ohne Bild bleibt das Monogramm */}
   });
+}
+/** Nach „Passt“: direkten Amazon-Link zum Produkt suchen und, wenn das Link-Feld leer ist, eintragen (sichtbar und änderbar). */
+async function attachAmazon(cand){
+  const f=wform();if(!f||!f.elements.link||f.elements.link.value.trim()||!S.auth.user)return;
+  const st=document.getElementById('wlstat');
+  try{const r=await findAmazonLink(cand.t);
+    const ff=wform();if(!r||!ff||ff.elements.link.value.trim())return;
+    ff.elements.link.value=r.url;
+    if(st){st.textContent='Direkter Amazon-Link gefunden und angehängt: '+r.title+'. Du kannst ihn im Feld ändern oder löschen.';st.className='hint ok'}
+  }catch{/* ohne Link bleibt die Amazon-Suche */}
 }
 /** Übernimmt Name, Preis und Bild eines Kandidaten ins Formular (nur nach Klick). */
 function applyCand(cand){
@@ -316,7 +327,7 @@ async readlink(){
     say(`Link gelesen: ${summary(p)}. Der Preis kann sich ändern.${p.price&&p.currency&&p.currency!=='EUR'?' Der Preis steht nicht in Euro, bitte passe ihn an.':''}`);
   }catch(e){setRec({st:'none',msg:''});say(e.message||'Diese Seite konnten wir nicht lesen. Dein Wunsch und der Link bleiben trotzdem gespeichert.')}
  },
- wraccept(){const r=S.ui.wr;if(!r||!r.cand)return;applyCand(r.cand);r.accepted=true;drawRec()},
+ wraccept(){const r=S.ui.wr;if(!r||!r.cand)return;applyCand(r.cand);r.accepted=true;drawRec();if(r.cand.src!=='link')attachAmazon(r.cand)},
  wrreject(){
   const r=S.ui.wr,f=wform();if(!r||!f)return;
   const t=(f.elements.t.value.trim()||r.t||r.cand?.t||'').slice(0,120);
@@ -326,7 +337,7 @@ async readlink(){
  },
  wrpick(el){
   const r=S.ui.wr;if(!r)return;const i=+el.dataset.i,it=ideasOf(draftKey(r.t))[i];if(!it)return;
-  const cand={t:it.t,q:it.q,price:altPrice(it),est:true,src:'alt'};r.chosen=i;applyCand(cand);drawRec();
+  const cand={t:it.t,q:it.q,price:altPrice(it),est:true,src:'alt'};r.chosen=i;applyCand(cand);drawRec();attachAmazon(cand);
   const seq=r.seq;fetchProductImage(null,it.q||it.t).then(im=>{if(S.ui.wr?.seq===seq&&S.ui.wr.chosen===i)showWishImg({blob:im.blob,preview:im.preview,src:im.src})}).catch(()=>{});
  },
  wimgdel(){const f=document.querySelector('form[data-form=wish]');if(f&&f.elements.img)f.elements.img.value='';showWishImg({remove:true})},
@@ -422,7 +433,7 @@ document.addEventListener('change',async e=>{
   if(e.target.name!=='img'||!e.target.closest('form[data-form=wish]')||!e.target.files||!e.target.files[0])return;
   try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:'',manual:true})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
 });
-document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?.('form[data-form=wish]')&&!S.ui.editWish&&!e.target.dataset.skip)previewWish(e.target.value)});
+document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?.('form[data-form=wish]')&&!S.ui.editWish&&!e.target.dataset.skip){const v=e.target.value.trim().slice(0,120);if(S.ui.wr&&S.ui.wr.t===v&&S.ui.wr.st)return;previewWish(e.target.value)}}); // beim Verlassen des Feldes (zum Beispiel Klick auf „Passt“) nicht noch einmal suchen
 // Die Erkennung startet schon beim Tippen und Einfügen (nach kurzer Pause), nicht erst beim Verlassen des Feldes.
 let recT;
 // Ein Link im Namensfeld wandert von selbst ins Link-Feld und wird gelesen, ein Feld reicht für alles.

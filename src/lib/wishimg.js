@@ -70,3 +70,12 @@ export async function finalImage() {
   }
   return { img: wi.preview, src: wi.src || '', removed: false };
 }
+
+/** Direkter Amazon-Produktlink (mit Partner-Kennung) zu einem Produktnamen über die Websuche, oder null. */
+export async function findAmazonLink(query) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return null;
+  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ amazonQuery: String(query).slice(0, 120) }), signal: AbortSignal.timeout(12000) });
+  if (!r.ok) return null;
+  return (await r.json().catch(() => ({}))).amazon || null;
+}

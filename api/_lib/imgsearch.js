@@ -61,3 +61,34 @@ export async function searchOfficialImage(query, { fetchJson, read = inspect, lo
 export async function findProductImage(query, deps = {}) {
   return (await searchOfficialImage(query, deps).catch(() => null)) || searchImage(query, deps.images || {});
 }
+
+export const toks = t => String(t || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').split(/[^a-z0-9]+/).filter(w => w.length > 1 || /^\d$/.test(w));
+/** Anteil der Wörter des Wunsches, die der Titel der gefundenen Seite enthält (Zahlen müssen alle vorkommen). */
+export function overlap(wish, title) {
+  const a = toks(wish), b = new Set(toks(title));
+  if (!a.length) return 0;
+  if (a.filter(w => /^\d+$/.test(w)).some(w => !b.has(w))) return 0;
+  return a.filter(w => b.has(w)).length / a.length;
+}
+
+
+const ASIN = /\/(?:dp|gp\/product)\/([A-Z0-9]{10})(?:[/?]|$)/;
+const AMAZON_TAG = 'jannst-21'; // Partner-Kennung, muss mit src/lib/shops.js übereinstimmen
+
+/**
+ * Direkter Amazon-Produktlink über die Websuche: „<Produkt> amazon.de“, erster amazon.de-Treffer mit Produktnummer (ASIN), dessen
+ * Titel zum Wunsch passt. Wir lesen Amazon selbst nicht, nur die Titelzeile der Suchmaschine. Der Link bekommt die Partner-Kennung.
+ */
+export async function amazonDirect(query, { fetchJson } = {}) {
+  const q = clean(query);
+  const json = await webJson(q + ' amazon.de', { fetchJson });
+  for (const r of json?.web?.results || []) {
+    let u; try { u = new URL(r.url); } catch { continue; }
+    if (!/(^|\.)amazon\.de$/i.test(u.hostname)) continue;
+    const asin = (u.pathname + '/').match(ASIN)?.[1];
+    const title = String(r.title || '').replace(/^Amazon\.de\s*:\s*/i, '');
+    if (!asin || overlap(q, title) < 0.7) continue;
+    return { asin, title: title.slice(0, 90), url: `https://www.amazon.de/dp/${asin}?tag=${AMAZON_TAG}` };
+  }
+  return null;
+}
