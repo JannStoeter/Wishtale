@@ -21,10 +21,10 @@ function Offer(pr, w, ctx, role) {
   const amazon = pr.host === 'amazon.de' || pr.host.endsWith('.amazon.de');
   const label = amazon ? (pr.direct ? 'Bei Amazon ansehen' : 'Bei Amazon suchen') : `Zu ${esc(pr.host)}`;
   const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === pr.t;
-  return `<div class="offer ${role === 'main' ? 'main' : ''} ${pr.source === 'link' ? '' : 'suggest'} ${chosen ? 'chosen' : ''}">
-   ${role === 'main' && pr.source === 'link' && w.img ? `<span class="otn"><img src="${w.img}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></span>` : pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
+  return `<div class="offer ${role === 'main' ? 'main' : ''} ${pr.source === 'link' || (pr.source === 'erzeugt' && isSpecific(w) && w.kind === 'produkt') ? '' : 'suggest'} ${chosen ? 'chosen' : ''}">
+   ${role === 'main' && (pr.source === 'link' || pr.source === 'erzeugt') && w.img ? `<span class="otn"><img src="${w.img}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></span>` : pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
    <div class="obody">
-    <span class="eyebrow">${pr.source === 'link' ? 'Gewünschtes Produkt' : pr.source === 'amz' ? 'Preise bei Amazon vergleichen' : pr.source === 'erzeugt' ? 'Suche nach genau diesem Wunsch' : role === 'main' ? 'Vorschlag von Wishtale' : 'Vorschlag'}</span>
+    <span class="eyebrow">${pr.source === 'link' ? 'Gewünschtes Produkt' : pr.source === 'amz' ? 'Preise bei Amazon vergleichen' : pr.source === 'erzeugt' ? (isSpecific(w) && w.kind === 'produkt' ? 'Gewünschtes Produkt, bei Amazon' : 'Suche nach genau diesem Wunsch') : role === 'main' ? 'Vorschlag von Wishtale' : 'Vorschlag'}</span>
     <strong class="ot">${esc(pr.t)}</strong>
     ${priceLine(pr)}
     ${(pr.why || []).slice(0, 2).map(t => `<span class="why">${esc(t)}</span>`).join('')}
@@ -54,6 +54,7 @@ function AiVariants(w, ctx) {
 
 /** Macht klar, was ein Vorschlag von Wishtale ist und was ein Wunsch der Person selbst. */
 function Suggest(p, w, o, ctx) {
+  if (isSpecific(w) && !w.link && w.kind === 'produkt') return ''; // bestimmtes Produkt ohne Link (zum Beispiel eingelesener Amazon-Titel): kein Vorschlag, die Karte darunter ist der Wunsch selbst
   const suggested = o.main ? o.main.source !== 'link' : o.alts.length > 0;
   if (!suggested) return '';
   const crit = criteriaText(w);

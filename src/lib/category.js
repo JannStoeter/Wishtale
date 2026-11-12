@@ -1,5 +1,6 @@
 /* Ordnet einen Produkttitel einer Kategorie zu. Reihenfolge zählt: „iPhone-Hülle“ soll Technik sein, nicht Mode oder Wohnen. */
 const RULES = [
+  ['spielen', /\btonies?\b|toniebox|hörfigur|tiptoi|duplo|schleich|kinderlieder|spielfigur/i],
   ['technik', /iphone|ipad|macbook|airpods|samsung galaxy|smartphone|handy|handyhülle|hülle für|kopfhörer|ladekabel|ladegerät|powerbank|usb|bluetooth|lautsprecher|speaker|laptop|tablet|e-?reader|kindle|smartwatch|kamera|gopro|monitor|tastatur|computermaus|webcam|router|drohne|konsole|playstation|nintendo|\bhdmi\b/i],
   ['genuss', /kaffee|espresso|barista|kaffeewaage|handmühle|kaffeemühle|wasserkocher|french press|aeropress|\btee\b|teekanne|wein|whisky|gin\b|schokolade|gewürz|bier|olivenöl|feinkost/i],
   ['kochen', /pfanne|topf|messer|küchen|bräter|backform|backen|kochbuch|mixer|airfryer|auflauf|schneidebrett|reibe|kochen|pfannenwender|thermomix|nudel|dutch oven/i],
