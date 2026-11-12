@@ -3,6 +3,7 @@
  * damit sie für jede Person passt. Reihenfolge: Interesse, Gewohnheit, Marken, Wünsche, Vorhandenes, Überleitung.
  */
 import { ACT } from '../data/content.js';
+import { WORLDS } from './flags.js';
 
 const WORLD_TAGS = {
   genuss: ['kaffee', 'tee'], kochen: ['kochen'], wohnen: ['wohnen', 'garten', 'keramik'], buecher: ['lesen', 'vorlesen'],
@@ -64,7 +65,7 @@ export function completeness(a) {
   const steps = [
     [15, !!(a.about && a.about.trim().length > 20), 'Erzähl in ein paar Sätzen etwas über dich.'],
     [15, a.interests.length >= 3, 'Such dir mindestens drei Interessen aus, die zu dir passen.'],
-    [10, a.cats.length >= 3, 'Wähle ein paar Welten, in denen du dich zuhause fühlst.'],
+    ...(WORLDS ? [[10, a.cats.length >= 3, 'Wähle ein paar Welten, in denen du dich zuhause fühlst.']] : []),
     [10, a.brands.length >= 3, 'Verrate uns ein paar Lieblingsmarken.'],
     [10, a.nogos.length >= 1, 'Sag uns, was du lieber nicht geschenkt bekommen möchtest.'],
     [5, a.tries.length >= 1, 'Überlege, was du gern einmal ausprobieren würdest.'],
@@ -73,7 +74,8 @@ export function completeness(a) {
     [10, owned >= 3, 'Trag ein paar Dinge ein, die du schon hast.'],
     [5, a.history.length >= 1, 'Erzähl uns von einem Geschenk, das du schon bekommen hast.'],
   ];
-  const pct = steps.reduce((s, [pts, ok]) => s + (ok ? pts : 0), 0);
+  const max = steps.reduce((s, [pts]) => s + pts, 0);
+  const pct = Math.round(steps.reduce((s, [pts, ok]) => s + (ok ? pts : 0), 0) * 100 / max);
   return { pct, next: steps.filter(([, ok]) => !ok).map(([, , t]) => t) };
 }
 

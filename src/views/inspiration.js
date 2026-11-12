@@ -1,4 +1,5 @@
 import { S } from '../state.js';
+import { WORLDS } from '../lib/flags.js';
 import { esc, ic } from '../lib/util.js';
 import { thinProfile } from '../lib/tale.js';
 import { art, artIllu } from '../lib/art.js';
@@ -54,7 +55,7 @@ export function AppPromo(){
   const act=ACT[c.app_cta_action];
   const byId=new Map(P.products.map(p=>[p.id,p]));
   const own=(c.product_ids||[]).map(i=>byId.get(i)).filter(Boolean).slice(0,2);
-  const auto=own.length?[]:promoOffers(S.me,2);
+  const auto=own.length||!WORLDS?[]:promoOffers(S.me,2);
   const mine=new Set(S.me.wishes.map(w=>w.t.toLowerCase()));
   return `<section class="promocard" aria-label="Aktion"><div class="pc-top"><p class="eyebrow">Aktion</p><button class="linkbtn" data-act="promohide" data-id="${esc(c.id)}" aria-label="Aktion ausblenden">Ausblenden</button></div>
    <h2 class="pc-h">${esc(head)}</h2>${body?`<p class="muted pc-b">${esc(body)}</p>`:''}
@@ -89,7 +90,7 @@ export function Entdecken(){
   const ids=m.cats.length?m.cats:CATS.slice(0,4).map(c=>c.id);
   const mine=new Set(m.wishes.map(w=>w.t.toLowerCase()));
   const st=m.handle&&S.auth.user?aiStatus(skey(m.handle)):'none';
-  const useCatalog=st==='empty'||st==='none';   // Katalog nur, wenn die KI nichts liefert, nie währenddessen
+  const useCatalog=WORLDS&&(st==='empty'||st==='none');   // Katalog nur, wenn die KI nichts liefert, nie währenddessen
   const secs=(useCatalog?ids:[]).map(id=>{
     const c=cat(id),list=worldOffers(m,id,3);
     if(!list.length)return '';
@@ -99,8 +100,8 @@ export function Entdecken(){
     </section>`;
   }).filter(Boolean);
   return `<div class="wrap">
-   <div class="pagehead"><p class="eyebrow">Inspiration</p><h1>Ideen aus deinen Welten</h1>
-    <p class="muted" style="max-width:620px">${m.cats.length?'Wir haben für jede deiner Welten ein paar Dinge herausgesucht, die zu deinen Interessen und Marken passen. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.':'Sobald du in deinem Profil ein paar Welten auswählst, schlagen wir dir hier passende Dinge vor. Bis dahin findest du ein paar Anregungen aus beliebten Bereichen.'}</p></div>
+   <div class="pagehead"><p class="eyebrow">Inspiration</p><h1>${WORLDS?'Ideen aus deinen Welten':'Ideen für dich'}</h1>
+    <p class="muted" style="max-width:620px">${WORLDS?(m.cats.length?'Wir haben für jede deiner Welten ein paar Dinge herausgesucht, die zu deinen Interessen und Marken passen. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.':'Sobald du in deinem Profil ein paar Welten auswählst, schlagen wir dir hier passende Dinge vor. Bis dahin findest du ein paar Anregungen aus beliebten Bereichen.'):'Wishtale sucht Ideen, die zu deinen Interessen, Marken und Wünschen passen. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.'}</p></div>
    ${Promo()}
    ${m.handle&&S.auth.user?PriceFilter():''}
    ${AiSelf()}
