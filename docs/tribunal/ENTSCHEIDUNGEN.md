@@ -60,6 +60,7 @@ Stand: 2026-11-09
 | 065 | Vorschlag übernehmen | **Anweisung: Knopf Dieses Produkt übernehmen im Wunsch-Detail, mit Rückgängig** | ja, `19adc42` |
 | 066 | Abgleich mit Trefferzeilen | **Anweisung: Händler-Trefferzeilen als Beleg, Sets und Supportseiten ausgeschlossen** | ja, `3e975bc` |
 | 067 | Fehlerbehebung Keine Vorschläge, Kachelpreis, Priorität | **Anweisung: Amazon-Produkt bleibt, Preis in Kacheln, Wichtigkeit per Auswahl, Sehr wichtig** | ja, `09c6740` |
+| 068 | Amazon-Direktlink bei englischen Titeln | **Anweisung: Modellauswahl unter den Amazon-Treffern, Knopf für bestehende Wünsche** | ja, `e4b1709` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
