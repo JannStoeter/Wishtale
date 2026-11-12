@@ -45,6 +45,7 @@ Stand: 2026-11-09
 | 050 | Startseite nach der Anmeldung | **C: Start auf Wünsche, Reiter Wünsche, Inspiration, Profil, Historie**, Claude und ChatGPT einig. | ja, `7de0085` |
 | 051 | Vorschau auf der Wunschseite | **Anweisung: Umschalter „So sehen Schenkende es“ auch auf der Wunschseite** | ja, `6d07a2f` |
 | 052 | Testlauf: Ladezeit und Handhabung | **Anweisung: KI ohne langes Nachdenken, Server in London, Vorladen; 15 Handhabungsbefunde behoben** | ja, `f3e994c` |
+| 053 | Wunsch-Dialog: Erkennung | **Anweisung: vage Hinweis, konkret eine Karte mit Passt/Nicht das Richtige, danach klickbare Alternativen; Schwelle 0,75** | ja, `2a439a9` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
