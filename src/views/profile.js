@@ -2,7 +2,7 @@ import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
 import { art } from '../lib/art.js';
 import { ACT, CATS, BRANDS, TRIES, NOGOS, ALTS, KID_CATS, KID_OPTS, cat, crea } from '../data/content.js';
-import { VisPill, Legend } from './shared.js';
+import { VisPill } from './shared.js';
 import { GuestPage } from './giver.js';
 import { ViewSeg, PreviewBanner } from './wishes.js';
 import { completeness } from '../lib/tale.js';
@@ -77,26 +77,26 @@ export function Profil(){
     const vk=m.vis[k]||'giver';
     if(pv&&vk==='privat')return '';
     const st=STEPS.find(x=>x.k===k),ed=!pv&&st&&S.ui.editK===k;
-    const btn=!pv&&st?`<button class="linkbtn" data-act="pedit" data-k="${k}">${ed?'Fertig':'Ändern'}</button>`:'';
-    return `<section class="psec"><div class="hd"><h3 aria-level="2">${title}</h3><span class="row" style="gap:10px">${btn}${VisPill(vk,pv?null:k)}</span></div>${ed?Picker(st):inner}</section>`;
+    const btn=!pv&&st?`<button class="iconbtn" data-act="pedit" data-k="${k}" aria-label="${esc(title)} ${ed?'fertig':'ändern'}">${ed?ic('check','sm'):'<span aria-hidden="true">✎</span>'}</button>`:'';
+    const empty=!ed&&inner==='';
+    return `<section class="psec cmp"><div class="hd"><h3 aria-level="2">${title}</h3><span class="row" style="gap:6px">${btn}${VisPill(vk,pv?null:k)}</span></div>${ed?Picker(st):empty&&st?`<button class="addchip" data-act="pedit" data-k="${k}">${ic('plus','sm')}Hinzufügen</button>`:inner}</section>`;
   };
-  const chips=(a,cls='')=>a.length?`<div class="chips">${a.map(x=>`<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div>`:'<p class="muted">Noch nichts hinterlegt.</p>';
-  const line=`${esc(m.name)} ${m.interests.length?`liebt ${m.interests.slice(0,3).map(esc).join(', ')}`:'hat noch keine Interessen hinterlegt'}. ${m.nogos.length?`Lieber nichts mit ${m.nogos.slice(0,2).map(esc).join(' oder ')}.`:''} ${m.alts.length?`Wenn die Idee fehlt: ${esc(m.alts[0])}.`:''}`;
+  const chips=(a,cls='')=>a.length?`<div class="chips">${a.map(x=>`<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div>`:'';
   return `<div class="wrap">
    ${pv?'':AppPromo()}
-   ${pv?'':`   <div class="pcard"><span class="av t${m.tone}">${initials(m.name)}</span>
-    <div><p class="eyebrow" style="color:#B8C4A8">Wishtale</p><h1>${esc(m.name)}</h1><p style="margin-top:8px">${m.about&&m.about.trim()?esc(m.about):line}</p>${m.about&&m.about.trim()?'':`<a class="linkbtn" href="#about" data-act="focusabout" style="color:var(--accent-ink);margin-top:6px;display:inline-block">Ein paar Sätze über dich schreiben</a>`}</div>
-    <div class="row" style="gap:8px"><button class="btn gold sm" data-act="share">Link teilen</button>${S.auth.user&&!m.managed?`<button class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" data-act="inviteopen">Jemanden einladen</button>`:''}${m.handle?`<a class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" href="#p/${m.handle}" target="_blank" rel="noopener">Als Gast ansehen</a>`:''}</div></div>`}
+   ${pv?'':`   <div class="pcard slim"><span class="av t${m.tone}">${initials(m.name)}</span>
+    <div class="pc-main"><h1>${esc(m.name)}</h1>${m.about&&m.about.trim()?`<p class="pc-about">${esc(m.about)}</p>`:m.interests.length?`<p class="pc-about">${esc(m.name)} liebt ${m.interests.slice(0,3).map(esc).join(', ')}.</p>`:`<a class="pc-add" href="#about" data-act="focusabout">+ Ein paar Sätze über dich</a>`}</div>
+    <div class="pc-acts"><button class="btn gold sm" data-act="share">Link teilen</button>${S.auth.user&&!m.managed?`<button class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" data-act="inviteopen">Einladen</button>`:''}</div></div>`}
    <div class="row" style="margin:18px 0 4px;justify-content:space-between">
      ${ViewSeg()}
    </div>
-   ${pv?PreviewBanner():`<p class="muted" style="font-size:14px;margin-top:8px">Du entscheidest selbst, wer was sieht. Tippe einfach auf die Sichtbarkeit neben einem Bereich, um sie zu ändern.</p>`}
+   ${pv?PreviewBanner():''}
    ${pv?GuestPage(m,{preview:true}):`
    ${Meter(m)}
    ${m.managed?MgPanel(m):''}
    ${AboutSec(m)}
    ${sec('interests','Interessen',chips(m.interests))}
-   ${sec('cats','Welten',`<div class="catrow">${m.cats.map(id=>{const c=cat(id);return `<button class="catmini" data-act="world" data-id="${c.id}" data-ctx="own" aria-label="Welt ${c.n} öffnen">${art(c.a,c.t)}<div>${c.n}</div></button>`}).join('')||'<p class="muted">Noch nichts hinterlegt.</p>'}</div>`)}
+   ${sec('cats','Welten',`<div class="catrow">${m.cats.map(id=>{const c=cat(id);return `<button class="catmini" data-act="world" data-id="${c.id}" data-ctx="own" aria-label="Welt ${c.n} öffnen">${art(c.a,c.t)}<div>${c.n}</div></button>`}).join('')}</div>`.replace('<div class="catrow"></div>',''))}
    ${(m.style||[]).length?sec('style','Im Notfall',`<div class="chips">${m.style.map(x=>`<button class="chip gold" data-act="creator" data-id="${x.id}" data-go="1">${esc(crea(x.id).scope)} von ${esc(crea(x.id).handle)}</button>`).join('')}</div><p class="muted" style="font-size:14px">Wenn deinen Freunden nichts Konkretes einfällt, können sie sich an diesen Listen orientieren.</p>`):''}
    ${sec('brands','Lieblingsmarken',chips(m.brands))}
    ${sec('tries','Möchte ich ausprobieren',chips(m.tries,'gold'))}
@@ -104,15 +104,14 @@ export function Profil(){
    ${sec('alts','Alternativen, wenn keine Idee passt',chips(m.alts,'ok'))}
    ${OwnedSec(m)}
    ${SocialSec(m)}
-   <section class="psec"><div class="hd"><h3 aria-level="2">Dein Feedback</h3>${VisPill('nur')}</div><p class="muted">Wie dir ein Geschenk wirklich gefallen hat, bleibt unter uns. Wer dir etwas geschenkt hat, bekommt höchstens eine freundliche Nachricht.</p></section>
-   ${Legend()}`}
+  `}
   </div>`;
 }
 
 function AboutSec(m){
-  return `<section class="psec"><div class="hd"><h3 aria-level="2">Über mich</h3>${VisPill('alle')}</div>
+  return `<section class="psec cmp"><div class="hd"><h3 aria-level="2">Über mich</h3>${VisPill('alle')}</div>
    ${m.managed?'':`<div class="fld"><label for="pname">Dein Vorname</label><input id="pname" class="inp" data-prof="name" value="${esc(m.name)}" maxlength="60" autocomplete="given-name"></div>`}
-   <label for="about" class="muted" style="font-size:14px">Erzähl in ein paar Sätzen etwas über dich. Deine Freunde lesen das als Erstes, wenn sie etwas für dich suchen, und bekommen so ein Gefühl dafür, was dir gefällt.</label>
+   <label for="about" class="muted" style="font-size:14px">Ein paar Sätze über dich, das lesen deine Freunde zuerst.</label>
    <textarea id="about" class="ta" data-prof="about" maxlength="320" placeholder="z. B. Ich koche gern für Freunde, trinke meinen Kaffee selbst gebrüht und richte meine Wohnung Stück für Stück ein.">${esc(m.about||'')}</textarea></section>`;
 }
 
@@ -121,27 +120,26 @@ function Meter(m){
   const c=completeness(m);
   return `<section class="meter" aria-label="Wie gut kennen wir dich"><div class="row" style="justify-content:space-between;gap:10px"><strong>Dein Wishtale ist zu ${c.pct} % fertig</strong><span class="muted" style="font-size:13px">${c.pct>=80?'Das sieht richtig gut aus':c.pct>=50?'Ein schöner Anfang':'Da geht noch einiges'}</span></div>
    <div class="bar" role="progressbar" aria-label="Fortschritt deines Wishtale" aria-valuenow="${c.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${c.pct}%"></i></div>
-   <p class="muted" style="font-size:13.5px">Je besser wir dich kennen, desto treffender können wir deinen Freunden passende Ideen zeigen.${c.next.length?` Ein guter nächster Schritt: <b>${esc(c.next[0])}</b>`:''}</p></section>`;
+   ${c.next.length?`<p class="muted" style="font-size:13.5px">Als Nächstes: <b>${esc(c.next[0])}</b></p>`:''}</section>`;
 }
 
 /* Produkte, die man schon hat. Sie fließen in die Empfehlungen ein, damit nichts doppelt gekauft wird. */
 function OwnedSec(m){
   const owned=m.wishes.filter(w=>w.status==='selbst');
-  return `<section class="psec"><div class="hd"><h3 aria-level="2">Das habe ich schon</h3>${VisPill('alle')}</div>
-   <p class="muted" style="font-size:14px">Was steht bei dir zu Hause schon im Schrank? Trag es hier ein, zum Beispiel eine Siebträgermaschine. Dann schlagen wir dir und deinen Freunden nichts vor, was du bereits hast.</p>
+  return `<details class="psec cmp fold2" ${owned.length?'open':''}><summary class="hd"><h3 aria-level="2">Das habe ich schon</h3></summary><div class="row" style="justify-content:flex-end">${VisPill('alle')}</div>
+   <p class="muted" style="font-size:14px">Dafür schlagen wir nichts mehr vor.</p>
    ${owned.length?`<div class="chips">${owned.map(w=>`<span class="chip ok">${esc(w.t)}<button class="chipx" data-act="ownedel" data-id="${w.id}" aria-label="${esc(w.t)} entfernen">×</button></span>`).join('')}</div>`:''}
-   <form data-form="owned" class="addrow"><label for="ownedt" style="position:absolute;left:-9999px">Was hast du schon?</label><input id="ownedt" name="t" class="inp" placeholder="z. B. Siebträgermaschine, Wanderrucksack" autocomplete="off" maxlength="120"><button class="btn sec sm" type="submit">${ic('plus','sm')}Hinzufügen</button></form></section>`;
+   <form data-form="owned" class="addrow"><label for="ownedt" style="position:absolute;left:-9999px">Was hast du schon?</label><input id="ownedt" name="t" class="inp" placeholder="z. B. Siebträgermaschine, Wanderrucksack" autocomplete="off" maxlength="120"><button class="btn sec sm" type="submit">${ic('plus','sm')}Hinzufügen</button></form></details>`;
 }
 
 /* Pinterest und Instagram verlinken. Freunde sehen auf der Profilseite, was dich inspiriert. */
 function SocialSec(m){
   const s=m.social||{};
-  return `<section class="psec"><div class="hd"><h3 aria-level="2">Was dich inspiriert</h3>${VisPill((m.vis&&m.vis.social)||'giver','social')}</div>
-   <p class="muted" style="font-size:14px">Wenn du magst, verlinkst du hier dein Pinterest oder dein Instagram. Deine Freunde können sich dort umsehen und bekommen ein Gefühl für deinen Geschmack, ohne selbst ein Konto zu brauchen. Bei Pinterest zeigen wir ihnen deine Pins sogar direkt hier an.</p>
+  return `<details class="psec cmp fold2" ${(s.pinterest||s.instagram)?'open':''}><summary class="hd"><h3 aria-level="2">Was dich inspiriert</h3></summary><div class="row" style="justify-content:flex-end">${VisPill((m.vis&&m.vis.social)||'giver','social')}</div>
+   <p class="muted" style="font-size:14px">Pinterest oder Instagram verlinken: Freunde sehen, was dir gefällt.</p>
    <form data-form="social" class="authform">
     <div class="fld"><label for="sp">Pinterest (dein Profil oder ein Board)</label><input id="sp" name="pinterest" class="inp" inputmode="url" autocomplete="off" placeholder="z. B. pinterest.de/dein-name/kaffee-ecke" value="${esc(s.pinterest||'')}"></div>
     <div class="fld"><label for="si">Instagram (dein Name)</label><input id="si" name="instagram" class="inp" autocomplete="off" placeholder="@dein-name" value="${esc(s.instagram||'')}"></div>
-    <p class="hint" style="margin:0">Wird gespeichert, sobald du das Feld verlässt, wie alles andere im Profil.</p>
    </form>
-   <p class="disc" style="margin:0">Pins werden erst angezeigt, wenn deine Freunde dem Laden der Pinterest-Inhalte zustimmen. Einen Instagram-Kanal können wir nur verlinken, weil Instagram keine Einbettung ganzer Profile erlaubt.</p></section>`;
+   <p class="disc" style="margin:0">Pins erscheinen erst, wenn deine Freunde dem Laden der Pinterest-Inhalte zustimmen.</p></details>`;
 }

@@ -461,6 +461,7 @@ document.addEventListener('change',async e=>{
 });
 document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?.('form[data-form=wish]')&&!S.ui.editWish&&!e.target.dataset.skip){const v=e.target.value.trim().slice(0,120);if(S.ui.wr&&S.ui.wr.t===v&&S.ui.wr.st)return;previewWish(e.target.value)}}); // beim Verlassen des Feldes (zum Beispiel Klick auf „Passt“) nicht noch einmal suchen
 // Die Erkennung startet schon beim Tippen und Einfügen (nach kurzer Pause), nicht erst beim Verlassen des Feldes.
+document.addEventListener('toggle',e=>{if(e.target.classList?.contains('fsteps'))S.ui.stepsOpen=e.target.open},true);
 let recT;
 // Ein Link im Namensfeld wandert von selbst ins Link-Feld und wird gelesen, ein Feld reicht für alles.
 document.addEventListener('input',e=>{const t=e.target;if(t.name!=='t'||!t.closest?.('form[data-form=wish]')||S.ui.editWish)return;const v=t.value.trim();if(/^https?:\/\/\S+$/i.test(v)){const f=wform();if(f&&f.elements.link&&!f.elements.link.value.trim()){f.elements.link.value=v;t.value='';t.dataset.moved='1';clearTimeout(recT);A.readlink()}}});
@@ -626,6 +627,7 @@ document.addEventListener('submit',e=>{
     S.me.history.unshift({id:nid('h'),what,from:fd.get('from').trim(),when:`${MONTHS[+mo-1]} ${y}`,liked:fd.get('liked'),have:fd.get('have')==='1',again:fd.get('again')==='1',a:'gift',tone:S.me.history.length%6,kw:kwOf(what)});
     S.ui.modal=null;toast('Das Geschenk ist eingetragen.');render();
   }
+  if(kind==='firstwish'){const t=String(fd.get('t')||'').trim().slice(0,120);S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.prefill=t;S.ui.modal='wish';render();setTimeout(()=>{S.ui.prefill=''},300);setTimeout(()=>{const f=wform();if(f&&t){f.elements.t.value=t;previewWish(t)}document.getElementById(t?'wl':'wt')?.focus({preventScroll:true})},60);return}
   if(kind==='wish'){
     // Doppelt? Einmal freundlich hinweisen, beim zweiten Klick trotzdem speichern.
     const dup=findDupe(S.me.wishes,{t:(fd.get('t')||'').trim(),link:(fd.get('link')||'').trim()},S.ui.editWish);

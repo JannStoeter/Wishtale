@@ -15,7 +15,7 @@ export function BottomNav(v){
   return `<nav class="btm" aria-label="Hauptnavigation">${items.map(([k,i,l])=>`<button class="${v===k?'on':''}" data-act="go" data-v="${k}">${ic(i)}${l}</button>`).join('')}</nav>`;
 }
 export const Legend=()=>`<div class="legend">${[V.alle,V.privat].map(x=>`<span>${ic(x.i,'sm')}${x.l}</span>`).join('')}<span>Tippe auf das Zeichen neben einem Abschnitt, um die Sichtbarkeit zu ändern.</span></div>`;
-export const VisPill=(k,btn)=>{const x=V[k];return btn?`<button class="pill pillbtn" data-act="vis" data-k="${btn}" title="Sichtbarkeit ändern" aria-label="Sichtbarkeit: ${x.l}, ändern">${ic(x.i,'sm')}${x.l}<i aria-hidden="true">▾</i></button>`:`<span class="pill">${ic(x.i,'sm')}${x.l}</span>`};
+export const VisPill=(k,btn)=>{const x=V[k];return btn?`<button class="pill pillbtn" data-act="vis" data-k="${btn}" title="Sichtbarkeit ändern" aria-label="Sichtbarkeit: ${x.l}, ändern">${ic(x.i,'sm')}<span class="vl">${x.l}</span><i aria-hidden="true">▾</i></button>`:`<span class="pill">${ic(x.i,'sm')}<span class="vl">${x.l}</span></span>`};
 
 
 /* Kopfzeile für Gäste: nur Logo und der Einstieg in ein eigenes Wishtale. */

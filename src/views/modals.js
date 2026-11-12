@@ -73,7 +73,7 @@ export function Modal(){
   if(m==='wish'){const ed=!!S.ui.editWish,more=ed&&(d.note||d.img||d.vis==='privat'||d.noSuggest||d.status==='plan'||(d.prio&&d.prio!==2));return `<div class="scrim" data-act="closebg"><div class="sheet wishsheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <div class="sheet-head"><h2 id="mt">${ed?'Wunsch bearbeiten':'Neuer Wunsch'}</h2><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
    <form data-form="wish">
-    <div class="fld"><label for="wt" class="lf-t">Was wünschst du dir?</label><input id="wt" name="t" class="inp big" required placeholder="Produkt, Erlebnis oder Idee, auch ein kopierter Titel oder Link" autocomplete="off" value="${esc(d.t||'')}"></div>
+    <div class="fld"><label for="wt" class="lf-t">Was wünschst du dir?</label><input id="wt" name="t" class="inp big" required placeholder="Produkt, Erlebnis oder Idee, auch ein kopierter Titel oder Link" autocomplete="off" value="${esc(d.t||S.ui.prefill||'')}"></div>
     <div id="wprev" aria-live="polite">${ed?'':WishRec()}</div>
     <div class="fld linkfirst"><label for="wl">Link zum Produkt <span class="muted" style="font-weight:400">(optional)</span></label>
      <div class="lf-row"><input id="wl" name="link" class="inp" placeholder="Link zu einem Shop einfügen" autocomplete="off" value="${esc(d.link||'')}"><button type="button" class="btn sec" data-act="readlink">Einlesen</button></div>

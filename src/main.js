@@ -7,7 +7,6 @@ import { S } from './state.js';
 import { sb } from './lib/supabase.js';
 import { enter, adoptDraft } from './lib/auth.js';
 import { toast } from './lib/util.js';
-import { maybeWelcome } from './views/welcome.js';
 import { adoptInvite } from './lib/invite.js';
 import { route, render } from './render.js';
 import './actions.js';
@@ -45,7 +44,7 @@ async function boot(){
   if(!session)await loadGiven().catch(()=>{});
   window.addEventListener('hashchange',route);
   route();
-  if(session)setTimeout(maybeWelcome,1200);
+  /* Kein Willkommens-Rundgang mehr: Der erste Bildschirm ist die Wunschliste mit einem Feld (Feedback der ersten Testerinnen). */
   loadPromo().then(p=>{S.promo=p;if(['entdecken','gast','profil','wuensche'].includes(S.ui.view)&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()});
 
   sb.auth.onAuthStateChange((event,sess)=>{
@@ -64,7 +63,6 @@ async function boot(){
         else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);
         else if(adopted)toast('Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
         else if(waiting)toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.');
-        if(adopted!=='quick')setTimeout(maybeWelcome,1500);
       }else if(event==='SIGNED_OUT'&&S.auth.user){
         S.auth.user=null;location.hash='#anmelden';location.reload();
       }
