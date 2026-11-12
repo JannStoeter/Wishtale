@@ -49,6 +49,7 @@ Stand: 2026-11-09
 | 054 | Leere Profile, Leerzustand, Start, Igel im Detail | **Anweisung: freundlicher Hinweis bei dünnem Profil, einladender Leerzustand, Start auf der Wunschliste, exakte Suche zuerst** | ja, `e64e636` |
 | 056 | Wunschliste wieder konkret, Amazon bei Shop-Links | **Anweisung: Tipp von Wishtale in der Zeile, Bei Amazon zu finden, Shop-Links zusätzlich mit Amazon** | ja, `1b75176` |
 | 057 | Produktbild von der Herstellerseite | **Anweisung: zuerst Hersteller- oder Shopseite per Websuche, dann Bildersuche; braucht den Brave-Schlüssel (027)** | ja, `f97b13c` |
+| 027 | Brave-Schlüssel setzen | **A: Schlüssel von Jann eingetragen, live geprüft (Tonies, Schlummerwal, AirPods)** | ja, `4b13088` |
 | 058 | Bestimmtes Produkt ohne Link | **Anweisung: genauer Wunsch ohne Link ist das gewünschte Produkt, kein Vorschlag** | ja, `3516819` |
 | 059 | Vorschläge beim Thema, Kategorien | **Anweisung: keine fremden Wünsche als Vorschlag, Spielzeug & Basteln, Kategorie aus der Erkennung** | ja, `d349cdc` |
 
@@ -74,7 +75,6 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 021 Soll Wishtale aus Rückmeldungen von Gästen lernen? (Entscheidung)
 - 022 Vielfalt der KI-Ideen schärfen (Aufgabe)
 - 025 Woher kommen Bilder, wenn die Shopseite keins liefert (Amazon, idealo)? (Entscheidung)
-- 027 Brave-Suchschlüssel setzen, sobald die Kosten es erlauben (Aufgabe, von Jann)
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)

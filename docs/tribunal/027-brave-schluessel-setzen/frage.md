@@ -1,7 +1,7 @@
 ---
 titel: Brave-Suchschlüssel setzen, sobald die Kosten es erlauben (Bildsuche aktivieren)
 art: aufgabe
-status: offen
+status: entschieden
 optionen: A=Schlüssel setzen, sobald Nutzung oder Einnahmen es tragen | B=Bildsuche ganz zurücknehmen und auf Awin-Feeds oder die Amazon-Schnittstelle warten
 erstellt: 2026-11-09
 von: jann
