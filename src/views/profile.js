@@ -75,8 +75,8 @@ export function Profil(){
   return `<div class="wrap">
    ${pv?'':AppPromo()}
    ${pv?'':`   <div class="pcard"><span class="av t${m.tone}">${initials(m.name)}</span>
-    <div><p class="eyebrow" style="color:#B8C4A8">Wishtale</p><h1>${esc(m.name)}</h1><p style="margin-top:8px">${line}</p></div>
-    <div class="row" style="gap:8px"><button class="btn gold sm" data-act="share">Link teilen</button>${S.auth.user&&!m.managed?`<button class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" data-act="inviteopen">Jemanden einladen</button>`:''}${m.handle?`<a class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" href="#p/${m.handle}" target="_blank" rel="noopener">Als Gast ansehen</a>`:''}<button class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" data-act="edit">Bearbeiten</button></div></div>`}
+    <div><p class="eyebrow" style="color:#B8C4A8">Wishtale</p><h1>${esc(m.name)}</h1><p style="margin-top:8px">${m.about&&m.about.trim()?esc(m.about):line}</p>${m.about&&m.about.trim()?'':`<a class="linkbtn" href="#about" data-act="focusabout" style="color:var(--accent-ink);margin-top:6px;display:inline-block">Ein paar Sätze über dich schreiben</a>`}</div>
+    <div class="row" style="gap:8px"><button class="btn gold sm" data-act="share">Link teilen</button>${S.auth.user&&!m.managed?`<button class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" data-act="inviteopen">Jemanden einladen</button>`:''}${m.handle?`<a class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" href="#p/${m.handle}" target="_blank" rel="noopener">Als Gast ansehen</a>`:''}</div></div>`}
    <div class="row" style="margin:18px 0 4px;justify-content:space-between">
      ${ViewSeg()}
    </div>
@@ -131,7 +131,7 @@ function SocialSec(m){
    <form data-form="social" class="authform">
     <div class="fld"><label for="sp">Pinterest (dein Profil oder ein Board)</label><input id="sp" name="pinterest" class="inp" inputmode="url" autocomplete="off" placeholder="z. B. pinterest.de/dein-name/kaffee-ecke" value="${esc(s.pinterest||'')}"></div>
     <div class="fld"><label for="si">Instagram (dein Name)</label><input id="si" name="instagram" class="inp" autocomplete="off" placeholder="@dein-name" value="${esc(s.instagram||'')}"></div>
-    <div class="row"><button class="btn sec sm" type="submit">Speichern</button></div>
+    <p class="hint" style="margin:0">Wird gespeichert, sobald du das Feld verlässt, wie alles andere im Profil.</p>
    </form>
    <p class="disc" style="margin:0">Pins werden erst angezeigt, wenn deine Freunde dem Laden der Pinterest-Inhalte zustimmen. Einen Instagram-Kanal können wir nur verlinken, weil Instagram keine Einbettung ganzer Profile erlaubt.</p></section>`;
 }

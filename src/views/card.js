@@ -25,7 +25,7 @@ function wishLine(w,p){
   const pr=(w.kind==='frei'||w.status==='selbst')?null:productFor(p,w);
   const ai=ideasOf('wish:'+w.id)[0],byAi=!!pr&&pr.source!=='link'&&!isSpecific(w)&&!w.link&&w.kind!=='erlebnis';
   // Unterzeile: beim eigenen Link der Shop (der Produktname steht schon im Titel), ohne Link ein klarer Hinweis auf Ideen von Wishtale.
-  const linkLine=w.link?`Link zu ${hostOf(w.link)}`:'';
+  const host=w.link?hostOf(w.link):'',linkLine=host?`Link zu ${host}`:'Mit Link';
   const line=w.status==='selbst'?'Schon vorhanden':w.link?linkLine:pr?(byAi?(ai?'Ohne Link, Wishtale hat Ideen dazu':'Ohne Link, Ideen von Wishtale ansehen'):'Ohne Link, Vorschlag von Wishtale ansehen'):w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':'';
   return {pr,line};
 }

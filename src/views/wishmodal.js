@@ -1,8 +1,9 @@
 /* Detail-Fenster zu einem Wunsch: Vorschlag ansehen, Alternativen vergleichen, wählen oder weitersuchen. */
+import { WishArt } from './card.js';
 import { S, guestPerson } from '../state.js';
 import { esc, ic, gen } from '../lib/util.js';
 import { criteriaText } from '../lib/fit.js';
-import { art, artIllu } from '../lib/art.js';
+import { artIllu } from '../lib/art.js';
 import { offersFor } from '../lib/products.js';
 import { cat, occL, PRIO } from '../data/content.js';
 import { priceLine } from './product.js';
@@ -86,14 +87,15 @@ export function WishModal() {
     if (mine && !w.bought) footer = `<button class="btn pri" data-act="bought" data-id="${w.id}">Gekauft</button><button class="btn sec" data-act="release" data-id="${w.id}">Freigeben</button>`;
     else if (!taken && !w.bought && !o.main) footer = `<button class="btn pri" data-act="reserve" data-id="${w.id}">Reservieren</button>`;
   } else if (ctx === 'own') {
-    footer = `<button class="btn pri" data-act="wedit" data-id="${w.id}">Bearbeiten</button><button class="btn sec" data-act="selbst" data-id="${w.id}">${w.status === 'selbst' ? 'Wieder offen' : 'Selbst gekauft'}</button>
+    footer = `<button class="btn pri" data-act="wedit" data-id="${w.id}">Bearbeiten</button><button class="btn sec" data-act="selbst" data-id="${w.id}">${w.status === 'selbst' ? 'Wieder offen' : 'Erledigt, habe ich schon'}</button>
       <button class="btn sec" data-act="prio" data-id="${w.id}">Priorität: ${PRIO[w.prio]}</button>
       <button class="btn ghost" data-act="delw" data-id="${w.id}">${ic('trash', 'sm')}Löschen</button>`;
   }
 
   return `<div class="scrim" data-act="closebg"><div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="mt">
+   <button type="button" class="sheet-x wm-x" data-act="close" aria-label="Schließen">×</button>
    <div class="wm-top">
-    <span class="wm-img">${w.img ? `<img src="${w.img}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">` : art((o.main && o.main.a) || w.a || cat(w.c).a, (o.main && o.main.tone) != null ? o.main.tone : (w.tone || 0))}</span>
+    <span class="wm-img">${WishArt(w, null)}</span>
     <div>
      <p class="eyebrow">${esc(meta.join(' · '))}</p>
      <h2 id="mt">${esc(w.t)}</h2>
@@ -103,6 +105,7 @@ export function WishModal() {
    </div>
    ${ctx === 'preview' ? `<div class="banner green">${ic('eye')}<span>So sehen Schenkende diesen Wunsch.</span></div>` : ''}
    ${state}
+   ${footer ? `<div class="row wm-actions">${footer}</div>` : ''}
    ${w.noSuggest ? `<div class="sugg"><b>Keine Vorschläge</b><span>Hierfür werden auf Wunsch von ${esc(p.managed ? (p.parent || (ctx === 'own' && S.accounts && S.accounts.me && S.accounts.me.name) || 'der Familie') : p.name)} keine Vorschläge generiert.</span>${ctx === 'own' ? `<button class="btn ghost sm" style="margin-top:8px" data-act="wnosug" data-id="${w.id}">Vorschläge wieder erlauben</button>` : ''}</div>` : ''}
    ${byAi || w.noSuggest ? '' : Suggest(p, w, o, ctx)}
    ${o.main && !byAi ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
@@ -111,6 +114,6 @@ export function WishModal() {
    ${o.over ? `<p class="muted" style="font-size:13px">${o.over} Produkt${o.over > 1 ? 'e' : ''} über dem Budget ausgeblendet.</p>` : ''}
    ${ctx === 'own' && !w.noSuggest && w.kind !== 'erlebnis' ? `<p style="margin:6px 0"><button class="linkbtn" data-act="wnosug" data-id="${w.id}">Hierfür keine Vorschläge generieren</button></p>` : ''}
    <p class="disc">Die Links zu Amazon sind Partnerlinks (Anzeige). Dir entstehen dadurch keine Mehrkosten. Maßgeblich ist immer der Preis bei Amazon. Vorschläge von Wishtale wählen wir nach den Kriterien des Wunsches aus. Wir testen und bewerten die Produkte nicht.</p>
-   <div class="row wm-foot">${footer}<span style="flex:1"></span><button class="btn ghost" data-act="close">Schließen</button></div>
+   <div class="row wm-foot"><span style="flex:1"></span><button class="btn ghost" data-act="close">Schließen</button></div>
   </div></div>`;
 }
