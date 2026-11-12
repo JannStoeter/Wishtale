@@ -83,6 +83,7 @@ const AMAZON_TAG = 'jannst-21'; // Partner-Kennung, muss mit src/lib/shops.js ü
 export async function amazonDirect(query, { fetchJson } = {}) {
   const q = clean(query);
   const json = await webJson(q + ' amazon.de', { fetchJson });
+  console.log('amazon-direkt', JSON.stringify({ q, treffer: (json?.web?.results || []).slice(0, 8).map(r => { try { const u = new URL(r.url); return u.hostname + u.pathname.slice(0, 40) + ' | ' + String(r.title).slice(0, 60) + ' | ' + Math.round(overlap(q, String(r.title).replace(/^Amazon\.de\s*:\s*/i, '')) * 100); } catch { return ''; } }) }));
   for (const r of json?.web?.results || []) {
     let u; try { u = new URL(r.url); } catch { continue; }
     if (!/(^|\.)amazon\.de$/i.test(u.hostname)) continue;
