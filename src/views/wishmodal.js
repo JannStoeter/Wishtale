@@ -22,9 +22,9 @@ function Offer(pr, w, ctx, role) {
   const label = amazon ? (pr.direct ? 'Bei Amazon ansehen' : 'Bei Amazon suchen') : `Zu ${esc(pr.host)}`;
   const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === pr.t;
   return `<div class="offer ${role === 'main' ? 'main' : ''} ${pr.source === 'link' ? '' : 'suggest'} ${chosen ? 'chosen' : ''}">
-   ${pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
+   ${role === 'main' && pr.source === 'link' && w.img ? `<span class="otn"><img src="${w.img}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></span>` : pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
    <div class="obody">
-    <span class="eyebrow">${pr.source === 'link' ? 'Gewünschtes Produkt' : pr.source === 'erzeugt' ? 'Suche nach genau diesem Wunsch' : role === 'main' ? 'Vorschlag von Wishtale' : 'Vorschlag'}</span>
+    <span class="eyebrow">${pr.source === 'link' ? 'Gewünschtes Produkt' : pr.source === 'amz' ? 'Preise bei Amazon vergleichen' : pr.source === 'erzeugt' ? 'Suche nach genau diesem Wunsch' : role === 'main' ? 'Vorschlag von Wishtale' : 'Vorschlag'}</span>
     <strong class="ot">${esc(pr.t)}</strong>
     ${priceLine(pr)}
     ${(pr.why || []).slice(0, 2).map(t => `<span class="why">${esc(t)}</span>`).join('')}
@@ -110,6 +110,7 @@ export function WishModal() {
    ${byAi || w.noSuggest ? '' : Suggest(p, w, o, ctx)}
    ${byAi && w.kind === 'produkt' ? `<section class="wm-sec">${Offer({ id: 'exact', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'erzeugt', a: 'gift' }, w, 'view', 'main')}</section>` : ''}
    ${o.main && !byAi ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
+   ${w.link && o.main && o.main.source === 'link' && !/(^|\.)amazon\./.test(o.main.host) ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">Auch bei Amazon</p>${Offer({ id: 'amz', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'amz', a: 'gift' }, w, 'view', 'alt')}</section>` : ''}
    ${o.alts.length && !byAi && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
    ${AiVariants(w, ctx)}
    ${o.over ? `<p class="muted" style="font-size:13px">${o.over} Produkt${o.over > 1 ? 'e' : ''} über dem Budget ausgeblendet.</p>` : ''}

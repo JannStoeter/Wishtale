@@ -5,7 +5,7 @@
 import { esc, ic, money } from '../lib/util.js';
 import { art } from '../lib/art.js';
 import { productFor, isSpecific } from '../lib/products.js';
-import { ideasOf } from '../lib/ideas.js';
+import { ideasOf, aiStatus } from '../lib/ideas.js';
 import { cat, PRIO } from '../data/content.js';
 
 /**
@@ -25,8 +25,11 @@ function wishLine(w,p){
   const pr=(w.kind==='frei'||w.status==='selbst')?null:productFor(p,w);
   const ai=ideasOf('wish:'+w.id)[0],byAi=!!pr&&pr.source!=='link'&&!isSpecific(w)&&!w.link&&w.kind!=='erlebnis';
   // Unterzeile: beim eigenen Link der Shop (der Produktname steht schon im Titel), ohne Link ein klarer Hinweis auf Ideen von Wishtale.
-  const host=w.link?hostOf(w.link):'',linkLine=host?`Link zu ${host}`:'Mit Link';
-  const line=w.status==='selbst'?'Schon vorhanden':w.link?linkLine:pr?(byAi?(ai?'Ohne Link, Wishtale hat Ideen dazu':'Ohne Link, Ideen von Wishtale ansehen'):'Ohne Link, Vorschlag von Wishtale ansehen'):w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':'';
+  // Konkret statt allgemein: wo es das gibt, und bei ungenauen Wünschen der erste Tipp von Wishtale (klar als Tipp gekennzeichnet).
+  const host=w.link?hostOf(w.link):'';
+  const linkLine=!host?'Mit Link':host==='Amazon'?'Bei Amazon':`${host}, auch bei Amazon`;
+  const vague=ai?`Tipp von Wishtale: ${ai.t}`:aiStatus('wish:'+w.id)==='loading'?'Wishtale sucht passende Produkte …':pr&&!['erzeugt','link'].includes(pr.source)?`Tipp von Wishtale: ${pr.t}`:'Tipps von Wishtale ansehen';
+  const line=w.status==='selbst'?'Schon vorhanden':w.link?linkLine:w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':w.noSuggest?'Bei Amazon suchen':byAi||w.kind==='kategorie'?vague:isSpecific(w)?'Bei Amazon zu finden':pr?`Tipp von Wishtale: ${pr.t}`:'';
   return {pr,line};
 }
 

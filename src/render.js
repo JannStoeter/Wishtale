@@ -1,4 +1,6 @@
 import { loadIdeas, gkey, skey } from './lib/ideas.js';
+import { isSpecific } from './lib/products.js';
+import { guestPerson } from './state.js';
 import { signalCount } from './lib/signals.js';
 import { S, saveState, setDemo, ensureDraft } from './state.js';
 import { $, esc } from './lib/util.js';
@@ -39,6 +41,10 @@ export function render(top){
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
   // Vorladen: Gast-Ideen und eigene Inspiration im Hintergrund holen, damit sie beim Öffnen schon da sind (der Server antwortet bei unverändertem Profil aus dem Zwischenspeicher).
   if(S.auth.user&&S.me.handle&&v!=='gast'){loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.preview&&['profil','wuensche'].includes(S.ui.view)&&!S.ui.modal)render()});if(v!=='entdecken')loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
+  // Tipps zu ungenauen Wünschen vorladen, damit die Liste konkret wird („Tipp von Wishtale: …“). Höchstens 12, der Server antwortet meist aus dem Zwischenspeicher.
+  {const own=v==='wuensche'&&S.auth.user&&S.me.handle,gp=v==='gast'?guestPerson():null,p=own?S.me:gp&&gp.remote&&gp.handle?gp:null;
+   if(p)p.wishes.filter(w=>(w.status==='offen')&&!w.link&&!w.noSuggest&&(w.kind==='produkt'||w.kind==='kategorie')&&!isSpecific(w)&&/^[0-9a-f-]{36}$/i.test(String(w.id))).slice(0,12)
+    .forEach(w=>loadIdeas('wish:'+w.id,{h:p.handle,mode:'wish',w:w.id,t:w.t.slice(0,80)},()=>{if(S.ui.view===v&&!S.ui.modal)render()}));}
   if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
   if((v==='profil'||v==='wuensche')&&S.ui.preview&&S.auth.user&&S.me.handle)loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.view===v&&S.ui.preview&&!S.ui.modal)render()});
   if(v==='plan'&&S.auth.user)loadPlan(()=>{if(S.ui.view==='plan'&&!S.ui.modal)render()});
