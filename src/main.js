@@ -36,8 +36,7 @@ async function boot(){
       if(adopted==='quick')setTimeout(()=>{toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()},500);
       else setTimeout(()=>toast(fromLink?'Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.':'Dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.'),400);
     }else if(fromLink||!location.hash||['#login','#anmelden','#registrieren','#demo'].includes(location.hash)){
-      const a=S.accounts.me;
-      history.replaceState(null,'',location.pathname+(a&&!a.interests.length&&!a.wishes.length?'#start':'#wuensche'));
+      history.replaceState(null,'',location.pathname+'#wuensche');
       if(fromLink)setTimeout(()=>toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.'),500);
     }
   }else if(fromLink){
@@ -59,8 +58,7 @@ async function boot(){
         if(location.hash==='#neues-passwort'){route();return}
         const adopted=adoptDraft();
         const invd=await adoptInvite().catch(()=>false);
-        const a=S.accounts.me;
-        location.hash=adopted||(invd&&invd.n)?'#wuensche':a&&!a.interests.length&&!a.wishes.length?'#start':'#wuensche';
+        location.hash='#wuensche';
         route();
         if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
         else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);

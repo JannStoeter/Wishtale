@@ -76,3 +76,6 @@ export function completeness(a) {
   const pct = steps.reduce((s, [pts, ok]) => s + (ok ? pts : 0), 0);
   return { pct, next: steps.filter(([, ok]) => !ok).map(([, , t]) => t) };
 }
+
+/** Profil noch zu dünn für persönliche Ideen (Interessen, Marken, Welten, Über-Text zusammen weniger als vier Angaben). */
+export const thinProfile = p => ((p.interests || []).length + (p.brands || []).length + (p.cats || []).length + (String(p.about || '').trim().length > 20 ? 2 : 0)) < 4;

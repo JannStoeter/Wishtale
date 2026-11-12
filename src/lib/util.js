@@ -30,12 +30,13 @@ export const money=n=>n.toLocaleString('de-DE')+' €';
 export const nid=()=>crypto.randomUUID();
 
 let toastT;
-export function toast(msg){
+export function toast(msg,action){
   document.querySelectorAll('.toast').forEach(e=>e.remove());
   const d=document.createElement('div');
   d.className='toast';d.setAttribute('role','status');d.textContent=msg;
+  if(action){const b=document.createElement('button');b.type='button';b.className='toast-act';b.textContent=action.label;b.onclick=()=>{d.remove();action.run()};d.appendChild(b)}
   document.body.appendChild(d);
-  clearTimeout(toastT);toastT=setTimeout(()=>d.remove(),3400);
+  clearTimeout(toastT);toastT=setTimeout(()=>d.remove(),action?6500:3400);
 }
 
 /** Genitiv eines Vornamens: "Lena" -> "Lenas", "Jonas" -> "Jonas’". */

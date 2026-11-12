@@ -561,7 +561,7 @@ document.addEventListener('submit',e=>{
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
-      S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';toast('Der Wunsch ist gespeichert.');render();
+      S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';const ideas=!link&&k!=='erlebnis'&&!noSuggest&&!plan;S.ui.wr=null;toast(ideas?'Der Wunsch ist gespeichert, und deine Freunde sehen dazu passende Ideen von Wishtale.':'Der Wunsch ist gespeichert.',ideas?{label:'So sehen es Freunde',run:()=>{S.ui.preview=true;render();scrollTo({top:0,behavior:'smooth'})}}:null);render();
     };
     if(fi.failed)toast('Das Bild konnte nicht gespeichert werden. Der Wunsch ist ohne Bild gespeichert, du kannst es später erneut versuchen.');
     S.ui.wishImg=null;done(fi.img,fi.src,fi.removed);

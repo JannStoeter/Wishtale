@@ -46,7 +46,7 @@ function AiVariants(w, ctx) {
   if (!list.length) return '';
   const guestFree = ctx === 'guest' && !w.res && !w.bought;
   const sim = isSpecific(w);
-  return `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${sim ? 'Ähnliche Produkte, falls es das Gewünschte nicht gibt' : 'Passende Produkte von Wishtale'}</p>${list.map(i => {
+  return `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${sim ? 'Ähnliche Produkte, falls es das Gewünschte nicht gibt' : w.kind === 'produkt' ? 'Weitere passende Produkte von Wishtale' : 'Passende Produkte von Wishtale'}</p>${list.map(i => {
     const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === i.t;
     return `<div class="aivar ${chosen ? 'chosen' : ''}"><div><span class="eyebrow">Vorschlag von Wishtale</span><strong class="ot">${esc(i.t)}</strong>${i.to ? `<span class="muted" style="font-size:13px;display:block">${i.from ? `ca. ${i.from} bis ${i.to} €` : `bis ca. ${i.to} €`}, grobe Schätzung</span>` : ''}<span class="why" style="display:block;margin-top:4px">${esc(i.why)}</span>${chosen ? `<span class="chip ok" style="margin-top:6px">${ic('check', 'sm')}Deine Wahl</span>` : ''}</div><div class="oa"><a class="btn amz sm" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${REL}">Bei Amazon suchen ${ic('arrow', 'sm')}</a>${guestFree ? `<button class="btn pri sm" data-act="aichoose" data-wid="${w.id}" data-t="${esc(i.t)}">Diesen wählen</button>` : ''}${ctx === 'own' ? `<button class="btn ghost sm" data-act="aivhave" data-wid="${w.id}" data-t="${esc(i.t)}">Habe ich schon</button>` : ''}</div></div>`;
   }).join('')}</section>`;
@@ -108,6 +108,7 @@ export function WishModal() {
    ${footer ? `<div class="row wm-actions">${footer}</div>` : ''}
    ${w.noSuggest ? `<div class="sugg"><b>Keine Vorschläge</b><span>Hierfür werden auf Wunsch von ${esc(p.managed ? (p.parent || (ctx === 'own' && S.accounts && S.accounts.me && S.accounts.me.name) || 'der Familie') : p.name)} keine Vorschläge generiert.</span>${ctx === 'own' ? `<button class="btn ghost sm" style="margin-top:8px" data-act="wnosug" data-id="${w.id}">Vorschläge wieder erlauben</button>` : ''}</div>` : ''}
    ${byAi || w.noSuggest ? '' : Suggest(p, w, o, ctx)}
+   ${byAi && w.kind === 'produkt' ? `<section class="wm-sec">${Offer({ id: 'exact', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'erzeugt', a: 'gift' }, w, 'view', 'main')}</section>` : ''}
    ${o.main && !byAi ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
    ${o.alts.length && !byAi && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
    ${AiVariants(w, ctx)}

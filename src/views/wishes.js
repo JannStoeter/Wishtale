@@ -1,4 +1,5 @@
 import { S } from '../state.js';
+import { artIllu } from '../lib/art.js';
 import { esc, ic, money } from '../lib/util.js';
 import { WishCard, WishRow } from './card.js';
 import { V, cat, occL, PRIO } from '../data/content.js';
@@ -9,7 +10,7 @@ import { GuestPage } from './giver.js';
 
 /** Freundlicher Hinweis, solange das Profil noch dünn ist. Verschwindet für eine Woche, wenn man „Später“ wählt. */
 function Nudge(m){
-  if(S.ui.nudgeOff||m.managed)return '';
+  if(S.ui.nudgeOff||m.managed||!m.wishes.length)return ''; // bei leerer Liste zählt erst der erste Wunsch
   try{const t=+localStorage.getItem('wishtale:nudge-hidden');if(t&&Date.now()-t<6048e5)return ''}catch{/* ohne Speicher */}
   if(completeness(m).pct>=45)return '';
   return `<div class="banner green nudge" role="note">${ic('user')}<span><b>Deine Wunschliste steht.</b> Wenn du uns noch ein paar Dinge über dich verrätst, zum Beispiel was du magst, welche Marken du liebst und was du schon hast, passen die Vorschläge für deine Freunde viel besser. Das dauert nur zwei Minuten.</span><span class="row" style="gap:8px;margin:0"><button class="btn pri sm" data-act="edit">Profil einrichten</button><button class="linkbtn" data-act="nudgehide">Später</button></span></div>`;
@@ -31,6 +32,22 @@ export function sortWishes(list){
 /** Umschalter „Meine Ansicht | So sehen Schenkende es“ (Wünsche und Profil). */
 export function ViewSeg(){const pv=S.ui.preview;return `<div class="seg" role="group" aria-label="Ansicht"><button class="${!pv?'on':''}" data-act="preview" data-v="0">Meine Ansicht</button><button class="${pv?'on':''}" data-act="preview" data-v="1">So sehen Schenkende es</button></div>`}
 export const PreviewBanner=()=>`<div class="banner green" style="margin-top:12px">${ic('eye')}<span>So sieht deine Seite für Freunde aus. Alles, was du auf „Privat“ gestellt hast, und dein persönliches Feedback bleiben dabei verborgen.</span></div>`;
+/** Leere Wunschliste: einladend statt trist, mit den drei Wegen zum ersten Wunsch. */
+function EmptyWishes(m){
+  const kid=m.managed,n=esc(m.name);
+  const tile=(act,v,img,t,d)=>`<button type="button" class="ew-tile" data-act="${act}" data-v="${v}"><span class="ew-img">${img}</span><b>${t}</b><small>${d}</small></button>`;
+  return `<section class="emptywish" aria-labelledby="ew-h">
+   <div class="ew-art" aria-hidden="true">${artIllu('gift',1)}${artIllu('ticket',2)}${artIllu('plant',4)}</div>
+   <h2 id="ew-h">${kid?`Was wünscht sich ${n} gerade?`:'Was wünschst du dir gerade?'}</h2>
+   <p>${kid?`Fang mit einem Wunsch von ${n} an, ganz gleich ob es ein bestimmtes Spielzeug ist oder nur eine Idee. Ein Foto vom Wunschzettel geht auch.`:'Fang mit einem Wunsch an, ganz gleich ob du schon ein bestimmtes Produkt im Kopf hast oder nur eine Idee. Wishtale macht daraus eine Liste, die deine Freunde gern öffnen.'}</p>
+   <div class="ew-acts">
+    ${tile('modal','wish',artIllu('gift',1),'Wunsch aufschreiben','Ein Produkt, ein Erlebnis oder einfach eine Idee')}
+    ${tile('modal','zettel',artIllu('book',3),'Liste einlesen',kid?'Ein Foto vom Wunschzettel oder eine Liste':'Amazon-Wunschliste, Notizen oder ein Foto')}
+    ${tile('go','entdecken',artIllu('plant',4),'Inspiration ansehen','Ideen, die zu '+(kid?n:'dir')+' passen')}
+   </div>
+   <p class="ew-note">${ic('lock','sm')}${kid?`Als Elternteil siehst du später, was reserviert ist, und ${n} erfährt davon nichts.`:'Die Überraschung bleibt: Du siehst nie, ob jemand einen deiner Wünsche reserviert hat.'}</p>
+  </section>`;
+}
 export function Wuensche(){
   const m=S.me,u=S.ui;
   if(u.preview)return `<div class="wrap"><div class="row" style="margin:18px 0 4px">${ViewSeg()}</div>${PreviewBanner()}${GuestPage(m,{preview:true})}</div>`;
@@ -44,6 +61,7 @@ export function Wuensche(){
    ${Nudge(m)}
    <div class="row" style="margin:18px 0 4px;justify-content:space-between;gap:8px">${ViewSeg()}${m.handle||!S.auth.user?`<button class="btn gold sm" data-act="share">Link teilen</button>`:""}</div>
    <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}.`:open===1?'1 Ding, über das ich mich freuen würde.':`${open} Dinge, über die ich mich freuen würde.`}</h1></div>
+   ${m.wishes.length?'':EmptyWishes(m)}<div ${m.wishes.length?'':'hidden'}>
    <div class="importcard"><div><p class="eyebrow">Schon eine Liste?</p><h2>Wishtale liest sie für dich ein</h2><p class="muted">Ob Amazon-Wunschliste, Notizen oder der Wunschzettel deines Kindes: Füge den Text ein oder lade ein Foto hoch, und Wishtale macht daraus einzelne Wünsche, die du vor dem Speichern prüfst.</p></div><div class="row" style="gap:8px"><button class="btn pri" data-act="modal" data-v="zettel">${ic('plus','sm')}Liste einlesen</button><button class="btn sec" data-act="azopen">Bei Amazon suchen</button></div></div>
    <div class="banner" style="margin-bottom:8px">${ic('lock')}<span>${m.managed?`Als Elternteil siehst du, was reserviert oder gekauft ist. ${esc(m.name)} sieht es nicht.`:'Die Überraschung bleibt: Du siehst nie, ob jemand einen deiner Wünsche reserviert oder gekauft hat.'}</span></div>
    <p class="muted" style="font-size:14px;margin-bottom:16px">Du musst nicht jedes Produkt kennen. Schreib zum Beispiel „Hochwertige Pfanne bis 100 €“, dann suchen wir für deine Freunde passende Vorschläge heraus. Auch ohne Link finden wir bei Amazon etwas Passendes.</p>
@@ -59,6 +77,7 @@ export function Wuensche(){
       taken:false,
       ctx:'own'
     })).join('')||`<p class="muted" style="font-size:16px">Dein erster Wunsch wartet schon auf dich. Schreib ihn auf, füge einen Link ein oder lies eine ganze Liste ein, und Wishtale macht den Rest.</p>`}</div>
+   </div>
    <div class="fabspace" aria-hidden="true"></div>
    <div class="fab"><button class="btn pri" data-act="modal" data-v="wish">${ic('plus','sm')}Wunsch hinzufügen</button></div>
   </div>`;

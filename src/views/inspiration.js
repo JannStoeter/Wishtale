@@ -1,5 +1,6 @@
 import { S } from '../state.js';
 import { esc, ic } from '../lib/util.js';
+import { thinProfile } from '../lib/tale.js';
 import { art, artIllu } from '../lib/art.js';
 import { worldOffers, popularOffers, promoOffers } from '../lib/products.js';
 import { CATS, cat } from '../data/content.js';
@@ -77,6 +78,7 @@ function AiSelf(){
   const list=ideasOf(skey(h));if(!list.length)return '';
   return `<section class="psec" style="margin-bottom:18px"><p class="eyebrow">Vorschläge von Wishtale</p><h3 aria-level="2">Ideen, die zu dir passen</h3>
    <p class="muted" style="font-size:14.5px;margin:6px 0 12px">Wishtale schreibt sie nach dem, was du über dich angegeben hast. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.</p>
+   ${thinProfile(S.me)?`<p class="thinnote">${ic('spark','sm')}<span>Dein Profil ist noch recht leer, darum sind diese Ideen noch allgemein. Wenn du ein paar Interessen und Lieblingsmarken ergänzt, werden sie spürbar persönlicher. <a href="#profil" class="linkbtn">Profil ergänzen</a></span></p>`:''}
    <div class="recs grid">${list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
     <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${i.to?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`}</span>`:''}</div>
     <div class="row" style="margin-top:8px"><button class="btn pri sm" data-act="aiadd" data-t="${esc(i.t)}">Auf meine Wunschliste</button><a class="btn amz sm" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon ansehen (Anzeige)'}</a><button class="btn ghost sm" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="btn ghost sm" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></div></article>`).join('')}</div></section>`;

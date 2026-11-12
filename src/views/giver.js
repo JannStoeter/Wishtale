@@ -1,5 +1,6 @@
 import { S, initials, guestPerson } from '../state.js';
 import { esc, ic, money, kwOf, gen } from '../lib/util.js';
+import { thinProfile } from '../lib/tale.js';
 import { art } from '../lib/art.js';
 import { CATS, crea, cprod } from '../data/content.js';
 import { excluded, recommend } from '../logic.js';
@@ -43,6 +44,7 @@ function More(p,{preview=false,none=false,open=0}={}){
    <p class="eyebrow">${none?'Tipps von Wishtale':'Wir empfehlen außerdem'}</p>
    <h2 id="mehr-h">${none?`${esc(p.name)} lässt sich noch inspirieren, hier findest du unsere Tipps`:'Nicht das Passende dabei?'}</h2>
    <p class="muted" style="margin:6px 0 14px">Wishtale kennt ${esc(gen(p.name))} Geschmack und schlägt dir Passendes vor. Sag uns, wie viel du ausgeben möchtest, der Rahmen gilt nur für diese Vorschläge.</p>
+   ${thinProfile(p)?`<p class="thinnote">${ic('spark','sm')}<span>${p.managed?`Das Profil von ${esc(p.name)} ist noch ganz frisch`:`${esc(gen(p.name))} Profil ist noch ganz frisch`}, darum sind unsere Ideen im Moment eher allgemein. Je mehr ${esc(p.name)} über sich erzählt, desto genauer treffen sie.${preview?' <a href="#profil" class="linkbtn">Profil ergänzen</a>':''}</span></p>`:''}
    ${PriceFilter()}
    ${AiIdeas(p)}
    ${ai?'':Curated(p,open)}
