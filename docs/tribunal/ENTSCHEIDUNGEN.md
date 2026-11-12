@@ -47,6 +47,7 @@ Stand: 2026-11-09
 | 052 | Testlauf: Ladezeit und Handhabung | **Anweisung: KI ohne langes Nachdenken, Server in London, Vorladen; 15 Handhabungsbefunde behoben** | ja, `f3e994c` |
 | 053 | Wunsch-Dialog: Erkennung | **Anweisung: vage Hinweis, konkret eine Karte mit Passt/Nicht das Richtige, danach klickbare Alternativen; Schwelle 0,75** | ja, `2a439a9` |
 | 054 | Leere Profile, Leerzustand, Start, Igel im Detail | **Anweisung: freundlicher Hinweis bei dünnem Profil, einladender Leerzustand, Start auf der Wunschliste, exakte Suche zuerst** | ja, `e64e636` |
+| 056 | Wunschliste wieder konkret, Amazon bei Shop-Links | **Anweisung: Tipp von Wishtale in der Zeile, Bei Amazon zu finden, Shop-Links zusätzlich mit Amazon** | ja, `1b75176` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
