@@ -4,7 +4,7 @@
  * Es geht nur der eingetippte Text raus, keine Profildaten.
  */
 import { complete, modelFor, fingerprint, cacheGet, cachePut } from './llm.js';
-import { webJson, pageCandidates, overlap } from './imgsearch.js';
+import { webJson, pageCandidates, overlap, toks } from './imgsearch.js';
 export { overlap };
 import { inspect } from './inspect.js';
 
@@ -33,9 +33,10 @@ export function bestResult(json, text) {
   const rows = (json?.web?.results || []).map(r => {
     let host = ''; try { host = new URL(r.url).hostname.replace(/^www\./, ''); } catch { return null; }
     const title = String(r.title || ''), hay = title + ' ' + String(r.description || '').replace(/<[^>]+>/g, ' ');
-    return { host, title, o: overlap(text, hay), ot: overlap(text, title) };
-  }).filter(r => r && r.ot >= 0.6 && r.o >= 0.75);
-  rows.sort((a, b) => (b.o + b.ot) - (a.o + a.ot) || (/amazon\./.test(a.host) ? 1 : 0) - (/amazon\./.test(b.host) ? 1 : 0));
+    const tt = toks(title), wt = new Set(toks(text)), prec = tt.length ? tt.filter(w => wt.has(w)).length / tt.length : 0; // Anteil der Titelwörter, die der Wunsch enthält: bevorzugt knappe Titel
+    return { host, title, o: overlap(text, hay), ot: overlap(text, title), prec, set: /\bsets?\b|-set\b/i.test(title) && !/\bsets?\b/i.test(text) };
+  }).filter(r => r && !r.set && r.ot >= 0.6 && r.o >= 0.75);
+  rows.sort((a, b) => (b.o + b.ot + b.prec) - (a.o + a.ot + a.prec) || (/amazon\./.test(a.host) ? 1 : 0) - (/amazon\./.test(b.host) ? 1 : 0));
   const b = rows.find(r => !/amazon\./.test(r.host)) || rows[0];
   return b ? { host: b.host, t: cleanTitle(b.title), o: b.o } : null;
 }
@@ -73,7 +74,9 @@ export async function matchFor(text, fetchImpl = fetch, opts = {}) {
   ]);
   if (r && opts.onUsage) await opts.onUsage(r.usage, r.model);
   const llm = r ? parseMatch(r.text) : { ok: false, conf: 0 };
-  const match = web ? { ...web, c: llm.c || null } : llm;
+  // Ein Treffer aus der Websuche gilt nur, wenn der Wunsch eine Zahl enthält (Modell, Größe) oder das Modell selbst ein bestimmtes Produkt vermutet; „Blauer Becher mit Punkten“ soll keine Karte bekommen.
+  const webOk = web && (/\d/.test(t) || llm.conf >= 0.5);
+  const match = webOk ? { ...web, c: llm.c || null } : llm;
   if (match.ok) await cachePut(hash, 'match', match, fetchImpl); // nur Treffer speichern, ein Fehlschlag soll beim nächsten Mal neu gesucht werden
   return { match };
 }
