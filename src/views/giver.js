@@ -1,12 +1,11 @@
 import { S, initials, guestPerson } from '../state.js';
 import { esc, ic, money, kwOf, gen } from '../lib/util.js';
 import { art } from '../lib/art.js';
-import { CATS, ABOUT, cat, crea, cprod } from '../data/content.js';
-import { ownedOf, excluded, recommend } from '../logic.js';
+import { CATS, crea, cprod } from '../data/content.js';
+import { excluded, recommend } from '../logic.js';
 import { densSeg, sortSeg, sortWishes, useList } from './wishes.js';
 import { WishCard, WishRow } from './card.js';
-import { AMAZON_DISCLOSURE, searchUrl, voucherLink } from '../lib/shops.js';
-import { instagramUrl } from '../lib/social.js';
+import { AMAZON_DISCLOSURE, searchUrl } from '../lib/shops.js';
 import { PastGifts } from './given.js';
 import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
@@ -25,7 +24,7 @@ export function GuestPage(p,{preview=false}={}){
   const wl=WishList(p,{preview});
   const none=!wl.count;
   return `<div class="${preview?'':'wrap'}">
-   <div class="pgrid">
+   <div class="pgrid solo">
     <div class="pheadslot">${ProfileHead(p,{preview})}</div>
     <div class="pmain">
      ${preview?'':PastGifts(p)}
@@ -33,10 +32,6 @@ export function GuestPage(p,{preview=false}={}){
      ${More(p,{preview,none,open:wl.open})}
      <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis bei Amazon.</p>
     </div>
-    <aside class="paside ${S.ui.asideOpen?'open':''}" aria-label="Mehr über ${esc(p.name)}">
-     <button class="asidetoggle" data-act="aside" aria-expanded="${!!S.ui.asideOpen}"><span><b>Mehr über ${esc(p.name)}</b><small>Über ${esc(p.name)}, Interessen, Lieblingsmarken, Inspiration, was ${esc(p.name)} schon hat und lieber nicht möchte</small></span><i aria-hidden="true">${S.ui.asideOpen?'−':'+'}</i></button>
-     <div class="asidebody" tabindex="0">${Facts(p,{preview})}</div>
-    </aside>
    </div>
   </div>`;
 }
@@ -61,32 +56,8 @@ export function ProfileHead(p,{preview=false}={}){
   const likes=(hide('interests')?[]:p.interests).slice(0,3);
   const list=likes.length>1?likes.slice(0,-1).join(', ')+' und '+likes[likes.length-1]:likes[0]||'';
   return `<section class="phead compact" aria-label="Profil von ${esc(p.name)}">
-    <div class="top"><span class="av t${p.tone}">${initials(p.name)}</span><div><p class="eyebrow">${p.managed?`Kind-Konto${p.age?', '+p.age+' Jahre':''}`:'Wishtale'}</p><h1>${esc(p.name)}</h1>${list?`<p class="taste">${esc(p.name)} liebt ${esc(list)}.</p>`:''}</div></div>
+    <button class="top phbtn" data-act="about" data-ctx="${preview?'own':'guest'}" aria-haspopup="dialog"><span class="av t${p.tone}">${initials(p.name)}</span><span class="phtxt"><span class="eyebrow">${p.managed?`Kind-Konto${p.age?', '+p.age+' Jahre':''}`:'Wishtale'}</span><h1>${esc(p.name)}</h1>${list?`<span class="taste">${esc(p.name)} liebt ${esc(list)}.</span>`:''}</span><span class="phmore">Mehr über ${esc(p.name)} <i aria-hidden="true">›</i></span></button>
   </section>`;
-}
-
-/* Seitenleiste: was Schenkende zusätzlich wissen sollten. */
-export function Facts(p,{preview=false}={}){
-  const ctx=preview?'own':'guest';
-  const block=(t,inner)=>inner?`<section class="fact"><h3 aria-level="2">${t}</h3>${inner}</section>`:'';
-  const chips=(a,c='')=>a.length?`<div class="chips">${a.map(x=>`<span class="chip ${c}">${esc(x)}</span>`).join('')}</div>`:'';
-  const worlds=p.cats.length?`<p class="muted" style="font-size:13.5px;margin-bottom:8px">Tippe auf eine Welt, dann erzählen wir dir, was dazu passen könnte.</p><div class="catrow">${p.cats.map(id=>{const c=cat(id);return `<button class="catmini" data-act="world" data-id="${c.id}" data-ctx="${ctx}" aria-label="Welt ${esc(c.n)} öffnen">${art(c.a,c.t)}<div>${esc(c.n)}</div></button>`}).join('')}</div>`:'';
-  const alts=p.alts.length?`<p class="muted" style="font-size:13.5px;margin-bottom:8px">${esc(p.name)} freut sich auch über:</p><div class="chips">${p.alts.map(a=>{const v=voucherLink(a);return `<a class="chip ok" href="${v.url}" target="_blank" rel="noopener noreferrer${v.ad?' sponsored nofollow':''}">${esc(a)} ↗</a>`}).join('')}</div>${p.alts.some(a=>voucherLink(a).ad)?'<span class="ad">Enthält Anzeige (Amazon-Partnerlink)</span>':''}`:'';
-  const soc=p.social||{};
-  const inspo=(soc.pinterest||soc.instagram)?`<p class="muted" style="font-size:13.5px;margin-bottom:10px">Hier sammelt ${esc(p.name)} Ideen und Fundstücke. Ein Blick darauf verrät oft mehr als jede Wunschliste.</p><div class="social">${soc.pinterest?`<button class="btn sec sm" data-act="pins" data-ctx="${ctx}">Pins hier ansehen</button><a class="chip" href="${esc(soc.pinterest)}" target="_blank" rel="noopener noreferrer">Auf Pinterest öffnen ↗</a>`:''}${soc.instagram?`<a class="chip" href="${esc(instagramUrl(soc.instagram))}" target="_blank" rel="noopener noreferrer">Instagram: @${esc(soc.instagram)} ↗</a>`:''}</div>`:'';
-  const hide=k=>preview&&p.vis&&p.vis[k]==='privat';
-  const nogos=hide('nogos')?[]:p.nogos,owned=ownedOf(p).filter(w=>w.vis!=='privat').map(w=>w.t);
-  const fold=(t,a,c,intro)=>a.length?`<details class="fact fold"><summary><h3 aria-level="2">${t}</h3><span class="cnt">${a.length}</span></summary>${intro?`<p class="muted" style="font-size:13.5px;margin:0">${intro}</p>`:''}${chips(a,c)}</details>`:'';
-  const about=p.about||ABOUT[p.id]||'';
-  return block('Über '+esc(p.name),about?`<p class="about" style="margin:0">${esc(about)}</p>`:'')
-   +block('Interessen',hide('interests')?'':chips(p.interests))
-   +block('Lieblingsmarken',hide('brands')?'':chips(p.brands))
-   +block('Das inspiriert '+esc(p.name),inspo)
-   +block('Möchte ausprobieren',chips(p.tries,'gold'))
-   +block('Welten',worlds)
-   +block('Wenn nichts passt',alts)
-   +fold('Bitte nicht',nogos,'warn',`Damit liegst du bei ${esc(p.name)} eher daneben.`)
-   +fold(`Hat ${esc(p.name)} schon`,owned,'ok','Das ist schon da und muss nicht doppelt kommen.');
 }
 
 /* Preisrahmen für die Ideen: viele Geschenke liegen um 20 Euro, nicht um 100. */
