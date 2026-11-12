@@ -26,8 +26,8 @@ function wishLine(w,p){
   const ai=ideasOf('wish:'+w.id)[0],byAi=!!pr&&pr.source!=='link'&&!isSpecific(w)&&!w.link&&w.kind!=='erlebnis';
   // Unterzeile: beim eigenen Link der Shop (der Produktname steht schon im Titel), ohne Link ein klarer Hinweis auf Ideen von Wishtale.
   const host=w.link?hostOf(w.link):'',linkLine=host?`Link zu ${host}`:'Mit Link';
-  const line=w.status==='selbst'?'Schon vorhanden':w.link?linkLine:pr?(byAi?(ai?'Ohne Link, Wishtale hat Ideen dazu':'Ohne Link, Ideen von Wishtale ansehen'):'Ohne Link, Vorschlag von Wishtale ansehen'):w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':'';
-  return {pr,line};
+  const line=w.status==='selbst'?'Schon vorhanden':w.link?linkLine:pr?(byAi?(ai?'Wishtale hat passende Ideen':'Ideen von Wishtale ansehen'):'Vorschlag von Wishtale ansehen'):w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':'';
+  return {pr,line,byAi};
 }
 
 /** Listenzeile für viele Wünsche: kleines Bild, Titel, Zeile, Preis, Status und Priorität in einer Reihe. */
@@ -43,9 +43,9 @@ export function WishRow(w,p,o={}){
 
 /** o.ctx: 'guest' | 'own' | 'preview'; o.status: {text,tone}; o.taken; o.dim; o.meta: HTML der Label-Zeile */
 export function WishCard(w,p,o={}){
-  const {pr,line}=wishLine(w,p);
+  const {pr,line,byAi}=wishLine(w,p);
   return `<div class="wcard compact ${o.taken?'taken':''} ${o.dim?'dim':''} ${w.status==='selbst'?'done':''}" role="button" tabindex="0" data-act="wopen" data-id="${w.id}" data-ctx="${o.ctx||'guest'}">
-   <div class="wmedia">${WishArt(w,pr)}
+   <div class="wmedia">${WishArt(w,pr)}${byAi&&!w.img?`<span class="wideas">${ic('spark','sm')}Ideen</span>`:''}
     <div class="top"><span class="tag">${esc(cat(w.c).n)}</span><span class="dots" title="${PRIO[w.prio]}" aria-label="Priorität: ${PRIO[w.prio]}">${[1,2,3].map(n=>`<i class="${n<=w.prio?'on':''}"></i>`).join('')}</span></div>
     ${o.status?`<span class="wstate ${o.status.tone}">${ic('lock','sm')}${esc(o.status.text)}</span>`:''}
    </div>
