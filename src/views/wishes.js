@@ -7,6 +7,7 @@ import { AppPromo } from './inspiration.js';
 import { completeness } from '../lib/tale.js';
 import { viaName } from '../lib/invite.js';
 import { GuestPage } from './giver.js';
+import { Steps } from './steps.js';
 
 /** Freundlicher Hinweis, solange das Profil noch dünn ist. Verschwindet für eine Woche, wenn man „Später“ wählt. */
 function Nudge(m){
@@ -58,11 +59,11 @@ export function Wuensche(){
   const open=m.wishes.filter(w=>w.status==='offen'||w.status==='plan').length;
   return `<div class="wrap">
    ${AppPromo()}
-   ${Nudge(m)}
+   ${Steps(m)||Nudge(m)}
    <div class="row" style="margin:18px 0 4px;justify-content:space-between;gap:8px">${ViewSeg()}${m.handle||!S.auth.user?`<button class="btn gold sm" data-act="share">Link teilen</button>`:""}</div>
    <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}.`:open===1?'1 Ding, über das ich mich freuen würde.':`${open} Dinge, über die ich mich freuen würde.`}</h1></div>
    ${m.wishes.length?'':EmptyWishes(m)}<div ${m.wishes.length?'':'hidden'}>
-   <div class="importcard"><div><p class="eyebrow">Schon eine Liste?</p><h2>Wishtale liest sie für dich ein</h2><p class="muted">Ob Amazon-Wunschliste, Notizen oder der Wunschzettel deines Kindes: Füge den Text ein oder lade ein Foto hoch, und Wishtale macht daraus einzelne Wünsche, die du vor dem Speichern prüfst.</p></div><div class="row" style="gap:8px"><button class="btn pri" data-act="modal" data-v="zettel">${ic('plus','sm')}Liste einlesen</button><button class="btn sec" data-act="azopen">Bei Amazon suchen</button></div></div>
+   <div class="importcard"><div><p class="eyebrow">Schon eine Liste?</p><h2>Wishtale liest sie für dich ein</h2><p class="muted">Ob Amazon-Wunschliste, Notizen oder der Wunschzettel deines Kindes: Füge den Text ein oder lade ein Foto hoch, und Wishtale macht daraus einzelne Wünsche, die du vor dem Speichern prüfst.</p></div><button class="btn pri" data-act="modal" data-v="zettel">${ic('plus','sm')}Liste einlesen</button></div>
    <div class="banner" style="margin-bottom:8px">${ic('lock')}<span>${m.managed?`Als Elternteil siehst du, was reserviert oder gekauft ist. ${esc(m.name)} sieht es nicht.`:'Die Überraschung bleibt: Du siehst nie, ob jemand einen deiner Wünsche reserviert oder gekauft hat.'}</span></div>
    <p class="muted" style="font-size:14px;margin-bottom:16px">Du musst nicht jedes Produkt kennen. Schreib zum Beispiel „Hochwertige Pfanne bis 100 €“, dann suchen wir für deine Freunde passende Vorschläge heraus. Auch ohne Link finden wir bei Amazon etwas Passendes.</p>
    <div class="row" style="justify-content:space-between;margin-bottom:16px">

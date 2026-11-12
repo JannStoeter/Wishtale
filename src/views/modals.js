@@ -25,6 +25,7 @@ export function AcctModal(){
     <p class="disc" style="margin:0 0 12px">Du legst das Konto als sorgeberechtigte Person an. Wir speichern dafür nur den Vornamen und das Alter.</p>
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Schließen</button><button class="btn pri" type="submit">Anlegen und einrichten</button></div>
    </form>
+   <div class="row" style="margin-top:14px"><button class="btn sec sm" data-act="stepsshow">${ic('check','sm')}Erste Schritte anzeigen</button></div>
    ${S.auth.user?`<div class="row" style="justify-content:space-between;margin-top:18px"><span class="disc" style="margin:0">Deine Daten liegen in deinem Wishtale-Konto.</span><button class="btn sec sm" data-act="logout">Abmelden</button></div><div class="row" style="margin-top:10px"><a class="btn ghost sm" href="#plan" style="padding-left:0">Mein Plan</a><button class="btn ghost sm" data-act="newpw" style="padding-left:0">Passwort ändern</button><button class="btn ghost sm" data-act="delacct" style="padding-left:0;color:var(--warn)">Konto und alle Daten löschen</button></div>`:`<p class="disc" style="margin-top:18px">Alle Daten liegen nur in deinem Browser. <button class="chip" data-act="reset">Demodaten zurücksetzen</button></p>`}</div></div>`;
 }
 export function AmazonModal(){

@@ -929,3 +929,21 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .wcard .wprice{font-weight:600;font-size:14px;margin-right:auto}
 .prio-sel{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
 .prio-sel .sel.sm{width:auto;padding:8px 32px 8px 12px;border-radius:99px;color:var(--ink);font-size:14px}
+/* Erste Schritte */
+.fsteps{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 18px 8px;margin:0 0 16px}
+.fs-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.fsteps h2{font-size:clamp(24px,3.5vw,30px);margin:0}
+.fs-meta{display:flex;gap:12px;align-items:center}
+.fs-count{font-size:13px;font-weight:600;color:var(--muted)}
+.fs-bar{height:6px;border-radius:99px;background:var(--line);margin:12px 0 6px;overflow:hidden}
+.fs-bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+.fs-list{list-style:none;margin:0;padding:0;display:grid}
+.fs-list li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.fs-list li:first-child{border-top:0}
+.fs-mark{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--muted)}
+.fs-list li.next .fs-mark{border-color:var(--accent);color:var(--accent)}
+.fs-list li.done .fs-mark{background:var(--ok);border-color:var(--ok);color:#fff}
+.fs-list li.done .fs-txt b{color:var(--muted);text-decoration:line-through}
+.fs-txt b{display:block;font-weight:600;font-size:15px}.fs-txt small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.fs-acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:600px){.fs-list li{grid-template-columns:34px minmax(0,1fr)}.fs-acts{grid-column:2;justify-content:flex-start}}

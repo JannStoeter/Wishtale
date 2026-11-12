@@ -13,6 +13,7 @@ import { track } from './lib/track.js';
 import { saveGift, removeGift } from './lib/given.js';
 import { readZettelRemote } from './lib/zettel.js';
 import { findDupe } from './lib/dupes.js';
+import { markStep, hideSteps } from './lib/steps.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
@@ -187,7 +188,9 @@ const A={
   S.ui.step=0;location.hash='#wuensche';setTimeout(()=>{S.ui.modal='wish';S.ui.editWish=null;render()},50);
  },
  nudgehide(){try{localStorage.setItem('wishtale:nudge-hidden',String(Date.now()))}catch{/* nur für diese Sitzung */}S.ui.nudgeOff=true;render()},
- preview(el){S.ui.preview=el.dataset.v==='1';render()},
+ preview(el){S.ui.preview=el.dataset.v==='1';if(S.ui.preview)markStep('preview');render()},
+ stepshide(){hideSteps(true);toast('Die Schritte sind ausgeblendet. Du findest sie unter deinem Namen oben rechts bei „Erste Schritte“.');render()},
+ stepsshow(){hideSteps(false);S.ui.modal=null;location.hash='#wuensche';render(true);scrollTo({top:0,behavior:'smooth'})},
  vis(el){const k=el.dataset.k;S.me.vis[k]=(S.me.vis[k]||'alle')==='privat'?'alle':'privat';render()},
  wf(el){S.ui.wf=el.dataset.v;render()},wc(el){S.ui.wc=el.dataset.v;render()},
  selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Deine Freunde sehen jetzt, dass du das schon hast.':'Der Wunsch ist wieder offen.');render()},
@@ -224,7 +227,8 @@ const A={
  exitdemo(){S.ui.modal=null;S.ui.authMsg=null;location.hash='#start'},
  logout(){signOut().finally(()=>{location.hash='';location.reload()})},
  guestretry(){S.guest=null;route()},
- share(){
+share(){
+  markStep('share');
   const url=`${location.origin}${location.pathname}#p/${S.me.handle||S.ui.acct}`;
   const done=()=>toast('Dein Link ist kopiert und bereit zum Verschicken. (In der Demo öffnet er dein Profil nur in diesem Browser.)');
   if(navigator.share){navigator.share({title:`${S.me.name} bei Wishtale`,url}).catch(()=>{})}
@@ -449,7 +453,7 @@ async readlink(){
  wview(el){S.ui.wview=el.dataset.v;render()},
  suggest(el){S.ui.pickId=el.dataset.id;S.ui.wishCtx='guest';S.ui.modal='wishdetail';render()}
 };
-document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const f=A[t.dataset.act];if(f)f(t,e)});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;if(t.dataset.step==='people')markStep('people');const f=A[t.dataset.act];if(f)f(t,e)});
 document.addEventListener('change',async e=>{
   if(e.target.name!=='img'||!e.target.closest('form[data-form=wish]')||!e.target.files||!e.target.files[0])return;
   try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:'',manual:true})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
@@ -631,7 +635,7 @@ document.addEventListener('submit',e=>{
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
-      S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';const ideas=!link&&k!=='erlebnis'&&!noSuggest&&!plan;S.ui.wr=null;toast(ideas?'Der Wunsch ist gespeichert, und deine Freunde sehen dazu passende Ideen von Wishtale.':'Der Wunsch ist gespeichert.',ideas?{label:'So sehen es Freunde',run:()=>{S.ui.preview=true;render();scrollTo({top:0,behavior:'smooth'})}}:null);render();
+      S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';const ideas=!link&&k!=='erlebnis'&&!noSuggest&&!plan;S.ui.wr=null;toast(ideas?'Der Wunsch ist gespeichert, und deine Freunde sehen dazu passende Ideen von Wishtale.':'Der Wunsch ist gespeichert.',ideas?{label:'So sehen es Freunde',run:()=>{S.ui.preview=true;markStep('preview');render();scrollTo({top:0,behavior:'smooth'})}}:null);render();
     };
     if(fi.failed)toast('Das Bild konnte nicht gespeichert werden. Der Wunsch ist ohne Bild gespeichert, du kannst es später erneut versuchen.');
     S.ui.wishImg=null;done(fi.img,fi.src,fi.removed);
