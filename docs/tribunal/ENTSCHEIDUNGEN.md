@@ -52,6 +52,7 @@ Stand: 2026-11-09
 | 027 | Brave-Schlüssel setzen | **A: Schlüssel von Jann eingetragen, live geprüft (Tonies, Schlummerwal, AirPods)** | ja, `4b13088` |
 | 058 | Bestimmtes Produkt ohne Link | **Anweisung: genauer Wunsch ohne Link ist das gewünschte Produkt, kein Vorschlag** | ja, `3516819` |
 | 059 | Vorschläge beim Thema, Kategorien | **Anweisung: keine fremden Wünsche als Vorschlag, Spielzeug & Basteln, Kategorie aus der Erkennung** | ja, `d349cdc` |
+| 060 | Landingpage: Höhen der Vorführung | **Anweisung: gleiche Höhe, alles auf dem ersten Bildschirm** | ja, `1e7da77` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
