@@ -119,9 +119,9 @@ function previewWish(title){
   loadMatch(S.me.handle,t).then(m=>{
     if(S.ui.wr?.seq!==seq)return;
     if(m&&m.c&&sel&&!sel.dataset.touched)sel.value=m.c;
-    if(!m||!m.ok){setRec({st:'vague',t,seq});return}
-    const cand={t:m.t,q:m.q,price:m.price,est:true,src:'match'};showCand(cand,t);S.ui.wr.seq=seq;candImage(cand);
-  }).catch(()=>{if(S.ui.wr?.seq===seq)setRec({st:'vague',t,seq})});
+    if(!m||!m.ok){setRec({st:'unsure',t,seq});return}
+    const web=m.src==='web',cand={t:m.t,q:m.q,price:m.price,est:!web,src:web?'web':'match',host:m.host||''};showCand(cand,t);S.ui.wr.seq=seq;candImage(cand,m.img||undefined);
+  }).catch(()=>{if(S.ui.wr?.seq===seq)setRec({st:'unsure',t,seq,err:true})});
 }
 /** Übernimmt Name, Preis und Bild eines Kandidaten ins Formular (nur nach Klick). */
 function applyCand(cand){
@@ -397,6 +397,11 @@ document.addEventListener('change',async e=>{
   try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:'',manual:true})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
 });
 document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?.('form[data-form=wish]')&&!S.ui.editWish&&!e.target.dataset.skip)previewWish(e.target.value)});
+// Die Erkennung startet schon beim Tippen und Einfügen (nach kurzer Pause), nicht erst beim Verlassen des Feldes.
+let recT;
+// Ein Link im Namensfeld wandert von selbst ins Link-Feld und wird gelesen, ein Feld reicht für alles.
+document.addEventListener('input',e=>{const t=e.target;if(t.name!=='t'||!t.closest?.('form[data-form=wish]')||S.ui.editWish)return;const v=t.value.trim();if(/^https?:\/\/\S+$/i.test(v)){const f=wform();if(f&&f.elements.link&&!f.elements.link.value.trim()){f.elements.link.value=v;t.value='';t.dataset.moved='1';clearTimeout(recT);A.readlink()}}});
+document.addEventListener('input',e=>{if(e.target.name!=='t'||!e.target.closest?.('form[data-form=wish]')||S.ui.editWish)return;if(e.target.dataset.moved){delete e.target.dataset.moved;return}clearTimeout(recT);const v=e.target.value;recT=setTimeout(()=>{if(wform()?.elements.t===e.target&&e.target.value===v&&v.trim()!==S.ui.wr?.t)previewWish(v)},e.inputType==='insertFromPaste'?150:800)});
 document.addEventListener('input',e=>{if(e.target.name==='t'&&e.target.classList?.contains('attn'))e.target.classList.remove('attn')});
 document.addEventListener('input',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;$('#budv').textContent=money(S.ui.budget)}});
 document.addEventListener('change',e=>{const sf=e.target.closest?.('form[data-form=social]');if(sf)sf.requestSubmit()});

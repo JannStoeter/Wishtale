@@ -40,10 +40,17 @@ export function pageCandidates(json, query) {
     .sort((a, b) => b.score - a.score).slice(0, 3);
 }
 
-export async function searchOfficialImage(query, { fetchJson, read = inspect, load = fetchImage } = {}) {
+/** Websuche über Brave (nur mit Schlüssel). Liefert die rohe Antwort oder null. */
+export async function webJson(query, { fetchJson } = {}) {
   const key = process.env.BRAVE_SEARCH_API_KEY, q = clean(query);
   if (!q || (!key && !fetchJson)) return null;
-  const json = fetchJson ? await fetchJson(q) : await fetch('https://api.search.brave.com/res/v1/web/search?count=8&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+  return fetchJson ? fetchJson(q) : fetch('https://api.search.brave.com/res/v1/web/search?count=8&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+}
+
+export async function searchOfficialImage(query, { fetchJson, read = inspect, load = fetchImage } = {}) {
+  const q = clean(query);
+  const json = await webJson(q, { fetchJson });
+  if (!json) return null;
   for (const c of pageCandidates(json, q)) {
     try { const p = await read(c.url); if (!p?.imageUrl) continue; const im = await load(p.imageUrl); return { ...im, source: c.host }; } catch { /* nächster Treffer */ }
   }

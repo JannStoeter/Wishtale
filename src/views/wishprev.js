@@ -1,6 +1,7 @@
 /*
  * Erkennung im Wunsch-Dialog, direkt unter dem Namensfeld. Drei Zustände (S.ui.wr.st):
  *  vague   – allgemeiner Wunsch: nur eine Hinweiszeile, keine Karten
+ *  unsure  – gesucht, aber nichts Sicheres gefunden: ehrlicher Hinweis, nichts geht verloren
  *  loading – kleiner Platzhalter, der Dialog bleibt bedienbar
  *  found   – genau eine Karte „Das haben wir erkannt“ mit „Passt“ und „Nicht das Richtige“
  *  alts    – nach „Nicht das Richtige“: bis zu 4 anklickbare Alternativen
@@ -24,13 +25,14 @@ export function WishRec() {
   if (!r || !r.st) return '';
   const c = cat(r.c || 'wohnen');
   if (r.st === 'vague') return `<p class="wr-hint">${ic('spark', 'sm')}Wir zeigen deinen Freunden passende Ideen dazu.</p>`;
+  if (r.st === 'unsure') return `<p class="wr-hint">${ic('spark', 'sm')}<span>${r.err ? 'Die Produktsuche hat gerade nicht geklappt.' : 'Wir haben dazu kein sicheres Produkt gefunden.'} Das ist in Ordnung: Dein Wunsch bleibt, wie du ihn geschrieben hast, und deine Freunde sehen dazu passende Ideen von Wishtale. Mit dem Link zu einem Shop wird er genauer.</span></p>`;
   if (r.st === 'none') return r.msg ? `<p class="wr-hint">${esc(r.msg)}</p>` : '';
   if (r.st === 'loading') return `<div class="wr-card wr-load" role="status" aria-live="polite"><span class="wr-thumb"></span><span><b>Wishtale schaut, welches Produkt du meinst …</b><small>Du kannst währenddessen weiter ausfüllen oder speichern.</small></span></div>`;
   if (r.st === 'found') {
     const k = r.cand;
     if (r.accepted) return `<p class="wr-hint ok">${ic('check', 'sm')}Übernommen: ${esc(k.t)}${k.price ? `, ${money(k.price)}` : ''}. Du kannst alles noch ändern.</p>`;
     return `<div class="wr-card" aria-live="polite"><span class="wr-thumb">${thumb(k.img, c, k.t)}</span>
-     <span class="wr-body"><span class="eyebrow">Das haben wir erkannt</span><b>${esc(k.t)}</b>${k.price ? `<small>${k.est ? 'ca. ' : ''}${money(k.price)}${k.est ? ', üblicher Preis' : ''}</small>` : '<small>Preis noch offen</small>'}</span>
+     <span class="wr-body"><span class="eyebrow">Das haben wir erkannt${k.host ? ` · gefunden bei ${esc(k.host)}` : ''}</span><b>${esc(k.t)}</b>${k.price ? `<small>${k.est ? 'ca. ' : ''}${money(k.price)}${k.est ? ', üblicher Preis' : ''}</small>` : '<small>Preis noch offen</small>'}</span>
      <span class="wr-acts"><button type="button" class="btn pri sm" data-act="wraccept">Passt</button><button type="button" class="btn ghost sm" data-act="wrreject">Nicht das Richtige</button></span></div>`;
   }
   if (r.st === 'alts') {
