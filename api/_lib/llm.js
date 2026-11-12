@@ -13,8 +13,12 @@ export const aiConfigured = () => !!process.env.ANTHROPIC_API_KEY;
 export const modelFor = tier => (tier === 'light' ? (process.env.LIGHT_LLM_MODEL || process.env.ANTHROPIC_MODEL_LIGHT || 'claude-haiku-5-5') : (process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5'));
 const external = tier => tier === 'light' && process.env.LIGHT_LLM_BASE_URL && process.env.LIGHT_LLM_KEY;
 
-/** content: Text oder Anthropic-Inhaltsliste. Liefert { text, usage: { input_tokens, output_tokens }, model, stop }. */
-export async function complete({ tier = 'main', system, content, maxTokens = 2000, timeoutMs = 50000 }, fetchImpl = fetch) {
+/**
+ * content: Text oder Anthropic-Inhaltsliste. Liefert { text, usage: { input_tokens, output_tokens }, model, stop }.
+ * effort: low | medium | high (output_config.effort). Die aktuellen Modelle denken ohne Angabe von selbst nach, das kostet
+ * bei kurzen Listen viel Zeit. quick: true schaltet das Nachdenken ab (Sonnet: between_tools, Haiku: disabled), nur bis effort high.
+ */
+export async function complete({ tier = 'main', system, content, maxTokens = 2000, timeoutMs = 50000, effort, quick = false }, fetchImpl = fetch) {
   const model = modelFor(tier);
   if (external(tier)) {
     const r = await fetchImpl(`${process.env.LIGHT_LLM_BASE_URL.replace(/\/$/, '')}/chat/completions`, {
@@ -29,7 +33,11 @@ export async function complete({ tier = 'main', system, content, maxTokens = 200
   const r = await fetchImpl('https://api.anthropic.com/v1/messages', {
     method: 'POST', signal: AbortSignal.timeout(timeoutMs),
     headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model, max_tokens: maxTokens, system, messages: [{ role: 'user', content }] }),
+    body: JSON.stringify({
+      model, max_tokens: maxTokens, system, messages: [{ role: 'user', content }],
+      ...(effort ? { output_config: { effort } } : {}),
+      ...(quick ? { thinking: { type: /sonnet/.test(model) ? 'between_tools' : 'disabled' } } : {}),
+    }),
   });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) {

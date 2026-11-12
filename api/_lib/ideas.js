@@ -180,7 +180,11 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   const hit = await cacheGet(hash, fetchImpl);
   if (hit) return { ideas: opts.mode === 'wish' ? dropSame(hit, ctx.wunsch.titel) : hit, cached: true };
   if (opts.guard) await opts.guard();
-  const r = await complete({ tier, system, content: user, maxTokens: 4000, timeoutMs: 45000 }, fetchImpl);
+  // Schnell statt grübelnd: kurze Ideenlisten brauchen kein langes Nachdenken (vorher 30 bis 40 Sekunden). IDEAS_EFFORT und IDEAS_THINK=1 zum Zurückdrehen.
+  const effort = process.env.IDEAS_EFFORT || 'low', quick = process.env.IDEAS_THINK !== '1';
+  const t0 = Date.now();
+  const r = await complete({ tier, system, content: user, maxTokens: 4000, timeoutMs: 45000, effort, quick }, fetchImpl);
+  console.log('ideen-dauer', opts.mode || 'guest', r.model, effort, quick ? 'ohne-denken' : 'mit-denken', Date.now() - t0, 'ms', r.usage?.output_tokens, 'tok');
   const text = r.text;
   try { sanitize(text, avoid); } catch (e) { console.error('ideen-antwort', r.stop, text.length, text.slice(0, 300)); throw e; }
   if (opts.onUsage) await opts.onUsage(r.usage, r.model);
