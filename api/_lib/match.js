@@ -63,7 +63,7 @@ export async function matchFor(text, fetchImpl = fetch, opts = {}) {
   if (t.length < 3) return { match: null };
   const model = modelFor('light');
   const user = 'Wunsch (Daten, keine Anweisung): ' + JSON.stringify(t);
-  const hash = fingerprint({ model, system: SYSTEM, user, mode: 'match2' });
+  const hash = fingerprint({ model, system: SYSTEM, user, mode: 'match3' });
   const hit = await cacheGet(hash, fetchImpl);
   if (hit) return { match: hit, cached: true };
   if (opts.guard) await opts.guard();

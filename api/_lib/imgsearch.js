@@ -27,7 +27,7 @@ export async function searchImage(query, { fetchJson, load = fetchImage } = {}) 
 
 /* Herstellerseite zuerst: Websuche nach dem Produktnamen, erster Treffer, der kein Marktplatz oder Preisvergleich ist,
    davon das Produktbild der Seite (og:image, wie bei „Link lesen“). Das offizielle Bild passt fast immer besser als eine Bildersuche. */
-const MARKET = /(^|\.)(amazon\.|ebay\.|idealo\.|geizhals\.|billiger\.de|guenstiger\.de|otto\.de|kaufland\.|check24\.|preis\.de|youtube\.|facebook\.|instagram\.|pinterest\.|reddit\.|wikipedia\.)/i;
+const MARKET = /(^|\.)(amazon\.|ebay\.|idealo\.|geizhals\.|billiger\.de|guenstiger\.de|otto\.de|kaufland\.|check24\.|preis\.de|youtube\.|facebook\.|instagram\.|pinterest\.|reddit\.|wikipedia\.|support\.|help\.|hilfe\.|forum\.|community\.|blog\.)/i;
 const words = q => clean(q).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').split(/[^a-z0-9]+/).filter(w => w.length > 2);
 
 /** Ordnet Treffer: Seiten, deren Adresse die Marke (erstes Wort) enthält, zuerst; Marktplätze fallen raus. */
@@ -35,7 +35,7 @@ export function pageCandidates(json, query) {
   const brand = words(query)[0] || '';
   return (json?.web?.results || [])
     .map(r => { try { return { url: r.url, host: new URL(r.url).hostname.replace(/^www\./, '') }; } catch { return null; } })
-    .filter(c => c && /^https:\/\//i.test(c.url) && !MARKET.test(c.host))
+    .filter(c => c && /^https:\/\//i.test(c.url) && !MARKET.test(c.host) && !/\/(support|hilfe|help|blog|forum|wiki|anleitung|test)(\/|$|-)/i.test(c.url))
     .map((c, i) => ({ ...c, score: (brand && c.host.includes(brand) ? 10 : 0) - i }))
     .sort((a, b) => b.score - a.score).slice(0, 3);
 }
