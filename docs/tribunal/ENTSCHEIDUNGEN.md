@@ -46,6 +46,7 @@ Stand: 2026-11-09
 | 051 | Vorschau auf der Wunschseite | **Anweisung: Umschalter „So sehen Schenkende es“ auch auf der Wunschseite** | ja, `6d07a2f` |
 | 052 | Testlauf: Ladezeit und Handhabung | **Anweisung: KI ohne langes Nachdenken, Server in London, Vorladen; 15 Handhabungsbefunde behoben** | ja, `f3e994c` |
 | 053 | Wunsch-Dialog: Erkennung | **Anweisung: vage Hinweis, konkret eine Karte mit Passt/Nicht das Richtige, danach klickbare Alternativen; Schwelle 0,75** | ja, `2a439a9` |
+| 054 | Leere Profile, Leerzustand, Start, Igel im Detail | **Anweisung: freundlicher Hinweis bei dünnem Profil, einladender Leerzustand, Start auf der Wunschliste, exakte Suche zuerst** | ja, `e64e636` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
@@ -73,3 +74,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
+- 055 Geführtes Onboarding zum Wiederaufrufen? (Entscheidung, von Jann)
