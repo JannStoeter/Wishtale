@@ -89,7 +89,7 @@ export function WishModal() {
     else if (!taken && !w.bought && !o.main) footer = `<button class="btn pri" data-act="reserve" data-id="${w.id}">Reservieren</button>`;
   } else if (ctx === 'own') {
     footer = `<button class="btn pri" data-act="wedit" data-id="${w.id}">Bearbeiten</button><button class="btn sec" data-act="selbst" data-id="${w.id}">${w.status === 'selbst' ? 'Wieder offen' : 'Erledigt, habe ich schon'}</button>
-      <button class="btn sec" data-act="prio" data-id="${w.id}">Priorität: ${PRIO[w.prio]}</button>
+      <label class="prio-sel"><span>Wichtigkeit</span><select class="sel sm" data-prio="${w.id}" aria-label="Wichtigkeit">${[3, 2, 1].map(n => `<option value="${n}" ${w.prio === n ? 'selected' : ''}>${PRIO[n]}</option>`).join('')}</select></label>
       <button class="btn ghost" data-act="delw" data-id="${w.id}">${ic('trash', 'sm')}Löschen</button>`;
   }
 

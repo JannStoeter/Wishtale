@@ -57,7 +57,7 @@ export const LOOKS=[
 ];
 export const LOOKSCOPE=['Alle','Interior','Küche','Outdoor'];
 export const V={alle:{l:'Für alle mit Link',i:'globe'},giver:{l:'Für alle mit Link',i:'globe'},privat:{l:'Privat',i:'lock'},nur:{l:'Nur für dich',i:'eye'}};
-export const PRIO=['','Nice to have','Wichtig','Herzenswunsch'];
+export const PRIO=['','Nice to have','Wichtig','Sehr wichtig'];
 export const FB={love:'Genau mein Geschmack!',happy:'Darüber freue ich mich sehr.',meh:'Schön, aber nicht ganz meins.',have:'Bereits vorhanden.',swap:'Ich würde lieber etwas anderes daraus machen.'};
 
 export const CATALOG=[

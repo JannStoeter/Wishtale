@@ -926,3 +926,6 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .wr-steps i:nth-child(1){animation-delay:.2s}.wr-steps i:nth-child(2){animation-delay:1.6s}.wr-steps i:nth-child(3){animation-delay:3.2s}
 @keyframes wrstep{to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.wr-load::after,.wr-lens{animation:none}.wr-steps i{animation:none;opacity:1;transform:none}}
+.wcard .wprice{font-weight:600;font-size:14px;margin-right:auto}
+.prio-sel{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
+.prio-sel .sel.sm{width:auto;padding:8px 32px 8px 12px;border-radius:99px;color:var(--ink);font-size:14px}

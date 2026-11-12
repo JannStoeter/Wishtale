@@ -31,7 +31,9 @@ export function covers(w, x) {
 
 /** Ergebnis: { t, url, host, price, a, tone, source, ideas } */
 export function productFor(person, w) {
-  if (w.noSuggest && !deepLink(w.link)) return null;
+  if (w.noSuggest && !deepLink(w.link)) { // „Hierfür keine Vorschläge“ blendet nur Vorschläge aus, das Produkt selbst bleibt auffindbar
+    return w.kind === 'produkt' ? { t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'erzeugt', direct: false } : null;
+  }
   if (w.kind === 'kategorie') {
     const top = picks(person, w).list[0];
     if (top) return fromProduct(top.x, 'vorschlag');
@@ -73,7 +75,7 @@ export function ideasFor(person, w, n = 3) {
 export function offersFor(person, w) {
   if (w.noSuggest) { // „Hierfür keine Vorschläge“: nur der eigene Link der Person bleibt
     const own = deepLink(w.link);
-    return { main: own ? { t: w.t, url: own, host: new URL(own).hostname.replace(/^www\./, ''), price: w.price || null, priceBy: 'user', source: 'link', direct: true, id: 'main' } : null, alts: [], over: 0 };
+    return { main: own ? { t: w.t, url: own, host: new URL(own).hostname.replace(/^www\./, ''), price: w.price || null, priceBy: 'user', source: 'link', direct: true, id: 'main' } : (productFor(person, w) && { ...productFor(person, w), id: 'main' }), alts: [], over: 0 };
   }
   const main = productFor(person, w);
   if (w.kind === 'kategorie') {

@@ -33,6 +33,8 @@ function wishLine(w,p){
   return {pr,line};
 }
 
+const cardPrice=w=>w.price?money(w.price):w.kind==='kategorie'&&w.budget?'bis '+money(w.budget):'';
+
 /** Listenzeile für viele Wünsche: kleines Bild, Titel, Zeile, Preis, Status und Priorität in einer Reihe. */
 export function WishRow(w,p,o={}){
   const {pr,line}=wishLine(w,p);
@@ -55,7 +57,7 @@ export function WishCard(w,p,o={}){
    <div class="wbody">
     <h3 class="wt">${esc(w.t)}</h3>
     <p class="wp">${esc(line)}</p>
-    <div class="wm">${o.meta||''}<span class="wgo">Ansehen ›</span></div>
+    <div class="wm">${o.meta||''}${cardPrice(w)?`<span class="wprice">${cardPrice(w)}</span>`:''}<span class="wgo">Ansehen ›</span></div>
    </div>
   </div>`;
 }

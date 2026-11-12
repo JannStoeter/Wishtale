@@ -455,6 +455,7 @@ document.addEventListener('input',e=>{if(e.target.name==='t'&&e.target.classList
 document.addEventListener('input',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;$('#budv').textContent=money(S.ui.budget)}});
 document.addEventListener('change',e=>{const sf=e.target.closest?.('form[data-form=social]');if(sf)sf.requestSubmit()});
 document.addEventListener('change',e=>{if(e.target.id==='wc2')e.target.dataset.touched='1'});
+document.addEventListener('change',e=>{if(e.target.dataset?.prio){const w=S.me.wishes.find(x=>x.id===e.target.dataset.prio);if(w){w.prio=+e.target.value;toast('Wichtigkeit: '+PRIO[w.prio]);render()}}});
 document.addEventListener('change',e=>{if(e.target.dataset?.sort){S.ui.wsort=e.target.value;render()}if(e.target.dataset?.wc){S.ui.wc=e.target.value;render()}});
 document.addEventListener('change',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;render()}});
 document.addEventListener('input',e=>{const f=e.target.dataset?.az;if(f&&S.ui.az)S.ui.az[f]=e.target.value});
