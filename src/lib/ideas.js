@@ -26,3 +26,13 @@ export const skey = h => `self:${h}:${S.ui.pb || 0}`;
 /** 'none' | 'loading' | 'ready' | 'empty' */
 export const aiStatus = key => { const e = (S.ui.aiMap || {})[key]; return !e ? 'none' : !e.loaded ? 'loading' : e.list.some(i => !isHidden(i)) ? 'ready' : 'empty'; };
 export const ideasOf = key => ((S.ui.aiMap || {})[key]?.list || []).filter(i => !isHidden(i));
+
+/** Wunsch-Dialog: gemeintes Produkt erkennen (api/ideas.js mode=match, nur angemeldet). Liefert { ok, conf, t, q, price } oder null. */
+export async function loadMatch(handle, t) {
+  const { data } = await sb.auth.getSession();
+  if (!data.session) return null;
+  const r = await fetch('/api/ideas?' + new URLSearchParams({ h: handle, mode: 'match', t: String(t).slice(0, 120) }), { headers: { authorization: 'Bearer ' + data.session.access_token }, signal: AbortSignal.timeout(25000) });
+  if (!r.ok) return null;
+  const j = await r.json().catch(() => ({}));
+  return j.match || null;
+}

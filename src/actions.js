@@ -13,12 +13,12 @@ import { track } from './lib/track.js';
 import { saveGift, removeGift } from './lib/given.js';
 import { readZettelRemote } from './lib/zettel.js';
 import { findDupe } from './lib/dupes.js';
-import { hideIdea, ideasOf, loadIdeas, skey, gkey } from './lib/ideas.js';
+import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
 import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage } from './lib/wishimg.js';
 import { render, route, refreshGuest } from './render.js';
-import { WishPrev, draftKey } from './views/wishprev.js';
+import { WishRec, draftKey, concrete, altPrice } from './views/wishprev.js';
 import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
 import { guestRpc } from './lib/remote.js';
@@ -94,19 +94,40 @@ function wishVariants(id,ctx){
   if(!w||w.noSuggest||!p.handle||!p.remote&&ctx==='guest'||w.link||w.kind==='erlebnis'||!/^[0-9a-f-]{36}$/i.test(String(id)))return;
   loadIdeas('wish:'+id,{h:p.handle,mode:'wish',w:id,t:w.t.slice(0,80)},()=>{if(S.ui.modal==='wishdetail'&&S.ui.pickId===id)render()});
 }
-/* Vorschau im Wunschformular: Kategorie raten, passende Produkte laden und im Formular anzeigen, ohne eingetippte Werte zu verlieren. */
-function previewWish(title,msg){
-  const f=document.querySelector('form[data-form=wish]'),box=document.getElementById('wprev');
-  if(!f||!box||S.ui.editWish)return;
+/* Erkennung im Wunsch-Dialog (src/views/wishprev.js): S.ui.wr hält den Zustand, gezeichnet wird nur der Kasten #wprev,
+   damit eingetippte Werte stehen bleiben. Das Namensfeld wird nur nach „Passt“ oder einem Klick auf eine Alternative überschrieben. */
+const wform=()=>document.querySelector('form[data-form=wish]');
+function drawRec(){const b=document.getElementById('wprev');if(b)b.innerHTML=WishRec()}
+function setRec(o){S.ui.wr=o;drawRec()}
+const canAi=()=>S.auth.user&&S.me.handle&&/^[a-z0-9-]{3,31}$/.test(S.me.handle);
+/** Bild zum Kandidaten im Hintergrund holen; die Karte bekommt es, sobald es da ist. */
+function candImage(cand,imageUrl){
+  if(!S.auth.user)return;
+  const seq=S.ui.wr?.seq;
+  fetchProductImage(imageUrl||null,imageUrl?undefined:cand.q||cand.t).then(im=>{if(S.ui.wr?.seq!==seq)return;cand.img={blob:im.blob,preview:im.preview,src:im.src};drawRec()}).catch(()=>{});
+}
+function showCand(cand,t){const seq=(S.ui.wr?.seq||0)+1;S.ui.wr={st:'found',t:t||cand.t,c:wform()?.elements.c?.value,cand,seq};drawRec();return seq}
+function previewWish(title){
+  const f=wform();if(!f||S.ui.editWish)return;
   const t=String(title||'').trim().slice(0,120);
-  if(t.length<3){box.innerHTML='';return}
+  if(S.ui.wr?.st==='found'&&S.ui.wr.accepted&&S.ui.wr.cand.t===t)return; // gerade übernommen
   const kind=f.querySelector('input[name=kind]:checked')?.value;
-  if(f.elements.nosug?.checked){box.innerHTML='';return}
-  const sel=f.elements.c;if(sel&&sel.value==='wohnen'){const g=guessCategory(t,'wohnen');if(g!==sel.value)sel.value=g}
-  S.ui.wprevMsg=msg||'';
-  const draw=()=>{const b=document.getElementById('wprev'),ff=document.querySelector('form[data-form=wish]');if(b&&ff&&ff.elements.t.value.trim().slice(0,120)===t)b.innerHTML=WishPrev(t,ff.elements.c?.value)};
-  if(kind!=='erlebnis'&&kind!=='frei'&&S.me.handle&&/^[a-z0-9-]{3,31}$/.test(S.me.handle))loadIdeas(draftKey(t),{h:S.me.handle,mode:'wish',t},draw);
-  draw();
+  const sel=f.elements.c;if(t.length>=3&&sel&&sel.value==='wohnen'){const g=guessCategory(t,'wohnen');if(g!==sel.value)sel.value=g}
+  if(t.length<3||f.elements.nosug?.checked||kind==='erlebnis'){setRec(null);return}
+  if(kind==='frei'||kind==='kategorie'||!concrete(t)||!canAi()){setRec({st:'vague',t});return}
+  const seq=(S.ui.wr?.seq||0)+1;setRec({st:'loading',t,seq,c:sel?.value});
+  loadMatch(S.me.handle,t).then(m=>{
+    if(S.ui.wr?.seq!==seq)return;
+    if(!m||!m.ok){setRec({st:'vague',t,seq});return}
+    const cand={t:m.t,q:m.q,price:m.price,est:true,src:'match'};showCand(cand,t);S.ui.wr.seq=seq;candImage(cand);
+  }).catch(()=>{if(S.ui.wr?.seq===seq)setRec({st:'vague',t,seq})});
+}
+/** Übernimmt Name, Preis und Bild eines Kandidaten ins Formular (nur nach Klick). */
+function applyCand(cand){
+  const f=wform();if(!f)return;
+  f.elements.t.value=cand.t.slice(0,160);f.elements.t.classList.remove('attn');
+  if(cand.price&&f.elements.price)f.elements.price.value=String(cand.price).replace('.',',');
+  if(cand.img&&!(S.ui.wishImg&&!S.ui.wishImg.remove&&S.ui.wishImg.manual))showWishImg({...cand.img});
 }
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
@@ -134,7 +155,7 @@ const A={
  selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Deine Freunde sehen jetzt, dass du das schon hast.':'Der Wunsch ist wieder offen.');render()},
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
  delw(el){S.ui.modal=null;const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
- modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wprevMsg=''}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  close(){if(S.ui.modal==='welcome'){markWelcomed();stopWelcome()}S.ui.modal=null;S.ui.editWish=null;render()},
  wtab(el){showScene(+el.dataset.i,true)},
  inviteopen(){S.ui.invm={list:[],link:'',error:'',busy:false};S.ui.modal='invite';render();listInvites().then(l=>{if(S.ui.invm)S.ui.invm.list=l;if(S.ui.modal==='invite')render()}).catch(()=>{})},
@@ -149,7 +170,7 @@ const A={
  inviterevoke(el){revokeInvite(el.dataset.id).then(()=>{if(S.ui.invm)S.ui.invm.list=S.ui.invm.list.filter(i=>i.id!==el.dataset.id);toast('Die Einladung ist zurückgezogen.');render()}).catch(()=>toast('Das hat nicht geklappt.'))},
  invitelogin(){const v=S.ui.inv;if(v&&v.data)saveLocal({code:v.code,name:'',keep:(v.data.tips||[]).map(()=>true)})},
  welcomeskip(el,e){if(el.dataset.bg&&e&&e.target!==el)return;A.close()},
- welcomego(){markWelcomed();stopWelcome();S.ui.editWish=null;S.ui.wishImg=null;S.ui.wprevMsg='';S.ui.modal='wish';render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ welcomego(){markWelcomed();stopWelcome();S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.modal='wish';render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  welcomeimport(){markWelcomed();stopWelcome();S.ui.zt=null;S.ui.modal='zettel';render()},
  wedit(el){S.ui.editWish=el.dataset.id;S.ui.wishImg=null;S.ui.modal='wish';render();setTimeout(()=>document.getElementById('wt')?.focus({preventScroll:true}),30)},
  resend(){
@@ -234,23 +255,20 @@ render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
  ownedel(el){const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
  pins(el){S.ui.pinsCtx=el.dataset.ctx||'guest';S.ui.modal='pins';render()},
  pinconsent(){givePinConsent();render()},
-async readlink(el,ev){
-  const auto=ev===true,f=document.querySelector('form[data-form=wish]');if(!f)return;
-  const raw=f.elements.link.value.trim(),st=document.getElementById('wlstat'),say=t=>{if(st){st.textContent=t;st.className='hint'}},mark=(k,t)=>{if(st){st.textContent=t;st.className='hint '+k}};
-  if(!raw){say('Füge zuerst einen Link oder einen Titel ein.');return}
-  if(!/https?:\/\//i.test(raw)&&/\s/.test(raw)){ // kein Link, sondern Text (zum Beispiel der kopierte Amazon-Titel): die KI erkennt das Produkt
-    say('Wir lesen den Text …');
+async readlink(){
+  const f=wform();if(!f)return;
+  const raw=f.elements.link.value.trim(),st=document.getElementById('wlstat'),say=t=>{if(st){st.textContent=t;st.className='hint'}};
+  const typed=f.elements.t.value.trim();
+  if(!raw){say('Füge zuerst einen Link oder einen kopierten Titel ein.');return}
+  if(!/https?:\/\//i.test(raw)&&/\s/.test(raw)){ // kein Link, sondern Text (zum Beispiel der kopierte Amazon-Titel)
+    say('Wir lesen den Titel …');setRec({st:'loading',t:typed,seq:(S.ui.wr?.seq||0)+1});
     try{
       const r=await readZettelRemote({text:raw}),w=(r.wishes||[])[0];
-      if(!w){mark('attn','Daraus konnten wir leider keinen Wunsch herauslesen. Trage den Namen bitte unten selbst ein.');return}
-      const t=f.elements.t,pr=f.elements.price,nt=f.elements.note;
-      t.value=w.t.slice(0,160);
-      if(w.price&&!pr.value.trim())pr.value=w.price.toFixed(2).replace('.',',');
-      if(w.note&&nt&&!nt.value.trim())nt.value=w.note;
+      if(!w){setRec({st:'none',msg:'Aus dem Text konnten wir kein Produkt herauslesen. Dein Wunsch bleibt so, wie du ihn eingetragen hast.'});say('Füge den Titel einer Produktseite ein, zum Beispiel von Amazon.');return}
       f.elements.link.value='';
-      previewWish(w.t,'✓ Titel gelesen, so sehen Freunde diesen Wunsch');
-      mark('ok',`✓ Titel gelesen: ${w.t}${w.price?` für ${w.price.toFixed(2).replace('.',',')} €`:''}. Bitte prüfe die Angaben, einen Link kannst du später ergänzen.${(r.wishes||[]).length>1?' Der Text enthält mehrere Produkte, für ganze Listen nutze „Liste einlesen“.':''}`);
-    }catch(e){mark('attn',e.message||'Das hat nicht geklappt.')}
+      const cand={t:w.t,q:w.t,price:w.price?Math.round(w.price*100)/100:null,est:false,src:'text'};showCand(cand,typed);candImage(cand);
+      say((r.wishes||[]).length>1?'Der Text enthält mehrere Produkte, für ganze Listen nutze „Liste einlesen“.':'Titel gelesen. Prüfe die Karte oben und tippe auf „Passt“, wenn es stimmt.');
+    }catch(e){setRec({st:'none',msg:''});say(e.message||'Das hat nicht geklappt.')}
     return;
   }
   if(isAmazon(raw)){
@@ -258,26 +276,31 @@ async readlink(el,ev){
     const r=await amazonRead(raw);
     if(r.error){say(r.error);return}
     f.elements.link.value=r.url;
-    if(r.title&&!f.elements.t.value.trim())f.elements.t.value=r.title;
-    const nm=f.elements.t.value.trim(),tf=f.elements.t;
-    tf.classList.remove('attn');
-    if(nm){previewWish(nm);mark('ok',`✓ Amazon-Link gespeichert, Name übernommen. Den Preis gibt Amazon nicht heraus, trage ihn gern selbst ein oder lass ihn offen.`)}
-    else{mark('attn','✓ Amazon-Link gespeichert. Amazon verrät uns den Namen nicht, bitte trage ihn jetzt im Feld „Was wünschst du dir?“ ein, mehr ist nicht nötig.');tf.classList.add('attn');tf.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>tf.focus({preventScroll:true}),350)}
-    if(nm&&!S.ui.wishImg){try{const im=await fetchProductImage(null,nm);showWishImg({blob:im.blob,preview:im.preview,src:im.src});mark('ok','✓ Amazon-Link gespeichert und ein passendes Bild im Netz gefunden. Bitte prüfe, ob es zum Produkt passt, du kannst es entfernen.')}catch(e){console.warn('Bildsuche:',e.message)}}
+    if(r.title){const cand={t:r.title,q:r.title,price:null,src:'amazon'};showCand(cand,typed);candImage(cand);say('Der Link ist gespeichert. Den Namen haben wir aus der Adresse gelesen, einen Preis gibt Amazon nicht heraus.')}
+    else{setRec({st:'none',msg:''});say(typed?'Der Amazon-Link ist gespeichert und gehört zu deinem Wunsch.':'Der Amazon-Link ist gespeichert. Trag oben noch kurz ein, was es ist, mehr ist nicht nötig.')}
     return;
   }
-  say('Wir lesen den Link …');
+  say('Wir lesen den Link …');setRec({st:'loading',t:typed,seq:(S.ui.wr?.seq||0)+1});
   try{
     const p=await inspectLink(raw);
-    const t=f.elements.t,pr=f.elements.price,nt=f.elements.note;
-    if(!t.value.trim())t.value=p.title.slice(0,160);
-    const pf=priceField(p);if(pf&&(!auto||!pr.value.trim()))pr.value=pf;
-    if(p.size&&!/gr(ö|oe)ße:/i.test(nt.value)&&(!auto||!nt.value.trim()))nt.value=(nt.value.trim()?nt.value.trim()+'\n':'')+`Größe: ${p.size}`;
-    say(`Gefunden: ${summary(p)}. Bitte prüfe die Angaben, der Preis kann sich ändern.${p.price&&p.currency&&p.currency!=='EUR'?' Der Preis steht nicht in Euro, bitte passe ihn an.':''}`);
-    if(p.imageUrl&&!S.ui.wishImg){
-      try{const im=await fetchProductImage(p.imageUrl);showWishImg({blob:im.blob,preview:im.preview,src:im.src});say(`Gefunden: ${summary(p)} und das Produktbild. Bitte prüfe die Angaben, der Preis kann sich ändern.`)}catch(e){console.warn('Produktbild:',e.message)}
-    }
-  }catch(e){say(e.message||'Das hat nicht geklappt.')}
+    const pf=priceField(p),cand={t:p.title.slice(0,160),q:p.title,price:pf?+pf.replace(',','.'):null,est:false,src:'link',size:p.size};
+    showCand(cand,typed);if(p.imageUrl)candImage(cand,p.imageUrl);
+    if(p.size&&f.elements.note&&!/gr(ö|oe)ße:/i.test(f.elements.note.value))f.elements.note.value=(f.elements.note.value.trim()?f.elements.note.value.trim()+'\n':'')+`Größe: ${p.size}`;
+    say(`Link gelesen: ${summary(p)}. Der Preis kann sich ändern.${p.price&&p.currency&&p.currency!=='EUR'?' Der Preis steht nicht in Euro, bitte passe ihn an.':''}`);
+  }catch(e){setRec({st:'none',msg:''});say(e.message||'Diese Seite konnten wir nicht lesen. Dein Wunsch und der Link bleiben trotzdem gespeichert.')}
+ },
+ wraccept(){const r=S.ui.wr;if(!r||!r.cand)return;applyCand(r.cand);r.accepted=true;drawRec()},
+ wrreject(){
+  const r=S.ui.wr,f=wform();if(!r||!f)return;
+  const t=(f.elements.t.value.trim()||r.t||r.cand?.t||'').slice(0,120);
+  setRec({st:'alts',t,seq:(r.seq||0)+1,chosen:null});
+  if(canAi())loadIdeas(draftKey(t),{h:S.me.handle,mode:'wish',t},()=>{if(S.ui.wr?.st==='alts')drawRec()});
+  else setRec({st:'alts',t,chosen:null});
+ },
+ wrpick(el){
+  const r=S.ui.wr;if(!r)return;const i=+el.dataset.i,it=ideasOf(draftKey(r.t))[i];if(!it)return;
+  const cand={t:it.t,q:it.q,price:altPrice(it),est:true,src:'alt'};r.chosen=i;applyCand(cand);drawRec();
+  const seq=r.seq;fetchProductImage(null,it.q||it.t).then(im=>{if(S.ui.wr?.seq===seq&&S.ui.wr.chosen===i)showWishImg({blob:im.blob,preview:im.preview,src:im.src})}).catch(()=>{});
  },
  wimgdel(){const f=document.querySelector('form[data-form=wish]');if(f&&f.elements.img)f.elements.img.value='';showWishImg({remove:true})},
  ihave(el){
@@ -370,7 +393,7 @@ async readlink(el,ev){
 document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const f=A[t.dataset.act];if(f)f(t,e)});
 document.addEventListener('change',async e=>{
   if(e.target.name!=='img'||!e.target.closest('form[data-form=wish]')||!e.target.files||!e.target.files[0])return;
-  try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:''})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
+  try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:'',manual:true})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
 });
 document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?.('form[data-form=wish]')&&!S.ui.editWish&&!e.target.dataset.skip)previewWish(e.target.value)});
 document.addEventListener('input',e=>{if(e.target.name==='t'&&e.target.classList?.contains('attn'))e.target.classList.remove('attn')});

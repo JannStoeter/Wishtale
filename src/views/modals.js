@@ -2,7 +2,7 @@ import { ZettelModal } from './zettel.js';
 import { WelcomeModal } from './welcome.js';
 import { InviteModal } from './invite.js';
 import { AboutModal } from './about.js';
-import { WishPrev } from './wishprev.js';
+import { WishRec } from './wishprev.js';
 import { imgBoxHtml } from '../lib/wishimg.js';
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
@@ -72,10 +72,10 @@ export function Modal(){
    <div class="sheet-head"><h2 id="mt">${ed?'Wunsch bearbeiten':'Neuer Wunsch'}</h2><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
    <form data-form="wish">
     <div class="fld"><label for="wt" class="lf-t">Was wünschst du dir?</label><input id="wt" name="t" class="inp big" required placeholder="Produkt, Erlebnis oder eine Idee" autocomplete="off" value="${esc(d.t||'')}"></div>
-    <div class="fld linkfirst"><label for="wl">Link oder Amazon-Titel <span class="muted" style="font-weight:400">(optional)</span></label>
-     <div class="lf-row"><input id="wl" name="link" class="inp" placeholder="Link oder kopierten Titel einfügen" autocomplete="off" value="${esc(d.link||'')}"><button type="button" class="btn sec" data-act="readlink">Einlesen</button></div>
-     <p id="wlstat" class="hint" role="status" aria-live="polite">Wishtale trägt Name, Preis und Bild für dich ein. ${ed?'':`Noch nichts gefunden? <button type="button" class="linkbtn" data-act="azopen">Bei Amazon suchen</button>`}</p></div>
-    <div id="wprev" aria-live="polite">${ed?'':WishPrev(d.t||'',d.c)}</div>
+    <div id="wprev" aria-live="polite">${ed?'':WishRec()}</div>
+    <div class="fld linkfirst"><label for="wl">Link oder kopierter Titel <span class="muted" style="font-weight:400">(optional)</span></label>
+     <div class="lf-row"><input id="wl" name="link" class="inp" placeholder="Shop-Link oder kopierten Produkttitel einfügen" autocomplete="off" value="${esc(d.link||'')}"><button type="button" class="btn sec" data-act="readlink">Einlesen</button></div>
+     <p id="wlstat" class="hint" role="status" aria-live="polite">Bei Amazon zählt der kopierte Produkttitel, den Link selbst lesen wir nicht aus. Links anderer Shops lesen wir direkt.${ed?'':` Noch nichts gefunden? <button type="button" class="linkbtn" data-act="azopen">Bei Amazon suchen</button>`}</p></div>
     <div class="fld"><span class="lb">Art</span><div class="radios">${[['produkt','Produkt'],['kategorie','Nur Kategorie'],['erlebnis','Erlebnis'],['frei','Freier Wunsch']].map(([v,l])=>`<label><input type="radio" name="kind" value="${v}" ${(d.kind||'produkt')===v?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
     <div class="fld f-budget"><label for="wb">Budget bis (Euro)</label><input id="wb" name="budget" type="number" min="1" inputmode="numeric" class="inp" placeholder="z. B. 100" value="${d.budget||''}"></div>
     <div class="fld f-price"><label for="wp">Preis (Euro, optional)</label><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="z. B. 69,90" value="${d.price?String(d.price).replace('.',','):''}"></div>
