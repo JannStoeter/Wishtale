@@ -912,3 +912,17 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 @media(prefers-reduced-motion:reduce){.zm-load{animation:none}}
 .zm-ok{display:flex;gap:8px;align-items:flex-start;cursor:pointer;color:var(--ink);background:color-mix(in srgb,var(--accent) 6%,var(--surface));border:1px solid var(--line);border-radius:10px;padding:8px 10px}
 .zm-ok input{margin-top:2px}.zm-ok small{color:var(--muted)}
+/* Produkt wird geprüft: Lupe wandert über das Bild, Schritte erscheinen nacheinander, Glanz läuft über die Karte */
+.wr-load{position:relative;overflow:hidden;border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.wr-load::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,color-mix(in srgb,var(--gold) 18%,transparent) 50%,transparent 70%);transform:translateX(-100%);animation:wrsweep 1.8s ease-in-out infinite;pointer-events:none}
+@keyframes wrsweep{to{transform:translateX(100%)}}
+.wr-load .wr-thumb{position:relative;animation:none;background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.wr-lens{position:absolute;left:8px;top:8px;width:22px;height:22px;border:3px solid var(--accent);border-radius:50%;animation:wrlens 1.6s ease-in-out infinite}
+.wr-lens::after{content:'';position:absolute;right:-8px;bottom:-6px;width:3px;height:10px;background:var(--accent);border-radius:2px;transform:rotate(-45deg)}
+@keyframes wrlens{0%{transform:translate(0,0)}25%{transform:translate(18px,4px)}50%{transform:translate(10px,20px)}75%{transform:translate(0,14px)}100%{transform:translate(0,0)}}
+.wr-steps{display:grid;gap:1px;margin:3px 0 4px;font-size:13px;color:var(--ink)}
+.wr-steps i{font-style:normal;opacity:0;transform:translateY(3px);animation:wrstep .35s ease forwards}
+.wr-steps i::before{content:'✓ ';color:var(--ok);font-weight:700}
+.wr-steps i:nth-child(1){animation-delay:.2s}.wr-steps i:nth-child(2){animation-delay:1.6s}.wr-steps i:nth-child(3){animation-delay:3.2s}
+@keyframes wrstep{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.wr-load::after,.wr-lens{animation:none}.wr-steps i{animation:none;opacity:1;transform:none}}
