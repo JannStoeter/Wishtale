@@ -42,6 +42,7 @@ Stand: 2026-11-09
 | 047 | Gast-Ansicht: Wünsche zuerst | **A: Wünsche zuerst, dann „Nicht das Passende dabei?“ mit Preisrahmen nur für Vorschläge**, Claude und ChatGPT einig. | ja, `9db59dc` |
 | 048 | Gast-Ansicht: Feinschliff | **Anweisung: Bitte nicht/Hat schon in die Seitenleiste, Liste statt Groß, Sortierung** | ja, `3ffe30a` |
 | 049 | Info-Welt zum Profil | **Anweisung: Profilkopf öffnet ein gestaltetes Fenster über die Person, Seitenleiste entfällt** | ja, `4e37d6a` |
+| 050 | Startseite nach der Anmeldung | **C: Start auf Wünsche, Reiter Wünsche, Inspiration, Profil, Historie**, Claude und ChatGPT einig. | ja, `7de0085` |
 | 051 | Vorschau auf der Wunschseite | **Anweisung: Umschalter „So sehen Schenkende es“ auch auf der Wunschseite** | ja, `6d07a2f` |
 
 ## Offen (noch kein Urteil)
@@ -70,4 +71,3 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
-- 050 Startseite nach der Anmeldung: Wünsche statt Profil-Bearbeitung? (Entscheidung)

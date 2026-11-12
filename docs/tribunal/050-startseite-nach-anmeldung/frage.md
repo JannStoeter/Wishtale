@@ -1,7 +1,7 @@
 ---
 titel: Startseite nach der Anmeldung: Wünsche statt Profil-Bearbeitung?
 art: entscheidung
-status: offen
+status: entschieden
 optionen: A=Start auf „Wünsche“, Profil bleibt eigener Reiter | B=Neue Startseite „Mein Wishtale“: oben die eigene Seite so, wie Freunde sie sehen, mit Bearbeiten-Stiften direkt an Wünschen und Profil (bearbeiten im Kontext) | C=Start auf „Wünsche“ und Reiter neu ordnen (Wünsche, Inspiration, Profil, Historie) | D=So lassen (Start auf Profil)
 erstellt: 2026-11-12
 von: jann
