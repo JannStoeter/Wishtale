@@ -89,6 +89,7 @@ export function Modal(){
     <div class="fld"><label for="wv">Wer sieht das?</label><select id="wv" name="vis" class="sel">${[['alle','Für alle mit meinem Link'],['privat','Privat, nur ich']].map(([v,l])=>`<option value="${v}" ${((d.vis==='giver'?'alle':d.vis)||'alle')===v?'selected':''}>${l}</option>`).join('')}</select></div>
     <div class="fld"><label class="chk"><input type="checkbox" name="nosug" value="1" ${d.noSuggest?'checked':''}><span>Hierfür keine Vorschläge generieren</span></label><span class="muted" style="font-size:13.5px">Wishtale zeigt dann bei diesem Wunsch keine Produkte und Ideen. Deine Freunde lesen, dass das auf deinen Wunsch so ist.</span></div>
     <div class="fld"><label class="chk"><input type="checkbox" name="plan" value="1" ${d.status==='plan'?'checked':''}><span>Das möchte ich mir selbst erfüllen</span></label><span class="muted" style="font-size:13.5px">Niemand sieht diesen Wunsch. Wishtale schlägt deinen Freunden dafür nichts vor und nutzt ihn nur, um deinen Geschmack besser zu verstehen.</span></div>
+    <p id="wdup" class="hint attn" role="alert" hidden></p>
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" type="submit">${S.ui.editWish?'Änderungen speichern':'Wunsch speichern'}</button></div>
    </form></div></div>`;
   return `<div class="scrim" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">

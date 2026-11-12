@@ -8,17 +8,25 @@ import { productFor, isSpecific } from '../lib/products.js';
 import { ideasOf } from '../lib/ideas.js';
 import { cat, PRIO } from '../data/content.js';
 
-/** Bild zum Wunsch: eigenes Foto, sonst passend zum vorgeschlagenen Produkt, sonst zur Kategorie. */
+/**
+ * Bild zum Wunsch: eigenes Foto; sonst ein ruhiges Monogramm (Anfangsbuchstabe auf der Farbe der Kategorie).
+ * Kein Katalogbild mehr, das passte oft nicht (Kopfhörer beim Staubsauger). Erlebnisse und Kategorie-Wünsche behalten ihr Motiv.
+ */
 export function WishArt(w,pr){
   if(w.img)return `<span class="imgbox art"><img src="${w.img}" alt="" loading="lazy" decoding="async"></span>`;
-  return art((pr&&pr.a)||w.a||cat(w.c).a,pr&&pr.tone!=null?pr.tone:(w.tone??0));
+  if(w.kind==='erlebnis'||w.kind==='kategorie'||w.kind==='frei')return art(w.a||cat(w.c).a,w.tone??cat(w.c).t??0);
+  const ch=(String(w.t||'').trim().match(/[\p{L}\p{N}]/u)||['?'])[0].toUpperCase();
+  return `<span class="art mono t${(w.tone??cat(w.c).t??0)%6}" aria-hidden="true"><b>${esc(ch)}</b><small>${esc(cat(w.c).n)}</small></span>`;
 }
+const hostOf=u=>{try{const h=new URL(u).hostname.replace(/^www\./,'');return /(^|\.)amazon\./.test(h)||/amzn\./.test(h)?'Amazon':h}catch{return ''}};
 
 /** Produkt und Zeile unter dem Titel (eigener Link, Vorschlag, Erlebnis …). */
 function wishLine(w,p){
   const pr=(w.kind==='frei'||w.status==='selbst')?null:productFor(p,w);
   const ai=ideasOf('wish:'+w.id)[0],byAi=!!pr&&pr.source!=='link'&&!isSpecific(w)&&!w.link&&w.kind!=='erlebnis';
-  const line=w.status==='selbst'?'Schon vorhanden':pr?(pr.source==='link'?pr.t:byAi?(ai?'Vorschlag: '+ai.t:'Vorschläge ansehen'):'Vorschlag: '+pr.t):w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':'';
+  // Unterzeile: beim eigenen Link der Shop (der Produktname steht schon im Titel), ohne Link ein klarer Hinweis auf Ideen von Wishtale.
+  const linkLine=w.link?`Link zu ${hostOf(w.link)}`:'';
+  const line=w.status==='selbst'?'Schon vorhanden':w.link?linkLine:pr?(byAi?(ai?'Ohne Link, Wishtale hat Ideen dazu':'Ohne Link, Ideen von Wishtale ansehen'):'Ohne Link, Vorschlag von Wishtale ansehen'):w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':'';
   return {pr,line};
 }
 

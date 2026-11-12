@@ -12,6 +12,7 @@ import { hidePromo } from './views/inspiration.js';
 import { track } from './lib/track.js';
 import { saveGift, removeGift } from './lib/given.js';
 import { readZettelRemote } from './lib/zettel.js';
+import { findDupe } from './lib/dupes.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
@@ -524,6 +525,9 @@ document.addEventListener('submit',e=>{
     S.ui.modal=null;toast('Das Geschenk ist eingetragen.');render();
   }
   if(kind==='wish'){
+    // Doppelt? Einmal freundlich hinweisen, beim zweiten Klick trotzdem speichern.
+    const dup=findDupe(S.me.wishes,{t:(fd.get('t')||'').trim(),link:(fd.get('link')||'').trim()},S.ui.editWish);
+    if(dup&&f.dataset.dupok!==dup.id){f.dataset.dupok=dup.id;const el=f.querySelector('#wdup');if(el){el.hidden=false;el.textContent=`„${dup.t}“ steht schon auf deiner Wunschliste. Wenn du ihn trotzdem noch einmal anlegen möchtest, tippe noch einmal auf Speichern.`;el.scrollIntoView({block:'center',behavior:'smooth'})}return}
     Promise.all([amazonLink((fd.get('link')||'').trim()),finalImage()]).then(([link,fi])=>{const done=(img,imgSrc,removed)=>{
       const c=fd.get('c'),t=fd.get('t').trim(),k=fd.get('kind'),plan=fd.get('plan')==='1',noSuggest=fd.get('nosug')==='1';
       if(S.ui.editWish){
