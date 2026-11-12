@@ -29,7 +29,9 @@ export async function webMatch(text, { search = webJson, read = inspect } = {}) 
   const cands = pageCandidates(json, text).slice(0, 3);
   if (!cands.length) return null;
   const pages = await Promise.all(cands.map(c => Promise.race([read(c.url).catch(() => null), new Promise(r => setTimeout(() => r(null), 7000))]).then(p => p && p.title ? { p, host: c.host } : null)));
-  const best = pages.filter(Boolean).map(x => ({ ...x, o: overlap(text, x.p.title) })).filter(x => x.o >= 0.7).sort((a, b) => b.o - a.o)[0];
+  const scored = pages.filter(Boolean).map(x => ({ ...x, o: overlap(text, x.p.title) }));
+  console.log('match-web', JSON.stringify({ q: text, treffer: (json?.web?.results || []).slice(0, 6).map(r => { try { return new URL(r.url).hostname + ' | ' + String(r.title).slice(0, 60); } catch { return ''; } }), seiten: scored.map(x => [x.host, x.p.title.slice(0, 70), Math.round(x.o * 100)]) }));
+  const best = scored.filter(x => x.o >= 0.7).sort((a, b) => b.o - a.o)[0];
   if (!best) return null;
   const price = best.p.price && (!best.p.currency || best.p.currency === 'EUR') ? best.p.price : null;
   return { ok: true, conf: 0.9, src: 'web', t: clip(best.p.title.split(/\s[|–—]\s|\s-\s(?=[A-ZÄÖÜ])/)[0], 90), q: clip(text, 60), price: price ? Math.round(price * 100) / 100 : null, img: best.p.imageUrl || null, host: best.host };
