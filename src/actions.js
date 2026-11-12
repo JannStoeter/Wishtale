@@ -369,6 +369,18 @@ async readlink(){
   w.noSuggest=!w.noSuggest;toast(w.noSuggest?'Für diesen Wunsch zeigt Wishtale keine Vorschläge mehr.':'Wishtale darf für diesen Wunsch wieder Vorschläge zeigen.');
   if(!w.noSuggest)wishVariants(w.id,'own');render();
  },
+ aiuse(el){ // Vorschlag zum Wunsch übernehmen: der ungenaue Wunsch wird zu diesem Produkt (Name, Preis, direkter Amazon-Link, Bild), rückgängig machbar
+  const w=S.me.wishes.find(x=>x.id===el.dataset.wid),i=ideasOf('wish:'+el.dataset.wid).find(x=>x.t===el.dataset.t);if(!w||!i)return;
+  const old={t:w.t,price:w.price,link:w.link,img:w.img,imgSrc:w.imgSrc,kw:w.kw,a:w.a,tone:w.tone,c:w.c};
+  w.t=i.t.slice(0,160);w.kw=kwOf(w.t);if(altPrice(i))w.price=altPrice(i);
+  const c=guessCategory(w.t,w.c||'wohnen');if(c!==w.c){w.c=c;w.a=cat(c).a;w.tone=cat(c).t}
+  S.ui.modal=null;
+  toast('Übernommen: Dein Wunsch ist jetzt „'+w.t+'“.',{label:'Rückgängig',run:()=>{Object.assign(w,old);render()}});render();
+  // Direktlink und Bild im Hintergrund nachladen, nur wenn die Person den Wunsch inzwischen nicht zurückgesetzt hat
+  const still=()=>w.t===i.t.slice(0,160);
+  if(S.auth.user&&!w.link)findAmazonLink(i.t).then(r=>{if(r&&still()&&!w.link){w.link=r.url;render()}}).catch(()=>{});
+  if(S.auth.user)fetchProductImage(null,i.q||i.t).then(async im=>{if(!still())return;let url=im.preview;if(S.me.dbId&&im.blob){try{url=await storeImage(im.blob)}catch{return}}w.img=url;w.imgSrc=im.src||'';render()}).catch(()=>{});
+ },
  aivhave(el){ // „Habe ich schon“ bei einem Vorschlag zu einem Wunsch: als vorhanden notieren, nie wieder vorschlagen
   const i=ideasOf('wish:'+el.dataset.wid).find(x=>x.t===el.dataset.t);if(!i)return;
   const c=guessCategory(i.t,'wohnen');
