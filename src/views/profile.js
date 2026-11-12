@@ -7,7 +7,7 @@ import { GuestPage } from './giver.js';
 import { ViewSeg, PreviewBanner } from './wishes.js';
 import { completeness } from '../lib/tale.js';
 import { AppPromo } from './inspiration.js';
-import { WORLDS } from '../lib/flags.js';
+import { worldsOn } from '../lib/flags.js';
 
 export const STEPS=[
  {k:'interests',t:'Was machst du in deiner freien Zeit am liebsten?',h:'Such dir aus, was zu deinem Alltag passt. Daran erkennen wir später, über welche Geschenke du dich wirklich freuen würdest.',opts:()=>ACT.map(a=>a.l)},
@@ -40,7 +40,7 @@ const kidText=st=>{const n=esc(S.me.name||'das Kind');const T={
  nogos:{t:`Was soll ${n} lieber nicht geschenkt bekommen?`,h:'Das sehen nur Menschen, die etwas schenken wollen. So bleiben Enttäuschungen aus.'},
  alts:{t:'Und wenn den Schenkenden gar nichts einfällt?',h:`Dann freut sich ${n} vielleicht über einen Gutschein oder einen gemeinsamen Ausflug.`},
 };return T[st.k]||{t:st.t,h:st.h}};
-const STEPS_ON=()=>STEPS.filter(x=>WORLDS||x.k!=='cats');
+const STEPS_ON=()=>STEPS.filter(x=>worldsOn()||x.k!=='cats');
 export const steps=()=>S.auth.user?[CHOICE_STEP,...STEPS_ON()]:[NAME_STEP,CHOICE_STEP,...STEPS_ON()];
 export function Start(){
   const list0=steps(),anon=!S.auth.user;
@@ -98,7 +98,7 @@ export function Profil(){
    ${m.managed?MgPanel(m):''}
    ${AboutSec(m)}
    ${sec('interests','Interessen',chips(m.interests))}
-   ${!WORLDS?'':sec('cats','Welten',`<div class="catrow">${m.cats.map(id=>{const c=cat(id);return `<button class="catmini" data-act="world" data-id="${c.id}" data-ctx="own" aria-label="Welt ${c.n} öffnen">${art(c.a,c.t)}<div>${c.n}</div></button>`}).join('')}</div>`.replace('<div class="catrow"></div>',''))}
+   ${!worldsOn()?'':sec('cats','Welten',`<div class="catrow">${m.cats.map(id=>{const c=cat(id);return `<button class="catmini" data-act="world" data-id="${c.id}" data-ctx="own" aria-label="Welt ${c.n} öffnen">${art(c.a,c.t)}<div>${c.n}</div></button>`}).join('')}</div>`.replace('<div class="catrow"></div>',''))}
    ${(m.style||[]).length?sec('style','Im Notfall',`<div class="chips">${m.style.map(x=>`<button class="chip gold" data-act="creator" data-id="${x.id}" data-go="1">${esc(crea(x.id).scope)} von ${esc(crea(x.id).handle)}</button>`).join('')}</div><p class="muted" style="font-size:14px">Wenn deinen Freunden nichts Konkretes einfällt, können sie sich an diesen Listen orientieren.</p>`):''}
    ${sec('brands','Lieblingsmarken',chips(m.brands))}
    ${sec('tries','Möchte ich ausprobieren',chips(m.tries,'gold'))}

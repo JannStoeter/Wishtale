@@ -92,3 +92,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
 - 071 Erkennung schon ab zwei Wörtern (Aufgabe, von Jann, umgesetzt)
 - 072 Welten vorerst ausblenden (Entscheidung, von Jann, umgesetzt)
+- 073 Inspiration ausblenden, Entwicklermodus im Dev (Entscheidung, von Jann, umgesetzt)

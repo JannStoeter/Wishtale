@@ -982,3 +982,5 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .fold2[open]>summary::after{content:'\2212'}
 .fold2[open]>summary{margin-bottom:6px}
 .psec.cmp textarea.ta{min-height:84px}
+
+.devbadge{font-size:11px;padding:2px 8px;white-space:nowrap}

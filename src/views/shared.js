@@ -1,17 +1,18 @@
 import { S, initials } from '../state.js';
 import { ic, esc } from '../lib/util.js';
 import { V } from '../data/content.js';
+import { inspirationOn, devMode } from '../lib/flags.js';
 
 export function Header(v){
-  const items=[['wuensche','Wünsche'],['entdecken','Inspiration'],['profil','Profil'],['historie','Historie']];
+  const items=[['wuensche','Wünsche'],...(inspirationOn()?[['entdecken','Inspiration']]:[]),['profil','Profil'],['historie','Historie']];
   return `<header class="hdr"><div class="wrap">
-   <a class="mark" href="../" aria-label="wishtale, zur Startseite">wishtale<i></i></a>
+   <a class="mark" href="../" aria-label="wishtale, zur Startseite">wishtale<i></i></a>${devMode()?'<span class="pill gold devbadge" title="Entwicklermodus: ausgeblendete Bereiche sind sichtbar">Entwicklermodus</span>':''}
    <nav class="nav" aria-label="Hauptnavigation">${items.map(([k,l])=>`<button class="${v===k?'on':''}" data-act="go" data-v="${k}">${l}</button>`).join('')}</nav>
    <div class="right">${S.auth.user?`<span id="syncst" class="syncst" data-state="${S.auth.sync}">${{saving:'Speichert …',saved:'Gespeichert',error:'Nicht gespeichert'}[S.auth.sync]||''}</span>`:'<span class="syncst" data-state="demo">Demo</span><button class="btn pri sm" data-act="exitdemo">Eigenes Wishtale</button>'}<button class="acctbtn" data-act="modal" data-v="accounts"><span class="av t${S.me.tone}">${initials(S.me.name)}</span><span class="hide-s">${esc(S.me.name)}${S.me.managed?' (Kind)':''}</span><span class="vh">, Konto und Einstellungen</span></button></div>
   </div></header>`;
 }
 export function BottomNav(v){
-  const items=[['wuensche','star','Wünsche'],['entdecken','spark','Inspiration'],['profil','user','Profil'],['historie','clock','Historie']];
+  const items=[['wuensche','star','Wünsche'],...(inspirationOn()?[['entdecken','spark','Inspiration']]:[]),['profil','user','Profil'],['historie','clock','Historie']];
   return `<nav class="btm" aria-label="Hauptnavigation">${items.map(([k,i,l])=>`<button class="${v===k?'on':''}" data-act="go" data-v="${k}">${ic(i)}${l}</button>`).join('')}</nav>`;
 }
 export const Legend=()=>`<div class="legend">${[V.alle,V.privat].map(x=>`<span>${ic(x.i,'sm')}${x.l}</span>`).join('')}<span>Tippe auf das Zeichen neben einem Abschnitt, um die Sichtbarkeit zu ändern.</span></div>`;

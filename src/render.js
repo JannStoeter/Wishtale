@@ -9,6 +9,7 @@ import { Start, Profil } from './views/profile.js';
 import { Wuensche } from './views/wishes.js';
 import { Historie } from './views/history.js';
 import { Entdecken } from './views/inspiration.js';
+import { inspirationOn } from './lib/flags.js';
 import { Plan } from './views/plan.js';
 import { loadPlan } from './lib/plan.js';
 import { Gast } from './views/giver.js';
@@ -40,7 +41,7 @@ export function render(top){
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
   // Vorladen: Gast-Ideen und eigene Inspiration im Hintergrund holen, damit sie beim Öffnen schon da sind (der Server antwortet bei unverändertem Profil aus dem Zwischenspeicher).
-  if(S.auth.user&&S.me.handle&&v!=='gast'){loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.preview&&['profil','wuensche'].includes(S.ui.view)&&!S.ui.modal)render()});if(v!=='entdecken')loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
+  if(S.auth.user&&S.me.handle&&v!=='gast'){loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.preview&&['profil','wuensche'].includes(S.ui.view)&&!S.ui.modal)render()});if(v!=='entdecken'&&inspirationOn())loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
   // Tipps zu ungenauen Wünschen vorladen, damit die Liste konkret wird („Tipp von Wishtale: …“). Höchstens 12, der Server antwortet meist aus dem Zwischenspeicher.
   {const own=v==='wuensche'&&S.auth.user&&S.me.handle,gp=v==='gast'?guestPerson():null,p=own?S.me:gp&&gp.remote&&gp.handle?gp:null;
    if(p)p.wishes.filter(w=>(w.status==='offen')&&!w.link&&!w.noSuggest&&(w.kind==='produkt'||w.kind==='kategorie')&&!isSpecific(w)&&/^[0-9a-f-]{36}$/i.test(String(w.id))).slice(0,12)
@@ -104,6 +105,7 @@ export function route(){
   }
   else if(h==='schenken'){location.hash='#p/jonas';return}  // alter Link
   else S.ui.view=(h in VIEWS&&h!=='gast'&&h!=='login'&&h!=='recovery'&&!(anon&&h==='start'))?h:DEFAULT_VIEW;
+  if(S.ui.view==='entdecken'&&!inspirationOn()){S.ui.view=DEFAULT_VIEW;history.replaceState(null,'',location.pathname+'#'+DEFAULT_VIEW)}  // Inspiration ruht (Dev 073)
   S.ui.modal=null;
   if(S.ui.view==='start'&&anon)track('start',{once:true,path:'/app/'});
   if(S.ui.view==='gast')track('guest_view',{once:true,path:'/app/'});

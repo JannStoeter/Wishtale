@@ -1,3 +1,4 @@
+import { devMode, setDevMode } from '../lib/flags.js';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource-variable/schibsted-grotesk/index.css';
@@ -249,6 +250,18 @@ function guide(el) {
     <p class="hint">Die Regeln und das Format stehen in <code>docs/tribunal/README.md</code> und <code>AGENTS.md</code>. Neue Dateien erscheinen hier nach dem nächsten Deploy. Die Seite ist nur für Admins sichtbar.</p></section>`;
 }
 
+function devmode(el) {
+  const on = devMode();
+  el.innerHTML = `<div class="head"><div><h1>Entwicklermodus</h1><p class="muted">Blendet Bereiche der App wieder ein, die zur Zeit bewusst ausgeblendet sind, damit du sie testen kannst.</p></div></div>
+   <section class="card"><p>Der Modus ist <b>${on ? 'an' : 'aus'}</b>. Er gilt nur für diesen Browser und verleiht keine Rechte. In der App erscheint oben ein Hinweis „Entwicklermodus“, solange er an ist.</p>
+    <button class="btn ${on ? 'sec' : ''}" id="dm">${on ? 'Ausschalten' : 'Einschalten'}</button>
+    <h3>Zur Zeit ausgeblendet</h3>
+    <ul><li><b>Inspiration</b>, die ganze Seite samt Navigationspunkt und KI-Ideen für dich (Dev 073).</li>
+    <li><b>Welten</b>, also Auswahl in Einrichtung und Profil, Welten-Fenster, Welten in der Info-Welt der Gäste und Katalog-Produkte nach Welten (Dev 072).</li></ul>
+    <p class="hint">Neue ausgeblendete Bereiche trägt Claude in <code>src/lib/flags.js</code> und hier in der Liste ein.</p></section>`;
+  el.onclick = e => { if (e.target.closest('#dm')) { setDevMode(!on); devmode(el); } };
+}
+
 async function show() {
   const key = location.hash.replace('#', '') || 'offen', el = shell.view;
   shell.current(key.startsWith('t/') ? 'offen' : key);
@@ -261,6 +274,7 @@ async function show() {
     if (key.startsWith('t/')) topic(el, key.slice(2));
     else if (key === 'entschieden') list(el, t => stateOf(t).k !== 'offen', 'Entschieden', 'Was du schon beantwortet oder vertagt hast.');
     else if (key === 'anleitung') guide(el);
+    else if (key === 'entwickler') devmode(el);
     else if (key === 'neu') newQuestion(el);
     else if (key === 'prio') priorities(el);
     else if (key === 'bauen') queue(el);
@@ -275,7 +289,7 @@ async function boot() {
   shell = mountShell(root, { app: 'dev', user: st.user, onSignOut: async () => { await signOut(); loginView(); }, groups: [
     { title: 'Entscheiden', items: [['offen', 'Offen', 'list'], ['neu', 'Neue Frage', 'plus'], ['bauen', 'Bauliste', 'hammer'], ['entschieden', 'Entschieden', 'check']] },
     { title: 'Planung', items: [['prio', 'Prioritäten', 'flag']] },
-    { title: 'Hilfe', items: [['anleitung', 'Anleitung', 'info']] },
+    { title: 'Hilfe', items: [['anleitung', 'Anleitung', 'info'], ['entwickler', 'Entwicklermodus', 'plug']] },
   ] });
   window.addEventListener('hashchange', show); show();
 }
