@@ -14,8 +14,8 @@ import { cat } from '../data/content.js';
 import { ideasOf, aiStatus } from '../lib/ideas.js';
 
 export const draftKey = t => 'draft:' + String(t || '').toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 80);
-/** Konkret genug für eine Erkennung: mindestens drei Wörter oder eine Zahl bei zwei Wörtern. */
-export const concrete = t => { const w = String(t || '').split(/\s+/).filter(x => /\p{L}{2,}|\d/u.test(x)); return w.length >= 3 || (w.length >= 2 && /\d/.test(t)); };
+/** Konkret genug für eine Erkennung: mindestens zwei Wörter. */
+export const concrete = t => { const w = String(t || '').split(/\s+/).filter(x => /\p{L}{2,}|\d/u.test(x)); return w.length >= 2; };
 export const altPrice = i => (i.from && i.to ? Math.round((i.from + i.to) / 2) : i.to || i.from || null);
 
 const thumb = (img, c, t) => img && img.preview ? `<img src="${img.preview}" alt="">` : `<span class="art mono t${c.t % 6}" aria-hidden="true"><b>${esc(((String(t || '').match(/[\p{L}\p{N}]/u) || ['?'])[0]).toUpperCase())}</b></span>`;
@@ -25,7 +25,7 @@ export function WishRec() {
   if (!r || !r.st) return '';
   const c = cat(r.c || 'wohnen');
   if (r.st === 'vague') return `<p class="wr-hint">${ic('spark', 'sm')}Wir zeigen deinen Freunden passende Ideen dazu.</p>`;
-  if (r.st === 'unsure') return `<p class="wr-hint">${ic('spark', 'sm')}<span>${r.err ? 'Die Produktsuche hat gerade nicht geklappt.' : 'Wir haben dazu kein sicheres Produkt gefunden.'} Das ist in Ordnung: Dein Wunsch bleibt, wie du ihn geschrieben hast, und deine Freunde sehen dazu passende Ideen von Wishtale. Mit dem Link zu einem Shop wird er genauer.</span></p>`;
+  if (r.st === 'unsure') return `<p class="wr-hint">${ic('spark', 'sm')}<span>${r.err ? 'Die Produktsuche hat gerade nicht geklappt.' : 'Wir haben dazu kein sicheres Produkt gefunden.'} Vielleicht gibt es mehrere passende Produkte: Schreib gern noch etwas dazu, zum Beispiel die Farbe, die Sorte oder die Größe (Essie Nagellack rot), oder füge den Link zu einem Shop ein. Dein Wunsch bleibt in jedem Fall, wie du ihn geschrieben hast, und deine Freunde sehen dazu passende Ideen von Wishtale.</span></p>`;
   if (r.st === 'none') return r.msg ? `<p class="wr-hint">${esc(r.msg)}</p>` : '';
   if (r.st === 'loading') return `<div class="wr-card wr-load scan" role="status" aria-live="polite"><span class="wr-thumb"><span class="wr-lens" aria-hidden="true"></span></span><span><b>Wishtale schaut, welches Produkt du meinst</b><span class="wr-steps" aria-hidden="true"><i>Name prüfen</i><i>Im Netz suchen</i><i>Titel, Preis und Bild vergleichen</i></span><small>Du kannst währenddessen weiter ausfüllen oder speichern.</small></span></div>`;
   if (r.st === 'found') {
