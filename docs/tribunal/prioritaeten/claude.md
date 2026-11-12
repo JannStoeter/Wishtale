@@ -35,3 +35,4 @@ Skala: 1 = jetzt, 2 = als Nächstes, 3 = später, 4 = Backlog. Maßstab: Was sch
 - 043: 1 | Sicherungen, Löschen der Bilder und die Punkte zu Kinderprofilen gehören vor den Launch.
 - 046: 2 | Wird bei Familien mit zwei Eltern schnell gebraucht, aber nur nach sorgfältigem Test der Zugriffsregeln.
 - 047: 2 | Gäste sind der Weg zu Reservierungen und Partnerumsatz, die Wünsche gehören auf den ersten Bildschirm, wenig Aufwand.
+- 050: 1 | Betrifft jede Anmeldung und passt die App an die Gastansicht an, wenig Aufwand.

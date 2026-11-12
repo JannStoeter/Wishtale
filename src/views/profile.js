@@ -4,6 +4,7 @@ import { art } from '../lib/art.js';
 import { ACT, CATS, BRANDS, TRIES, NOGOS, ALTS, cat, crea } from '../data/content.js';
 import { VisPill, Legend } from './shared.js';
 import { GuestPage } from './giver.js';
+import { ViewSeg, PreviewBanner } from './wishes.js';
 import { completeness } from '../lib/tale.js';
 import { AppPromo } from './inspiration.js';
 
@@ -77,9 +78,9 @@ export function Profil(){
     <div><p class="eyebrow" style="color:#B8C4A8">Wishtale</p><h1>${esc(m.name)}</h1><p style="margin-top:8px">${line}</p></div>
     <div class="row" style="gap:8px"><button class="btn gold sm" data-act="share">Link teilen</button>${S.auth.user&&!m.managed?`<button class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" data-act="inviteopen">Jemanden einladen</button>`:''}${m.handle?`<a class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" href="#p/${m.handle}" target="_blank" rel="noopener">Als Gast ansehen</a>`:''}<button class="btn sec sm" style="border-color:var(--accent-ink);color:var(--accent-ink)" data-act="edit">Bearbeiten</button></div></div>`}
    <div class="row" style="margin:18px 0 4px;justify-content:space-between">
-     <div class="seg" role="group" aria-label="Ansicht"><button class="${!pv?'on':''}" data-act="preview" data-v="0">Meine Ansicht</button><button class="${pv?'on':''}" data-act="preview" data-v="1">So sehen Schenkende es</button></div>
+     ${ViewSeg()}
    </div>
-   ${pv?`<div class="banner green" style="margin-top:12px">${ic('eye')}<span>So sieht deine Seite für Freunde aus. Alles, was du auf „Privat“ gestellt hast, und dein persönliches Feedback bleiben dabei verborgen.</span></div>`:`<p class="muted" style="font-size:14px;margin-top:8px">Du entscheidest selbst, wer was sieht. Tippe einfach auf die Sichtbarkeit neben einem Bereich, um sie zu ändern.</p>`}
+   ${pv?PreviewBanner():`<p class="muted" style="font-size:14px;margin-top:8px">Du entscheidest selbst, wer was sieht. Tippe einfach auf die Sichtbarkeit neben einem Bereich, um sie zu ändern.</p>`}
    ${pv?GuestPage(m,{preview:true}):`
    ${Meter(m)}
    ${m.managed?MgPanel(m):''}

@@ -38,7 +38,7 @@ export function render(top){
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
   if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
-  if(v==='profil'&&S.ui.preview&&S.auth.user&&S.me.handle)loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.view==='profil'&&S.ui.preview&&!S.ui.modal)render()});
+  if((v==='profil'||v==='wuensche')&&S.ui.preview&&S.auth.user&&S.me.handle)loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.view===v&&S.ui.preview&&!S.ui.modal)render()});
   if(v==='plan'&&S.auth.user)loadPlan(()=>{if(S.ui.view==='plan'&&!S.ui.modal)render()});
   const body=VIEWS[v]();
   if(v==='login'||v==='recovery'||v==='einladung'){
