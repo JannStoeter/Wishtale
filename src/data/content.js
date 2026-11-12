@@ -5,7 +5,7 @@ export const CATS=[
  {id:'reisen',n:'Reisen',a:'suitcase',t:1},{id:'mode',n:'Mode',a:'sweater',t:0},
  {id:'genuss',n:'Genuss',a:'mug',t:2},{id:'buecher',n:'Bücher',a:'book',t:3},
  {id:'erlebnisse',n:'Erlebnisse',a:'ticket',t:5},{id:'outdoor',n:'Outdoor',a:'tent',t:1},
- {id:'spielen',n:'Spielen & Basteln',a:'game',t:5}];
+ {id:'spielen',n:'Spielzeug & Basteln',a:'game',t:5}];
 export const cat=id=>CATS.find(c=>c.id===id)||CATS[0];
 export const ACT=[
  {l:'Kaffee brühen',t:'kaffee'},{l:'Kochen',t:'kochen'},{l:'Backen',t:'kochen'},{l:'Einrichten',t:'wohnen'},

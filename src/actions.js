@@ -118,6 +118,7 @@ function previewWish(title){
   const seq=(S.ui.wr?.seq||0)+1;setRec({st:'loading',t,seq,c:sel?.value});
   loadMatch(S.me.handle,t).then(m=>{
     if(S.ui.wr?.seq!==seq)return;
+    if(m&&m.c&&sel&&!sel.dataset.touched)sel.value=m.c;
     if(!m||!m.ok){setRec({st:'vague',t,seq});return}
     const cand={t:m.t,q:m.q,price:m.price,est:true,src:'match'};showCand(cand,t);S.ui.wr.seq=seq;candImage(cand);
   }).catch(()=>{if(S.ui.wr?.seq===seq)setRec({st:'vague',t,seq})});
@@ -399,6 +400,7 @@ document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?
 document.addEventListener('input',e=>{if(e.target.name==='t'&&e.target.classList?.contains('attn'))e.target.classList.remove('attn')});
 document.addEventListener('input',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;$('#budv').textContent=money(S.ui.budget)}});
 document.addEventListener('change',e=>{const sf=e.target.closest?.('form[data-form=social]');if(sf)sf.requestSubmit()});
+document.addEventListener('change',e=>{if(e.target.id==='wc2')e.target.dataset.touched='1'});
 document.addEventListener('change',e=>{if(e.target.dataset?.sort){S.ui.wsort=e.target.value;render()}if(e.target.dataset?.wc){S.ui.wc=e.target.value;render()}});
 document.addEventListener('change',e=>{if(e.target.id==='bud'){S.ui.budget=+e.target.value;render()}});
 document.addEventListener('input',e=>{const f=e.target.dataset?.az;if(f&&S.ui.az)S.ui.az[f]=e.target.value});

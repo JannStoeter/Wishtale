@@ -19,7 +19,7 @@ Regeln für die Ideen:
 - Jede Idee verbindet mindestens zwei Dinge, die über die Person bekannt sind, oder trifft einen Geschmack ganz genau. Lies zwischen den Zeilen: Wer Kaffee brüht, mag vielleicht auch Keramik und Rituale.
 - Keine Doppelungen: Nichts, was schon auf der Wunschliste steht, in „bereits vorhanden“ vorkommt oder unter den No-Gos genannt ist.
 - Keine erfundenen Einzelprodukte, keine Modellnummern. „Suche“ ist ein allgemeiner Suchbegriff (2 bis 6 Wörter), mit dem man bei Amazon etwas Passendes findet. Eine Marke nur, wenn sie unter den Lieblingsmarken steht.
-- „Begründung“: ein bis zwei warme Sätze in ganzen Sätzen, die den Bezug zur Person nennen. Den Namen wiederholen, keine Pronomen (er, sie). Keine Ausrufezeichen, keine Kaufaufforderung, keine Versprechen zu Preis oder Qualität.
+- „Begründung“: ein bis zwei warme Sätze in ganzen Sätzen, die den Bezug zur Person nennen. Den Namen wiederholen, keine Pronomen (er, sie, sein, seine, ihr, ihre). Keine Ausrufezeichen, keine Kaufaufforderung, keine Versprechen zu Preis oder Qualität.
 - Preise sind grobe Schätzungen in Euro (von, bis).
 - Lernen: „gefaellt“ sind Ideen, die der Person gefallen haben, davon darf es Verwandtes geben, aber nichts Gleiches. „lehnt_ab“ und „hat_schon“ sind tabu, auch in Abwandlungen. „reaktion_auf_geschenke“ zeigt, was gut oder schlecht ankam: Lerne daraus den Geschmack (Material, Stil, Preislage), erwähne die Geschenke aber nie in der Begründung und nenne nie, was jemand geschenkt hat.
 - Privates: „privat_nur_zur_orientierung“ steuert deine Auswahl, ist aber nie Teil einer Begründung und darf weder genannt noch angedeutet werden. Die Begründung bezieht sich nur auf die übrigen Angaben. Alles unter „privat_nur_zur_orientierung.keine_geschenke“ ist tabu.
@@ -130,7 +130,7 @@ const SELF = `
 Besonderheit für diese Anfrage: Die Ideen sind für die Person selbst, als Anregung für ihre eigene Wunschliste. „begruendung“ spricht die Person mit „du“ an und nennt keinen Namen.`;
 const WISH = `
 
-Besonderheit für diese Anfrage: Die Person hat sich einen Wunsch notiert („wunsch“). Gib genau 4 konkrete Kaufvorschläge dafür, nicht 8, und lass die Regel mit den fünf Bereichen weg. Für diese Anfrage dürfen Marken genannt werden, und die Regel „keine erfundenen Einzelprodukte“ gilt so: Nenne nur etablierte Produktlinien, die du sicher kennst und die es üblicherweise zu kaufen gibt, mit Marke und Reihe oder Produktart, ohne Modellnummern. „titel“ nennt Marke und Produktlinie, „suche“ ist ein Suchbegriff, mit dem man das Produkt bei Amazon findet. Mische: eine Entscheidung nah am Wunsch, eine günstigere, eine hochwertigere und eine Überraschung. „begruendung“ ist ein Satz dazu, was das Produkt auszeichnet, ohne Bewertungen, Testsieger oder Zahlen zu behaupten. Nennt der Wunsch Eigenschaften (zum Beispiel beschichtet, eine Größe oder Farbe), erfüllen alle Vorschläge sie. Marken unter „keine_geschenke“ sind tabu. Der Wunsch selbst und dasselbe Produkt unter anderem Namen sind kein Vorschlag, auch nicht in einer anderen Schreibweise. Deute zuerst, ob der Wunsch eine bekannte Marke oder Produktwelt nennt, auch abgekürzt oder verschrieben (zum Beispiel „Toni“ oder „Tonie“ für die Hörfiguren der Tonies zur Toniebox, „Lego“, „Playmobil“, „Siku“), und halte dann mindestens zwei Vorschläge innerhalb genau dieser Marke oder Produktwelt, zum Beispiel andere Figuren derselben Reihe. Ähnliche Produkte anderer Hersteller sind nur Ergänzung, nie der Schwerpunkt, und Hersteller, die nur ähnlich klingen, sind keine Treffer. Ist unklar, ob es das Gewünschte gibt, schlage Ähnliches vor und tue nicht so, als wäre es dasselbe.`;
+Besonderheit für diese Anfrage: Die Person hat sich einen Wunsch notiert („wunsch“). Gib genau 4 konkrete Kaufvorschläge dafür, nicht 8, und lass die Regel mit den fünf Bereichen weg. Für diese Anfrage dürfen Marken genannt werden, und die Regel „keine erfundenen Einzelprodukte“ gilt so: Nenne nur etablierte Produktlinien, die du sicher kennst und die es üblicherweise zu kaufen gibt, mit Marke und Reihe oder Produktart, ohne Modellnummern. „titel“ nennt Marke und Produktlinie, „suche“ ist ein Suchbegriff, mit dem man das Produkt bei Amazon findet. Mische: eine Entscheidung nah am Wunsch, eine günstigere, eine hochwertigere und eine Überraschung. „begruendung“ ist ein Satz dazu, was das Produkt auszeichnet, ohne Bewertungen, Testsieger oder Zahlen zu behaupten. Nennt der Wunsch Eigenschaften (zum Beispiel beschichtet, eine Größe oder Farbe), erfüllen alle Vorschläge sie. Marken unter „keine_geschenke“ sind tabu. Der Wunsch selbst und dasselbe Produkt unter anderem Namen sind kein Vorschlag, auch nicht in einer anderen Schreibweise. Deute zuerst, ob der Wunsch eine bekannte Marke oder Produktwelt nennt, auch abgekürzt oder verschrieben (zum Beispiel „Toni“ oder „Tonie“ für die Hörfiguren der Tonies zur Toniebox, „Lego“, „Playmobil“, „Siku“), und halte dann mindestens zwei Vorschläge innerhalb genau dieser Marke oder Produktwelt, zum Beispiel andere Figuren derselben Reihe. Ähnliche Produkte anderer Hersteller sind nur Ergänzung, nie der Schwerpunkt, und Hersteller, die nur ähnlich klingen, sind keine Treffer. Ist unklar, ob es das Gewünschte gibt, schlage Ähnliches vor und tue nicht so, als wäre es dasselbe. Alle Vorschläge gehören zur selben Produktart oder Produktwelt wie der Wunsch; Interessen und Marken aus dem Profil helfen nur bei der Auswahl innerhalb dieser Produktart.`;
 
 /** Eigenes Profil mit allem, auch Privatem (nur für die angemeldete Person selbst, über deren Token und die Regeln der Datenbank). */
 export async function fetchOwn(handle, token, fetchImpl = fetch) {
@@ -146,6 +146,11 @@ export async function fetchOwn(handle, token, fetchImpl = fetch) {
 }
 
 /** Produktvorschläge zu einem genau benannten Wunsch: das Gleiche wie der Wunsch ist kein Vorschlag. */
+/** Vorschläge zu einem Wunsch, die zu einem anderen Wunsch der Liste gehören und nichts mit diesem zu tun haben, fallen raus. */
+export function offTopic(ideas, wishTitle, others) {
+  const mine = new Set(toks(wishTitle)), other = new Set(others.flatMap(toks).filter(t => !mine.has(t)));
+  return ideas.filter(i => { const t = toks(i.t + ' ' + i.q); return t.some(x => mine.has(x)) || !t.some(x => other.has(x)); });
+}
 export function dropSame(ideas, wishTitle) {
   const w = toks(wishTitle);
   if (w.length < 3) return ideas;
@@ -163,13 +168,15 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   const { ctx, avoid } = context(p, OCCASIONS.includes(occ) ? occ : 'ohne', learn, { budget, priv });
   let system = SYSTEM;
   if (opts.mode === 'self') system += SELF;
+  let others = [];
   if (opts.mode === 'wish') {
     const found = (p.wishes || []).find(x => x.id === opts.wid);
     if (found && (found.no_suggest || found.noSuggest)) return { ideas: [], off: false, noSuggest: true }; // Wunsch der Person: keine Vorschläge
     const w = found || (opts.draft ? { title: opts.draft, note: '', budget: null, price: null } : null);
     if (!w) throw new HttpError(404, 'Wunsch nicht gefunden.');
     ctx.wunsch = { titel: clip(w.title, 160), notiz: clip(w.note, 200), budget: w.budget || w.price || null };
-    ctx.wunschliste = ctx.wunschliste.filter(t => t !== w.title);
+    others = ctx.wunschliste.filter(t => t !== w.title); // nur für den Filter unten, geht nicht an die KI
+    delete ctx.wunschliste; // andere Wünsche lenken bei Vorschlägen zu einem Wunsch nur ab (Pfanne beim Tonie)
     avoid.weak.clear(); // bei Produktvorschlägen zu einem Wunsch sind Doppelungen mit anderen Wünschen derselben Art gewollt
     system += WISH;
   }
@@ -179,7 +186,7 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   // Gleiche Eingabe (Profil, Rückmeldungen, Anlass, Anweisung, Modell) gibt die gespeicherte Antwort, ohne neuen Aufruf.
   const hash = fingerprint({ model, system, user, mode: opts.mode });
   const hit = await cacheGet(hash, fetchImpl);
-  if (hit) return { ideas: opts.mode === 'wish' ? dropSame(hit, ctx.wunsch.titel) : hit, cached: true };
+  if (hit) return { ideas: opts.mode === 'wish' ? offTopic(dropSame(hit, ctx.wunsch.titel), ctx.wunsch.titel, others) : hit, cached: true };
   if (opts.guard) await opts.guard();
   // Schnell statt grübelnd: kurze Ideenlisten brauchen kein langes Nachdenken (vorher 30 bis 40 Sekunden). IDEAS_EFFORT und IDEAS_THINK=1 zum Zurückdrehen.
   const effort = process.env.IDEAS_EFFORT || 'low', quick = process.env.IDEAS_THINK !== '1';
@@ -190,7 +197,7 @@ export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   try { sanitize(text, avoid); } catch (e) { console.error('ideen-antwort', r.stop, text.length, text.slice(0, 300)); throw e; }
   if (opts.onUsage) await opts.onUsage(r.usage, r.model);
   let ideas = sanitize(text, avoid);
-  if (opts.mode === 'wish') ideas = dropSame(ideas, ctx.wunsch.titel);
+  if (opts.mode === 'wish') ideas = offTopic(dropSame(ideas, ctx.wunsch.titel), ctx.wunsch.titel, others);
   ideas = ideas.slice(0, opts.mode === 'wish' ? 4 : 8);
   if (ideas.length) await cachePut(hash, opts.mode || 'gift', ideas, fetchImpl);
   return { ideas };

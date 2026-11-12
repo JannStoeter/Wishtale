@@ -8,9 +8,11 @@ import { complete, modelFor, fingerprint, cacheGet, cachePut } from './llm.js';
 export const MATCH_MIN = 0.75; // darunter keine Ergebnis-Karte (Unsicherheit = Zustand „vage“)
 const clip = (v, n) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
 
+export const CATS = ['wohnen', 'technik', 'kochen', 'sport', 'reisen', 'mode', 'genuss', 'buecher', 'erlebnisse', 'outdoor', 'spielen'];
 const SYSTEM = `Du erkennst Produkte für eine Wunschliste. Die Person hat einen Wunsch eingetippt. Bestimme, welches konkrete, im deutschen Handel übliche Produkt gemeint ist.
 Antworte nur mit JSON ohne Text davor oder danach:
-{"erkannt": true|false, "titel": "Marke Produktlinie Modell, so wie man es im Shop findet", "preis": Zahl in Euro (üblicher Preis, ohne Cent-Spielereien) oder null, "suche": "Suchbegriff für Amazon", "sicherheit": Zahl von 0 bis 1}
+{"erkannt": true|false, "titel": "Marke Produktlinie Modell, so wie man es im Shop findet", "preis": Zahl in Euro (üblicher Preis, ohne Cent-Spielereien) oder null, "suche": "Suchbegriff für Amazon", "kategorie": eine von ${CATS.join(', ')}, "sicherheit": Zahl von 0 bis 1}
+"kategorie" füllst du immer aus, auch wenn "erkannt" false ist: die Kategorie, in die der Wunsch am besten passt (Spielzeug, Hörfiguren und Babysachen sind spielen).
 Regeln:
 - "sicherheit" ist hoch (0.8 bis 1) nur, wenn genau ein bestimmtes Produkt gemeint ist und du sicher weißt, dass es dieses Produkt so gibt. Gibt es mehrere passende Produkte, ist der Wunsch allgemein (zum Beispiel "Pfanne", "Kopfhörer", "Toni Figur") oder bist du nicht sicher, dass es das Produkt gibt, dann ist "sicherheit" höchstens 0.5 oder "erkannt" false.
 - Erfinde nichts: keine ausgedachten Modellnamen, keine Modellnummern, die du nicht sicher kennst.
@@ -40,6 +42,7 @@ export function parseMatch(raw) {
   const conf = Math.max(0, Math.min(1, Number(j.sicherheit) || 0));
   const price = Number(j.preis);
   const titel = clip(j.titel, 90);
-  if (!j.erkannt || !titel || /https?:/i.test(titel)) return { ok: false, conf };
-  return { ok: conf >= MATCH_MIN, conf, t: titel, q: clip(j.suche, 60) || titel, price: Number.isFinite(price) && price > 0 && price < 5000 ? Math.round(price) : null };
+  const c = CATS.includes(j.kategorie) ? j.kategorie : null;
+  if (!j.erkannt || !titel || /https?:/i.test(titel)) return { ok: false, conf, c };
+  return { ok: conf >= MATCH_MIN, conf, c, t: titel, q: clip(j.suche, 60) || titel, price: Number.isFinite(price) && price > 0 && price < 5000 ? Math.round(price) : null };
 }
