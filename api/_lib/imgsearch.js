@@ -87,7 +87,7 @@ export async function amazonDirect(query, { fetchJson } = {}) {
     if (!/(^|\.)amazon\.de$/i.test(u.hostname)) continue;
     const asin = (u.pathname + '/').match(ASIN)?.[1];
     const title = String(r.title || '').replace(/^Amazon\.de\s*:\s*/i, '');
-    if (!asin || overlap(q, title) < 0.7) continue;
+    if (!asin || overlap(q, title) < 0.85) continue; // strenger als bei Herstellerseiten: ein falsches Produkt als Kauflink ist schlimmer als keins
     return { asin, title: title.slice(0, 90), url: `https://www.amazon.de/dp/${asin}?tag=${AMAZON_TAG}` };
   }
   return null;
