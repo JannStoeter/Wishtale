@@ -63,6 +63,7 @@ Stand: 2026-11-09
 | 067 | Fehlerbehebung Keine Vorschläge, Kachelpreis, Priorität | **Anweisung: Amazon-Produkt bleibt, Preis in Kacheln, Wichtigkeit per Auswahl, Sehr wichtig** | ja, `09c6740` |
 | 068 | Amazon-Direktlink bei englischen Titeln | **Anweisung: Modellauswahl unter den Amazon-Treffern, Knopf für bestehende Wünsche** | ja, `e4b1709` |
 | 069 | Kind-Konten: Alter und Größe | **Anweisung: Geburtsdatum (Gäste sehen nur das Alter), Kleidergröße, altersgerechte Vorschläge und Marken** | ja, `21a3aea` |
+| 070 | Einstieg und Profil cleaner | **Anweisung: erster Bildschirm nur ein Feld, Schritte als Zeile, Profil kompakt** | ja, `7df08c4` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
