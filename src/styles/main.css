@@ -882,3 +882,25 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .thinnote{display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--gold) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 30%,var(--line));border-radius:14px;padding:12px 14px;font-size:14px;margin:0 0 14px}
 .thinnote svg{flex:0 0 auto;margin-top:2px}
 .toast-act{margin-left:12px;background:none;border:0;color:inherit;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
+/* Vorführung: alle Ansichten gleich hoch, die Karte passt auf den ersten Bildschirm */
+.sscenes{height:clamp(456px,56vh,470px);overflow:hidden;align-content:start;position:relative}
+.sscenes::after{content:'';position:absolute;left:0;right:0;bottom:0;height:28px;background:linear-gradient(transparent,var(--surface));pointer-events:none}
+.vs{align-self:start}
+.stage .rec{padding:7px;gap:10px}
+.stage .rec .imgbox,.stage .rec .art{width:64px;height:64px}
+.stage .rec .rh{font-size:17px}
+.stage .rec .why{margin-bottom:3px}
+.swish .wcard .imgbox,.swish .wcard .art{aspect-ratio:16/8}
+.swish .wcard .wp{display:none}
+.swish .wcard .wm{display:none}
+.swish .wcard .wbody{padding:8px 10px}
+@media(min-width:900px){.hero-grid{align-items:center}.hero{padding:48px 0 64px}}
+@media(max-width:899px){.sscenes{height:auto;min-height:440px}.sscenes::after{display:none}}
+.stage .srecs .rec:nth-child(n+3){display:none}
+.swish .wcard:nth-child(n+3){display:none}
+.swish .wcard{height:auto}
+.swish .wcard .wbody{min-height:0}
+@media(max-width:899px){.stage .srecs .rec:nth-child(n+3){display:grid}.swish .wcard:nth-child(n+3){display:block}}
+.swish .wcard.compact .wbody{grid-template-rows:auto;gap:0;padding:8px 10px 10px}
+.swish .wcard .wt{font-size:17px;-webkit-line-clamp:2}
+.swish .wcard .imgbox,.swish .wcard .art{aspect-ratio:16/11}
