@@ -56,6 +56,7 @@ Stand: 2026-11-09
 | 061 | Erkennung beim Tippen | **Anweisung: Suche beim Tippen und Einfügen, Websuche, ehrliche Rückmeldung, Link im Namensfeld** | ja, `8be6c14` |
 | 062 | Liste einlesen mit Abgleich | **Anweisung: Abgleich im Hintergrund, Übernahme per Haken** | ja, `bba184c` |
 | 063 | Amazon-Direktlink über Websuche | **Anweisung: nach Passt direkter Produktlink mit Partner-Kennung, Schwelle 85 Prozent** | ja, `0cd1891` |
+| 064 | Animation beim Prüfen | **Anweisung: Lupe, Glanz und Schritte beim Produktabgleich** | ja, `b4fd258` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
