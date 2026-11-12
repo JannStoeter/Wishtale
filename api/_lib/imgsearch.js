@@ -52,7 +52,8 @@ export async function searchOfficialImage(query, { fetchJson, read = inspect, lo
   const json = await webJson(q, { fetchJson });
   if (!json) return null;
   for (const c of pageCandidates(json, q)) {
-    try { const p = await read(c.url); if (!p?.imageUrl) continue; const im = await load(p.imageUrl); return { ...im, source: c.host }; } catch { /* nächster Treffer */ }
+    try { const p = await read(c.url); if (!p?.imageUrl || overlap(q, p.title || '') < 0.5) continue; const im = await load(p.imageUrl); // eine Kategorieseite des Herstellers liefert das falsche Bild, darum muss der Seitentitel zum Produkt passen
+      return { ...im, source: c.host }; } catch { /* nächster Treffer */ }
   }
   return null;
 }
