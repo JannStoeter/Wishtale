@@ -14,7 +14,7 @@ export function loadIdeas(key, params, done) {
   const e = S.ui.aiMap[key] = { list: [], loaded: false };
   const q = new URLSearchParams({ ...(S.ui.pb ? { b: S.ui.pb } : {}), ...params });
   (params.mode === 'self' || (params.mode === 'wish' && params.t && !params.w) ? sb.auth.getSession().then(({ data }) => (data.session ? { authorization: 'Bearer ' + data.session.access_token } : {})) : Promise.resolve({}))
-    .then(headers => fetch('/api/ideas?' + q, { headers }))
+    .then(headers => fetch('/api/ideas?' + q, { headers, signal: AbortSignal.timeout(50000) }))
     .then(r => (r.ok ? r.json() : { ideas: [] }))
     .then(j => { e.list = Array.isArray(j.ideas) ? j.ideas : []; e.loaded = true; done && done(); })
     .catch(() => { e.loaded = true; done && done(); });

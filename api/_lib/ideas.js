@@ -155,8 +155,9 @@ export function dropSame(ideas, wishTitle) {
 export async function ideasFor(handle, occ, fetchImpl = fetch, opts = {}) {
   if (!aiConfigured()) return { ideas: [], off: true };
   const p = opts.token ? await fetchOwn(handle, opts.token, fetchImpl) : await fetchProfile(handle, fetchImpl);
-  if (!p.hidden) p.hidden = await planKeywords(p.id, fetchImpl); // Stichwörter der Wünsche „selbst erfüllen“ liefert die öffentliche Antwort nicht mehr
-  const learn = await learned(p.id, fetchImpl);
+  // parallel statt nacheinander: Stichwörter der Wünsche „selbst erfüllen“ (liefert die öffentliche Antwort nicht mehr) und Rückmeldungen
+  const [hid, learn] = await Promise.all([p.hidden ? null : planKeywords(p.id, fetchImpl), learned(p.id, fetchImpl)]);
+  if (!p.hidden) p.hidden = hid;
   const budget = [20, 50, 100].includes(+opts.budget) ? +opts.budget : 0;
   const priv = !opts.token && opts.mode !== 'self' ? await privateExtras(handle, fetchImpl) : {};
   const { ctx, avoid } = context(p, OCCASIONS.includes(occ) ? occ : 'ohne', learn, { budget, priv });
