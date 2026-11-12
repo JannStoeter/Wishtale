@@ -32,6 +32,7 @@ function Offer(pr, w, ctx, role) {
    </div>
    <div class="oa">
     <a class="btn amz sm" href="${pr.url}" target="_blank" rel="${REL}">${label} ${ic('arrow', 'sm')}</a>
+    ${role === 'main' && pr.source === 'erzeugt' && ctx === 'own' && w.kind === 'produkt' ? `<button class="btn ghost sm" data-act="wamz" data-id="${w.id}" ${S.ui.amzBusy === w.id ? 'disabled' : ''}>${S.ui.amzBusy === w.id ? 'Suche läuft …' : 'Direkten Amazon-Link suchen'}</button>` : ''}
     ${guestFree ? `<button class="btn pri sm" data-act="choose" data-wid="${w.id}" data-pid="${esc(pr.id)}">Diesen wählen</button>` : ''}
    </div>
   </div>`;

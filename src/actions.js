@@ -369,6 +369,15 @@ async readlink(){
   w.noSuggest=!w.noSuggest;toast(w.noSuggest?'Für diesen Wunsch zeigt Wishtale keine Vorschläge mehr.':'Wishtale darf für diesen Wunsch wieder Vorschläge zeigen.');
   if(!w.noSuggest)wishVariants(w.id,'own');render();
  },
+ async wamz(el){ // direkten Amazon-Produktlink zu einem bestehenden Wunsch suchen (Partner-Kennung inklusive), rückgängig machbar
+  const w=S.me.wishes.find(x=>x.id===el.dataset.id);if(!w||w.link)return;
+  S.ui.amzBusy=w.id;render();
+  try{const r=await findAmazonLink(w.t);S.ui.amzBusy=null;
+   if(r&&!w.link){w.link=r.url;toast('Direkter Amazon-Link gefunden: '+r.title,{label:'Rückgängig',run:()=>{w.link='';render()}})}
+   else toast('Dazu haben wir bei Amazon keinen sicheren Treffer gefunden. Die Amazon-Suche mit deiner Partner-Kennung bleibt.');
+  }catch{S.ui.amzBusy=null;toast('Die Suche hat gerade nicht geklappt.')}
+  render();
+ },
  aiuse(el){ // Vorschlag zum Wunsch übernehmen: der ungenaue Wunsch wird zu diesem Produkt (Name, Preis, direkter Amazon-Link, Bild), rückgängig machbar
   const w=S.me.wishes.find(x=>x.id===el.dataset.wid),i=ideasOf('wish:'+el.dataset.wid).find(x=>x.t===el.dataset.t);if(!w||!i)return;
   const old={t:w.t,price:w.price,link:w.link,img:w.img,imgSrc:w.imgSrc,kw:w.kw,a:w.a,tone:w.tone,c:w.c};
