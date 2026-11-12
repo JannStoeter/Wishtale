@@ -16,9 +16,10 @@ import { findDupe } from './lib/dupes.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
-import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage } from './lib/wishimg.js';
+import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage, storeImage } from './lib/wishimg.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishRec, draftKey, concrete, altPrice } from './views/wishprev.js';
+import { ZmRow } from './views/zettel.js';
 import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
 import { guestRpc } from './lib/remote.js';
@@ -122,6 +123,31 @@ function previewWish(title){
     if(!m||!m.ok){setRec({st:'unsure',t,seq});return}
     const web=m.src==='web',cand={t:m.t,q:m.q,price:m.price,est:!web,src:web?'web':'match',host:m.host||''};showCand(cand,t);S.ui.wr.seq=seq;candImage(cand,m.img||undefined);
   }).catch(()=>{if(S.ui.wr?.seq===seq)setRec({st:'unsure',t,seq,err:true})});
+}
+/** Wunschzettel: Wünsche im Hintergrund abgleichen (höchstens 12, drei gleichzeitig), das Ergebnis erscheint unter der jeweiligen Zeile. */
+function zettelMatch(){
+  const z=S.ui.zt;if(!z||!z.items||!canAi())return;
+  z.m={};const run=z.items.map((w,i)=>({w,i})).filter(x=>concrete(x.w.t)&&x.w.kind!=='erlebnis').slice(0,12);
+  run.forEach(x=>{z.m[x.i]={st:'loading'}});
+  const draw=i=>{const el=document.getElementById('zm'+i);if(el&&S.ui.zt===z)el.innerHTML=ZmRow(i,z.items[i])};
+  run.forEach(x=>draw(x.i));
+  let n=0;
+  const worker=async()=>{while(n<run.length){const {w,i}=run[n++];
+    try{const m=await loadMatch(S.me.handle,w.t);
+      if(m&&m.ok){z.m[i]={st:'ok',cand:{t:m.t,q:m.q,price:m.price,host:m.host||'',img:m.img||null,c:m.c||null,web:m.src==='web'}}}
+      else{z.m[i]={st:'none',c:m&&m.c||null}}
+    }catch{z.m[i]={st:'none'}}
+    draw(i)}};
+  for(let k=0;k<3;k++)worker();
+}
+/** Nach dem Speichern: Bilder zu den genauer gemachten Wünschen im Hintergrund holen. */
+function zettelImages(list){
+  list.forEach(async({w,cand})=>{
+    try{const im=await fetchProductImage(cand.img||null,cand.img?undefined:(cand.q||cand.t));
+      let url=im.preview,src=im.src||'';
+      if(S.auth.user&&S.me.dbId&&im.blob){try{url=await storeImage(im.blob)}catch{return}}
+      w.img=url;w.imgSrc=src;render()}catch{/* ohne Bild bleibt das Monogramm */}
+  });
 }
 /** Übernimmt Name, Preis und Bild eines Kandidaten ins Formular (nur nach Klick). */
 function applyCand(cand){
@@ -531,17 +557,21 @@ document.addEventListener('submit',e=>{
     S.ui.zt={busy:true};render();
     readZettelRemote({text,files}).then(r=>{
       S.ui.zt=r.wishes.length?{items:r.wishes,name:r.name,unclear:r.unclear}:{error:'Auf dem Zettel konnten wir keine Wünsche finden. Ein schärferes oder helleres Foto hilft oft, oder du fügst den Text ein.'};
-      track('choice',{label:'zettel',once:true,path:'/app/'});render();
+      track('choice',{label:'zettel',once:true,path:'/app/'});render();if(S.ui.zt&&S.ui.zt.items)zettelMatch();
     }).catch(e=>{S.ui.zt={error:e.message||'Das hat nicht geklappt.'};render()});
     return;
   }
   if(kind==='zettelsave'){
-    const z=S.ui.zt||{},on=fd.getAll('on').map(Number);let n=0;
+    const z=S.ui.zt||{},on=fd.getAll('on').map(Number);let n=0;const imgs=[];
     on.forEach(i=>{
-      const w=(z.items||[])[i],t=(fd.get('t'+i)||'').trim();if(!w||!t)return;
-      const c=guessCategory(t,'wohnen');
-      S.me.wishes.unshift(W({t,c,kind:w.kind,prio:2,price:w.price,note:w.note||'',a:w.kind==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(t)}));n++;
+      const w=(z.items||[])[i];let t=(fd.get('t'+i)||'').trim();if(!w||!t)return;
+      const m=z.m&&z.m[i],use=m&&m.st==='ok'&&fd.get('use'+i)==='1',cand=use?m.cand:null;
+      if(cand)t=cand.t;
+      const c=(m&&(m.cand?.c||m.c))||guessCategory(t,'wohnen');
+      const nw=W({t,c,kind:w.kind,prio:2,price:cand&&cand.price?cand.price:w.price,note:w.note||'',a:w.kind==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(t)});
+      S.me.wishes.unshift(nw);if(cand&&S.auth.user)imgs.push({w:nw,cand});n++;
     });
+    if(imgs.length)setTimeout(()=>zettelImages(imgs),50);
     S.ui.zt=null;S.ui.modal=null;
     if(n)toast(`${n===1?'Ein Wunsch steht':n+' Wünsche stehen'} jetzt auf der Wunschliste. Bei jedem Wunsch kannst du den Link ergänzen.`);
     location.hash='#wuensche';render();return;
