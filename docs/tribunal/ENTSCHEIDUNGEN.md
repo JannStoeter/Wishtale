@@ -75,3 +75,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
 - 055 Geführtes Onboarding zum Wiederaufrufen? (Entscheidung, von Jann)
+- 056 Wunsch ohne Link als Produktkarte, nur „Bei Amazon suchen“ (Anweisung, umgesetzt)

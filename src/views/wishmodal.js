@@ -21,12 +21,13 @@ function Offer(pr, w, ctx, role) {
   const amazon = pr.host === 'amazon.de' || pr.host.endsWith('.amazon.de');
   const label = amazon ? (pr.direct ? 'Bei Amazon ansehen' : 'Bei Amazon suchen') : `Zu ${esc(pr.host)}`;
   const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === pr.t;
+  const exact = pr.source === 'erzeugt'; // genau der Wunsch der Person: als Produkt zeigen, nur mit Amazon-Suche
   return `<div class="offer ${role === 'main' ? 'main' : ''} ${pr.source === 'link' ? '' : 'suggest'} ${chosen ? 'chosen' : ''}">
-   ${pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
+   ${exact && w.img ? `<span class="otn">${WishArt(w, null)}</span>` : pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
    <div class="obody">
-    <span class="eyebrow">${pr.source === 'link' ? 'Gewünschtes Produkt' : pr.source === 'erzeugt' ? 'Suche nach genau diesem Wunsch' : role === 'main' ? 'Vorschlag von Wishtale' : 'Vorschlag'}</span>
+    <span class="eyebrow">${pr.source === 'link' ? 'Gewünschtes Produkt' : pr.source === 'erzeugt' ? 'Gewünschtes Produkt' : role === 'main' ? 'Vorschlag von Wishtale' : 'Vorschlag'}</span>
     <strong class="ot">${esc(pr.t)}</strong>
-    ${priceLine(pr)}
+    ${exact ? '' : priceLine(pr)}
     ${(pr.why || []).slice(0, 2).map(t => `<span class="why">${esc(t)}</span>`).join('')}
     ${chosen ? `<span class="chip ok">${ic('check', 'sm')}Deine Wahl</span>` : ''}
    </div>
