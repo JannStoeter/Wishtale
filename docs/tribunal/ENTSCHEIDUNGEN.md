@@ -49,6 +49,7 @@ Stand: 2026-11-09
 | 054 | Leere Profile, Leerzustand, Start, Igel im Detail | **Anweisung: freundlicher Hinweis bei dünnem Profil, einladender Leerzustand, Start auf der Wunschliste, exakte Suche zuerst** | ja, `e64e636` |
 | 056 | Wunschliste wieder konkret, Amazon bei Shop-Links | **Anweisung: Tipp von Wishtale in der Zeile, Bei Amazon zu finden, Shop-Links zusätzlich mit Amazon** | ja, `1b75176` |
 | 057 | Produktbild von der Herstellerseite | **Anweisung: zuerst Hersteller- oder Shopseite per Websuche, dann Bildersuche; braucht den Brave-Schlüssel (027)** | ja, `f97b13c` |
+| 058 | Bestimmtes Produkt ohne Link | **Anweisung: genauer Wunsch ohne Link ist das gewünschte Produkt, kein Vorschlag** | ja, `3516819` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
