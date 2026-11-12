@@ -57,6 +57,15 @@ export const LOOKS=[
 ];
 export const LOOKSCOPE=['Alle','Interior','Küche','Outdoor'];
 export const V={alle:{l:'Für alle mit Link',i:'globe'},giver:{l:'Für alle mit Link',i:'globe'},privat:{l:'Privat',i:'lock'},nur:{l:'Nur für dich',i:'eye'}};
+/* Kinder-Konten: nur altersgerechte Auswahl für Welten, Interessen, Marken und Co. */
+export const KID_CATS=['spielen','buecher','sport','outdoor','erlebnisse','mode'];
+export const KID_OPTS={
+ interests:['Bauen und Konstruieren','Malen und Basteln','Tiere','Dinosaurier','Autos und Fahrzeuge','Traktoren und Bagger','Fußball','Schwimmen','Radfahren und Rollern','Prinzessinnen und Feen','Ritter und Piraten','Bücher und Vorlesen','Singen und Musik','Hörspiele','Experimentieren','Draußen spielen','Puzzeln','Verkleiden'],
+ brands:['LEGO','Playmobil','SIKU','Schleich','Ravensburger','Tonies','Haba','Brio','Duplo','Hot Wheels','Barbie','Paw Patrol','Disney','Pixi','Kosmos','Bruder','Jako-o','Sterntaler'],
+ tries:['Schwimmkurs','Zoobesuch','Freizeitpark','Töpfern','Reitstunde','Kindertheater','Klettern','Zelten im Garten','Musikschule schnuppern'],
+ nogos:['Laute Spielzeuge','Süßigkeiten','Kleinteile','Gruselige Sachen','Elektronik','Plastikspielzeug','Noch ein Kuscheltier'],
+ alts:['Spielwarengutschein','Buchhandlung vor Ort','Kinogutschein','Ticket für Zoo oder Freizeitpark','Gemeinsamer Ausflug','Einzahlung aufs Sparbuch'],
+};
 export const PRIO=['','Nice to have','Wichtig','Sehr wichtig'];
 export const FB={love:'Genau mein Geschmack!',happy:'Darüber freue ich mich sehr.',meh:'Schön, aber nicht ganz meins.',have:'Bereits vorhanden.',swap:'Ich würde lieber etwas anderes daraus machen.'};
 
@@ -91,6 +100,15 @@ export const CATALOG=[
  {id:'c3',t:'Bilderbuch-Sammlung zum Vorlesen',p:28,c:'buecher',k:'ding',a:'book',tags:['vorlesen'],kw:['bilderbuch']},
  {id:'c4',t:'Kinder-Fernglas für kleine Entdecker',p:25,c:'outdoor',k:'ding',a:'compass',tags:['draussen','tiere'],kw:['fernglas']},
  {id:'c5',t:'Kinder-Gartenset mit Mini-Werkzeug',p:24,c:'spielen',k:'ding',a:'plant',tags:['draussen','garten'],kw:['gartenset']},
+ {id:'kd1',t:'LEGO Classic Bausteine-Box',p:30,c:'spielen',k:'ding',a:'game',tags:['bauen'],kw:['lego','bausteine'],brand:'LEGO',q:'LEGO Classic Bausteine Box'},
+ {id:'kd2',t:'Playmobil Bauernhof-Spielset',p:35,c:'spielen',k:'ding',a:'game',tags:['tiere','bauen'],kw:['playmobil','bauernhof'],brand:'Playmobil',q:'Playmobil Bauernhof'},
+ {id:'kd3',t:'SIKU Traktor mit Anhänger',p:20,c:'spielen',k:'ding',a:'game',tags:['draussen'],kw:['siku','traktor'],brand:'SIKU',q:'SIKU Traktor Anhänger'},
+ {id:'kd4',t:'Schleich Tierfiguren, Bauernhof',p:25,c:'spielen',k:'ding',a:'animals',tags:['tiere'],kw:['schleich','tierfiguren'],brand:'Schleich',q:'Schleich Bauernhof Tiere'},
+ {id:'kd5',t:'Ravensburger Kinderpuzzle ab 4 Jahren',p:12,c:'spielen',k:'ding',a:'game',tags:['basteln'],kw:['puzzle'],brand:'Ravensburger',q:'Ravensburger Kinderpuzzle ab 4'},
+ {id:'kd6',t:'Tonies Hörfigur mit Kinderliedern',p:17,c:'spielen',k:'ding',a:'headphones',tags:['musik'],kw:['tonie','hörfigur'],brand:'Tonies',q:'Tonies Hörfigur Kinderlieder'},
+ {id:'kd7',t:'Haba Gesellschaftsspiel für Kinder',p:18,c:'spielen',k:'ding',a:'game',tags:['spielen'],kw:['haba','gesellschaftsspiel'],brand:'Haba',q:'Haba Kinderspiel'},
+ {id:'kd8',t:'Brio Holzeisenbahn Starter-Set',p:40,c:'spielen',k:'ding',a:'game',tags:['bauen'],kw:['brio','eisenbahn'],brand:'Brio',q:'Brio Holzeisenbahn Starter Set'},
+ {id:'kd9',t:'Bilderbuch zum Vorlesen',p:14,c:'buecher',k:'ding',a:'book',tags:['lesen'],kw:['bilderbuch'],q:'Bilderbuch Vorlesen ab 3',kid:true},
  {id:'c6',t:'Tierpark-Besuch mit Patenschaftsurkunde',p:30,c:'erlebnisse',k:'erlebnis',a:'animals',tags:['tiere'],kw:['tierpark']}
 ];
 

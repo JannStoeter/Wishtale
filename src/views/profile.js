@@ -1,7 +1,7 @@
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
 import { art } from '../lib/art.js';
-import { ACT, CATS, BRANDS, TRIES, NOGOS, ALTS, cat, crea } from '../data/content.js';
+import { ACT, CATS, BRANDS, TRIES, NOGOS, ALTS, KID_CATS, KID_OPTS, cat, crea } from '../data/content.js';
 import { VisPill, Legend } from './shared.js';
 import { GuestPage } from './giver.js';
 import { ViewSeg, PreviewBanner } from './wishes.js';
@@ -20,9 +20,9 @@ export const STEPS=[
 export function Picker(st){
   let body='';
   if(st.tiles){
-    body=`<div class="tiles">${CATS.map(c=>{const on=S.me.cats.includes(c.id);return `<button class="tile ${on?'on':''}" data-act="pick" data-k="cats" data-v="${c.id}" aria-pressed="${on}">${art(c.a,c.t)}<span>${c.n}<i class="tick">${ic('check','sm')}</i></span></button>`}).join('')}</div>`;
+    body=`<div class="tiles">${CATS.filter(c=>!S.me.managed||KID_CATS.includes(c.id)).map(c=>{const on=S.me.cats.includes(c.id);return `<button class="tile ${on?'on':''}" data-act="pick" data-k="cats" data-v="${c.id}" aria-pressed="${on}">${art(c.a,c.t)}<span>${c.n}<i class="tick">${ic('check','sm')}</i></span></button>`}).join('')}</div>`;
   }else{
-    const list=[...new Set([...st.opts(),...S.me[st.k]])];
+    const list=[...new Set([...(S.me.managed&&KID_OPTS[st.k]?KID_OPTS[st.k]:st.opts()),...S.me[st.k]])];
     body=`<div class="opts">${list.map(o=>{const on=S.me[st.k].includes(o);return `<button class="opt ${on?'on':''}" data-act="pick" data-k="${st.k}" data-v="${esc(o)}" aria-pressed="${on}">${esc(o)}</button>`}).join('')}</div>
     <form data-form="custom" class="addrow"><input type="hidden" name="k" value="${st.k}"><label class="sr" for="cust" style="position:absolute;left:-9999px">Eigene Angabe</label><input id="cust" name="v" class="inp" placeholder="Fehlt etwas? Schreib es einfach dazu" autocomplete="off"><button class="btn sec sm" type="submit">${ic('plus','sm')}Hinzufügen</button></form>`;
   }
@@ -31,6 +31,14 @@ export function Picker(st){
 const NAME_STEP={k:'name',t:'Wie dürfen wir dich nennen?',h:'Dein Vorname reicht völlig. So begrüßen wir dich in deinem Wishtale und deine Freunde sehen später, bei wem sie gerade stöbern.',name:true};
 const CHOICE_STEP={k:'choice',t:'Wie möchtest du starten?',h:'Beides ist in Ordnung, und du kannst jederzeit zwischen den Wegen wechseln.',choice:true};
 /* Ohne Konto beginnt die Einrichtung mit dem Namen, das Konto kommt erst am Ende. Danach darf man wählen: gleich Wünsche aufschreiben oder erst das Profil einrichten. */
+const kidText=st=>{const n=esc(S.me.name||'das Kind');const T={
+ interests:{t:`Was spielt und macht ${n} am liebsten?`,h:'Such aus, was zu eurem Alltag passt. Daran erkennen wir, welche Geschenke zum Alter passen und Freude machen.'},
+ cats:{t:`In welchen Welten ist ${n} zuhause?`,h:'Tippt auf die Bereiche, die zu passen. Das lässt sich jederzeit ändern.'},
+ brands:{t:`Welche Marken und Spielwelten mag ${n}?`,h:'Zum Beispiel LEGO, Playmobil oder SIKU. Wenn euch gerade nichts einfällt, ist das auch in Ordnung.'},
+ tries:{t:`Was würde ${n} gern einmal ausprobieren?`,h:'Ein Ausflug, ein Kurs oder etwas ganz Neues? Dafür lassen sich schöne Erlebnisse verschenken.'},
+ nogos:{t:`Was soll ${n} lieber nicht geschenkt bekommen?`,h:'Das sehen nur Menschen, die etwas schenken wollen. So bleiben Enttäuschungen aus.'},
+ alts:{t:'Und wenn den Schenkenden gar nichts einfällt?',h:`Dann freut sich ${n} vielleicht über einen Gutschein oder einen gemeinsamen Ausflug.`},
+};return T[st.k]||{t:st.t,h:st.h}};
 export const steps=()=>S.auth.user?[CHOICE_STEP,...STEPS]:[NAME_STEP,CHOICE_STEP,...STEPS];
 export function Start(){
   const list0=steps(),anon=!S.auth.user;
@@ -48,7 +56,7 @@ export function Start(){
    <div class="prog" role="img" aria-label="Schritt ${i+1} von ${list0.length}">${list0.map((_,j)=>`<i class="${j<=i?'on':''}"></i>`).join('')}</div>
    <p class="eyebrow">Dein Wishtale · ${i+1} von ${list0.length}</p>
    ${S.me.managed?`<div class="banner green" style="margin-top:10px">${ic('user')}<span>Du richtest gerade das Profil für ${esc(S.me.name)} ein. Am schönsten wird es, wenn ihr es zusammen macht.</span></div>`:''}
-   <h1>${st.t}</h1><p class="muted" style="font-size:17px">${st.h}</p>
+   <h1>${S.me.managed?kidText(st).t:st.t}</h1><p class="muted" style="font-size:17px">${S.me.managed?kidText(st).h:st.h}</p>
    ${body}
    <div class="obnav">${i?`<button class="btn ghost" data-act="prev">${ic('back','sm')}Zurück</button>`:anon?`<a class="btn ghost" href="../">${ic('back','sm')}Zur Startseite</a>`:`<button class="btn ghost" data-act="go" data-v="profil">${ic('back','sm')}Abbrechen</button>`}
    ${st.choice?'':`<button class="btn pri" data-act="${last?'finish':'next'}">${last?(anon?'Fertig, weiter zu meinem Konto':'Fertig, zeig mir mein Profil'):'Weiter'} ${ic('arrow','sm')}</button>`}</div>
@@ -59,8 +67,10 @@ export function Start(){
 export function MgPanel(m){return `<section class="panel" style="margin-top:16px;display:grid;gap:10px"><div class="row" style="justify-content:space-between"><h3 aria-level="2" style="font-size:24px">Kind-Konto</h3><span class="pill">${ic('lock','sm')}Nur auf Einladung</span></div>
  <p class="muted" style="font-size:15px">Du pflegst Profil, Wünsche und Feedback für ${esc(m.name)}. Du siehst, was reserviert oder gekauft ist, damit nichts doppelt ankommt. ${esc(m.name)} bekommt davon nichts mit, damit die Überraschung bleibt.</p>
  <div class="chips">${m.invited.map(x=>`<span class="chip ok">${ic('check','sm')}${esc(x)}</span>`).join('')||'<span class="muted" style="font-size:14px">Noch niemand eingeladen.</span>'}</div>
+ <div class="fld"><label for="mbd">Geburtsdatum</label><input id="mbd" class="inp" type="date" data-prof="birthdate" value="${esc(m.birthdate||'')}" max="${new Date().toISOString().slice(0,10)}" style="max-width:240px"><span class="muted" style="font-size:13px">${m.birthdate&&m.age!=null?`${esc(m.name)} ist ${m.age} Jahre alt. Deine Freunde sehen nur das Alter.`:`Damit passen Vorschläge zum Alter von ${esc(m.name)}. Deine Freunde sehen nur das Alter.`}</span></div>
+ <div class="fld"><label for="msz">Aktuelle Kleidergröße <span class="muted" style="font-weight:400">(optional, aber empfohlen)</span></label><input id="msz" class="inp" data-prof="size" value="${esc(m.size||'')}" maxlength="20" placeholder="z. B. 104 oder Schuhgröße 28" style="max-width:320px"><span class="muted" style="font-size:13px">Kinder wachsen schnell: Trag hier die aktuelle Größe ein, dann passen Kleidung und Schuhe.</span></div>
  <div class="row"><button class="btn sec sm" data-act="invite">${ic('plus','sm')}Person einladen</button></div>
- <p class="disc" style="margin:0">Wir speichern nur den Vornamen und das Alter, keine Fotos und keinen Nachnamen. Das Profil sehen nur Menschen, die du eingeladen hast.</p></section>`}
+ <p class="disc" style="margin:0">Wir speichern den Vornamen, das Geburtsdatum und die Kleidergröße, keine Fotos und keinen Nachnamen. Das Profil sehen nur Menschen, die du eingeladen hast.</p></section>`}
 export function Profil(){
   const m=S.me,pv=S.ui.preview;
   const sec=(k,title,inner)=>{

@@ -1,6 +1,7 @@
 import { S, initials, guestPerson } from '../state.js';
 import { esc, ic, money, kwOf, gen } from '../lib/util.js';
 import { thinProfile } from '../lib/tale.js';
+import { ageText } from '../lib/age.js';
 import { art } from '../lib/art.js';
 import { CATS, crea, cprod } from '../data/content.js';
 import { excluded, recommend } from '../logic.js';
@@ -58,7 +59,7 @@ export function ProfileHead(p,{preview=false}={}){
   const likes=(hide('interests')?[]:p.interests).slice(0,3);
   const list=likes.length>1?likes.slice(0,-1).join(', ')+' und '+likes[likes.length-1]:likes[0]||'';
   return `<section class="phead compact" aria-label="Profil von ${esc(p.name)}">
-    <button class="top phbtn" data-act="about" data-ctx="${preview?'own':'guest'}" aria-haspopup="dialog"><span class="av t${p.tone}">${initials(p.name)}</span><span class="phtxt"><span class="eyebrow">${p.managed?`Kind-Konto${p.age?', '+p.age+' Jahre':''}`:'Wishtale'}</span><h1>${esc(p.name)}</h1>${list?`<span class="taste">${esc(p.name)} liebt ${esc(list)}.</span>`:''}</span><span class="phmore">Mehr über ${esc(p.name)} <i aria-hidden="true">›</i></span></button>
+    <button class="top phbtn" data-act="about" data-ctx="${preview?'own':'guest'}" aria-haspopup="dialog"><span class="av t${p.tone}">${initials(p.name)}</span><span class="phtxt"><span class="eyebrow">${p.managed?`Kind-Konto${p.age!=null?', '+ageText(p.age):''}`:'Wishtale'}</span><h1>${esc(p.name)}</h1>${list?`<span class="taste">${esc(p.name)} liebt ${esc(list)}.</span>`:''}</span><span class="phmore">Mehr über ${esc(p.name)} <i aria-hidden="true">›</i></span></button>
   </section>`;
 }
 

@@ -6,6 +6,7 @@
  *  - Gast-Aktionen: reserve / release / bought über RPC, mit zufälligem Browser-Token
  */
 import { safeImg } from './wishimg.js';
+import { ageOf } from './age.js';
 import { sb } from './supabase.js';
 import { S, W } from '../state.js';
 import { kwOf } from './util.js';
@@ -36,12 +37,13 @@ const giftFromRow = (r, i) => ({
 });
 const profileToRow = a => ({
   ...(a.social && Object.keys(a.social).length ? { social: a.social } : (a.socialWas ? { social: {} } : {})),
-  name: a.name, tone: a.tone || 0, about: a.about || '', age: a.age || null,
+  name: a.name, tone: a.tone || 0, about: a.about || '', age: (a.birthdate ? ageOf(a.birthdate) : a.age) || null,
+  ...(a.birthdate || a.birthdateWas ? { birthdate: a.birthdate || null } : {}), ...(a.size || a.sizeWas ? { clothing_size: (a.size || '').slice(0, 20) || null } : {}),
   interests: a.interests || [], cats: a.cats || [], brands: a.brands || [], tries: a.tries || [],
   nogos: a.nogos || [], alts: a.alts || [], style: a.style || [], vis: { ...VIS_DEFAULT, ...(a.vis || {}) },
 });
 const accountFromRow = (p, wishes, gifts) => ({
-  dbId: p.id, handle: p.handle, name: p.name, age: p.age, managed: p.managed, tone: p.tone, about: p.about,
+  dbId: p.id, handle: p.handle, name: p.name, age: (p.birthdate ? ageOf(p.birthdate) : p.age), birthdate: p.birthdate || '', birthdateWas: !!p.birthdate, size: p.clothing_size || '', sizeWas: !!p.clothing_size, managed: p.managed, tone: p.tone, about: p.about,
   interests: p.interests, cats: p.cats, brands: p.brands, tries: p.tries, nogos: p.nogos, alts: p.alts,
   style: p.style || [], vis: { ...VIS_DEFAULT, ...(p.vis || {}) },
   social: safeSocial(p.social), socialWas: !!(p.social && Object.keys(p.social).length),
@@ -188,7 +190,7 @@ export async function fetchPublic(handle) {
   if (error) throw error;
   if (!data) return null;
   return {
-    remote: true, id: data.handle, dbId: data.id, handle: data.handle, name: data.name, age: data.age, managed: data.managed,
+    remote: true, id: data.handle, dbId: data.id, handle: data.handle, name: data.name, age: data.age, size: data.size || '', managed: data.managed,
     parent: data.parent_name, tone: data.tone, about: data.about,
     interests: data.interests, cats: data.cats, brands: data.brands, tries: data.tries, nogos: data.nogos, alts: data.alts,
     style: data.style || [],

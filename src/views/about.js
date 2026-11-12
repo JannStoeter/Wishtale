@@ -5,6 +5,7 @@ import { art } from '../lib/art.js';
 import { ABOUT, cat } from '../data/content.js';
 import { ownedOf } from '../logic.js';
 import { voucherLink } from '../lib/shops.js';
+import { ageText } from '../lib/age.js';
 import { instagramUrl } from '../lib/social.js';
 
 const and = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' und ' + a[a.length - 1] : a[0] || '';
@@ -30,6 +31,7 @@ export function AboutModal() {
   const sWorld = p.cats?.length ? `<div class="ab-worlds">${p.cats.map(id => { const c = cat(id); return c ? `<button class="ab-world" data-act="world" data-id="${c.id}" data-ctx="${own ? 'own' : 'guest'}" aria-label="Welt ${esc(c.n)} öffnen">${art(c.a, c.t)}<span>${esc(c.n)}</span></button>` : ''; }).join('')}</div><p class="ab-note">Tippe auf eine Welt, dann erzählen wir dir, was dazu passen könnte.</p>` : '';
   const sBrand = brands.length ? `<div class="ab-brands">${brands.map(b => `<span>${esc(b)}</span>`).join('')}</div>` : '';
   const sTry = tries.length ? `<p class="ab-try">${n} möchte gern einmal <b>${esc(and(tries))}</b> ausprobieren. Damit machst du ein Erlebnis daraus, an das ${n} sich erinnert.</p>` : '';
+  const sSize = p.size ? `<p class="ab-try">${n} trägt zurzeit <b>${esc(p.size)}</b>. Das hilft bei Kleidung und Schuhen, und Kinder wachsen schnell: Im Zweifel lieber eine Nummer größer.</p>` : '';
   const sKnow = (nogos.length || owned.length) ? `<div class="ab-two">
     ${nogos.length ? `<div class="ab-col no"><h3>Lieber nicht</h3><ul>${nogos.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
     ${owned.length ? `<div class="ab-col ok"><h3>Hat ${n} schon</h3><ul>${owned.slice(0, 14).map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
@@ -42,7 +44,7 @@ export function AboutModal() {
    <div class="ab-hero">
     <button class="ab-x" data-act="close" aria-label="Schließen">×</button>
     <span class="av t${p.tone}">${initials(p.name)}</span>
-    <p class="eyebrow">${p.managed ? `Kind-Konto${p.age ? ', ' + p.age + ' Jahre' : ''}` : 'Eine kleine Geschichte über'}</p>
+    <p class="eyebrow">${p.managed ? `Kind-Konto${p.age != null ? ', ' + ageText(p.age) : ''}` : 'Eine kleine Geschichte über'}</p>
     <h2 id="mt">${n}</h2>
     ${about ? `<blockquote>${esc(about)}</blockquote>` : ints.length ? `<blockquote>${n} liebt ${esc(and(ints.slice(0, 3)))}.</blockquote>` : ''}
    </div>
@@ -51,6 +53,7 @@ export function AboutModal() {
     ${ch(sWorld ? no() : '', `${esc(gen(p.name))} Welten`, sWorld)}
     ${ch(sBrand ? no() : '', 'Lieblingsmarken', sBrand)}
     ${ch(sTry ? no() : '', 'Einmal ausprobieren', sTry)}
+    ${ch(sSize ? no() : '', 'Aktuelle Größe', sSize)}
     ${ch(sKnow ? no() : '', 'Gut zu wissen', sKnow)}
     ${ch(sInsp ? no() : '', `Das inspiriert ${n}`, sInsp)}
     ${ch(sAlt ? no() : '', 'Wenn nichts passt', sAlt ? `<p class="ab-note" style="margin-top:0">Damit liegst du bei ${n} trotzdem richtig:</p>${sAlt}` : '')}

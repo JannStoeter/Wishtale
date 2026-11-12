@@ -6,7 +6,7 @@ import { WishRec } from './wishprev.js';
 import { imgBoxHtml } from '../lib/wishimg.js';
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
-import { CATS, PRIO } from '../data/content.js';
+import { CATS, PRIO, KID_CATS } from '../data/content.js';
 import { WishModal } from './wishmodal.js';
 import { GivenModal, GiftGivenModal } from './given.js';
 import { WorldModal } from './world.js';
@@ -21,8 +21,9 @@ export function AcctModal(){
    <p class="muted" style="font-size:14.5px;margin-bottom:12px">Für Kinder pflegst du Profil und Wünsche selbst. Du siehst, was reserviert ist, damit nichts doppelt kommt. Das Kind bekommt davon nichts mit, damit die Überraschung bleibt.</p>
    <form data-form="child">
     <div class="fld"><label for="cn">Vorname</label><input id="cn" name="name" class="inp" required autocomplete="off"></div>
-    <div class="fld"><label for="ca">Alter</label><input id="ca" name="age" type="number" min="0" max="17" inputmode="numeric" class="inp"></div>
-    <p class="disc" style="margin:0 0 12px">Du legst das Konto als sorgeberechtigte Person an. Wir speichern dafür nur den Vornamen und das Alter.</p>
+    <div class="fld"><label for="cb">Geburtsdatum</label><input id="cb" name="birthdate" type="date" class="inp" required min="${new Date().getFullYear()-18}-01-01" max="${new Date().toISOString().slice(0,10)}"><span class="muted" style="font-size:13px">Damit passen Vorschläge und Ideen zum Alter. Deine Freunde sehen nur das Alter, nie das Geburtsdatum.</span></div>
+    <div class="fld"><label for="cs">Aktuelle Kleidergröße <span class="muted" style="font-weight:400">(optional, aber empfohlen)</span></label><input id="cs" name="size" class="inp" maxlength="20" placeholder="z. B. 104 oder Schuhgröße 28" autocomplete="off"><span class="muted" style="font-size:13px">Das hilft Schenkenden bei Kleidung und Schuhen. Kinder wachsen schnell, du kannst sie jederzeit im Profil ändern.</span></div>
+    <p class="disc" style="margin:0 0 12px">Du legst das Konto als sorgeberechtigte Person an. Wir speichern dafür den Vornamen, das Geburtsdatum und auf Wunsch die Kleidergröße, keine Fotos und keinen Nachnamen.</p>
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Schließen</button><button class="btn pri" type="submit">Anlegen und einrichten</button></div>
    </form>
    <div class="row" style="margin-top:14px"><button class="btn sec sm" data-act="stepsshow">${ic('check','sm')}Erste Schritte anzeigen</button></div>
@@ -82,7 +83,7 @@ export function Modal(){
     <div class="fld f-price"><label for="wp">Preis (Euro, optional)</label><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="z. B. 69,90" value="${d.price?String(d.price).replace('.',','):''}"></div>
     <details class="wmore" ${more?'open':''}><summary>Mehr Angaben <span class="muted">Notiz, Kategorie, Wichtigkeit, Bild, Sichtbarkeit</span></summary>
      <div class="fld"><label for="wn">Notiz</label><textarea id="wn" name="note" class="ta" placeholder="Farbe, Größe, Stimmung">${esc(d.note||'')}</textarea></div>
-     <div class="fld"><label for="wc2">Kategorie</label><select id="wc2" name="c" class="sel">${CATS.map(c=>`<option value="${c.id}" ${(d.c||'wohnen')===c.id?'selected':''}>${c.n}</option>`).join('')}</select></div>
+     <div class="fld"><label for="wc2">Kategorie</label><select id="wc2" name="c" class="sel">${CATS.filter(c=>!S.me.managed||KID_CATS.includes(c.id)).map(c=>`<option value="${c.id}" ${(d.c||'wohnen')===c.id?'selected':''}>${c.n}</option>`).join('')}</select></div>
      <div class="fld"><span class="lb">Wie wichtig ist es dir?</span><div class="radios">${[1,2,3].map(n=>`<label><input type="radio" name="prio" value="${n}" ${n===(d.prio||2)?'checked':''}><span>${PRIO[n]}</span></label>`).join('')}</div></div>
      <div id="wimg" class="wimg">${imgBoxHtml(d.img?{preview:d.img,src:d.imgSrc}:null)}</div>
      <div class="fld"><span class="lb">Bild (optional${ed&&d.img?', ein neues ersetzt das alte':''})</span><label class="filebtn"><input id="wi" name="img" type="file" accept="image/*"><span>Foto auswählen</span></label></div>

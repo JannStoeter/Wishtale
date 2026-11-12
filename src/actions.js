@@ -13,6 +13,7 @@ import { track } from './lib/track.js';
 import { saveGift, removeGift } from './lib/given.js';
 import { readZettelRemote } from './lib/zettel.js';
 import { findDupe } from './lib/dupes.js';
+import { ageOf } from './lib/age.js';
 import { markStep, hideSteps } from './lib/steps.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
@@ -493,7 +494,7 @@ window.addEventListener('focus',()=>{
   if(S.ui.modal!=='amazon'||!z?.searched||(z.res&&!z.res.error)||!navigator.clipboard?.readText)return;
   navigator.clipboard.readText().then(t=>{if(/amazon\.de\//i.test(t))azParse(t)}).catch(()=>{});
 });
-document.addEventListener('input',e=>{const f=e.target.dataset?.prof;if(f){S.me[f]=e.target.value;saveState()}});
+document.addEventListener('input',e=>{const f=e.target.dataset?.prof;if(f){S.me[f]=e.target.value;if(f==='birthdate'){const ag=ageOf(e.target.value);if(ag!=null)S.me.age=ag}saveState()}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('[role=button][data-act]')){e.preventDefault();e.target.click()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.ui.modal)A.close()});
 document.addEventListener('submit',e=>{
@@ -580,8 +581,10 @@ document.addEventListener('submit',e=>{
   }
   if(kind==='child'){
     const name=(fd.get('name')||'').trim();if(!name)return;
+    const bd=String(fd.get('birthdate')||''),ag=ageOf(bd);
+    if(ag==null||ag>17){toast(ag>17?'Kind-Konten sind für Kinder und Jugendliche unter 18 Jahren. Wer volljährig ist, legt sein eigenes Wishtale an.':'Bitte gib das Geburtsdatum an, damit Vorschläge zum Alter passen.');return}
     const id=nid('c');
-    S.accounts[id]={id,name,age:+fd.get('age')||null,tone:Object.keys(S.accounts).length%6,managed:true,invited:[],interests:[],cats:[],brands:[],tries:[],nogos:[],alts:[],vis:{interests:'giver',cats:'giver',brands:'giver',tries:'giver',nogos:'giver',alts:'giver'},wishes:[],history:[],inbox:[]};
+    S.accounts[id]={id,name,age:ag,birthdate:bd,size:String(fd.get('size')||'').trim().slice(0,20),tone:Object.keys(S.accounts).length%6,managed:true,invited:[],interests:[],cats:[],brands:[],tries:[],nogos:[],alts:[],vis:{interests:'giver',cats:'giver',brands:'giver',tries:'giver',nogos:'giver',alts:'giver'},wishes:[],history:[],inbox:[]};
     switchTo(id);S.ui.step=0;toast(`Das Konto für ${name} ist angelegt. Jetzt könnt ihr das Profil gemeinsam einrichten.`);
     if(location.hash==='#start')render(true);else location.hash='#start';
     return;

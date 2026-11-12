@@ -7,6 +7,7 @@
  */
 import { same, overlap, norm, kwOf } from './util.js';
 import { PRODUCTS, CATALOG } from '../data/content.js';
+import { isKid } from './age.js';
 import { AMAZON_TAG, normUrl, searchUrl } from './shops.js';
 import { picks, excluded, recommend } from '../logic.js';
 import { weightOf } from './weights.js';
@@ -147,6 +148,7 @@ const nearby = t => `https://www.google.de/search?q=${encodeURIComponent(t + ' i
  */
 export function worldOffers(person, cid, n = 6) {
   const out = [];
+  if (isKid(person)) return out; // die Produktliste ist für Erwachsene, Kinder bekommen Ideen von der KI und aus dem Kinder-Katalog
   livePRODUCTS().filter(x => WORLD_OF_CAT[x.cat] === cid && !excluded(person, { kw: [...kwOf(x.t), x.cat] })).forEach(x => {
     const wt = weightOf(cid);
     if (wt === 0) return;

@@ -4,10 +4,12 @@ import { weightOf } from './lib/weights.js';
 import { esc, norm, kwOf, same, overlap, money, gen } from './lib/util.js';
 import { S } from './state.js';
 import { ACT, CATALOG, cat, occL } from './data/content.js';
+import { isKid } from './lib/age.js';
 
 export const tagsOf=p=>p.interests.map(l=>ACT.find(a=>a.l===l)?.t).filter(Boolean);
 export const ownedOf=p=>p.wishes.filter(w=>w.status==='selbst');
 export function excluded(p,item){
+  if(isKid(p)&&item.c&&item.c!=='spielen'&&!item.kid)return 'Nicht altersgerecht.'; // Kind-Konten: nur Kinder-Ideen aus dem Katalog
   const known=[];
   p.wishes.filter(w=>w.vis!=='privat').forEach(w=>known.push({k:w.kw,why:w.status==='selbst'?`${p.name} hat das schon (${w.t}).`:`Steht schon auf ${gen(p.name)} Liste (${w.t}).`}));
   (p.gifts||p.history||[]).forEach(g=>known.push({k:g.kw||[],why:`${p.name} hat das schon bekommen.`}));
