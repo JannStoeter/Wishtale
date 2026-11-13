@@ -65,7 +65,7 @@ export function ProfileHead(p,{preview=false}={}){
 /* Preisrahmen für die Ideen: viele Geschenke liegen um 20 Euro, nicht um 100. */
 export function PriceFilter(){
   const pb=S.ui.pb||0;
-  return `<div class="occ pocc"><p class="eyebrow">Wie viel möchtest du ausgeben?</p><div class="seg" role="group" aria-label="Preisrahmen">${[[0,'Egal'],[20,'Bis 20 €'],[50,'Bis 50 €'],[100,'Bis 100 €']].map(([k,l])=>`<button class="${pb===k?'on':''}" data-act="pb" data-v="${k}">${l}</button>`).join('')}</div></div>`;
+  return `<div class="occ pocc pbar"><span class="pb-l" id="pb-l">Preis</span><div class="seg" role="group" aria-labelledby="pb-l">${[[0,'Egal'],[20,'bis 20 €'],[50,'bis 50 €'],[100,'bis 100 €']].map(([k,l])=>`<button class="${pb===k?'on':''}" data-act="pb" data-v="${k}">${l}</button>`).join('')}</div></div>`;
 }
 
 /* Die Wunschliste: steht direkt unter dem Profilkopf. */

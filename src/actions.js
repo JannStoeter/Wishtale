@@ -452,7 +452,7 @@ async readlink(){
   S.ui.pb=+el.dataset.v||0;
   const h=S.ui.view==='gast'?S.ui.person:S.me.handle;
   if(S.ui.view==='gast')loadIdeas(gkey(h),{h},()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()});
-  else if(S.auth.user&&h)loadIdeas(skey(h),{h,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
+  else if(S.auth.user&&h){loadIdeas(skey(h),{h,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});loadIdeas(gkey(h),{h},()=>{if(['wuensche','profil'].includes(S.ui.view)&&!S.ui.modal)render()})}
   render();
  },
  occ(el){S.ui.occ=el.dataset.v;S.ui.budget=el.dataset.v==='danke'?40:100;render()},

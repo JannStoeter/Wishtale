@@ -5,7 +5,7 @@ import { V, cat, occL, PRIO } from '../data/content.js';
 import { AppPromo } from './inspiration.js';
 import { completeness } from '../lib/tale.js';
 import { viaName } from '../lib/invite.js';
-import { GuestPage } from './giver.js';
+import { GuestPage, PriceFilter } from './giver.js';
 import { Steps } from './steps.js';
 import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
@@ -42,6 +42,7 @@ export function OwnIdeas(m){
   const list=ideasOf(key).slice(0,6);if(!list.length)return '';
   return `<section class="ownideas" id="ideen-eigen" aria-labelledby="oi-h"><h2 id="oi-h">Ideen von Wishtale</h2>
    <p class="muted oi-sub">Diese Vorschläge sehen auch deine Freunde unter deiner Liste. Sag uns, was nicht passt oder was du schon hast.</p>
+   ${PriceFilter()}
    <div class="oi-list">${list.map(i=>`<article class="oi"><div class="oi-main"><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
     <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${i.to?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`}</span>`:''}</div></div>
     <div class="oi-acts"><button class="btn pri sm" data-act="aiadd" data-t="${esc(i.t)}">Auf meine Wunschliste</button><button class="btn ghost sm" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="btn ghost sm" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></article>`).join('')}</div>
@@ -72,7 +73,7 @@ export function Wuensche(){
   const open=m.wishes.filter(w=>w.status==='offen'||w.status==='plan').length;
   if(!m.wishes.length)return `<div class="wrap first">${EmptyWishes(m)}</div>`;
   const active=(u.wc!=='alle'?1:0)+((u.wsort||'prio')!=='prio'?1:0);
-  const filt=m.wishes.length>=6?`<details class="fsort"><summary>${ic('search','sm')}Filtern und sortieren${active?` <span class="chip gold">${active}</span>`:''}</summary><div class="fsort-body">${used.length>1?`<label class="sortsel"><span class="vh">Kategorie</span><select class="sel sm" data-wc="1" aria-label="Kategorie"><option value="alle">Alle Kategorien</option>${used.map(c=>`<option value="${c}" ${u.wc===c?'selected':''}>${cat(c).n}</option>`).join('')}</select></label>`:''}${sortSeg()}<span class="desk-only">${densSeg(list.length)}</span></div></details>`:'';
+  const filt=m.wishes.length>=6?`<details class="fsort"><summary>${ic('filter','sm')}Filtern und sortieren${active?` <span class="chip gold">${active}</span>`:''}</summary><div class="fsort-body">${used.length>1?`<label class="sortsel"><span class="vh">Kategorie</span><select class="sel sm" data-wc="1" aria-label="Kategorie"><option value="alle">Alle Kategorien</option>${used.map(c=>`<option value="${c}" ${u.wc===c?'selected':''}>${cat(c).n}</option>`).join('')}</select></label>`:''}${sortSeg()}<span class="desk-only">${densSeg(list.length)}</span></div></details>`:'';
   const note=m.managed?`Als Elternteil siehst du, was reserviert oder gekauft ist. ${esc(m.name)} sieht es nicht.`:'Die Überraschung bleibt: Du siehst nie, ob jemand einen deiner Wünsche reserviert oder gekauft hat.';
   return `<div class="wrap">
    <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}.`:open===1?'1 Ding, über das ich mich freuen würde.':`${open} Dinge, über die ich mich freuen würde.`}</h1></div>

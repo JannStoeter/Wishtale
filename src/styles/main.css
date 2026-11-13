@@ -1042,3 +1042,10 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .oi h3{font-size:19px;margin:0}.oi .why{font-size:14px;color:var(--muted);margin:2px 0 6px}
 .oi-acts{display:flex;gap:6px;flex-wrap:wrap}
 @media(min-width:720px){.oi-list{grid-template-columns:repeat(2,1fr)}}
+
+/* Preisrahmen: eine schmale Zeile statt Kasten (Dev 081) */
+.pocc.pbar{display:flex;align-items:center;gap:10px;padding:0;background:none;margin:8px 0 12px;flex-wrap:nowrap}
+.pbar .pb-l{font-size:13px;font-weight:600;color:var(--muted);flex:none}
+.pbar .seg{flex-wrap:nowrap;overflow-x:auto;border-radius:99px;max-width:100%;scrollbar-width:none}
+.pbar .seg::-webkit-scrollbar{display:none}
+.pbar .seg button{white-space:nowrap;padding:7px 12px;font-size:14px}

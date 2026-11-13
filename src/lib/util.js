@@ -22,6 +22,7 @@ export const ICON={
  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
  link:'<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/>',
  spark:'<path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/>',
+ filter:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9M13 7a2 2 0 104 0 2 2 0 00-4 0zM7 17a2 2 0 104 0 2 2 0 00-4 0z"/>',
  help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 015 1c0 1.7-2.5 2-2.5 3.6M12 17h.01"/>',
  bag:'<path d="M5 8h14l1 12H4z"/><path d="M9 8V6a3 3 0 016 0v2"/>'
 };
