@@ -70,7 +70,7 @@ Stand: 2026-11-09
 | 074 | Wünsche-Seite am Handy | **Durch 075 erledigt: Wünsche nach vorn, Einlesen als Zeile, Filter hinter Knopf** | ja, siehe 075 |
 | 075 | Nutzerzentrale und reduzierte Schenkendenansicht | **Anweisung: keine untere Navigation, Menü hinter dem Avatar, Zurück zur Wunschliste, Kurzer Rundgang** | ja, `859c20f` |
 | 076 | Gastansicht: weniger Text unten | **Anweisung: ein Abschnitt Ideen von Wishtale, Erklärtexte auf eine Zeile** | ja, `33a7753` |
-| 079 | Habe ich schon bei Vorschlägen, eine gemeinsame Ansicht | **Anweisung: Ideen unter den eigenen Wünschen mit Habe ich schon, Vorschau als kleiner Link** | ja, `PENDING` |
+| 079 | Habe ich schon bei Vorschlägen, eine gemeinsame Ansicht | **Anweisung: Ideen unter den eigenen Wünschen mit Habe ich schon, Vorschau als kleiner Link** | ja, `274bea5` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
