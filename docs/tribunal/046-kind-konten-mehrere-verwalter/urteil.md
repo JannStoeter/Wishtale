@@ -1,5 +1,5 @@
 ---
-topic: 046-kind-konten-von-mehreren-personen-verwalten
+topic: 046-kind-konten-mehrere-verwalter
 status: entschieden
 option: A
 datum: 2026-11-13
