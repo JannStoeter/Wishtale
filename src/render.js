@@ -11,6 +11,8 @@ import { Historie } from './views/history.js';
 import { Entdecken } from './views/inspiration.js';
 import { inspirationOn } from './lib/flags.js';
 import { Menu } from './views/menu.js';
+import { Geschmack } from './views/taste.js';
+import { loadAnswers } from './lib/cards.js';
 import { Plan } from './views/plan.js';
 import { loadPlan } from './lib/plan.js';
 import { Gast } from './views/giver.js';
@@ -22,7 +24,7 @@ import { loadPinterest, pinConsent } from './lib/social.js';
 import { Modal } from './views/modals.js';
 import { track } from './lib/track.js';
 
-export const VIEWS={plan:Plan,start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,gast:Gast,login:Login,recovery:Recovery,einladung:Einladung};
+export const VIEWS={plan:Plan,start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,geschmack:Geschmack,gast:Gast,login:Login,recovery:Recovery,einladung:Einladung};
 const DEFAULT_VIEW='wuensche';
 
 let lastModalKey='';
@@ -43,7 +45,9 @@ export function render(top){
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
   // Vorladen: Gast-Ideen und eigene Inspiration im Hintergrund holen, damit sie beim Öffnen schon da sind (der Server antwortet bei unverändertem Profil aus dem Zwischenspeicher).
-  if(S.auth.user&&S.me.handle&&v!=='gast'){loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(['profil','wuensche'].includes(S.ui.view)&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()});if(v!=='entdecken'&&inspirationOn())loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
+  if(S.auth.user&&S.me.handle&&v!=='gast'){if(v!=='entdecken'&&inspirationOn())loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
+  if((v==='geschmack'||v==='wuensche')&&S.auth.user&&S.me.dbId&&!S.me.managed)loadAnswers().then(fresh=>{if(fresh&&S.ui.view===v&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()}).catch(()=>{});
+  if(v==='geschmack'&&!S.auth.user)loadAnswers().then(fresh=>{if(fresh&&S.ui.view==='geschmack')render()}).catch(()=>{});
   // Tipps zu ungenauen Wünschen vorladen, damit die Liste konkret wird („Tipp von Wishtale: …“). Höchstens 12, der Server antwortet meist aus dem Zwischenspeicher.
   {const own=v==='wuensche'&&S.auth.user&&S.me.handle,gp=v==='gast'?guestPerson():null,p=own?S.me:gp&&gp.remote&&gp.handle?gp:null;
    if(p)p.wishes.filter(w=>(w.status==='offen')&&!w.link&&!w.noSuggest&&(w.kind==='produkt'||w.kind==='kategorie')&&!isSpecific(w)&&/^[0-9a-f-]{36}$/i.test(String(w.id))).slice(0,12)

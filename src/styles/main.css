@@ -1049,3 +1049,33 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .pbar .seg{flex-wrap:nowrap;overflow-x:auto;border-radius:99px;max-width:100%;scrollbar-width:none}
 .pbar .seg::-webkit-scrollbar{display:none}
 .pbar .seg button{white-space:nowrap;padding:7px 12px;font-size:14px}
+
+/* Geschmack schärfen (Dev 082) */
+.taste{max-width:640px;margin-inline:auto}
+.tasteintro h1{margin:2px 0 8px}
+.tastecats{margin:14px 0 6px}
+.tastecats .chip{cursor:pointer;border:1px solid var(--line);background:var(--surface)}
+.tastecats .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tastecount{font-size:14px;color:var(--muted);margin:8px 0 14px}
+.tasteall{margin-top:22px;border-top:1px solid var(--line);padding-top:10px}
+.tasteall summary{cursor:pointer;font-weight:600}
+.tastelist{list-style:none;margin:10px 0 8px;padding:0;display:grid;gap:8px}
+.tastelist li{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--surface)}
+.tl-t{display:flex;flex-direction:column;font-weight:500}.tl-t small{font-weight:400;color:var(--muted)}
+.tl-b{display:flex;gap:4px;flex:none}
+.tp{display:flex;align-items:center;gap:12px;margin:14px 0 10px;font-size:14px;color:var(--muted)}
+.tbar{flex:1;height:6px;border-radius:99px;background:var(--line);overflow:hidden}.tbar i{display:block;height:100%;background:var(--accent);transition:width .25s}
+@media(prefers-reduced-motion:reduce){.tbar i{transition:none}}
+.tcard{border:1px solid var(--line);border-radius:22px;background:var(--surface);padding:16px 16px 20px;text-align:center}
+.tcard h2{font-size:26px;margin:2px 0 6px;outline:none}
+.tart{width:min(220px,60%);margin:0 auto 10px;border-radius:18px;overflow:hidden}
+.tart .art{display:block;aspect-ratio:1/1}
+.tchk{display:flex;gap:8px;align-items:center;justify-content:center;width:100%;margin:12px 0 4px;padding:12px;border:1px dashed var(--line);border-radius:14px;background:none;font-weight:600;color:var(--muted)}
+.tchk.on{border-style:solid;border-color:var(--ink);color:var(--ink);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.tbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.tbtns .btn{min-height:52px}
+.tmore{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.tnote{font-size:13px;text-align:center;margin-top:10px}
+.tasteend{text-align:center;padding:24px 0}
+.tastehint{display:flex;gap:8px;align-items:flex-start;margin:6px 0 14px;font-size:14px;color:var(--muted)}
+.tastehint .ico{flex:none;margin-top:2px}

@@ -4,7 +4,7 @@ import { ic } from '../lib/util.js';
 const STEPS = [
   ['plus', 'Wünsche hinzufügen', 'Tippe auf „Wunsch hinzufügen“ und schreib, was du dir wünschst. Wishtale erkennt das Produkt und fragt, ob es passt. Eine fertige Liste liest du über „Liste einlesen“ ein, als Text oder Foto.'],
   ['link', 'Teilen', 'Mit „Teilen“ schickst du deinen Freunden die Wunschliste. Mit „So sehen es deine Freunde“ prüfst du vorher, was sie sehen. Die Überraschung bleibt: Du siehst nie, was reserviert ist.'],
-  ['spark', 'Ideen von Wishtale', 'Unter deinen Wünschen stehen Ideen von Wishtale, die auch deine Freunde sehen. Mit „Habe ich schon“ und „Passt nicht“ werden sie besser, mit „Auf meine Wunschliste“ übernimmst du eine.'],
+  ['spark', 'Geschmack schärfen', 'Im Menü findest du kurze Kartenrunden. Mit „Gefällt mir“, „Nicht mein Geschmack“ und „Habe ich schon“ lernt Wishtale, was zu dir passt. Nichts davon kommt auf deine Wunschliste, deine Freunde sehen es nie, und für sie werden die Ideen besser.'],
   ['user', 'Das Menü', 'Hinter deinem Avatar oben rechts liegen Profil und Persönlichkeit, Social Media, Inspiration, Historie, weitere Profile und Kind-Konten, Einladen und deine Einstellungen. Von dort kommst du mit „Zurück zur Wunschliste“ immer wieder hierher.'],
 ];
 

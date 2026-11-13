@@ -15,6 +15,7 @@ import { readZettelRemote } from './lib/zettel.js';
 import { findDupe } from './lib/dupes.js';
 import { ageOf } from './lib/age.js';
 import { markStep, hideSteps } from './lib/steps.js';
+import { buildRound, saveAnswer, removeAnswer, resetAnswers } from './lib/cards.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
@@ -171,6 +172,20 @@ function applyCand(cand){
 }
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
+ cardcat(el){const c=S.ui.cards;if(c){c.cat=el.dataset.v;render()}},
+ cardstart(){const c=S.ui.cards;if(!c)return;c.round=buildRound(c.cat);c.i=0;c.done=0;c.owned=false;c.hist=[];render();setTimeout(()=>document.getElementById('card-h')?.focus({preventScroll:true}),30)},
+ cardmore(){A.cardstart()},
+ cardown(){const c=S.ui.cards;c.owned=!c.owned;render();document.querySelector('.tchk')?.focus({preventScroll:true})},
+ cardans(el){const c=S.ui.cards;if(!c||!c.round)return;const id=c.round[c.i],r=el.dataset.r,prev=c.map[id]||null;
+  const rating=r==='like'||r==='dislike'?r:null;
+  if(rating||c.owned){saveAnswer(id,{rating,owned:c.owned});c.done++}
+  c.hist.push({id,prev,counted:!!(rating||c.owned)});c.i++;c.owned=false;render();setTimeout(()=>document.getElementById(c.i<c.round.length?'card-h':'main')?.focus({preventScroll:true}),30)},
+ cardundo(){const c=S.ui.cards;if(!c||!c.hist.length)return;const h=c.hist.pop();c.i--;if(h.counted)c.done--;
+  if(h.prev)saveAnswer(h.id,h.prev);else if(c.map[h.id])removeAnswer(h.id);c.owned=false;render();setTimeout(()=>document.getElementById('card-h')?.focus({preventScroll:true}),30)},
+ cardend(){const c=S.ui.cards;if(c){c.i=c.round?c.round.length:0;render()}},
+ cardchange(el){saveAnswer(el.dataset.id,{rating:el.dataset.r,owned:!!(S.ui.cards.map[el.dataset.id]||{}).owned}).then(()=>render());render()},
+ cardremove(el){removeAnswer(el.dataset.id).then(()=>render());render()},
+ cardreset(){if(!confirm('Alle deine Antworten zu den Karten löschen? Deine Wünsche und dein Profil bleiben, wie sie sind.'))return;resetAnswers().then(()=>{toast('Deine Antworten sind gelöscht.');render()});render()},
  jump(el){document.getElementById(el.dataset.to)?.scrollIntoView({behavior:'smooth',block:'start'})},
  menu(){S.ui.menu=!S.ui.menu;render()},
  menuclose(){S.ui.menu=false;render();document.querySelector('.acctbtn')?.focus({preventScroll:true})},
@@ -452,7 +467,7 @@ async readlink(){
   S.ui.pb=+el.dataset.v||0;
   const h=S.ui.view==='gast'?S.ui.person:S.me.handle;
   if(S.ui.view==='gast')loadIdeas(gkey(h),{h},()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()});
-  else if(S.auth.user&&h){loadIdeas(skey(h),{h,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});loadIdeas(gkey(h),{h},()=>{if(['wuensche','profil'].includes(S.ui.view)&&!S.ui.modal)render()})}
+  else if(S.auth.user&&h){loadIdeas(skey(h),{h,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});if(S.ui.preview)loadIdeas(gkey(h),{h},()=>{if(S.ui.preview&&!S.ui.modal)render()})}
   render();
  },
  occ(el){S.ui.occ=el.dataset.v;S.ui.budget=el.dataset.v==='danke'?40:100;render()},

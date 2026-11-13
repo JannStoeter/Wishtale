@@ -73,6 +73,7 @@ Stand: 2026-11-09
 | 079 | Habe ich schon bei Vorschlägen, eine gemeinsame Ansicht | **Anweisung: Ideen unter den eigenen Wünschen mit Habe ich schon, Vorschau als kleiner Link** | ja, `274bea5` |
 | 080 | Start nach der Anmeldung auf den Wünschen | **Anweisung: Zu meinem Wishtale führt auf app/#wuensche** | ja, `3be20ff` |
 | 081 | Preisrahmen zurück, Filter-Symbol | **Anweisung: schmale Preiszeile bei allen Ideen, Regler-Symbol statt Lupe** | ja, `8bbdd6d` |
+| 082 | Geschmack schärfen mit Karten | **A: feste, konkrete Karten, Ja ist kein Wunsch, nur die Idee wird ausgeschlossen, Ideen unter den eigenen Wünschen entfernt** | ja, `PENDING` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
@@ -101,4 +102,3 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
 - 077 Profilpflege dezent anstoßen und Klicktour zu den Einstellungen (Entscheidung, von Jann, wartet auf ChatGPT)
 - 078 Landingpage-Intro: echter Durchklick durch die neue App (Entscheidung, von Jann, wartet auf ChatGPT, Entwurf liegt bei)
-- 082 Geschmack schärfen mit Karten (Ja, Nein, Habe ich schon) (Entscheidung, von Jann, wartet auf ChatGPT)
