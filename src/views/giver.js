@@ -43,9 +43,7 @@ export function GuestPage(p,{preview=false}={}){
 function More(p,{preview=false,none=false,open=0}={}){
   const ai=['ready','loading'].includes(aiStatus(gkey(p.handle||p.id)));
   return `<section class="more${none?' first':''}" id="mehr" aria-labelledby="mehr-h">
-   <p class="eyebrow">${none?'Tipps von Wishtale':'Ideen von Wishtale'}</p>
-   <h2 id="mehr-h">${none?`${esc(p.name)} lässt sich noch inspirieren, hier findest du unsere Tipps`:'Nicht das Passende dabei?'}</h2>
-   <p class="muted" style="margin:6px 0 14px">Wishtale kennt ${esc(gen(p.name))} Geschmack und schlägt dir Passendes vor. Sag uns, wie viel du ausgeben möchtest, der Rahmen gilt nur für diese Vorschläge.</p>
+   <h2 id="mehr-h">${none?`${esc(p.name)} lässt sich noch inspirieren`:'Ideen von Wishtale'}</h2>
    ${thinProfile(p)?`<p class="thinnote">${ic('spark','sm')}<span>${p.managed?`Das Profil von ${esc(p.name)} ist noch ganz frisch`:`${esc(gen(p.name))} Profil ist noch ganz frisch`}, darum sind unsere Ideen im Moment eher allgemein. Je mehr ${esc(p.name)} über sich erzählt, desto genauer treffen sie.${preview?' <a href="#profil" class="linkbtn">Profil ergänzen</a>':''}</span></p>`:''}
    ${PriceFilter()}
    ${AiIdeas(p)}
@@ -89,8 +87,8 @@ export function WishList(p,{preview=false}={}){
   const free=vw.filter(w=>w.res!=='other').length;
   const html=`<section id="wunschliste" aria-label="Wunschliste von ${esc(p.name)}">
    <div class="row" style="justify-content:space-between;margin-bottom:8px"><div><p class="eyebrow">Wunschliste · ${only?`${shown.length} offen`:`${all.length} ${all.length===1?'Wunsch':'Wünsche'}`}</p><h2 style="font-size:clamp(30px,4vw,44px)">Was ${esc(p.name)} sich wünscht</h2></div>
-    <div class="row" style="gap:8px">${preview?'':`<div class="seg" role="group" aria-label="Filter"><button class="${!only?'on':''}" data-act="onlyopen" data-v="0">Alle</button><button class="${only?'on':''}" data-act="onlyopen" data-v="1">Nur offene${free!==all.length?` (${free})`:''}</button></div>`}${sortSeg()}${densSeg(all.length)}</div></div>
-   <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} pflegt die Wünsche und sieht, was reserviert ist. ${esc(p.name)} bekommt davon nichts mit.`:`Deine Reservierung bleibt anonym. ${esc(p.name)} erfährt nie, was reserviert oder gekauft wurde, damit die Überraschung bleibt.`}</p>
+    <div class="row" style="gap:8px">${preview?'':`<div class="seg" role="group" aria-label="Filter"><button class="${!only?'on':''}" data-act="onlyopen" data-v="0">Alle</button><button class="${only?'on':''}" data-act="onlyopen" data-v="1">Nur offene${free!==all.length?` (${free})`:''}</button></div>`}${sortSeg()}<span class="desk-only">${densSeg(all.length)}</span></div></div>
+   <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} sieht, was reserviert ist, ${esc(p.name)} nicht.`:`Deine Reservierung bleibt anonym, ${esc(p.name)} erfährt nie davon.`}</p>
    ${PrioKey()}<div class="${useList(all.length)?'wlist':'wgrid'}">${shown.map(cardOf).join('')||`<p class="muted">Alle Wünsche sind schon vergeben. Schau dir unten die Ideen an.</p>`}</div></section>`;
   return {html,open:free,count:all.length};
 }
@@ -103,16 +101,14 @@ export function AiIdeas(p){
   if(st==='loading')return `<section class="sect curated" id="ideen-ki">${AiLoading(`Wishtale erstellt individuelle Empfehlungen für ${esc(p.name)} …`)}</section>`;
   const list=ideasOf(gkey(p.handle||p.id));if(!list.length)return '';
   const price=i=>i.from&&i.to?`ca. ${i.from} bis ${i.to} €`:i.to?`bis ca. ${i.to} €`:'';
-  return `<section class="sect curated" id="ideen-ki"><p class="eyebrow">Vorschläge von Wishtale</p><h3 style="font-size:clamp(24px,3vw,32px)">Ideen, die zu ${esc(p.name)} passen</h3>
-   <p class="muted" style="font-size:14.5px;margin:6px 0 16px">Diese Ideen schreibt Wishtale nach dem, was wir über ${esc(p.name)} wissen. Es sind Anregungen und keine ausgewählten Produkte: ${esc(p.name)} hat sich dafür nichts Bestimmtes gewünscht.</p>
+  return `<section class="sect curated" id="ideen-ki"><p class="muted" style="font-size:14px;margin:0 0 12px">Vorschläge von Wishtale, passend zu ${esc(p.name)}. Anregungen, keine Wünsche.</p>
    <div class="recs grid">${list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
     <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${price(i)?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${price(i)}</span>`:''}</div>
     <div class="row" style="margin-top:8px"><a class="btn amz sm" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon suchen (Anzeige)'}</a><button class="btn ghost sm" data-act="ideano" data-t="${esc(i.t)}">Passt nicht</button></div></div></article>`).join('')}</div></section>`;
 }
 export function Curated(p,openWishes){
   const few=openWishes<4;
-  return `<section class="sect curated" id="passt"><p class="eyebrow">Von Wishtale kuratiert</p><h3 style="font-size:clamp(24px,3vw,32px)">Das würde auch gut passen</h3>
-   <p class="muted" style="font-size:14.5px;margin:6px 0 16px">${few?`${esc(p.name)} hat noch nicht viele Wünsche eingetragen, deshalb haben wir hier ein paar Ideen mehr für dich. `:'Falls dir auf der Wunschliste nichts zusagt, haben wir hier noch ein paar Ideen. '}Wir haben sie aus den Interessen, Lieblingsmarken und dem Anlass zusammengestellt und dabei beachtet, was ${esc(p.name)} schon besitzt.</p>
+  return `<section class="sect curated" id="passt"><p class="muted" style="font-size:14px;margin:0 0 12px">${few?`${esc(p.name)} hat noch nicht viele Wünsche eingetragen, hier ein paar Ideen mehr.`:'Vorschläge von Wishtale, passend zu den Interessen und Marken.'}</p>
    ${Recs(p)}</section>`;
 }
 export function Ideen(p){
