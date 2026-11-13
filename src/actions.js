@@ -171,6 +171,12 @@ function applyCand(cand){
 }
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
+ jump(el){document.getElementById(el.dataset.to)?.scrollIntoView({behavior:'smooth',block:'start'})},
+ menu(){S.ui.menu=!S.ui.menu;render()},
+ menuclose(){S.ui.menu=false;render();document.querySelector('.acctbtn')?.focus({preventScroll:true})},
+ menuclosebg(el,e){if(e.target===el)A.menuclose()},
+ mgo(el){const v=el.dataset.v;S.ui.menu=false;S.ui.scrollTo=el.dataset.to||'';if(v==='profil'&&el.dataset.to==='vis')S.ui.scrollTo='';if(location.hash==='#'+v){render(true)}else location.hash='#'+v},
+ mdo(el,e){S.ui.menu=false;const f=A[el.dataset.do];if(f)f(el,e);else render()},
  go(el){const v=el.dataset.v;if(v==='start')S.ui.step=0;location.hash='#'+v;if(location.hash==='#'+v&&S.ui.view===v)render(true)},
  pick(el){const k=el.dataset.k,v=el.dataset.v,a=S.me[k],i=a.indexOf(v);i>-1?a.splice(i,1):a.push(v);render()},
  next(){
@@ -497,7 +503,7 @@ window.addEventListener('focus',()=>{
 });
 document.addEventListener('input',e=>{const f=e.target.dataset?.prof;if(f){S.me[f]=e.target.value;if(f==='birthdate'){const ag=ageOf(e.target.value);if(ag!=null)S.me.age=ag}saveState()}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('[role=button][data-act]')){e.preventDefault();e.target.click()}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.ui.modal)A.close()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(S.ui.menu)A.menuclose();else if(S.ui.modal)A.close()}});
 document.addEventListener('submit',e=>{
   const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();
   const fd=new FormData(f),kind=f.dataset.form;

@@ -67,6 +67,8 @@ Stand: 2026-11-09
 | 071 | Erkennung ab zwei Wörtern | **Anweisung: Erkennung schon ab zwei Wörtern, Hinweis zum Genauer-Schreiben** | ja, `3fcfb16` |
 | 072 | Welten vorerst ausblenden | **Anweisung: Welten ruhen, Daten bleiben, Schalter in `flags.js`** | ja, `b995ad8` |
 | 073 | Inspiration ausblenden, Entwicklermodus | **Anweisung: Seite Inspiration ruht, Entwicklermodus unter /dev/#entwickler** | ja, `4045a40` |
+| 074 | Wünsche-Seite am Handy | **Durch 075 erledigt: Wünsche nach vorn, Einlesen als Zeile, Filter hinter Knopf** | ja, siehe 075 |
+| 075 | Nutzerzentrale und reduzierte Schenkendenansicht | **Anweisung: keine untere Navigation, Menü hinter dem Avatar, Zurück zur Wunschliste, Kurzer Rundgang** | ja, `PENDING` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
@@ -93,5 +95,3 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
-- 074 Wünsche-Seite am Handy: Wünsche nach vorn, untere Leiste neu aufteilen (Entscheidung, von Jann)
-- 075 Nutzerzentrale und reduzierte Schenkendenansicht (Entscheidung, von ChatGPT)

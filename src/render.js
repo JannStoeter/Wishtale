@@ -4,12 +4,13 @@ import { guestPerson } from './state.js';
 import { signalCount } from './lib/signals.js';
 import { S, saveState, setDemo, ensureDraft } from './state.js';
 import { $, esc } from './lib/util.js';
-import { Header, BottomNav, GuestHeader, LoginHeader, LegalFoot } from './views/shared.js';
+import { Header, GuestHeader, LoginHeader, LegalFoot } from './views/shared.js';
 import { Start, Profil } from './views/profile.js';
 import { Wuensche } from './views/wishes.js';
 import { Historie } from './views/history.js';
 import { Entdecken } from './views/inspiration.js';
 import { inspirationOn } from './lib/flags.js';
+import { Menu } from './views/menu.js';
 import { Plan } from './views/plan.js';
 import { loadPlan } from './lib/plan.js';
 import { Gast } from './views/giver.js';
@@ -26,6 +27,7 @@ const DEFAULT_VIEW='wuensche';
 
 let lastModalKey='';
 function afterRender(){
+  if(S.ui.menu&&!document.activeElement?.closest?.('.drawer'))document.querySelector('.drawer .mclose')?.focus({preventScroll:true});
   if(S.ui.modal!=='pins'||!pinConsent())return;
   const box=document.querySelector('.pinwrap');if(!box)return;
   loadPinterest().then(ok=>{
@@ -63,7 +65,7 @@ export function render(top){
     return;
   }
   if(v==='gast'){
-    $('#app').innerHTML=GuestHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot()+Modal();
+    $('#app').innerHTML=GuestHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot()+Modal()+(S.auth.user?Menu():'');
     window.scrollTo(0,top?0:y);
     const gs=document.querySelector('.sheet');
     if(gs)gs.scrollTop=(modalKey&&modalKey===lastModalKey)?sheetY:0;
@@ -74,8 +76,11 @@ export function render(top){
   $('#app').innerHTML=Header(v)
     +(S.me.managed?`<div class="mgbar">Du verwaltest das Konto von ${esc(S.me.name)}.<button data-act="acct" data-id="me">Zurück zu ${esc(S.accounts.me.name)}</button></div>`:'')
     +`<main id="main" class="appmain">${body}</main>`
-    +LegalFoot()+BottomNav(v)+Modal();
-  window.scrollTo(0,top?0:y);
+    +LegalFoot()+Modal()+Menu();
+  // Zurück zur Wunschliste: Position der Liste wiederherstellen; sonst ganz nach oben, bei Sprung zu einem Abschnitt dorthin
+  window.scrollTo(0,top?(v==='wuensche'&&S.ui.homeY!=null?S.ui.homeY:0):y);
+  if(v==='wuensche')S.ui.homeY=null;
+  if(S.ui.scrollTo){const t=S.ui.scrollTo;S.ui.scrollTo='';setTimeout(()=>document.getElementById('sec-'+t)?.scrollIntoView({block:'start'}),30)}
   const sheet=document.querySelector('.sheet');
   if(sheet)sheet.scrollTop=(modalKey&&modalKey===lastModalKey)?sheetY:0;
   lastModalKey=modalKey;
@@ -85,6 +90,7 @@ export function render(top){
 }
 
 export function route(){
+  const prevView=S.ui.view,prevY=window.scrollY;
   let h=location.hash.replace('#','');
   if(h==='login')h='anmelden';  // alter Link
   const guest=h.match(/^p\/([\w-]+)$/);
@@ -105,7 +111,9 @@ export function route(){
   }
   else if(h==='schenken'){location.hash='#p/jonas';return}  // alter Link
   else S.ui.view=(h in VIEWS&&h!=='gast'&&h!=='login'&&h!=='recovery'&&!(anon&&h==='start'))?h:DEFAULT_VIEW;
-  if(S.ui.view==='entdecken'&&!inspirationOn()){S.ui.view=DEFAULT_VIEW;history.replaceState(null,'',location.pathname+'#'+DEFAULT_VIEW)}  // Inspiration ruht (Dev 073)
+  if(S.ui.view==='entdecken'&&!inspirationOn()){S.ui.view=DEFAULT_VIEW;history.replaceState(null,'',location.pathname+'#'+DEFAULT_VIEW)}
+  if(prevView==='wuensche'&&S.ui.view!=='wuensche')S.ui.homeY=prevY;
+  S.ui.menu=false;
   S.ui.modal=null;
   if(S.ui.view==='start'&&anon)track('start',{once:true,path:'/app/'});
   if(S.ui.view==='gast')track('guest_view',{once:true,path:'/app/'});

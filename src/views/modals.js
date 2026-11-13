@@ -2,6 +2,7 @@ import { ZettelModal } from './zettel.js';
 import { WelcomeModal } from './welcome.js';
 import { InviteModal } from './invite.js';
 import { AboutModal } from './about.js';
+import { TourModal } from './tour.js';
 import { WishRec } from './wishprev.js';
 import { imgBoxHtml } from '../lib/wishimg.js';
 import { S, initials } from '../state.js';
@@ -60,6 +61,7 @@ export function Modal(){
   if(m==='welcome')return WelcomeModal();
   if(m==='invite')return InviteModal();
   if(m==='about')return AboutModal();
+  if(m==='tour')return TourModal();
   if(m==='amazon')return AmazonModal();
   if(m==='given')return GivenModal();
   if(m==='giftgiven')return GiftGivenModal();

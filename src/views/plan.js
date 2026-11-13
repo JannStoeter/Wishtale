@@ -1,5 +1,6 @@
 /* Mein Plan: was dein Konto kann, was verbraucht wurde und was sich buchen lässt. */
 import { S } from '../state.js';
+import { BackBar } from './menu.js';
 import { esc } from '../lib/util.js';
 import { FEATURES, PLANS, FREE_CORE } from '../lib/features.js';
 
@@ -8,9 +9,9 @@ const day = iso => new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', m
 const every = i => (i === 'month' ? ' pro Monat' : i === 'year' ? ' pro Jahr' : '');
 
 export function Plan() {
-  if (!S.auth.user) return `<div class="wrap"><div class="pagehead"><h1>Mein Plan</h1><p class="muted">Melde dich an, dann siehst du hier, was dein Konto kann.</p></div></div>`;
+  if (!S.auth.user) return `<div class="wrap">${BackBar()}<div class="pagehead"><h1>Mein Plan</h1><p class="muted">Melde dich an, dann siehst du hier, was dein Konto kann.</p></div></div>`;
   const p = S.plan;
-  if (!p || !p.loaded) return `<div class="wrap"><div class="pagehead"><h1>Mein Plan</h1></div><p class="muted" role="status">Wird geladen …</p></div>`;
+  if (!p || !p.loaded) return `<div class="wrap">${BackBar()}<div class="pagehead"><h1>Mein Plan</h1></div><p class="muted" role="status">Wird geladen …</p></div>`;
   const e = p.ent || { plan: 'free', features: [], usage: {} };
   const paid = !!e.paid_until || (e.plan === 'plus' && !e.founder_until);
   const founder = e.plan === 'plus' && !e.paid_until && e.founder_until && Date.parse(e.founder_until) > Date.now();
@@ -19,7 +20,7 @@ export function Plan() {
   const status = founder
     ? `Du nutzt Wishtale Plus als Gründerin oder Gründer, kostenlos bis ${day(e.founder_until)}. Danach bleibt der Kern frei, und du entscheidest in Ruhe, ob du Plus buchen möchtest.`
     : e.plan === 'plus' ? `Du hast Wishtale Plus${e.paid_until ? ` bis ${day(e.paid_until)}` : ''}.` : 'Du nutzt Wishtale kostenlos. Das Wichtigste bleibt immer frei.';
-  return `<div class="wrap"><div class="pagehead"><p class="eyebrow">Konto</p><h1>Mein Plan: ${esc(PLANS[e.plan] || e.plan)}</h1><p class="muted" style="max-width:620px">${esc(status)}</p></div>
+  return `<div class="wrap">${BackBar()}<div class="pagehead"><p class="eyebrow">Konto</p><h1>Mein Plan: ${esc(PLANS[e.plan] || e.plan)}</h1><p class="muted" style="max-width:620px">${esc(status)}</p></div>
    <div class="psec" style="margin-bottom:18px"><h3 aria-level="2">Immer frei</h3><ul class="plist">${FREE_CORE.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
    <div class="psec" style="margin-bottom:18px"><h3 aria-level="2">Mit Plus</h3><ul class="plist">${plusList.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
     ${calls ? `<p class="muted" style="font-size:14px">In diesem Monat hat Wishtale ${calls} Mal für dich nachgedacht.</p>` : ''}</div>

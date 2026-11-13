@@ -1,4 +1,5 @@
 import { S } from '../state.js';
+import { BackBar } from './menu.js';
 import { worldsOn } from '../lib/flags.js';
 import { esc, ic } from '../lib/util.js';
 import { thinProfile } from '../lib/tale.js';
@@ -99,7 +100,7 @@ export function Entdecken(){
      <div class="offers">${list.map(o=>Card(o,id,mine.has(o.t.toLowerCase()))).join('')}</div>
     </section>`;
   }).filter(Boolean);
-  return `<div class="wrap">
+  return `<div class="wrap">${BackBar()}
    <div class="pagehead"><p class="eyebrow">Inspiration</p><h1>${worldsOn()?'Ideen aus deinen Welten':'Ideen für dich'}</h1>
     <p class="muted" style="max-width:620px">${worldsOn()?(m.cats.length?'Wir haben für jede deiner Welten ein paar Dinge herausgesucht, die zu deinen Interessen und Marken passen. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.':'Sobald du in deinem Profil ein paar Welten auswählst, schlagen wir dir hier passende Dinge vor. Bis dahin findest du ein paar Anregungen aus beliebten Bereichen.'):'Wishtale sucht Ideen, die zu deinen Interessen, Marken und Wünschen passen. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.'}</p></div>
    ${Promo()}

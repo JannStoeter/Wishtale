@@ -984,3 +984,52 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .psec.cmp textarea.ta{min-height:84px}
 
 .devbadge{font-size:11px;padding:2px 8px;white-space:nowrap}
+
+/* ---------- Menü, Rundgang, Wünsche-Seite (Dev 075, 074) ---------- */
+.nav,.btm{display:none!important}
+.appmain{padding-bottom:24px}
+.hdr .right{gap:8px}
+.helpbtn{white-space:nowrap}
+@media(max-width:520px){.helpbtn span{display:none}.helpbtn{padding:8px 10px}.syncst{max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.hdr .wrap{gap:10px}}
+.backbar{margin:12px 0 2px}
+.menu-scrim{display:flex;justify-content:flex-end;align-items:stretch;padding:0}
+.drawer{width:min(360px,90vw);height:100%;background:var(--bg);overflow:auto;padding:16px 16px 28px;box-shadow:-12px 0 40px rgba(0,0,0,.18);animation:drawerin .22s ease-out}
+@keyframes drawerin{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.drawer{animation:none}}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.drawer-head .who{display:flex;gap:10px;align-items:center;min-width:0}
+.drawer-head .who>div{display:flex;flex-direction:column;min-width:0}
+.drawer-head .who span.muted{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mgrp{margin-top:16px}
+.mgrp h3{font:600 12px/1 var(--sans,inherit);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px 4px}
+.mgrp ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.mi{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:8px 10px;border-radius:12px;text-align:left;font-size:16px;font-weight:500;color:var(--ink)}
+.mi:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.mi.on{background:color-mix(in srgb,var(--accent) 14%,transparent);font-weight:600}
+.mi .ico{width:22px;height:22px;flex:none}
+.mi small{display:block;font-weight:400;font-size:13px;color:var(--muted)}
+.mi .av{width:28px;height:28px;font-size:12px;flex:none}
+.tour-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:14px}
+.tour-list li{display:flex;gap:12px}
+.tour-list h3{font-size:19px;margin:0 0 2px}
+.tour-list p{margin:0;font-size:15px;color:var(--muted)}
+.tour-ic{flex:none;width:40px;height:40px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,transparent);display:grid;place-items:center;color:var(--accent)}
+.homebar{margin:10px 0 6px;justify-content:space-between;gap:8px}
+.importrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 14px;margin:8px 0 0;border:1px dashed var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
+.importrow span{flex:1;display:flex;flex-direction:column}
+.importrow small{font-size:13px;color:var(--muted)}
+.importrow:hover{border-color:var(--ink)}
+.fsort{margin:0 0 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.fsort summary{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;font-weight:600;font-size:15px;list-style:none}
+.fsort summary::-webkit-details-marker{display:none}
+.fsort-body{display:flex;flex-wrap:wrap;gap:8px;padding:0 14px 12px}
+.desk-only{display:none}
+@media(min-width:720px){.desk-only{display:inline-flex}}
+.surprise{display:flex;gap:8px;align-items:flex-start;margin:16px 0 8px;font-size:14px;color:var(--muted)}
+.surprise .ico{flex:none;margin-top:2px}
+.tips{margin:0 0 16px;font-size:14px}
+.tips summary{cursor:pointer;font-weight:600;padding:6px 0}
+.jumpideas{margin:0 0 8px}
+.fab{bottom:24px}
+.show-s{display:inline}@media(min-width:720px){.show-s{display:none}}
+.homebar{flex-wrap:nowrap}

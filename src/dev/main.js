@@ -256,8 +256,7 @@ function devmode(el) {
    <section class="card"><p>Der Modus ist <b>${on ? 'an' : 'aus'}</b>. Er gilt nur für diesen Browser und verleiht keine Rechte. In der App erscheint oben ein Hinweis „Entwicklermodus“, solange er an ist.</p>
     <button class="btn ${on ? 'sec' : ''}" id="dm">${on ? 'Ausschalten' : 'Einschalten'}</button>
     <h3>Zur Zeit ausgeblendet</h3>
-    <ul><li><b>Inspiration</b>, die ganze Seite samt Navigationspunkt und KI-Ideen für dich (Dev 073).</li>
-    <li><b>Welten</b>, also Auswahl in Einrichtung und Profil, Welten-Fenster, Welten in der Info-Welt der Gäste und Katalog-Produkte nach Welten (Dev 072).</li></ul>
+    <ul><li><b>Welten</b>, also Auswahl in Einrichtung und Profil, Welten-Fenster, Welten in der Info-Welt der Gäste und Katalog-Produkte nach Welten (Dev 072).</li></ul>
     <p class="hint">Neue ausgeblendete Bereiche trägt Claude in <code>src/lib/flags.js</code> und hier in der Liste ein.</p></section>`;
   el.onclick = e => { if (e.target.closest('#dm')) { setDevMode(!on); devmode(el); } };
 }

@@ -1,4 +1,5 @@
 import { S, initials } from '../state.js';
+import { BackBar } from './menu.js';
 import { esc, ic } from '../lib/util.js';
 import { art } from '../lib/art.js';
 import { ACT, CATS, BRANDS, TRIES, NOGOS, ALTS, KID_CATS, KID_OPTS, cat, crea } from '../data/content.js';
@@ -84,7 +85,7 @@ export function Profil(){
     return `<section class="psec cmp"><div class="hd"><h3 aria-level="2">${title}</h3><span class="row" style="gap:6px">${btn}${VisPill(vk,pv?null:k)}</span></div>${ed?Picker(st):empty&&st?`<button class="addchip" data-act="pedit" data-k="${k}">${ic('plus','sm')}Hinzufügen</button>`:inner}</section>`;
   };
   const chips=(a,cls='')=>a.length?`<div class="chips">${a.map(x=>`<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div>`:'';
-  return `<div class="wrap">
+  return `<div class="wrap">${BackBar()}
    ${pv?'':AppPromo()}
    ${pv?'':`   <div class="pcard slim"><span class="av t${m.tone}">${initials(m.name)}</span>
     <div class="pc-main"><h1>${esc(m.name)}</h1>${m.about&&m.about.trim()?`<p class="pc-about">${esc(m.about)}</p>`:m.interests.length?`<p class="pc-about">${esc(m.name)} liebt ${m.interests.slice(0,3).map(esc).join(', ')}.</p>`:`<a class="pc-add" href="#about" data-act="focusabout">+ Ein paar Sätze über dich</a>`}</div>
@@ -137,7 +138,7 @@ function OwnedSec(m){
 /* Pinterest und Instagram verlinken. Freunde sehen auf der Profilseite, was dich inspiriert. */
 function SocialSec(m){
   const s=m.social||{};
-  return `<details class="psec cmp fold2" ${(s.pinterest||s.instagram)?'open':''}><summary class="hd"><h3 aria-level="2">Was dich inspiriert</h3></summary><div class="row" style="justify-content:flex-end">${VisPill((m.vis&&m.vis.social)||'giver','social')}</div>
+  return `<details class="psec cmp fold2" id="sec-social" ${(s.pinterest||s.instagram||S.ui.scrollTo==='social')?'open':''}><summary class="hd"><h3 aria-level="2">Was dich inspiriert</h3></summary><div class="row" style="justify-content:flex-end">${VisPill((m.vis&&m.vis.social)||'giver','social')}</div>
    <p class="muted" style="font-size:14px">Pinterest oder Instagram verlinken: Freunde sehen, was dir gefällt.</p>
    <form data-form="social" class="authform">
     <div class="fld"><label for="sp">Pinterest (dein Profil oder ein Board)</label><input id="sp" name="pinterest" class="inp" inputmode="url" autocomplete="off" placeholder="z. B. pinterest.de/dein-name/kaffee-ecke" value="${esc(s.pinterest||'')}"></div>

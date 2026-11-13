@@ -30,6 +30,7 @@ export function GuestPage(p,{preview=false}={}){
     <div class="pheadslot">${ProfileHead(p,{preview})}</div>
     <div class="pmain">
      ${preview?'':PastGifts(p)}
+     ${none||preview?'':`<p class="jumpideas"><button class="linkbtn" data-act="jump" data-to="mehr">${ic('spark','sm')}Zu den Ideen von Wishtale</button></p>`}
      ${none?'':wl.html}
      ${More(p,{preview,none,open:wl.open})}
      <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis bei Amazon.</p>
@@ -42,7 +43,7 @@ export function GuestPage(p,{preview=false}={}){
 function More(p,{preview=false,none=false,open=0}={}){
   const ai=['ready','loading'].includes(aiStatus(gkey(p.handle||p.id)));
   return `<section class="more${none?' first':''}" id="mehr" aria-labelledby="mehr-h">
-   <p class="eyebrow">${none?'Tipps von Wishtale':'Wir empfehlen außerdem'}</p>
+   <p class="eyebrow">${none?'Tipps von Wishtale':'Ideen von Wishtale'}</p>
    <h2 id="mehr-h">${none?`${esc(p.name)} lässt sich noch inspirieren, hier findest du unsere Tipps`:'Nicht das Passende dabei?'}</h2>
    <p class="muted" style="margin:6px 0 14px">Wishtale kennt ${esc(gen(p.name))} Geschmack und schlägt dir Passendes vor. Sag uns, wie viel du ausgeben möchtest, der Rahmen gilt nur für diese Vorschläge.</p>
    ${thinProfile(p)?`<p class="thinnote">${ic('spark','sm')}<span>${p.managed?`Das Profil von ${esc(p.name)} ist noch ganz frisch`:`${esc(gen(p.name))} Profil ist noch ganz frisch`}, darum sind unsere Ideen im Moment eher allgemein. Je mehr ${esc(p.name)} über sich erzählt, desto genauer treffen sie.${preview?' <a href="#profil" class="linkbtn">Profil ergänzen</a>':''}</span></p>`:''}

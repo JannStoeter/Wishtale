@@ -1,4 +1,5 @@
 import { S } from '../state.js';
+import { BackBar } from './menu.js';
 import { esc, ic } from '../lib/util.js';
 import { art } from '../lib/art.js';
 import { FB } from '../data/content.js';
@@ -6,7 +7,7 @@ import { GivenSection } from './given.js';
 
 export function Historie(){
   const m=S.me;
-  return `<div class="wrap">
+  return `<div class="wrap">${BackBar()}
    <div class="pagehead"><p class="eyebrow">Geschenk-Historie</p><h1>${m.managed?`Geschenke rund um ${esc(m.name)}`:'Deine Geschenke, bekommen und verschenkt'}</h1>
     <p class="muted" style="max-width:600px">${m.managed?`Hier sammelst du, was ${esc(m.name)} geschenkt bekommen hat, damit nichts doppelt kommt.`:'Oben steht, was du geschenkt bekommen hast, damit deine Freunde nichts doppelt schenken. Darunter merkt sich Wishtale, was du anderen geschenkt hast.'} Wie du ein Geschenk bewertest, sieht nur du.</p></div>
    ${m.inbox.length?`<section><h3 aria-level="2" style="margin-bottom:12px">${m.managed?`Neu bei ${esc(m.name)} angekommen. Du antwortest für ${esc(m.name)}.`:'Neu bei dir angekommen'}</h3><div class="glist">${m.inbox.map(g=>{
