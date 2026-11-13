@@ -408,13 +408,13 @@ async readlink(){
   saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das ist schon vorhanden. Solche Vorschläge zeigen wir nicht mehr.');render();
  },
  aihave(el){
-  const i=ideasOf(skey(S.me.handle||'')).find(x=>x.t===el.dataset.t);if(!i)return;
+  const i=[...ideasOf(skey(S.me.handle||'')),...ideasOf(gkey(S.me.handle||''))].find(x=>x.t===el.dataset.t);if(!i)return;
   const c=guessCategory(i.t,'wohnen');
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===i.t.toLowerCase()))S.me.wishes.unshift(W({t:i.t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
   saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das hast du schon. Solche Ideen zeigen wir dir nicht mehr.');render();
  },
  aiadd(el){
-  const i=ideasOf(skey(S.me.handle||'')).find(x=>x.t===el.dataset.t);if(!i)return;
+  const i=[...ideasOf(skey(S.me.handle||'')),...ideasOf(gkey(S.me.handle||''))].find(x=>x.t===el.dataset.t);if(!i)return;
   const c=guessCategory(i.t,'wohnen');
   S.me.wishes.unshift(W({t:i.t,c,kind:i.exp?'erlebnis':'produkt',prio:2,price:i.to||null,a:i.exp?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
   saveSignal('yes',i.t);hideIdea(i.t);toast('Schön, das steht jetzt auf deiner Wunschliste.');render();

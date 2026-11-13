@@ -43,7 +43,7 @@ export function render(top){
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
   // Vorladen: Gast-Ideen und eigene Inspiration im Hintergrund holen, damit sie beim Öffnen schon da sind (der Server antwortet bei unverändertem Profil aus dem Zwischenspeicher).
-  if(S.auth.user&&S.me.handle&&v!=='gast'){loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.preview&&['profil','wuensche'].includes(S.ui.view)&&!S.ui.modal)render()});if(v!=='entdecken'&&inspirationOn())loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
+  if(S.auth.user&&S.me.handle&&v!=='gast'){loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(['profil','wuensche'].includes(S.ui.view)&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()});if(v!=='entdecken'&&inspirationOn())loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
   // Tipps zu ungenauen Wünschen vorladen, damit die Liste konkret wird („Tipp von Wishtale: …“). Höchstens 12, der Server antwortet meist aus dem Zwischenspeicher.
   {const own=v==='wuensche'&&S.auth.user&&S.me.handle,gp=v==='gast'?guestPerson():null,p=own?S.me:gp&&gp.remote&&gp.handle?gp:null;
    if(p)p.wishes.filter(w=>(w.status==='offen')&&!w.link&&!w.noSuggest&&(w.kind==='produkt'||w.kind==='kategorie')&&!isSpecific(w)&&/^[0-9a-f-]{36}$/i.test(String(w.id))).slice(0,12)

@@ -7,6 +7,8 @@ import { completeness } from '../lib/tale.js';
 import { viaName } from '../lib/invite.js';
 import { GuestPage } from './giver.js';
 import { Steps } from './steps.js';
+import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
+import { AiLoading } from './ailoading.js';
 
 /** Freundlicher Hinweis, solange das Profil noch dünn ist. Verschwindet für eine Woche, wenn man „Später“ wählt. */
 function Nudge(m){
@@ -31,7 +33,20 @@ export function sortWishes(list){
   return [...list].sort((a,b)=>b.prio-a.prio||idx.get(a)-idx.get(b));
 }
 /** Umschalter „Meine Ansicht | So sehen Schenkende es“ (Wünsche und Profil). */
-export function ViewSeg(){const pv=S.ui.preview;return `<div class="seg" role="group" aria-label="Ansicht"><button class="${!pv?'on':''}" data-act="preview" data-v="0">Meine Ansicht</button><button class="${pv?'on':''}" data-act="preview" data-v="1"><span class="hide-s">So sehen Schenkende es</span><span class="show-s">Vorschau</span></button></div>`}
+export function ViewSeg(){return S.ui.preview?`<button class="btn ghost sm" data-act="preview" data-v="0">${ic('back','sm')}Zurück zu meinen Wünschen</button>`:`<button class="linkbtn viewlink" data-act="preview" data-v="1">${ic('eye','sm')}So sehen es deine Freunde</button>`}
+/** Ideen von Wishtale unter den eigenen Wünschen: dieselben Ideen, die Freunde sehen, mit Rückmeldung (Dev 079). */
+export function OwnIdeas(m){
+  const h=m.handle;if(!h||!S.auth.user)return '';
+  const key=gkey(h),st=aiStatus(key);
+  if(st==='loading')return `<section class="ownideas" aria-label="Ideen von Wishtale">${AiLoading('Wishtale sucht Ideen, die zu dir passen …')}</section>`;
+  const list=ideasOf(key).slice(0,6);if(!list.length)return '';
+  return `<section class="ownideas" id="ideen-eigen" aria-labelledby="oi-h"><h2 id="oi-h">Ideen von Wishtale</h2>
+   <p class="muted oi-sub">Diese Vorschläge sehen auch deine Freunde unter deiner Liste. Sag uns, was nicht passt oder was du schon hast.</p>
+   <div class="oi-list">${list.map(i=>`<article class="oi"><div class="oi-main"><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
+    <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${i.to?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`}</span>`:''}</div></div>
+    <div class="oi-acts"><button class="btn pri sm" data-act="aiadd" data-t="${esc(i.t)}">Auf meine Wunschliste</button><button class="btn ghost sm" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="btn ghost sm" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></article>`).join('')}</div>
+   <p class="disc">Vorschläge von Wishtale, keine Wünsche von dir.</p></section>`;
+}
 export const PreviewBanner=()=>`<div class="banner green" style="margin-top:12px">${ic('eye')}<span>So sieht deine Seite für Freunde aus. Alles, was du auf „Privat“ gestellt hast, und dein persönliches Feedback bleiben dabei verborgen.</span></div>`;
 /** Leere Wunschliste: ein einziges Feld, sonst nichts. Der Rest erscheint erst mit dem ersten Wunsch. */
 function EmptyWishes(m){
@@ -74,6 +89,7 @@ export function Wuensche(){
     })).join('')||`<p class="muted" style="font-size:16px">Dein erster Wunsch wartet schon auf dich. Schreib ihn auf, füge einen Link ein oder lies eine ganze Liste ein, und Wishtale macht den Rest.</p>`}</div>
    <p class="surprise">${ic('lock','sm')}<span>${note}</span></p>
    <details class="tips"><summary>Tipps zu deiner Wunschliste</summary><p class="muted">Du musst nicht jedes Produkt kennen. Schreib zum Beispiel „Hochwertige Pfanne bis 100 €“, dann suchen wir für deine Freunde passende Vorschläge heraus. Auch ohne Link finden wir bei Amazon etwas Passendes.</p></details>
+   ${OwnIdeas(m)}
    ${Steps(m)||Nudge(m)}
    ${AppPromo()}
    <div class="fabspace" aria-hidden="true"></div>

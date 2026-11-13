@@ -1033,3 +1033,12 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .fab{bottom:24px}
 .show-s{display:inline}@media(min-width:720px){.show-s{display:none}}
 .homebar{flex-wrap:nowrap}
+.viewlink{display:inline-flex;gap:6px;align-items:center;font-size:14px}
+.ownideas{margin:26px 0 8px;padding-top:18px;border-top:1px solid var(--line)}
+.ownideas h2{font-size:26px;margin:0 0 4px}
+.oi-sub{font-size:14px;margin:0 0 12px}
+.oi-list{display:grid;gap:10px}
+.oi{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px 14px;display:grid;gap:10px}
+.oi h3{font-size:19px;margin:0}.oi .why{font-size:14px;color:var(--muted);margin:2px 0 6px}
+.oi-acts{display:flex;gap:6px;flex-wrap:wrap}
+@media(min-width:720px){.oi-list{grid-template-columns:repeat(2,1fr)}}
