@@ -94,3 +94,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
 - 074 Wünsche-Seite am Handy: Wünsche nach vorn, untere Leiste neu aufteilen (Entscheidung, von Jann)
+- 075 Nutzerzentrale und reduzierte Schenkendenansicht (Entscheidung, von ChatGPT)
