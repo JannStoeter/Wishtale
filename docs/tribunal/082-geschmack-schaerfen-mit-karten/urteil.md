@@ -3,7 +3,7 @@ topic: 082-geschmack-schaerfen-mit-karten
 status: entschieden
 option: A
 datum: 2026-11-13
-umgesetzt: PENDING
+umgesetzt: 422106e
 ---
 **Janns Urteil im Chat (Wortlaut): „Ja, 82 ist frei. Achte darauf, dass Wortstämme/Kategorien nicht ausschließen, sondern nur die Idee. Die Vorschläge bei mir kommen raus. Wie willst du die Karten bauen? Sie können ja nicht immer gleich sein?!“** Dazu eine Ergänzung aus dem Gespräch mit ChatGPT: Karten müssen konkret sein (eine bestimmte gerippte Wollmütze in Dunkelgrün, nicht „Mützen“). „Gefällt mir“ und „Nicht mein Geschmack“ bewerten, „Besitze ich bereits“ ist eine zusätzliche, unabhängige Angabe und gibt es nur bei konkreten Karten (bei Stilkarten nicht). Regel für Empfehlungen: dasselbe Produkt vermeiden, ähnliche passende weiter vorschlagen. „Davon möchte ich grundsätzlich nichts mehr“ ist eine eigene, bewusst gewählte Einschränkung im Profil (No-Gos).
 
