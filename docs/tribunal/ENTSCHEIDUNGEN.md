@@ -76,6 +76,7 @@ Stand: 2026-11-09
 | 081 | Preisrahmen zurück, Filter-Symbol | **Anweisung: schmale Preiszeile bei allen Ideen, Regler-Symbol statt Lupe** | ja, `8bbdd6d` |
 | 082 | Geschmack schärfen mit Karten | **A: feste, konkrete Karten, Ja ist kein Wunsch, nur die Idee wird ausgeschlossen, Ideen unter den eigenen Wünschen entfernt** | ja, `422106e` |
 | 083 | Erledigte Wünsche aus der Liste | **Anweisung: Statusschalter weg, Erledigtes im Profil unter Das habe ich schon mit Pfeil zurück** | ja, `584eb9e` |
+| 084 | Wunschliste hochladen als Highlight, Reel dazu | **Anweisung: grüne Leiste mit Gold in der App, Reel Wunschzettel (promo:zettel)** | ja, `PENDING` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.

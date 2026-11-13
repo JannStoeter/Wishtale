@@ -8,3 +8,5 @@ promo/out/_frames
 .env.*
 !.env.example
 *.pem
+promo/out/_shots
+promo/out/_reel-zettel.html

@@ -63,7 +63,7 @@ export function Wuensche(){
   return `<div class="wrap">
    <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}.`:open===1?'1 Ding, über das ich mich freuen würde.':`${open} Dinge, über die ich mich freuen würde.`}</h1></div>
    <div class="row homebar">${ViewSeg()}${m.handle||!S.auth.user?`<button class="btn gold sm" data-act="share">Teilen</button>`:""}</div>
-   <button class="importrow" data-act="modal" data-v="zettel">${ic('plus','sm')}<span><b>Schon eine Liste? Liste einlesen</b><small>Text oder Foto übernehmen</small></span>${ic('arrow','sm')}</button>
+   <button class="newbar" data-act="modal" data-v="zettel"><span class="nb-tag">Jetzt neu</span><span class="nb-t"><b>Einfach Wunschliste hochladen</b><small>Foto vom Wunschzettel oder Text, Wishtale macht daraus Wünsche</small></span>${ic('arrow','sm')}</button>
    ${filt}
    <h2 class="vh">Deine Wünsche</h2>
    ${list.length?PrioKey():''}<div class="${useList(list.length)?'wlist':'wgrid'}">${list.map(w=>(useList(list.length)?WishRow:WishCard)(w,m,{
