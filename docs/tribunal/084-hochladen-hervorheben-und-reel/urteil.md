@@ -3,7 +3,7 @@ topic: 084-hochladen-hervorheben-und-reel
 status: entschieden
 option: Anweisung
 datum: 2026-11-13
-umgesetzt: PENDING
+umgesetzt: 33e0924
 ---
 **App (`src/views/wishes.js`, `src/styles/main.css`):** Die gestrichelte Zeile „Schon eine Liste? Liste einlesen“ auf der Wünsche-Seite ist jetzt eine grüne Leiste mit Gold: goldene Marke „Jetzt neu“, „Einfach Wunschliste hochladen“ und die Zeile „Foto vom Wunschzettel oder Text, Wishtale macht daraus Wünsche“, mit goldenem Pfeil. Sie öffnet wie vorher den Dialog zum Einlesen. Auf sehr schmalen Handys (unter 380 px) entfällt die Marke.
 
