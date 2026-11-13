@@ -15,6 +15,9 @@ import { readZettelRemote } from './lib/zettel.js';
 import { findDupe } from './lib/dupes.js';
 import { ageOf } from './lib/age.js';
 import { markStep, hideSteps } from './lib/steps.js';
+import { createCoInvite, revokeCoInvites, removeMember, acceptCoInvite, coLink, saveCode, sharedKey } from './lib/coparent.js';
+import { managersOf } from './lib/coparent.js';
+import { loadMine } from './lib/remote.js';
 import { buildRound, saveAnswer, removeAnswer, resetAnswers } from './lib/cards.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
@@ -172,6 +175,20 @@ function applyCand(cand){
 }
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
+ coinvite(el){const id=el.dataset.id,z=S.ui.mgm[id];if(!z||z.busy)return;z.busy=true;z.error='';render();
+  createCoInvite(id).then(t=>{z.link=coLink(t);z.busy=false;return managersOf(id).then(d=>{z.data=d}).catch(()=>{})}).catch(e=>{z.busy=false;z.error=e.message||'Das hat leider nicht geklappt.'}).finally(()=>render())},
+ cocopy(){const id=S.me.dbId,z=(S.ui.mgm||{})[id];if(!z||!z.link)return;const u=z.link;
+  if(navigator.share){navigator.share({title:`Mitverwalten: ${S.me.name} bei Wishtale`,url:u}).catch(()=>{})}
+  else if(navigator.clipboard)navigator.clipboard.writeText(u).then(()=>toast('Der Link ist kopiert.')).catch(()=>toast('Bitte kopiere den Link aus dem Feld.'));
+  else toast('Bitte kopiere den Link aus dem Feld.')},
+ corevoke(el){const id=el.dataset.id;revokeCoInvites(id).then(()=>managersOf(id)).then(d=>{S.ui.mgm[id]={data:d};toast('Die offenen Einladungen sind zurückgezogen.');render()}).catch(()=>{toast('Das hat leider nicht geklappt.')})},
+ coremove(el){const id=el.dataset.id;if(!confirm(`${el.dataset.n} aus der Verwaltung entfernen? ${el.dataset.n} sieht das Wishtale von ${S.me.name} danach nicht mehr.`))return;
+  removeMember(id).then(()=>managersOf(id)).then(d=>{S.ui.mgm[id]={data:d};toast('Das zweite Elternteil ist entfernt.');render()}).catch(()=>toast('Das hat leider nicht geklappt.'))},
+ coleave(el){const id=el.dataset.id;if(!confirm(`Die Verwaltung von ${S.me.name} abgeben? Du siehst das Wishtale danach nicht mehr.`))return;
+  removeMember(id).then(()=>loadMine(S.auth.user)).then(()=>{S.ui.mgm={};switchTo('me');location.hash='#wuensche';toast('Du verwaltest das Wishtale nicht mehr mit.');render(true)}).catch(()=>toast('Das hat leider nicht geklappt.'))},
+ coaccept(){const c=S.ui.co;if(!c||c.busy)return;c.busy=true;c.error='';render(true);
+  acceptCoInvite(c.code).then(async r=>{await loadMine(S.auth.user);const k=sharedKey(r.kid);S.ui.co=null;S.ui.mgm={};if(k)switchTo(k);location.hash='#wuensche';render(true);toast(`Du verwaltest jetzt gemeinsam mit ${r.from} das Wishtale von ${r.kid}.`)}).catch(e=>{c.busy=false;c.error=e.message;render(true)})},
+ cologin(el){const c=S.ui.co;if(c)saveCode(c.code);location.hash='#'+(el.dataset.to||'anmelden')},
  cardcat(el){const c=S.ui.cards;if(c){c.cat=el.dataset.v;render()}},
  cardstart(){const c=S.ui.cards;if(!c)return;c.round=buildRound(c.cat);c.i=0;c.done=0;c.owned=false;c.hist=[];render();setTimeout(()=>document.getElementById('card-h')?.focus({preventScroll:true}),30)},
  cardmore(){A.cardstart()},

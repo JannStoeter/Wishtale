@@ -56,3 +56,17 @@ export async function ownerOf(handle, fetchImpl = fetch) {
   if (!k) return null;
   try { return (await rest(k, fetchImpl)(`profiles?select=owner_id&handle=eq.${encodeURIComponent(handle)}&limit=1`))?.[0]?.owner_id || null; } catch { return null; }
 }
+
+/** Darf diese Person das Profil verwalten? Hauptnutzer oder das eine eingeladene Elternteil (Dev 046). */
+export async function manages(handle, userId, fetchImpl = fetch) {
+  const k = key();
+  if (!k || !userId) return false;
+  try {
+    const q = rest(k, fetchImpl);
+    const [p] = (await q(`profiles?select=id,owner_id&handle=eq.${encodeURIComponent(handle)}&limit=1`)) || [];
+    if (!p) return false;
+    if (p.owner_id === userId) return true;
+    const m = await q(`profile_members?select=user_id&profile_id=eq.${p.id}&user_id=eq.${userId}&limit=1`);
+    return !!(m && m.length);
+  } catch { return false; }
+}

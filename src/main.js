@@ -2,10 +2,11 @@ import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource-variable/schibsted-grotesk/index.css';
 import './styles/main.css';
-import { loadState } from './state.js';
+import { loadState, switchTo } from './state.js';
 import { S } from './state.js';
 import { sb } from './lib/supabase.js';
 import { enter, adoptDraft } from './lib/auth.js';
+import { adoptCoInvite, sharedKey } from './lib/coparent.js';
 import { toast } from './lib/util.js';
 import { adoptInvite } from './lib/invite.js';
 import { route, render } from './render.js';
@@ -25,6 +26,8 @@ async function boot(){
     await migrateGiven().catch(()=>0);await loadGiven().catch(()=>{});
     const adopted=recoveryLink?false:adoptDraft();
     const invd=recoveryLink?false:await adoptInvite().catch(()=>false);
+    const cod=recoveryLink?null:await adoptCoInvite().catch(()=>null);
+    if(cod){const k=sharedKey(cod.kid);if(k)switchTo(k);history.replaceState(null,'',location.pathname+'#wuensche');setTimeout(()=>toast(`Du verwaltest jetzt gemeinsam mit ${cod.from} das Wishtale von ${cod.kid}.`),500)}
     if(recoveryLink){
       history.replaceState(null,'',location.pathname+'#neues-passwort');
     }else if(invd&&invd.n){
@@ -57,9 +60,12 @@ async function boot(){
         if(location.hash==='#neues-passwort'){route();return}
         const adopted=adoptDraft();
         const invd=await adoptInvite().catch(()=>false);
+        const cod=await adoptCoInvite().catch(()=>null);
+        if(cod){const k=sharedKey(cod.kid);if(k)switchTo(k)}
         location.hash='#wuensche';
         route();
-        if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
+        if(cod)toast(`Du verwaltest jetzt gemeinsam mit ${cod.from} das Wishtale von ${cod.kid}.`);
+        else if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
         else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);
         else if(adopted)toast('Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
         else if(waiting)toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.');

@@ -265,8 +265,8 @@ input[type=range]{accent-color:var(--accent);width:140px}
 @media(min-width:1100px){.wgrid{grid-template-columns:repeat(5,1fr)}.wgrid.big{grid-template-columns:repeat(3,1fr)}.wrap{max-width:1240px}}
 .acctbtn{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border:1px solid var(--line);border-radius:99px;background:var(--surface);font-weight:600;font-size:14px}
 .acctbtn:hover{border-color:var(--ink)}
-.mgbar{background:var(--gold);color:#fff;font-size:13.5px;padding:8px 20px;text-align:center}
-.mgbar button{text-decoration:underline;font-weight:600;color:#fff;margin-left:6px}
+.mgbar{background:var(--gold);color:#1d231f;font-size:13.5px;padding:8px 20px;text-align:center}
+.mgbar button{text-decoration:underline;font-weight:600;color:#1d231f;margin-left:6px}
 .crhead{display:grid;grid-template-columns:88px 1fr;gap:16px;align-items:center;margin-bottom:16px}
 .crhead .art{width:88px;height:88px;border-radius:50%}
 .ccard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;text-align:left;transition:transform .2s}
@@ -1079,3 +1079,10 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .tasteend{text-align:center;padding:24px 0}
 .tastehint{display:flex;gap:8px;align-items:flex-start;margin:6px 0 14px;font-size:14px;color:var(--muted)}
 .tastehint .ico{flex:none;margin-top:2px}
+
+/* Zweites Elternteil (Dev 046) */
+.comgr{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:4px}
+.comgr h4{font-size:15px;margin:0;letter-spacing:.02em}
+.comnote{font-size:13.5px;margin:2px 0}
+.comerr{color:var(--bad,#a33);font-size:14px;margin:4px 0}
+.narrow{max-width:620px;margin-inline:auto}

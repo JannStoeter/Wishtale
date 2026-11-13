@@ -16,7 +16,7 @@ export function Menu() {
   const v = S.ui.view, u = S.auth.user, m = S.me;
   const accts = Object.entries(S.accounts || {});
   const mine = [
-    ...accts.map(([id, a]) => `<li><button class="mi${S.ui.acct === id ? ' on' : ''}" ${dd('acct', `data-id="${id}"`)}${S.ui.acct === id ? ' aria-current="true"' : ''}><span class="av t${a.tone}">${initials(a.name)}</span><span>${esc(a.name)}${a.managed ? '<small>Kind-Konto</small>' : '<small>Mein Profil</small>'}</span></button></li>`),
+    ...accts.map(([id, a]) => `<li><button class="mi${S.ui.acct === id ? ' on' : ''}" ${dd('acct', `data-id="${id}"`)}${S.ui.acct === id ? ' aria-current="true"' : ''}><span class="av t${a.tone}">${initials(a.name)}</span><span>${esc(a.name)}${a.shared ? '<small>Kind-Konto, mitverwaltet</small>' : a.managed ? '<small>Kind-Konto</small>' : '<small>Mein Profil</small>'}</span></button></li>`),
     item('plus', 'Kind-Konto hinzufügen', dd('modal', 'data-v="accounts"'), false),
     u ? item('gift', 'Jemanden einladen', dd('inviteopen'), false, 'mit vorbereitetem Entwurf') : '',
   ].join('');

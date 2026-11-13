@@ -39,6 +39,7 @@ Stand: 2026-11-09
 | 041 | Bestätigungsmails vom eigenen Absender | **A: united domains als SMTP-Server.** Eingerichtet und von Jann getestet. | ja, Einrichtung durch Jann |
 | 043 | Sicherheitscheck vor dem Launch (Auftrag von Jann) | **A: Hoch und Mittel vor dem Launch.** Teil 1 von Claude umgesetzt, Rest bei Jann und offen. | teilweise, `903df74` |
 | 039 | Vorbereitete Profile verschenken (Einladungslink) | **A: Einladungslink ohne vorab angelegtes Konto**, Claude und ChatGPT einig. | ja, `3d8bc76` |
+| 046 | Kind-Konten von mehreren Personen verwalten | **A, begrenzt auf ein zweites Elternteil: Verwaltet von, Einladungslink, Abgeben und Entfernen** | ja, `PENDING` |
 | 047 | Gast-Ansicht: Wünsche zuerst | **A: Wünsche zuerst, dann „Nicht das Passende dabei?“ mit Preisrahmen nur für Vorschläge**, Claude und ChatGPT einig. | ja, `9db59dc` |
 | 048 | Gast-Ansicht: Feinschliff | **Anweisung: Bitte nicht/Hat schon in die Seitenleiste, Liste statt Groß, Sortierung** | ja, `3ffe30a` |
 | 049 | Info-Welt zum Profil | **Anweisung: Profilkopf öffnet ein gestaltetes Fenster über die Person, Seitenleiste entfällt** | ja, `4e37d6a` |
@@ -99,6 +100,5 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 025 Woher kommen Bilder, wenn die Shopseite keins liefert (Amazon, idealo)? (Entscheidung)
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
-- 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
 - 077 Profilpflege dezent anstoßen und Klicktour zu den Einstellungen (Entscheidung, von Jann, wartet auf ChatGPT)
 - 078 Landingpage-Intro: echter Durchklick durch die neue App (Entscheidung, von Jann, wartet auf ChatGPT, Entwurf liegt bei)

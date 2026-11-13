@@ -8,6 +8,7 @@ import { GuestPage } from './giver.js';
 import { ViewSeg, PreviewBanner } from './wishes.js';
 import { completeness } from '../lib/tale.js';
 import { AppPromo } from './inspiration.js';
+import { ManagersBlock } from './comember.js';
 import { worldsOn } from '../lib/flags.js';
 
 export const STEPS=[
@@ -69,10 +70,9 @@ export function Start(){
 /* ---- Profile ---- */
 export function MgPanel(m){return `<section class="panel" style="margin-top:16px;display:grid;gap:10px"><div class="row" style="justify-content:space-between"><h3 aria-level="2" style="font-size:24px">Kind-Konto</h3><span class="pill">${ic('lock','sm')}Nur auf Einladung</span></div>
  <p class="muted" style="font-size:15px">Du pflegst Profil, Wünsche und Feedback für ${esc(m.name)}. Du siehst, was reserviert oder gekauft ist, damit nichts doppelt ankommt. ${esc(m.name)} bekommt davon nichts mit, damit die Überraschung bleibt.</p>
- <div class="chips">${m.invited.map(x=>`<span class="chip ok">${ic('check','sm')}${esc(x)}</span>`).join('')||'<span class="muted" style="font-size:14px">Noch niemand eingeladen.</span>'}</div>
+ ${ManagersBlock(m)}
  <div class="fld"><label for="mbd">Geburtsdatum</label><input id="mbd" class="inp" type="date" data-prof="birthdate" value="${esc(m.birthdate||'')}" max="${new Date().toISOString().slice(0,10)}" style="max-width:240px"><span class="muted" style="font-size:13px">${m.birthdate&&m.age!=null?`${esc(m.name)} ist ${m.age} Jahre alt. Deine Freunde sehen nur das Alter.`:`Damit passen Vorschläge zum Alter von ${esc(m.name)}. Deine Freunde sehen nur das Alter.`}</span></div>
  <div class="fld"><label for="msz">Aktuelle Kleidergröße <span class="muted" style="font-weight:400">(optional, aber empfohlen)</span></label><input id="msz" class="inp" data-prof="size" value="${esc(m.size||'')}" maxlength="20" placeholder="z. B. 104 oder Schuhgröße 28" style="max-width:320px"><span class="muted" style="font-size:13px">Kinder wachsen schnell: Trag hier die aktuelle Größe ein, dann passen Kleidung und Schuhe.</span></div>
- <div class="row"><button class="btn sec sm" data-act="invite">${ic('plus','sm')}Person einladen</button></div>
  <p class="disc" style="margin:0">Wir speichern den Vornamen, das Geburtsdatum und die Kleidergröße, keine Fotos und keinen Nachnamen. Das Profil sehen nur Menschen, die du eingeladen hast.</p></section>`}
 export function Profil(){
   const m=S.me,pv=S.ui.preview;

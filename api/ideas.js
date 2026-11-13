@@ -1,6 +1,6 @@
 import { send, fail, HttpError, requireUser } from './_lib/auth.js';
 import { ideasFor, OCCASIONS } from './_lib/ideas.js';
-import { entitlementsOf, can, recordUsage, ownerOf } from './_lib/entitlements.js';
+import { entitlementsOf, can, recordUsage, ownerOf, manages } from './_lib/entitlements.js';
 import { guardLlm } from './_lib/limits.js';
 import { matchFor } from './_lib/match.js';
 
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     const mode = ['self', 'wish'].includes(req.query?.mode) ? req.query.mode : 'gift';
     if (req.query?.mode === 'match') { // Wunsch-Dialog: gemeintes Produkt erkennen, nur für die angemeldete Person selbst
       const me = /^Bearer /.test(req.headers?.authorization || '') ? await requireUser(req) : null;
-      if (!me || (await ownerOf(h)) !== me.id) throw new HttpError(me ? 403 : 401, 'Bitte melde dich an.');
+      if (!me || !(await manages(h, me.id))) throw new HttpError(me ? 403 : 401, 'Bitte melde dich an.');
       if (!can(await entitlementsOf(me.id), 'ideas.wish')) return res.status(200).json({ match: null, locked: true });
       const out = await matchFor(req.query?.t, fetch, { onUsage: (u, model) => recordUsage(me.id, `ideas.match:${model}`, u), guard: () => guardLlm({ ip: '', payer: me.id, feature: 'ideas.wish' }) });
       res.status(200).setHeader('Cache-Control', 'private, max-age=3600');
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     const isDraft = mode === 'wish' && !/^[0-9a-f-]{36}$/i.test(wid);
     const own = (mode === 'self' || isDraft) && /^Bearer /.test(req.headers?.authorization || '') ? await requireUser(req) : null;
     // Entwürfe (frei eingegebener Titel) nur für die angemeldete Person selbst, sonst ließe sich die KI mit beliebigem Text auf fremde Kosten aufrufen.
-    if (isDraft && (!own || (await ownerOf(h)) !== own.id)) throw new HttpError(own ? 403 : 401, 'Bitte melde dich an.');
+    if (isDraft && (!own || !(await manages(h, own.id)))) throw new HttpError(own ? 403 : 401, 'Bitte melde dich an.');
     const feature = mode === 'self' ? 'ideas.self' : mode === 'wish' ? 'ideas.wish' : 'ideas.guest';
     const payer = own?.id || await ownerOf(h); // der Verbrauch geht auf das Konto, um dessen Profil es geht
     if (payer && !can(await entitlementsOf(payer), feature)) { res.status(200).setHeader('Cache-Control', 'public, s-maxage=600'); return res.json({ ideas: [], locked: true }); }

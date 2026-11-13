@@ -74,6 +74,15 @@ export async function loadMine(user) {
     if (!created) throw new Error('Profil konnte nicht angelegt werden.');
     list = [created];
   }
+  // Kind-Konten, die jemand anderes angelegt hat und die dieses Konto als zweites Elternteil mitverwaltet (Dev 046)
+  let sharedIds = new Set();
+  try {
+    const mem = await sb.from('profile_members').select('profile_id').eq('user_id', user.id);
+    if (!mem.error && mem.data && mem.data.length) {
+      const sp = await sb.from('profiles').select('*').in('id', mem.data.map(m => m.profile_id)).order('created_at');
+      if (!sp.error) { list = [...list, ...(sp.data || [])]; sharedIds = new Set((sp.data || []).map(p => p.id)); }
+    }
+  } catch (e) { console.error('mitverwaltet', e); }
   const ids = list.map(p => p.id);
   const [w, g] = await Promise.all([
     sb.from('wishes').select('*').in('profile_id', ids).order('created_at'),
@@ -87,6 +96,7 @@ export async function loadMine(user) {
   for (const p of list.filter(x => x.id !== main.id)) {
     accounts[p.id] = accountFromRow(p, w.data, g.data);
     accounts[p.id].id = p.id;
+    accounts[p.id].shared = sharedIds.has(p.id);
     // Eltern sehen bei Kind-Konten, welche Wünsche reserviert oder gekauft sind (nicht von wem).
     const r = await sb.rpc('owner_reservations', { p_profile_id: p.id });
     (r.data || []).forEach(x => {

@@ -12,6 +12,8 @@ import { Entdecken } from './views/inspiration.js';
 import { inspirationOn } from './lib/flags.js';
 import { Menu } from './views/menu.js';
 import { Geschmack } from './views/taste.js';
+import { Mitverwalten } from './views/comember.js';
+import { peekCoInvite, validCode as validCo, managersOf } from './lib/coparent.js';
 import { loadAnswers } from './lib/cards.js';
 import { Plan } from './views/plan.js';
 import { loadPlan } from './lib/plan.js';
@@ -24,7 +26,7 @@ import { loadPinterest, pinConsent } from './lib/social.js';
 import { Modal } from './views/modals.js';
 import { track } from './lib/track.js';
 
-export const VIEWS={plan:Plan,start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,geschmack:Geschmack,gast:Gast,login:Login,recovery:Recovery,einladung:Einladung};
+export const VIEWS={plan:Plan,start:Start,profil:Profil,wuensche:Wuensche,historie:Historie,entdecken:Entdecken,geschmack:Geschmack,mitverwalten:Mitverwalten,gast:Gast,login:Login,recovery:Recovery,einladung:Einladung};
 const DEFAULT_VIEW='wuensche';
 
 let lastModalKey='';
@@ -48,6 +50,7 @@ export function render(top){
   if(S.auth.user&&S.me.handle&&v!=='gast'){if(v!=='entdecken'&&inspirationOn())loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
   if((v==='geschmack'||v==='wuensche')&&S.auth.user&&S.me.dbId&&!S.me.managed)loadAnswers().then(fresh=>{if(fresh&&S.ui.view===v&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()}).catch(()=>{});
   if(v==='geschmack'&&!S.auth.user)loadAnswers().then(fresh=>{if(fresh&&S.ui.view==='geschmack')render()}).catch(()=>{});
+  if(v==='profil'&&S.auth.user&&S.me.managed&&S.me.dbId){S.ui.mgm=S.ui.mgm||{};if(!S.ui.mgm[S.me.dbId]){const id=S.me.dbId;S.ui.mgm[id]={loading:true};managersOf(id).then(d=>{S.ui.mgm[id]={data:d};if(S.ui.view==='profil'&&!S.ui.modal)render()}).catch(()=>{S.ui.mgm[id]={data:null};})}}
   // Tipps zu ungenauen Wünschen vorladen, damit die Liste konkret wird („Tipp von Wishtale: …“). Höchstens 12, der Server antwortet meist aus dem Zwischenspeicher.
   {const own=v==='wuensche'&&S.auth.user&&S.me.handle,gp=v==='gast'?guestPerson():null,p=own?S.me:gp&&gp.remote&&gp.handle?gp:null;
    if(p)p.wishes.filter(w=>(w.status==='offen')&&!w.link&&!w.noSuggest&&(w.kind==='produkt'||w.kind==='kategorie')&&!isSpecific(w)&&/^[0-9a-f-]{36}$/i.test(String(w.id))).slice(0,12)
@@ -56,7 +59,7 @@ export function render(top){
   if((v==='profil'||v==='wuensche')&&S.ui.preview&&S.auth.user&&S.me.handle)loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.view===v&&S.ui.preview&&!S.ui.modal)render()});
   if(v==='plan'&&S.auth.user)loadPlan(()=>{if(S.ui.view==='plan'&&!S.ui.modal)render()});
   const body=VIEWS[v]();
-  if(v==='login'||v==='recovery'||v==='einladung'){
+  if(v==='login'||v==='recovery'||v==='einladung'||v==='mitverwalten'){
     $('#app').innerHTML=LoginHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot();
     window.scrollTo(0,0);
     return;
@@ -99,9 +102,11 @@ export function route(){
   if(h==='login')h='anmelden';  // alter Link
   const guest=h.match(/^p\/([\w-]+)$/);
   const inv=h.match(/^einladung\/([0-9a-f]{16,100})$/i);
+  const co=h.match(/^mitverwalten\/([0-9a-f]{16,100})$/i);
   const anon=!S.auth.user;
   if(!(anon&&h==='start')&&S.ui.acct==='draft')S.ui.acct='me';
-  if(inv){S.ui.view='einladung';startInvite(inv[1])}
+  if(co&&validCo(co[1])){S.ui.view='mitverwalten';startCo(co[1])}
+  else if(inv){S.ui.view='einladung';startInvite(inv[1])}
   else if(guest){
     S.ui.person=guest[1];S.ui.view='gast';startGuest(guest[1]);
   }
@@ -125,6 +130,12 @@ export function route(){
 }
 
 /* Gast-Profil aus der Datenbank laden. Gibt es das Handle dort nicht, greifen die lokalen Demo-Profile. */
+function startCo(code){
+  if(S.ui.co&&S.ui.co.code===code&&S.ui.co.status!=='bad')return;
+  S.ui.co={code,status:'loading',data:null};
+  peekCoInvite(code).then(d=>{if(S.ui.co?.code!==code)return;S.ui.co=d?{code,status:'ok',data:d}:{code,status:'bad'};if(S.ui.view==='mitverwalten')render(true)})
+   .catch(()=>{if(S.ui.co?.code!==code)return;S.ui.co={code,status:'bad'};if(S.ui.view==='mitverwalten')render(true)});
+}
 function startInvite(code){
   if(S.ui.inv&&S.ui.inv.code===code&&S.ui.inv.status!=='bad')return;
   S.ui.inv={code,status:'loading',data:null,keep:[],name:undefined};
