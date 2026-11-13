@@ -130,8 +130,8 @@ function Meter(m){
 function OwnedSec(m){
   const owned=m.wishes.filter(w=>w.status==='selbst');
   return `<details class="psec cmp fold2" ${owned.length?'open':''}><summary class="hd"><h3 aria-level="2">Das habe ich schon</h3></summary><div class="row" style="justify-content:flex-end">${VisPill('alle')}</div>
-   <p class="muted" style="font-size:14px">Dafür schlagen wir nichts mehr vor.</p>
-   ${owned.length?`<div class="chips">${owned.map(w=>`<span class="chip ok">${esc(w.t)}<button class="chipx" data-act="ownedel" data-id="${w.id}" aria-label="${esc(w.t)} entfernen">×</button></span>`).join('')}</div>`:''}
+   <p class="muted" style="font-size:14px">Dafür schlagen wir nichts mehr vor. Erledigte Wünsche stehen auch hier, mit dem Pfeil kommt einer zurück auf deine Wunschliste.</p>
+   ${owned.length?`<div class="chips">${owned.map(w=>`<span class="chip ok">${esc(w.t)}<button class="chipx" data-act="selbst" data-id="${w.id}" aria-label="${esc(w.t)} wieder als Wunsch auf die Liste" title="Wieder als Wunsch">↺</button><button class="chipx" data-act="ownedel" data-id="${w.id}" aria-label="${esc(w.t)} entfernen">×</button></span>`).join('')}</div>`:''}
    <form data-form="owned" class="addrow"><label for="ownedt" style="position:absolute;left:-9999px">Was hast du schon?</label><input id="ownedt" name="t" class="inp" placeholder="z. B. Siebträgermaschine, Wanderrucksack" autocomplete="off" maxlength="120"><button class="btn sec sm" type="submit">${ic('plus','sm')}Hinzufügen</button></form></details>`;
 }
 

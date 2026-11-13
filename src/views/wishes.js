@@ -51,7 +51,7 @@ function EmptyWishes(m){
 export function Wuensche(){
   const m=S.me,u=S.ui;
   if(u.preview)return `<div class="wrap"><div class="row" style="margin:18px 0 4px">${ViewSeg()}</div>${PreviewBanner()}${GuestPage(m,{preview:true})}</div>`;
-  let list=m.wishes.filter(w=>u.wf==='alle'||(u.wf==='offen'?(w.status==='offen'||w.status==='plan'):w.status==='selbst'));
+  let list=m.wishes.filter(w=>w.status==='offen'||w.status==='plan');  // Erledigtes steht im Profil unter „Das habe ich schon“ (Dev 083)
   if(u.wc!=='alle')list=list.filter(w=>w.c===u.wc);
   list=sortWishes(list);
   const used=[...new Set(m.wishes.map(w=>w.c))];
@@ -64,7 +64,6 @@ export function Wuensche(){
    <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}.`:open===1?'1 Ding, über das ich mich freuen würde.':`${open} Dinge, über die ich mich freuen würde.`}</h1></div>
    <div class="row homebar">${ViewSeg()}${m.handle||!S.auth.user?`<button class="btn gold sm" data-act="share">Teilen</button>`:""}</div>
    <button class="importrow" data-act="modal" data-v="zettel">${ic('plus','sm')}<span><b>Schon eine Liste? Liste einlesen</b><small>Text oder Foto übernehmen</small></span>${ic('arrow','sm')}</button>
-   <div class="row" style="margin:10px 0 12px;gap:8px;flex-wrap:wrap"><div class="seg" role="group" aria-label="Status">${[['offen','Offen'],['selbst','Erledigt'],['alle','Alle Wünsche']].map(([k,l])=>`<button class="${u.wf===k?'on':''}" data-act="wf" data-v="${k}">${l}</button>`).join('')}</div></div>
    ${filt}
    <h2 class="vh">Deine Wünsche</h2>
    ${list.length?PrioKey():''}<div class="${useList(list.length)?'wlist':'wgrid'}">${list.map(w=>(useList(list.length)?WishRow:WishCard)(w,m,{
