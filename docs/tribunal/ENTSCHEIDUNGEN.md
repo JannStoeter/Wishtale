@@ -96,3 +96,5 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 034 Supabase-Dashboard: Site URL, Redirect-URLs und deutsche Mail-Vorlagen (Aufgabe, Jann)
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
+- 077 Profilpflege dezent anstoßen und Klicktour zu den Einstellungen (Entscheidung, von Jann, wartet auf ChatGPT)
+- 078 Landingpage-Intro: echter Durchklick durch die neue App (Entscheidung, von Jann, wartet auf ChatGPT, Entwurf liegt bei)
