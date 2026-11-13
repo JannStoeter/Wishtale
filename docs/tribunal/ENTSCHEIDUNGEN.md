@@ -68,7 +68,7 @@ Stand: 2026-11-09
 | 072 | Welten vorerst ausblenden | **Anweisung: Welten ruhen, Daten bleiben, Schalter in `flags.js`** | ja, `b995ad8` |
 | 073 | Inspiration ausblenden, Entwicklermodus | **Anweisung: Seite Inspiration ruht, Entwicklermodus unter /dev/#entwickler** | ja, `4045a40` |
 | 074 | Wünsche-Seite am Handy | **Durch 075 erledigt: Wünsche nach vorn, Einlesen als Zeile, Filter hinter Knopf** | ja, siehe 075 |
-| 075 | Nutzerzentrale und reduzierte Schenkendenansicht | **Anweisung: keine untere Navigation, Menü hinter dem Avatar, Zurück zur Wunschliste, Kurzer Rundgang** | ja, `PENDING` |
+| 075 | Nutzerzentrale und reduzierte Schenkendenansicht | **Anweisung: keine untere Navigation, Menü hinter dem Avatar, Zurück zur Wunschliste, Kurzer Rundgang** | ja, `859c20f` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.

@@ -3,7 +3,7 @@ topic: 075-nutzerzentrale-und-reduzierte-schenkendenansicht
 status: entschieden
 option: Anweisung
 datum: 2026-11-13
-umgesetzt: PENDING
+umgesetzt: 859c20f
 ---
 **Janns Vorgabe (festgehalten in `chatgpt-2.md`, Pull Request 13):** Die Wunschliste ist der feste Startpunkt, die untere Navigation entfällt vollständig (Handy und PC). Profil, Historie und Inspiration sind Ebenen über der Liste mit „Zurück zur Wunschliste“. Alles Weitere liegt im Menü hinter dem Avatar. Empfehlungen stehen in der Gastansicht direkt unter den Wünschen, ohne eigenen Ideen-Tab. Oben gibt es einen freiwilligen „Kurzen Rundgang“. Janns ausdrückliche Aufnahme von Inspiration in das Menü hebt das Ausblenden aus 073 auf (Welten aus 072 bleiben aus). Auch 074 ist damit erledigt (Wünsche nach vorn).
 
