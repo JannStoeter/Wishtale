@@ -72,7 +72,7 @@ Stand: 2026-11-09
 | 076 | Gastansicht: weniger Text unten | **Anweisung: ein Abschnitt Ideen von Wishtale, Erklärtexte auf eine Zeile** | ja, `33a7753` |
 | 079 | Habe ich schon bei Vorschlägen, eine gemeinsame Ansicht | **Anweisung: Ideen unter den eigenen Wünschen mit Habe ich schon, Vorschau als kleiner Link** | ja, `274bea5` |
 | 080 | Start nach der Anmeldung auf den Wünschen | **Anweisung: Zu meinem Wishtale führt auf app/#wuensche** | ja, `3be20ff` |
-| 081 | Preisrahmen zurück, Filter-Symbol | **Anweisung: schmale Preiszeile bei allen Ideen, Regler-Symbol statt Lupe** | ja, `PENDING` |
+| 081 | Preisrahmen zurück, Filter-Symbol | **Anweisung: schmale Preiszeile bei allen Ideen, Regler-Symbol statt Lupe** | ja, `8bbdd6d` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
