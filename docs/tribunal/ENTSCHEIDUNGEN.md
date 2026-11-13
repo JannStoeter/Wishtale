@@ -101,3 +101,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 046 Kind-Konten von mehreren Personen verwalten (Entscheidung, von Jann)
 - 077 Profilpflege dezent anstoßen und Klicktour zu den Einstellungen (Entscheidung, von Jann, wartet auf ChatGPT)
 - 078 Landingpage-Intro: echter Durchklick durch die neue App (Entscheidung, von Jann, wartet auf ChatGPT, Entwurf liegt bei)
+- 082 Geschmack schärfen mit Karten (Ja, Nein, Habe ich schon) (Entscheidung, von Jann, wartet auf ChatGPT)
