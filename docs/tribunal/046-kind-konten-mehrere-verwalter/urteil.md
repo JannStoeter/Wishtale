@@ -3,7 +3,7 @@ topic: 046-kind-konten-von-mehreren-personen-verwalten
 status: entschieden
 option: A
 datum: 2026-11-13
-umgesetzt: PENDING
+umgesetzt: 9e716f1
 ---
 **Janns Urteil (Chat, Wortlaut): „Können wir noch einbauen, dass ein Kind-Konto von zwei Eltern geführt werden kann? Es reichen nur die Eltern“** und später „Baue die Oberfläche“. Option A, begrenzt auf höchstens ein weiteres Elternteil (Hauptnutzer plus eine Person).
 
