@@ -27,14 +27,21 @@ const FACES = `
 @font-face{font-family:"Caveat";font-weight:500;src:url(data:font/woff2;base64,${font('@fontsource/caveat', 'caveat-latin-500-normal.woff2')}) format("woff2")}
 @font-face{font-family:"Caveat";font-weight:600;src:url(data:font/woff2;base64,${font('@fontsource/caveat', 'caveat-latin-600-normal.woff2')}) format("woff2")}`;
 
-const WISHES = ['LEGO Technic Bagger', 'Tonie-Figur Igel', 'Fahrradhelm in Grün', 'Das Buch „Die kleine Hexe“', 'Neuer Schlafanzug mit Sternen'];
+/* Die ersten beiden Wünsche sind sehr konkret: Wishtale erkennt das Produkt (m = simulierter Treffer, photo = Platzhalterbild aus public/photos, Beispielpreise). */
+const WISHES = [
+  { t: 'Sony WH-1000XM5 Kopfhörer', m: { t: 'Sony WH-1000XM5 Kabellose Kopfhörer', price: 299, host: 'sony.de', c: 'technik', photo: 'headphones' } },
+  { t: 'Le Creuset Bräter, 24 cm', m: { t: 'Le Creuset Signature Bräter rund, 24 cm', price: 259, host: 'lecreuset.de', c: 'kochen', photo: 'pot' } },
+  { t: 'Eine schöne Thermoskanne' },
+  { t: 'Wanderstöcke' },
+  { t: 'Ein Buch zum Schmökern' },
+];
 const NAME = 'Mia';
 
 /* ---------------- Der Zettel (handschriftlich) ---------------- */
 const zettelHtml = (w = 900, animate = false) => `
 <div class="paper" style="width:${w}px">
  <div class="ph"><span class="hl" data-i="0">Mein Wunschzettel</span><span class="star hl" data-i="1">★</span></div>
- <ol>${WISHES.map((t, i) => `<li><span class="hl" data-i="${i + 2}">${t}</span></li>`).join('')}</ol>
+ <ol>${WISHES.map((w, i) => `<li><span class="hl" data-i="${i + 2}">${w.t}</span></li>`).join('')}</ol>
  <div class="sig"><span class="hl" data-i="${WISHES.length + 2}">Danke, liebes Christkind! ${NAME}</span></div>
 </div>`;
 const ZETTEL_CSS = `
@@ -52,6 +59,10 @@ const ZETTEL_CSS = `
 .hl{display:inline-block}`;
 
 /* ---------------- App-Ausschnitte (echt, mit simuliertem Konto) ---------------- */
+const jpegOf = buf => { const i = buf.indexOf(Buffer.from([0xff, 0xd8])), j = buf.lastIndexOf(Buffer.from([0xff, 0xd9])); return i >= 0 && j > i ? buf.subarray(i, j + 2) : buf; };
+const photo = k => readFileSync(join(root, 'public/photos', `${k}-600.jpg`));
+let GEO = {}; // Positionen der erkannten Zeilen im Ergebnis-Dialog (für den Zoom im Film)
+
 async function capture(base) {
   const browser = await chromium.launch();
   try {
@@ -73,11 +84,33 @@ async function capture(base) {
     await p.route(/rest\/v1\/profiles/, r => r.fulfill({ json: [prof] }));
     await p.route(/rest\/v1\/(wishes|gifts|campaigns|products|settings|given_gifts|taste_signals|taste_cards|catalog_items|catalog_disabled|invites|entitlements|profile_members)/, r => r.fulfill({ json: [] }));
     await p.route(/rest\/v1\/rpc/, r => r.fulfill({ json: null }));
-    await p.route(/\/api\/zettel/, async r => { await new Promise(x => setTimeout(x, 900)); r.fulfill({ json: { name: NAME, unclear: false, wishes: WISHES.map(t => ({ t, kind: 'produkt', note: '' })) } }); });
-    await p.route(/\/api\/ideas\?/, r => { if (new URL(r.request().url()).searchParams.get('mode') === 'match') return new Promise(() => {}); return r.fulfill({ json: { ideas: [] } }); });
+    await p.route(/\/api\/zettel/, async r => { await new Promise(x => setTimeout(x, 900)); r.fulfill({ json: { name: NAME, unclear: false, wishes: WISHES.map(w => ({ t: w.t, kind: 'produkt', note: '' })) } }); });
+    // Produkterkennung: sehr konkrete Wünsche bekommen einen Treffer, die anderen nicht
+    await p.route(/\/api\/ideas\?/, async r => {
+      const u = new URL(r.request().url());
+      if (u.searchParams.get('mode') !== 'match') return r.fulfill({ json: { ideas: [] } });
+      const t = u.searchParams.get('t') || '', w = WISHES.find(x => x.t === t);
+      await new Promise(x => setTimeout(x, 700 + Math.random() * 600));
+      return r.fulfill({ json: { match: w && w.m ? { ok: true, conf: 0.95, src: 'web', t: w.m.t, q: w.m.t, price: w.m.price, img: null, host: w.m.host, c: w.m.c } : { ok: false, conf: 0.2 } } });
+    });
+    // Produktbild und Amazon-Link zum erkannten Produkt (Bild: Platzhalter aus unseren eigenen Fotos)
+    await p.route(/\/api\/inspect/, async r => {
+      const b = JSON.parse(r.request().postData() || '{}'), q = String(b.imageQuery || b.amazonQuery || '');
+      const w = WISHES.find(x => x.m && (q.includes(x.m.t) || q.includes(x.t)));
+      if (b.imageQuery && w) return r.fulfill({ json: { image: { type: 'image/jpeg', data: photo(w.m.photo).toString('base64'), source: w.m.host } } });
+      if (b.amazonQuery && w) return r.fulfill({ json: { amazon: { url: `https://www.amazon.de/s?k=${encodeURIComponent(w.m.t)}&tag=jannst-21`, title: w.m.t } } });
+      return r.fulfill({ status: 404, json: { error: 'x' } });
+    });
+    // Eigener Bildspeicher (simuliert): hochgeladene Bilder merken und wieder ausliefern
+    const store = new Map();
+    await p.route(/\/storage\/v1\/object\/(public\/)?wish-images\//, async r => {
+      const req = r.request(), path = req.url().split('wish-images/')[1].split('?')[0];
+      if (req.method() === 'POST' || req.method() === 'PUT') { store.set(path, jpegOf(req.postDataBuffer() || Buffer.alloc(0))); return r.fulfill({ status: 200, json: { Key: 'wish-images/' + path } }); }
+      const img = store.get(path); return img ? r.fulfill({ status: 200, contentType: 'image/jpeg', body: img }) : r.fulfill({ status: 404, body: '' });
+    });
     await p.goto(base + '/app/#wuensche');
     await p.waitForTimeout(2200);
-    await p.addStyleTag({ content: '.toast{display:none!important}' });
+    await p.addStyleTag({ content: '.toast,.fab{display:none!important}' });
     await p.locator('[data-act=modal][data-v=zettel]').first().click();
     await p.waitForTimeout(500);
     await p.setInputFiles('#zt-f', zfile);
@@ -85,12 +118,17 @@ async function capture(base) {
     await p.screenshot({ path: join(SHOTS, 'upload.png') });
     await p.locator('form[data-form=zettel] button[type=submit]').click();
     await p.waitForSelector('form[data-form=zettelsave]');
-    await p.waitForTimeout(1200);
+    await p.waitForSelector('.zm-ok', { timeout: 12000 });
+    await p.waitForTimeout(3500);
+    GEO = await p.evaluate(() => { const s = document.querySelector('.sheet'), sb = s.getBoundingClientRect(); return { sheetTop: sb.top, rows: [...document.querySelectorAll('.zrow')].map(e => { const r = e.getBoundingClientRect(); return { y: r.top, h: r.height, ok: !!e.querySelector('.zm-ok') }; }) }; });
     await p.screenshot({ path: join(SHOTS, 'ergebnis.png') });
     await p.locator('form[data-form=zettelsave] button[type=submit]').click();
-    await p.waitForTimeout(1600);
+    await p.waitForTimeout(4500); // Produktbilder und Links werden im Hintergrund geholt
     await p.evaluate(() => window.scrollTo(0, 0));
     await p.screenshot({ path: join(SHOTS, 'liste.png') });
+    await p.locator('.wrow, .wcard', { hasText: 'Sony' }).first().click();
+    await p.waitForTimeout(1800);
+    await p.screenshot({ path: join(SHOTS, 'produkt.png') });
     await ctx.close();
   } finally { await browser.close(); }
 }
@@ -99,9 +137,19 @@ const b64 = f => 'data:image/png;base64,' + readFileSync(join(SHOTS, f)).toStrin
 
 /* ---------------- Der Film ---------------- */
 const FPS = 30, W = 1080, H = 1920;
-const SC = [[0, 3.4], [3.4, 8.6], [8.6, 13.2], [13.2, 17.8], [17.8, 22.2], [22.2, 25.6]]; // Szenen (Sekunden)
+const SC = [[0, 3.2], [3.2, 8.2], [8.2, 12.6], [12.6, 17.0], [17.0, 21.4], [21.4, 25.4], [25.4, 30.2], [30.2, 33.4]]; // Szenen (Sekunden)
 const TOTAL = SC[SC.length - 1][1];
 
+/* Zoom auf die erkannten Zeilen (Positionen aus der Aufnahme, 1 CSS-Pixel der App = 1,692 Pixel im Film) */
+const KF = 660 / 390;
+let ZOOM = { k: 1, ox: 330, oy: 860, dy: -240 }, ZOOM_BOXES = '';
+const setupZoom = () => {
+  const rowsOk = (GEO.rows || []).filter(r => r.ok);
+  const zy0 = rowsOk.length ? Math.min(...rowsOk.map(r => r.y)) - 4 : 370, zy1 = rowsOk.length ? Math.max(...rowsOk.map(r => r.y + r.h)) + 4 : 650;
+  ZOOM = { k: 1, ox: 330, oy: Math.round(((zy0 + zy1) / 2) * KF), dy: 0 };
+  ZOOM.dy = Math.round(720 - ZOOM.oy); // die Kamera fährt so nach oben, dass die erkannten Zeilen in der Bildmitte des Handys liegen
+  ZOOM_BOXES = rowsOk.map(r => `<i class="zb" style="left:${Math.round(18 * KF)}px;top:${Math.round((r.y - 4) * KF)}px;width:${Math.round(354 * KF)}px;height:${Math.round((r.h + 8) * KF)}px"></i>`).join('');
+};
 const reelHtml = () => `<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
 ${FACES}${ZETTEL_CSS}
 :root{--bg:#F3EDE2;--ink:#1F1B16;--muted:#5E564C;--green:#2E3B2F;--gold:#D9A441;--cream:#F6F0E4}
@@ -139,6 +187,11 @@ h1 em,h2 em{font-style:italic;color:var(--gold)}
 .pill{display:inline-block;background:var(--gold);color:#1F1B16;font-weight:700;font-size:48px;padding:26px 52px;border-radius:99px;margin-top:50px}
 .url{font-size:50px;margin-top:40px;color:var(--cream);font-weight:600}
 .small{font-size:36px;color:#C9D3BD;margin-top:18px}
+.zoom{position:absolute;inset:0;transform-origin:${ZOOM.ox}px ${ZOOM.oy}px}
+.zoom img{position:absolute;left:0;top:0;width:660px}
+.zb{position:absolute;border:7px solid var(--gold);border-radius:34px;box-shadow:0 0 0 10px rgba(217,164,65,.25);opacity:0}
+.foot{position:absolute;left:80px;right:80px;top:372px;font-size:30px;line-height:1.35;color:#6b6155;margin:0;z-index:4}
+em{font-style:italic;color:var(--gold)}
 </style></head><body>
 
 <div class="logo" id="logo">wishtale<i></i></div>
@@ -170,16 +223,31 @@ h1 em,h2 em{font-style:italic;color:var(--gold)}
  <div class="badge" id="b3"><b>5 Wünsche</b> erkannt</div>
 </section>
 
-<!-- 4 Liste fertig -->
+<!-- 4 Konkrete Produkte erkannt (Zoom) -->
 <section class="sc cream" id="s4">
+ <div class="cap"><p class="eyebrow u">Bei sehr konkreten Wünschen</p><h2 class="u">Wishtale erkennt das <em>echte Produkt</em></h2></div>
+ <div class="phone"><div class="screen"><div class="zoom" id="zm"><img src="${b64('ergebnis.png')}" alt="">${ZOOM_BOXES}</div></div></div>
+ <div class="badge" id="b4a">Mit <b>Name, Preis und Bild</b></div>
+</section>
+
+<!-- 5 Liste fertig -->
+<section class="sc cream" id="s5">
  <div class="cap"><p class="eyebrow u">Schritt 3</p><h2 class="u">Fertig: die Wunschliste steht</h2></div>
  <div class="phone"><div class="screen"><img id="li" src="${b64('liste.png')}" alt=""></div></div>
  <span class="spark" id="k1" style="left:90px;top:660px">✦</span><span class="spark" id="k2" style="right:100px;top:900px">✦</span><span class="spark" id="k3" style="left:120px;top:1240px">✦</span>
- <div class="badge" id="b4"><b>In Sekunden</b> statt Abtippen</div>
+ <div class="badge" id="b5"><b>Produkte</b> mit Bild und Preis</div>
 </section>
 
-<!-- 5 Abschluss -->
-<section class="sc green" id="s5"><div class="cap" style="top:560px"><span class="tag u">Jetzt neu</span><h1 class="u" style="font-size:130px">Einfach <em>Wunschliste</em> hochladen</h1><p class="small u">Für Weihnachten, Geburtstage und alles dazwischen.</p><span class="pill u">Jetzt ausprobieren</span><p class="url u">wishtale.de</p></div></section>
+<!-- 6 Produktansicht -->
+<section class="sc cream" id="s6">
+ <div class="cap"><p class="eyebrow u">Ein Tipp auf den Wunsch</p><h2 class="u">Und hier ist <em>das Produkt</em></h2></div>
+ <div class="phone" id="ph6"><div class="screen"><img id="pr" src="${b64('produkt.png')}" alt=""><span class="tap" id="tp6" style="left:155px;top:950px"></span></div></div>
+ <div class="badge" id="b6">Mit <b>Preis und Link</b> zum Shop</div>
+ <p class="foot">Beispielperson und Beispielpreise, die Preise schwanken.</p>
+</section>
+
+<!-- 7 Abschluss -->
+<section class="sc green" id="s7"><div class="cap" style="top:560px"><span class="tag u">Jetzt neu</span><h1 class="u" style="font-size:130px">Einfach <em>Wunschliste</em> hochladen</h1><p class="small u">Für Weihnachten, Geburtstage und alles dazwischen.</p><span class="pill u">Jetzt ausprobieren</span><p class="url u">wishtale.de</p></div></section>
 
 <script>
 const TOTAL=${TOTAL}, SC=${JSON.stringify(SC)}, tl=[];
@@ -192,7 +260,7 @@ SC.forEach(([s,e],i)=>{
   el.querySelectorAll('.u').forEach((u,j)=>anim(u,[{opacity:0,transform:'translateY(40px)'},{opacity:1,transform:'none'}],s+.2+j*.3,.7));
 });
 // Logo: auf Grün hell, auf Creme dunkel
-anim($('#logo'),[{color:'#F6F0E4'},{color:'#F6F0E4',offset:SC[0][1]/TOTAL-.01},{color:'#1F1B16',offset:SC[0][1]/TOTAL},{color:'#1F1B16',offset:SC[4][1]/TOTAL-.01},{color:'#F6F0E4',offset:SC[4][1]/TOTAL}],0,TOTAL,'linear');
+anim($('#logo'),[{color:'#F6F0E4'},{color:'#F6F0E4',offset:SC[0][1]/TOTAL-.01},{color:'#1F1B16',offset:SC[0][1]/TOTAL},{color:'#1F1B16',offset:SC[6][1]/TOTAL-.01},{color:'#F6F0E4',offset:SC[6][1]/TOTAL}],0,TOTAL,'linear');
 // Szene 1: Zettel erscheint, Schrift wird Zeile für Zeile geschrieben
 const s1=SC[1][0];
 anim($('#zw'),[{opacity:0,transform:'translateY(120px) rotate(-6deg)'},{opacity:1,transform:'rotate(-2.2deg)'}],s1+.5,1,E);
@@ -209,11 +277,21 @@ const s3=SC[3][0];
 anim($('#er'),[{clipPath:'inset(0 0 100% 0)'},{clipPath:'inset(0 0 0% 0)'}],s3+1.2,2.0,'ease-in-out');
 anim($('#sc3'),[{top:'0px',opacity:1},{top:'1420px',opacity:1,offset:.97},{top:'1420px',opacity:0}],s3+1.2,2.0,'ease-in-out');
 anim($('#b3'),[{opacity:0,transform:'translate(-50%,40px)'},{opacity:1,transform:'translate(-50%,0)'}],s3+3.3,.6,'cubic-bezier(.2,1.3,.4,1)');
-// Szene 4: Liste, Funkeln, Hinweis
+// Szene 4: auf die erkannten Produkte zoomen, Rahmen pulsieren
 const s4=SC[4][0];
-anim($('#li'),[{transform:'scale(1.0)'},{transform:'scale(1.0) translateY(-40px)'}],s4,SC[4][1]-s4,'linear');
-[['#k1',.8],['#k2',1.1],['#k3',1.4]].forEach(([q,t])=>anim($(q),[{opacity:0,transform:'scale(.2) rotate(0)'},{opacity:1,transform:'scale(1.1) rotate(40deg)',offset:.5},{opacity:0,transform:'scale(.6) rotate(90deg)'}],s4+t,1.1,'ease-out'));
-anim($('#b4'),[{opacity:0,transform:'translate(-50%,40px)'},{opacity:1,transform:'translate(-50%,0)'}],s4+2.4,.6,'cubic-bezier(.2,1.3,.4,1)');
+anim($('#zm'),[{transform:'translate(0,0) scale(1)'},{transform:'translate(0,${ZOOM.dy}px) scale(${ZOOM.k})'}],s4+.7,1.6,'ease-in-out');
+document.querySelectorAll('.zb').forEach((z,i)=>anim(z,[{opacity:0},{opacity:1}],s4+1.9+i*.5,.5,'linear'));
+anim($('#b4a'),[{opacity:0,transform:'translate(-50%,40px)'},{opacity:1,transform:'translate(-50%,0)'}],s4+2.8,.6,'cubic-bezier(.2,1.3,.4,1)');
+// Szene 5: Liste, Funkeln, Hinweis
+const s5=SC[5][0];
+anim($('#li'),[{transform:'translateY(0)'},{transform:'translateY(-40px)'}],s5,SC[5][1]-s5,'linear');
+[['#k1',.8],['#k2',1.1],['#k3',1.4]].forEach(([q,t])=>anim($(q),[{opacity:0,transform:'scale(.2) rotate(0)'},{opacity:1,transform:'scale(1.1) rotate(40deg)',offset:.5},{opacity:0,transform:'scale(.6) rotate(90deg)'}],s5+t,1.1,'ease-out'));
+anim($('#b5'),[{opacity:0,transform:'translate(-50%,40px)'},{opacity:1,transform:'translate(-50%,0)'}],s5+2.0,.6,'cubic-bezier(.2,1.3,.4,1)');
+// Szene 6: Produktansicht kommt hoch, Tipp auf „Bei Amazon ansehen“
+const s6=SC[6][0];
+anim($('#ph6'),[{transform:'translateY(260px)',opacity:0},{transform:'none',opacity:1}],s6+.3,.9,E);
+anim($('#tp6'),[{opacity:0,transform:'scale(1.6)'},{opacity:1,transform:'scale(1)',offset:.4},{opacity:0,transform:'scale(1.3)'}],s6+3.0,.9,E);
+anim($('#b6'),[{opacity:0,transform:'translate(-50%,40px)'},{opacity:1,transform:'translate(-50%,0)'}],s6+1.6,.6,'cubic-bezier(.2,1.3,.4,1)');
 window.seek=t=>{tl.forEach(a=>{a.currentTime=Math.max(0,t*1000)})};
 window.ready=document.fonts.ready.then(()=>true);
 seek(0);
@@ -226,7 +304,9 @@ try {
   for (let i = 0; i < 40; i++) { try { if ((await fetch(`http://localhost:${PORT}/app/`)).ok) break; } catch { /* noch nicht bereit */ } await new Promise(r => setTimeout(r, 500)); }
   await capture(`http://localhost:${PORT}`);
   console.log('Bildschirme aufgenommen');
+  if (process.env.CAPTURE_ONLY) { console.log(JSON.stringify(GEO)); process.exit(0); }
 
+  setupZoom();
   const html = reelHtml();
   writeFileSync(join(OUT, '_reel-zettel.html'), html);
   const browser = await chromium.launch();
