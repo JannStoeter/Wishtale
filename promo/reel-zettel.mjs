@@ -171,7 +171,7 @@ h1 em,h2 em{font-style:italic;color:var(--gold)}
 .phone .screen{position:relative;width:660px;height:1430px;border-radius:60px;overflow:hidden;background:#F3EDE2}
 .phone img{display:block;width:660px;position:absolute;left:0;top:0}
 .vf{position:absolute;inset:0;background:#2a2620;display:grid;place-items:center}
-.vf .z{transform:scale(.62) rotate(-2deg);transform-origin:center}
+.vf .z{position:absolute;left:50%;top:46%;width:900px;transform:translate(-50%,-50%) scale(.68) rotate(-2deg);transform-origin:center}
 .br{position:absolute;width:90px;height:90px;border:8px solid #fff;opacity:.9}
 .br.a{left:60px;top:150px;border-right:0;border-bottom:0}.br.b{right:60px;top:150px;border-left:0;border-bottom:0}
 .br.c{left:60px;bottom:210px;border-right:0;border-top:0}.br.d{right:60px;bottom:210px;border-left:0;border-top:0}
@@ -264,7 +264,7 @@ anim($('#logo'),[{color:'#F6F0E4'},{color:'#F6F0E4',offset:SC[0][1]/TOTAL-.01},{
 // Szene 1: Zettel erscheint, Schrift wird Zeile für Zeile geschrieben
 const s1=SC[1][0];
 anim($('#zw'),[{opacity:0,transform:'translateY(120px) rotate(-6deg)'},{opacity:1,transform:'rotate(-2.2deg)'}],s1+.5,1,E);
-document.querySelectorAll('#s1 .hl').forEach(h=>{const i=+h.dataset.i;h.style.clipPath='inset(0 100% 0 0)';anim(h,[{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0% 0 0)'}],s1+1.5+i*.5,.8,'ease-out')});
+document.querySelectorAll('#s1 .hl').forEach(h=>{const i=+h.dataset.i;h.style.clipPath='inset(-45% 100% -45% -5%)';anim(h,[{clipPath:'inset(-45% 100% -45% -5%)'},{clipPath:'inset(-45% -20% -45% -5%)'}],s1+1.2+i*.38,.55,'ease-out')});
 // Szene 2: Handy kommt, Sucher, Auslöser, Blitz, dann die App
 const s2=SC[2][0];
 anim($('#ph2'),[{transform:'translateY(300px)',opacity:0},{transform:'none',opacity:1}],s2+.3,.8,E);
