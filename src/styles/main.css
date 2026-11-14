@@ -639,7 +639,7 @@ mark.todo{background:#F5D98B;color:#3A2A00;padding:0 4px;border-radius:4px}
 .aivar{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px 16px;border:1px dashed rgba(0,0,0,.18);border-radius:16px;background:var(--cream,#faf7f0);margin-bottom:10px}
 .aivar .ot{display:block;font-family:var(--serif,Georgia,serif);font-size:1.2rem;line-height:1.2;margin:2px 0}
 .aivar .oa{display:grid;gap:8px;justify-items:stretch;min-width:150px}
-@media (max-width:560px){.aivar{grid-template-columns:1fr}.aivar .oa{grid-auto-flow:column;grid-auto-columns:1fr}}
+@media (max-width:560px){.aivar{grid-template-columns:minmax(0,1fr)}.aivar>*{min-width:0}.aivar .oa{grid-auto-flow:row;grid-template-columns:minmax(0,1fr)}.aivar .oa .btn{white-space:normal;text-align:center}}
 
 /* Produktbild im Wunschformular */
 .wimg:empty{display:none}.wimg{margin:0 0 14px}
