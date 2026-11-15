@@ -25,6 +25,7 @@ const font = (pkg, file) => readFileSync(join(root, 'node_modules', pkg, 'files'
 const FACES = `
 @font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;src:url(data:font/woff2;base64,${font('@fontsource/instrument-serif', 'instrument-serif-latin-400-normal.woff2')}) format("woff2")}
 @font-face{font-family:"Instrument Serif";font-style:italic;font-weight:400;src:url(data:font/woff2;base64,${font('@fontsource/instrument-serif', 'instrument-serif-latin-400-italic.woff2')}) format("woff2")}
+@font-face{font-family:"Caveat";font-weight:600;src:url(data:font/woff2;base64,${font('@fontsource/caveat', 'caveat-latin-600-normal.woff2')}) format("woff2")}
 @font-face{font-family:"Schibsted";font-weight:400 900;src:url(data:font/woff2;base64,${font('@fontsource-variable/schibsted-grotesk', 'schibsted-grotesk-latin-wght-normal.woff2')}) format("woff2")}`;
 const img = (f, type = 'png') => `data:image/${type};base64,` + readFileSync(join(SHOTS, f)).toString('base64');
 const photo = k => 'data:image/jpeg;base64,' + readFileSync(join(root, 'public/photos', `${k}-1200.jpg`)).toString('base64');
@@ -91,6 +92,19 @@ const CSS = `${FACES}
 .sub{font-size:52px;line-height:1.3;color:#C9D3BD;margin:36px 0 0}
 .pill{display:inline-block;background:#D9A441;color:#1F1B16;font-weight:800;font-size:52px;padding:26px 54px;border-radius:99px;margin-top:56px}
 .tag{display:inline-block;background:#D9A441;color:#1F1B16;font-weight:800;font-size:36px;letter-spacing:.1em;text-transform:uppercase;padding:14px 28px;border-radius:99px;margin-bottom:36px}
+.full{position:absolute;inset:0}.full img{width:100%;height:100%;object-fit:cover;display:block}
+.label{position:absolute;left:70px;right:70px;bottom:330px;text-align:center;z-index:5}
+.mugscene{position:absolute;inset:0;background:linear-gradient(#EFE4D2 0,#E9DCC5 58%,#B98B5E 58%,#9C7048 100%)}
+.mugscene::before{content:"";position:absolute;left:0;right:0;top:58%;height:14px;background:rgba(0,0,0,.08)}
+.mug{position:absolute;left:250px;top:620px;width:520px;height:600px}
+.mug .body{position:absolute;inset:0;border-radius:24px 24px 90px 90px;background:linear-gradient(90deg,#d9d6d0 0,#ffffff 18%,#ffffff 62%,#e6e2db 85%,#c9c4bc 100%);box-shadow:0 50px 60px -20px rgba(60,35,10,.45)}
+.mug .rim{position:absolute;left:0;right:0;top:-26px;height:60px;border-radius:50%;background:linear-gradient(#f4f1ec,#dcd7cf);box-shadow:inset 0 10px 18px rgba(0,0,0,.18)}
+.mug .handle{position:absolute;right:-150px;top:120px;width:220px;height:280px;border:46px solid #f2efea;border-left:none;border-radius:0 140px 140px 0;box-shadow:inset -8px 0 12px rgba(0,0,0,.12),10px 20px 30px -10px rgba(60,35,10,.35)}
+.mug .print{position:absolute;left:40px;right:60px;top:150px;text-align:center;font-family:"Caveat",cursive;font-weight:600;color:#d0457a;line-height:.95;transform:rotate(-4deg)}
+.mug .print b{display:block;font-size:110px;font-weight:600}
+.mug .print i{display:block;font-style:normal;font-size:88px}
+.mug .print u{display:block;text-decoration:none;font-size:90px;color:#e2577f;margin-top:10px}
+.steam{position:absolute;top:470px;width:30px;height:150px;border-radius:30px;background:linear-gradient(transparent,rgba(255,255,255,.75));filter:blur(8px);opacity:0}
 .tap{position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(217,164,65,.45);border:7px solid #D9A441;z-index:7;opacity:0}
 .strike{position:relative;display:inline-block}
 .strike::after{content:"";position:absolute;left:-6px;right:-6px;top:52%;height:10px;background:#A5402A;transform-origin:left;transform:scaleX(var(--s,0))}
@@ -120,13 +134,14 @@ const cta = (i, head, sub) => `<section class="sc green" id="s${i}"><div class="
 const reelA = () => {
   const SC = [[0, 1.6], [1.6, 3.2], [3.2, 4.6], [4.6, 6.6], [6.6, 8.6], [8.6, 11]];
   return { name: 'reel-a-geschenk', total: 11, html: page(`
-<section class="sc cream" id="s0"><div class="cap"><span class="box pop">Was du dir gewünscht hast</span></div><div class="card zoom"><img src="${photo('headphones')}" alt=""><p>Diese Kopfhörer</p></div></section>
-<section class="sc cream" id="s1"><div class="cap"><span class="box rust pop">Was du bekommen hast</span></div><div class="card zoom" id="mug"><img src="${photo('mug')}" alt=""><p>Die fünfte Tasse</p></div></section>
+<section class="sc ink" id="s0"><div class="full zoom"><img src="${photo('headphones')}" alt=""></div><div class="cap"><span class="box pop">Was du dir gewünscht hast</span></div><div class="label"><span class="box light pop">Genau diese Kopfhörer</span></div></section>
+<section class="sc cream" id="s1"><div class="mugscene zoom"><i class="steam" id="st1" style="left:420px"></i><i class="steam" id="st2" style="left:520px"></i><div class="mug" id="mug"><div class="handle"></div><div class="body"></div><div class="rim"></div><div class="print"><b>Bester</b><i>Mensch der Welt</i><u>♥</u></div></div></div><div class="cap"><span class="box rust pop">Was du bekommen hast</span></div><div class="label"><span class="box pop">Nicht noch so eine doofe Tasse</span></div></section>
 <section class="sc ink" id="s2"><div class="center"><p class="big pop">Das geht auch <em>anders</em>.</p></div></section>
 <section class="sc cream" id="s3"><div class="cap"><span class="box pop">Deine Wunschliste mit allem, was dich ausmacht</span></div>${phone(img('liste.png'), 'li')}</section>
 <section class="sc cream" id="s4"><div class="cap"><span class="box gold pop">Ein Link, und Freunde schenken, was passt</span></div>${phone(img('freunde.png'), 'fr')}</section>
 ${cta(5, 'Die Wunschliste, die <em>dich</em> kennt.', 'Kostenlos und ohne App-Download')}`, SC, `
-anim($('#mug'),[{transform:'rotate(0)'},{transform:'rotate(-3deg)',offset:.25},{transform:'rotate(3deg)',offset:.5},{transform:'rotate(-2deg)',offset:.75},{transform:'rotate(0)'}],SC[1][0]+.3,.5,'linear');
+[['#st1',0],['#st2',.35]].forEach(([q,d])=>anim($(q),[{opacity:0,transform:'translateY(40px)'},{opacity:.9,transform:'translateY(-20px)',offset:.5},{opacity:0,transform:'translateY(-80px)'}],SC[1][0]+d,1.3,'ease-out'));
+anim($('#mug'),[{transform:'rotate(0)'},{transform:'rotate(-3deg)',offset:.25},{transform:'rotate(3deg)',offset:.5},{transform:'rotate(-2deg)',offset:.75},{transform:'rotate(0)'}],SC[1][0]+.5,.5,'linear');
 anim($('#li'),[{transform:'translateY(0)'},{transform:'translateY(-120px)'}],SC[3][0],2,'ease-in-out');
 anim($('#fr'),[{transform:'translateY(0)'},{transform:'translateY(-260px)'}],SC[4][0]+.3,1.7,'ease-in-out');`) };
 };
