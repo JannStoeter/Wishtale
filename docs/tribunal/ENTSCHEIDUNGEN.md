@@ -79,7 +79,7 @@ Stand: 2026-11-09
 | 084 | Wunschliste hochladen als Highlight, Reel dazu | **Anweisung: grüne Leiste mit Gold in der App, Reel Wunschzettel (promo:zettel)** | ja, `33e0924` |
 | 085 | Grafikfehler bei Vorschlägen im Wunsch | **Befund behoben: Knöpfe der Vorschläge umbrechen am Handy** | ja, `0cb44e7` |
 | 086 | Landingpage fokussiert aufs Produkt | **Anweisung: echte App-Ansichten im Einstieg, Jetzt neu Hochladen, ein klarer Knopf, klebender Knopf am Handy** | ja, `41e62c0` |
-| 087 | Kurze Reels mit Aufhänger | **Anweisung: drei Reels zu 10 bis 11 Sekunden, Aufhänger im ersten Bild (Geschenk, Zettel, POV)** | ja, `PENDING` |
+| 087 | Kurze Reels mit Aufhänger | **Anweisung: drei Reels zu 10 bis 11 Sekunden, Aufhänger im ersten Bild (Geschenk, Zettel, POV)** | ja, `5e42770` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.

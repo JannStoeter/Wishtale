@@ -3,7 +3,7 @@ topic: 087-kurze-reels-mit-aufhaenger
 status: entschieden
 option: Anweisung
 datum: 2026-11-15
-umgesetzt: PENDING
+umgesetzt: 5e42770
 ---
 **Befund zum alten Reel:** Die ersten drei Sekunden waren ein ruhiger grüner Titel ohne Bewegung und ohne Spannung, danach kam erst der Zettel. Reels werden in der ersten Sekunde entschieden, und 33 Sekunden sind lang.
 
