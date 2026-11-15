@@ -12,7 +12,8 @@
     "photos:fetch": "node scripts/fetch-photos.mjs",
     "photos:check": "node scripts/check-photos.mjs",
     "promo": "node promo/render.mjs",
-    "promo:zettel": "node promo/reel-zettel.mjs"
+    "promo:zettel": "node promo/reel-zettel.mjs",
+    "promo:kurz": "node promo/reels-kurz.mjs"
   },
   "devDependencies": {
     "@fontsource/caveat": "^5.3.0",
