@@ -3,7 +3,7 @@ topic: 090-chatgpt-darf-programmieren
 status: entschieden
 option: Anweisung
 datum: 2026-11-15
-umgesetzt: PENDING
+umgesetzt: 2bef5b3
 ---
 Die Konventionen stehen in `AGENTS.md` (Abschnitt „Programmieren: Konventionen“), die Rollen in `docs/tribunal/README.md` und `CLAUDE.md`:
 1. Nur Freigegebenes bauen (Urteil mit Bau-Freigabe oder ausdrückliche Anweisung von Jann).
