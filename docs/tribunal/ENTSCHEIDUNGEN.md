@@ -78,7 +78,7 @@ Stand: 2026-11-09
 | 083 | Erledigte Wünsche aus der Liste | **Anweisung: Statusschalter weg, Erledigtes im Profil unter Das habe ich schon mit Pfeil zurück** | ja, `584eb9e` |
 | 084 | Wunschliste hochladen als Highlight, Reel dazu | **Anweisung: grüne Leiste mit Gold in der App, Reel Wunschzettel (promo:zettel)** | ja, `33e0924` |
 | 085 | Grafikfehler bei Vorschlägen im Wunsch | **Befund behoben: Knöpfe der Vorschläge umbrechen am Handy** | ja, `0cb44e7` |
-| 086 | Landingpage fokussiert aufs Produkt | **Anweisung: echte App-Ansichten im Einstieg, Jetzt neu Hochladen, ein klarer Knopf, klebender Knopf am Handy** | ja, `PENDING` |
+| 086 | Landingpage fokussiert aufs Produkt | **Anweisung: echte App-Ansichten im Einstieg, Jetzt neu Hochladen, ein klarer Knopf, klebender Knopf am Handy** | ja, `41e62c0` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.

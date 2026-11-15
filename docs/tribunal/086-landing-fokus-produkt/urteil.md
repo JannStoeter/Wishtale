@@ -3,7 +3,7 @@ topic: 086-landing-fokus-produkt
 status: entschieden
 option: Anweisung
 datum: 2026-11-15
-umgesetzt: PENDING
+umgesetzt: 41e62c0
 ---
 **Umgesetzt (`index.html`, `src/landing.js`, `src/styles/main.css`, Bilder `public/landing/*.jpg`):**
 - Einstieg: dunkelgrüne Marke „Neu · Jetzt neu: Wunschzettel einfach hochladen“, Überschrift bleibt „Die Wunschliste, die dich kennt.“, kürzerer Satz zum Produkt („Schreib deine Wünsche auf oder lade ein Foto vom Wunschzettel hoch …“), ein großer Knopf „Kostenlos Wunschliste anlegen“, daneben „Beispiel ansehen“, darunter „Kostenlos und ohne App-Download, in wenigen Minuten fertig“.
