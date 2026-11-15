@@ -76,7 +76,7 @@ async function capture(base) {
 
     const user = { id: 'u1', email: 'mia@example.com', aud: 'authenticated', role: 'authenticated', app_metadata: {}, user_metadata: { full_name: NAME } };
     const session = { access_token: 'x', refresh_token: 'y', expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600, token_type: 'bearer', user };
-    const prof = { id: 'p1', owner_id: 'u1', handle: 'mia-ab12cd', name: NAME, managed: false, tone: 0, about: '', interests: [], cats: [], brands: [], tries: [], nogos: [], alts: [], style: [], vis: {}, social: {}, created_at: new Date().toISOString() };
+    const prof = { id: 'p1', owner_id: 'u1', handle: 'mia-ab12cd', name: NAME, managed: false, tone: 0, about: 'Ich koche gern für Freunde, bin am Wochenende in den Bergen unterwegs und lese abends gern ein gutes Buch.', interests: ['Kochen', 'Wandern', 'Lesen'], cats: [], brands: [], tries: [], nogos: [], alts: [], style: [], vis: {}, social: {}, created_at: new Date().toISOString() };
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
     const p = await ctx.newPage();
     await p.addInitScript(s => { localStorage.setItem('sb-uzercrfhieipplgrjbvk-auth-token', JSON.stringify(s)); localStorage.setItem('wishtale:steps:u1', JSON.stringify({ hidden: true })); }, session);
@@ -124,8 +124,27 @@ async function capture(base) {
     await p.screenshot({ path: join(SHOTS, 'ergebnis.png') });
     await p.locator('form[data-form=zettelsave] button[type=submit]').click();
     await p.waitForTimeout(4500); // Produktbilder und Links werden im Hintergrund geholt
+    // Die beiden erkannten Produkte sind Mia besonders wichtig (dadurch stehen sie oben in der Liste)
+    for (const name of ['Le Creuset', 'Sony']) {
+      await p.locator('.wrow, .wcard', { hasText: name }).first().click();
+      await p.waitForTimeout(500);
+      await p.selectOption('select[data-prio]', '3');
+      await p.waitForTimeout(300);
+      await p.keyboard.press('Escape');
+      await p.waitForTimeout(400);
+    }
     await p.evaluate(() => window.scrollTo(0, 0));
     await p.screenshot({ path: join(SHOTS, 'liste.png') });
+    // So sehen es Freunde (Vorschau der eigenen Liste, gleiche Beispielperson)
+    await p.locator('.viewlink').click();
+    await p.waitForTimeout(1500);
+    const hide = await p.addStyleTag({ content: '.appmain .wrap > .row:first-child,.appmain .banner.green{display:none!important}' });
+    await p.evaluate(() => window.scrollTo(0, 0));
+    await p.screenshot({ path: join(SHOTS, 'freunde.png') });
+    await hide.evaluate(n => n.remove());
+    await p.evaluate(() => { document.querySelector('[data-act=preview][data-v="0"]').click(); });
+    await p.waitForTimeout(800);
+    await p.evaluate(() => window.scrollTo(0, 0));
     await p.locator('.wrow, .wcard', { hasText: 'Sony' }).first().click();
     await p.waitForTimeout(1800);
     await p.screenshot({ path: join(SHOTS, 'produkt.png') });
