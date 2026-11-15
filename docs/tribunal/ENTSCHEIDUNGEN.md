@@ -81,6 +81,7 @@ Stand: 2026-11-09
 | 086 | Landingpage fokussiert aufs Produkt | **Anweisung: echte App-Ansichten im Einstieg, Jetzt neu Hochladen, ein klarer Knopf, klebender Knopf am Handy** | ja, `41e62c0` |
 | 087 | Kurze Reels mit Aufhänger | **Anweisung: drei Reels zu 10 bis 11 Sekunden, Aufhänger im ersten Bild (Geschenk, Zettel, POV)** | ja, `5e42770` |
 | 088 | Ideen erfinden Fakten, Gäste sehen Passt nicht | **Befund behoben: nur belegte Fakten in Begründungen, Passt nicht nicht mehr bei Gästen** | ja, `8153ca9` |
+| 090 | ChatGPT darf programmieren | **Anweisung: nach Konventionen in AGENTS.md, Ankündigung in bau.md, Branch chatgpt/…, Pull Request** | ja, `PENDING` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
@@ -108,3 +109,4 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 042 Server, Hosting und Mail: ist das Setup die beste Wahl, auch bei den Kosten? (Entscheidung, von Jann)
 - 077 Profilpflege dezent anstoßen und Klicktour zu den Einstellungen (Entscheidung, von Jann, wartet auf ChatGPT)
 - 078 Landingpage-Intro: echter Durchklick durch die neue App (Entscheidung, von Jann, wartet auf ChatGPT, Entwurf liegt bei)
+- 089 Empfehlungen besser: Hinweis auf Geschmackskarten und zweite Prüfung der Begründungen (Entscheidung, von Jann)
