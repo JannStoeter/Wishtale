@@ -3,7 +3,7 @@ topic: 088-ideen-nur-belegte-fakten
 status: entschieden
 option: Anweisung
 datum: 2026-11-15
-umgesetzt: PENDING
+umgesetzt: 8153ca9
 ---
 **Behoben:**
 - `api/_lib/ideas.js` (Anweisung an die KI, gilt für alle Ideen): Begründungen nennen nur, was wörtlich in den Angaben steht. Aus einer Lieblingsmarke folgt nur „mag die Marke“, nie Besitz oder Nutzung („mag Apple“, nicht „nutzt Apple-Geräte“ oder „arbeitet am Mac“). Zwei Angaben werden nicht zu einer neuen Behauptung verbunden. Hängt eine Idee von Unbekanntem ab (etwa dem Betriebssystem), schlägt die KI eine Variante vor, die unabhängig davon passt. Weil sich die Anweisung ändert, werden die gespeicherten Ideen neu erzeugt.
