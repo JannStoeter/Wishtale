@@ -26,6 +26,16 @@ document.querySelectorAll('.art[data-kind]').forEach(el=>el.insertAdjacentHTML('
   type();start();
 })();
 
+/* Klebender Knopf am Handy: erscheint, sobald der Knopf im Einstieg aus dem Bild ist, und verschwindet beim Abschluss-Knopf. */
+(function(){
+  const bar=document.getElementById('stickycta'),hero=document.querySelector('.herocta'),end=document.querySelector('.cta');
+  if(!bar||!hero||!('IntersectionObserver' in window))return;
+  let heroOut=false,endIn=false;
+  const upd=()=>{const on=heroOut&&!endIn;bar.classList.toggle('show',on);bar.setAttribute('aria-hidden',on?'false':'true');bar.querySelector('a').tabIndex=on?0:-1};
+  new IntersectionObserver(es=>{heroOut=!es[0].isIntersecting&&es[0].boundingClientRect.top<0;upd()}).observe(hero);
+  if(end)new IntersectionObserver(es=>{endIn=es[0].isIntersecting;upd()}).observe(end);
+})();
+
 /* Geschichte: Schritt für Schritt einblenden, sobald er sichtbar wird. Ohne JavaScript bleibt alles sichtbar. */
 document.documentElement.classList.add('js');
 document.querySelectorAll('.tstep').forEach(step=>step.querySelectorAll('.chip,.mini').forEach((el,i)=>el.style.setProperty('--i',i)));
