@@ -10,3 +10,5 @@ promo/out/_frames
 *.pem
 promo/out/_shots
 promo/out/_reel-zettel.html
+promo/out/_frames-*
+promo/out/_reel-*.png
