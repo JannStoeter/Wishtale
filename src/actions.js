@@ -352,9 +352,13 @@ render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
  ownedel(el){const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
  pins(el){S.ui.pinsCtx=el.dataset.ctx||'guest';S.ui.modal='pins';render()},
  pinconsent(){givePinConsent();render()},
-async readlink(){
+async readlink(el,auto){
   const f=wform();if(!f)return;
-  const raw=f.elements.link.value.trim(),st=document.getElementById('wlstat'),say=t=>{if(st){st.textContent=t;st.className='hint'}};
+  const raw0=f.elements.link.value.trim();
+  // Einfügen und Verlassen des Feldes (zum Beispiel der Klick auf „Passt“) lösen beide aus: denselben Link nur einmal lesen.
+  const seen=(f.dataset.read||'').split('\n');if(auto&&raw0&&seen.includes(raw0))return;
+  f.dataset.read=raw0;
+  const raw=raw0,st=document.getElementById('wlstat'),say=t=>{if(st){st.textContent=t;st.className='hint'}};
   const typed=f.elements.t.value.trim();
   if(!raw){say('Füge zuerst einen Link oder einen kopierten Titel ein.');return}
   if(!/https?:\/\//i.test(raw)&&/\s/.test(raw)){ // kein Link, sondern Text (zum Beispiel der kopierte Amazon-Titel)
@@ -372,7 +376,7 @@ async readlink(){
     say('Wir übernehmen den Amazon-Link …');
     const r=await amazonRead(raw);
     if(r.error){say(r.error);return}
-    f.elements.link.value=r.url;
+    f.elements.link.value=r.url;f.dataset.read=raw+'\n'+r.url;
     if(r.title){const cand={t:r.title,q:r.title,price:null,src:'amazon'};showCand(cand,typed);candImage(cand);say('Der Link ist gespeichert. Den Namen haben wir aus der Adresse gelesen, einen Preis gibt Amazon nicht heraus.')}
     else{setRec({st:'none',msg:''});say(typed?'Der Amazon-Link ist gespeichert und gehört zu deinem Wunsch.':'Der Amazon-Link ist gespeichert. Trag oben noch kurz ein, was es ist, mehr ist nicht nötig.')}
     return;
@@ -472,7 +476,7 @@ async readlink(){
   const o=['','ja','teils','nein'];saveGift({id:g.id,reaction:o[(o.indexOf(g.reaction||'')+1)%4]||null}).then(()=>render());
  },
  givendel(el){if(confirm('Dieses Geschenk aus deiner Liste entfernen?'))removeGift(el.dataset.id).then(()=>render())},
- homeideastoggle(){const show=!homeIdeasVisible();setHomeIdeasVisible(show);render();toast(show?'Deine Vorschau ist eingeblendet.':'Deine Vorschau ist ausgeblendet.');(document.getElementById('homeideas-toggle')||document.querySelector('.acctbtn'))?.focus({preventScroll:true})},
+ homeideastoggle(){const show=!homeIdeasVisible();setHomeIdeasVisible(show);render();toast(show?'Die Vorschläge von Wishtale sind eingeblendet.':'Die Vorschläge sind eingeklappt, du kannst sie jederzeit wieder öffnen.');(document.getElementById('homeideas-toggle')||document.querySelector('.acctbtn'))?.focus({preventScroll:true})},
  promohide(el){hidePromo(el.dataset.id);render()},
  pinrevoke(){revokePinConsent();location.reload()},
  delacct(){

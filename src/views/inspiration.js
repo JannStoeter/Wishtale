@@ -75,29 +75,39 @@ function Promo(){
 }
 
 const AI_REL='noopener noreferrer sponsored nofollow';
-/* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto. */
+/* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto.
+   Ruhige Karten: der Name trägt, die Begründung ist kurz gehalten, Aktionen sind leise Textknöpfe. */
+function IdeaRow(i){
+  const price=i.to?(i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`):'';
+  const href=i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q);
+  return `<article class="rec idea"><h3>${esc(i.t)}</h3>
+   <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price?` · <span title="Grobe Schätzung, kein Live-Preis">${price}</span>`:''}</p>
+   <p class="why">${esc(i.why)}</p>
+   <div class="idea-acts"><button class="qa qa-add" data-act="aiadd" data-t="${esc(i.t)}">${ic('plus','sm')}Auf meine Wunschliste</button><a class="qa" href="${href}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Ansehen (Anzeige)'}</a><button class="qa qa-mute" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="qa qa-mute" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></article>`;
+}
 function AiSelf(home=false){
   const h=S.me.handle;if(!h||!S.auth.user)return '';
   const list=ideasOf(skey(h));if(!list.length)return '';
-  return `<section class="psec${home?' homeideas-list':''}" style="margin-bottom:18px">${home?'':'<p class="eyebrow">Vorschläge von Wishtale</p><h3 aria-level="2">Ideen, die zu dir passen</h3>'}
+  return `<section class="psec ideas-quiet${home?' homeideas-list':''}" style="margin-bottom:18px">${home?'':'<p class="eyebrow">Vorschläge von Wishtale</p><h3 aria-level="2">Ideen, die zu dir passen</h3>'}
    ${home?'':'<p class="muted" style="font-size:14.5px;margin:6px 0 12px">Wishtale schreibt sie nach dem, was du über dich angegeben hast. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.</p>'}
    ${thinProfile(S.me)?`<p class="thinnote">${ic('spark','sm')}<span>Dein Profil ist noch recht leer, darum sind diese Ideen noch allgemein. Wenn du ein paar Interessen und Lieblingsmarken ergänzt, werden sie spürbar persönlicher. <a href="#profil" class="linkbtn">Profil ergänzen</a></span></p>`:''}
-   <div class="recs grid">${list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
-    <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${i.to?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`}</span>`:''}</div>
-    <div class="row" style="margin-top:8px"><button class="btn pri sm" data-act="aiadd" data-t="${esc(i.t)}">Auf meine Wunschliste</button><a class="btn amz sm" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon ansehen (Anzeige)'}</a><button class="btn ghost sm" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="btn ghost sm" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></div></article>`).join('')}</div></section>`;
+   <div class="recs grid">${list.map(IdeaRow).join('')}</div></section>`;
 }
 
-/** Eigene Empfehlungen unter den Wünschen, niemals Reservierungsdaten oder Gast-Cache. */
+/** Eigene Empfehlungen unter den Wünschen, niemals Reservierungsdaten oder Gast-Cache.
+    Eingeklappt (am Handy der Standard) bleibt nur eine leise Zeile, die zum Aufklappen einlädt. */
 export function HomeIdeas(){
   if(!S.auth.user||!S.me.handle)return '';
-  const visible=homeIdeasVisible(),st=aiStatus(skey(S.me.handle));
+  const visible=homeIdeasVisible(),st=aiStatus(skey(S.me.handle)),n=ideasOf(skey(S.me.handle)).length;
+  if(!visible)return `<section class="homeideas closed" aria-labelledby="homeideas-h"><h2 id="homeideas-h" class="vh">Vorschläge von Wishtale</h2>
+   <button id="homeideas-toggle" class="homeideas-peek" data-act="homeideastoggle" aria-expanded="false" aria-controls="homeideas-content">${ic('spark','sm')}<span>${n?`Wishtale hat ${n} Ideen für dich`:'Ideen von Wishtale für dich'}</span><span class="peek-go">Anzeigen</span></button>
+   <div id="homeideas-content" hidden></div></section>`;
   return `<section class="homeideas" aria-labelledby="homeideas-h">
-   <div class="homeideas-head"><h2 id="homeideas-h">Deine Vorschau</h2><button id="homeideas-toggle" class="btn ghost sm" data-act="homeideastoggle" aria-expanded="${visible}" aria-controls="homeideas-content" aria-label="${visible?'Vorschau ausblenden':'Vorschau einblenden'}" title="${visible?'Vorschau ausblenden':'Vorschau einblenden'}">${ic(visible?'eyeoff':'eye')}</button></div>
-   ${visible?`<div id="homeideas-content"><p class="eyebrow">Vorschläge von Wishtale</p>
-   <p class="muted">Deinen Freunden zeigen wir ähnliche Vorschläge. Welche sie auswählen, bleibt eine Überraschung.</p>
+   <div class="homeideas-head"><div><p class="eyebrow">Vorschläge von Wishtale</p><h2 id="homeideas-h">Ideen für dich</h2></div><button id="homeideas-toggle" class="btn ghost sm" data-act="homeideastoggle" aria-expanded="true" aria-controls="homeideas-content" aria-label="Vorschläge ausblenden" title="Vorschläge ausblenden">${ic('eyeoff')}</button></div>
+   <div id="homeideas-content"><p class="muted homeideas-sub">Deinen Freunden zeigen wir ähnliche Vorschläge, und welche sie auswählen, bleibt eine Überraschung.</p>
    ${st==='loading'||st==='none'?AiLoading('Deine individuellen Empfehlungen werden erstellt …'):st==='empty'?'<p class="muted">Gerade sind keine weiteren Vorschläge da. Mit deinen Interessen und den Geschmackskarten lernt Wishtale dich besser kennen.</p>':AiSelf(true)}
    ${st==='ready'?'<p class="disc"><b>Anzeige:</b> Links zu Amazon sind Partnerlinks. Als Amazon-Partner verdiene ich an qualifizierten Verkäufen. Preise sind Richtwerte und können abweichen.</p>':''}
-   </div>`:'<div id="homeideas-content" hidden></div>'}
+   </div>
   </section>`;
 }
 
