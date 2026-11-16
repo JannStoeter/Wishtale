@@ -46,3 +46,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: unverändert; gleiche bestehende Browserpräferenz, keine neuen Pakete oder Ereignisse. Zugangsdaten werden nicht dokumentiert.
 - Zurücknehmen: Diesen Funktionscommit mit git revert zurücknehmen.
 - Offen: Liveprüfung und Abschlussdokumentation folgen.
+
+## 2026-11-16 · 092 · Vorschau im Demokonto geprüft
+- Commits: Funktionskorrektur `e7c27fbc6e364cbb9a1e9e33c027c15aaeedeff6`; dieser Abschlusscommit dokumentiert das Ergebnis.
+- Geändert: Bau fertig, Urteil, Entscheidungsspiegel und technische Notiz aktualisiert.
+- Geprüft: Vercel-Produktion READY. Cloud-Browser, angemeldetes Demokonto: Ausblenden lässt Titel und Auge stehen; ausgeblendeter Zustand überlebt Neuladen; Wiedereinblenden am Auge erfolgreich; eingeblendeter Zustand überlebt Neuladen. Desktop 1363 px, kein horizontaler Überlauf, Auge 46 × 44 px, gleiche Zeile wie Titel. ESLint und Build vor Abschluss-Push.
+- Datenbank und Dienste: unverändert. Anmeldung ausschließlich über sichere Browser-Anmeldemaske; keine Zugangsdaten gespeichert oder geloggt.
+- Zurücknehmen: git revert e7c27fb, Abschlussdokumentation entsprechend anpassen.
+- Offen: 390 px weiterhin nicht visuell geprüft (Cloud-Browser ohne Größensteuerung); Datenbankeintrag der Dev-Seite durch Claude beim Abgleich.

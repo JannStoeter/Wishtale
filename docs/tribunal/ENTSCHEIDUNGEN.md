@@ -17,7 +17,7 @@ Stand: 2026-11-09
 
 | Nr. | Frage | Urteil | Umgesetzt |
 |---|---|---|---|
-| 092 | Vorschläge zurück in die Hauptansicht und Logo als Heimweg | **Jann im Chat:** Eigene Vorschläge unter den Wünschen, ausblendbar und im Menü wieder einschaltbar. Karten und Hinweis bleiben. Eigenes App-Logo zur Wunschliste. Ersetzt 082 nur bezüglich entfernter eigener Ideen. Subdomain zurückgestellt. | ja, `8d70841` |
+| 092 | Vorschläge zurück in die Hauptansicht und Logo als Heimweg | **Jann im Chat:** Eigene Vorschläge unter den Wünschen. Die Zeile „Deine Vorschau“ bleibt mit Augensymbol zum Aus- und Einblenden stehen, zusätzlich im Menü einschaltbar. Karten und Hinweis bleiben. Eigenes App-Logo zur Wunschliste. Ersetzt 082 nur bezüglich entfernter eigener Ideen. Subdomain zurückgestellt. | ja, `8d70841`, Nachbesserung `e7c27fb` |
 | 003 | Sichtbarkeit: Stufe „Nur Schenkende“ behalten? | **B: Streichen.** Nur „Für alle mit Link“ und „Privat“. Die KI darf Privates zur Orientierung nutzen, zeigt es Gästen aber nie. | ja, `f700dd4` |
 | 016 | Barrierefreiheit erneut prüfen und beheben | **A: Jetzt.** Prüflauf über 15 Ansichten ohne Befund, zwei Befunde behoben. Handtests stehen aus. | ja, `77a5eba` |
 | 017 | Missbrauchsschutz für KI-Aufrufe | **A: Tageslimits in der Datenbank** je Adresse, Konto und gesamt. | ja, `77a5eba` |
