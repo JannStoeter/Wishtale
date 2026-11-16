@@ -54,3 +54,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: unverändert. Anmeldung ausschließlich über sichere Browser-Anmeldemaske; keine Zugangsdaten gespeichert oder geloggt.
 - Zurücknehmen: git revert e7c27fb, Abschlussdokumentation entsprechend anpassen.
 - Offen: 390 px weiterhin nicht visuell geprüft (Cloud-Browser ohne Größensteuerung); Datenbankeintrag der Dev-Seite durch Claude beim Abgleich.
+
+## 2026-11-16 · 093 · Hilfe-Umbau angekündigt
+- Auftrag: Jann, geführte Klicktour, klickbarer nächster Profilschritt, FAQ.
+- Geändert: Bauankündigung und Auftrag 093.
+- Geprüft: ESLint und Build vor Push; keine UI geändert.
+- Datenbank und Dienste: unverändert.
+- Zurücknehmen: Ankündigungscommit mit git revert zurücknehmen.
+- Offen: Implementierung und Bedienprüfung folgen.
