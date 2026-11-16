@@ -71,3 +71,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: unverändert, keine neuen Pakete, Ereignisse oder Browser-Speichereinträge; die Führung liegt nur im flüchtigen UI-Zustand.
 - Zurücknehmen: Diesen Implementierungscommit mit git revert zurücknehmen.
 - Offen: Live-Bedienprüfung und Abschlussdokumentation folgen.
+
+## 2026-11-16 · 093 · Liveprüfung und Abschluss
+- Commits: Implementierung `94b11c11114d20d643ad6315b2ab3f7064b36265`; dieser Abschlusscommit dokumentiert und verbessert die Fokusübergabe beim Ende einer Tour.
+- Geändert: Bau fertig, Urteil und Entscheidungsspiegel. Nach Tourende Fokus am tatsächlichen Ziel statt Rücksprung in die Kopfzeile.
+- Geprüft: Vercel-Implementierungsdeploy READY. Cloud-Browser im angemeldeten Demokonto, 1363 px: alle fünf Touren bis Ziel; leere Wunschliste im Kind-Kontext; Formularwert nach Beenden erhalten und danach abgebrochen, nichts angelegt; FAQ öffnen und Antwort aufklappen; Shift+Tab in Hilfe und Escape; Profil-Direkteinstieg bei 0 % fokussiert #about, bei 100 % kein nächster Schritt. Kein horizontaler Überlauf. ESLint und Build erneut vor Abschluss-Push.
+- Datenbank und Dienste: unverändert, keine neuen Pakete oder gespeicherten Daten. Keine Zugangsdaten dokumentiert. Lediglich vorhandene Ansichten und die bestehende Vorschau-Checkliste im Demokonto bedient.
+- Zurücknehmen: git revert 94b11c1 und diesen Abschlusscommit, in umgekehrter Reihenfolge.
+- Offen: 390 px, echter Safari und Screenreader ungeprüft; Claude ergänzt beim Abgleich den Dev-Datenbankeintrag.

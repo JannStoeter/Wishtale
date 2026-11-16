@@ -208,7 +208,7 @@ const A={
  jump(el){document.getElementById(el.dataset.to)?.scrollIntoView({behavior:'smooth',block:'start'})},
  helptab(el){S.ui.helpTab=el.dataset.v;render();document.querySelector('.help-switch [aria-pressed="true"]')?.focus({preventScroll:true})},
  guidestart(el){if(!beginGuide(el.dataset.id))return;if(S.ui.view==='wuensche')render(true);else location.hash='#wuensche'},
- guideend(){const step=currentGuideStep(),target=step&&document.querySelector(step.target);endGuide();document.querySelector('.guide-coach')?.remove();syncGuide();(S.ui.modal?(target?.matches('input,button,textarea,a,select')?target:document.querySelector('.sheet input,.sheet button')):document.querySelector('.helpbtn'))?.focus({preventScroll:true})},
+ guideend(){const step=currentGuideStep(),target=step&&document.querySelector(step.target);endGuide();document.querySelector('.guide-coach')?.remove();syncGuide();(target?.matches('input,button,textarea,a,select')?target:target?.querySelector('input,button,a,select')||(S.ui.modal?document.querySelector('.sheet input,.sheet button'):document.querySelector('.helpbtn')))?.focus({preventScroll:true})},
  guidefocus(){focusGuideTarget()},
  profilenext(el){
   const k=el.dataset.k;
