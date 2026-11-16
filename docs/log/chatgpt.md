@@ -21,3 +21,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Keine Änderungen oder neuen Pakete; nur lokale Anzeigepräferenz, in Datenschutz Abschnitt 7 ergänzt. Bestehende Ideen-API und deren Datenschutz gelten weiter.
 - Zurücknehmen: Implementierungscommit mit git revert zurücknehmen.
 - Offen: Geschmackskarten selbst unverändert; PR 16 / Tribunal 089 wird nicht mit übernommen. Subdomain zurückgestellt. Deploy und Liveprüfung folgen; Datenbank-Dev-Eintrag beim Claude-Abgleich.
+
+## 2026-11-16 · 092 · Abschluss und Liveprüfung
+- Commits: Implementierung `8d70841f10184ad599bc1883de08f4dfcef071ee`, Ankündigung `98b99bd`; dieser Abschlusscommit enthält ausschließlich Dokumentation.
+- Auftrag: Freigegebenen Umbau direkt hochladen und prüfen.
+- Geändert: Bau auf fertig, Urteil mit Implementierungscommit, Entscheidungsspiegel ergänzt.
+- Warum: Umsetzung, Rücknahme und verbleibende Prüflücken nachvollziehbar dokumentieren.
+- Geprüft: Implementierungsdeploy Vercel Produktion READY (`dpl_9P6vAeqNH2bkuWNL9XtaUKR6jkGF`). Cloud-Browser Demo bei 1363 px: Profil über Menü geöffnet, Logo zurück zur Wunschliste, scrollWidth 1348 px, kein horizontaler Überlauf. ESLint und Build erneut vor Dokumentationspush.
+- Datenbank und Dienste: Keine Änderungen, keine Pakete; keine Migration erforderlich.
+- Zurücknehmen: git revert 8d70841; Abschlussdokumentation bei Bedarf ebenfalls zurücknehmen.
+- Offen: Echte angemeldete Empfehlungen, deren Bedienung und mobile 390-px-Ansicht konnten nicht visuell geprüft werden. PR 16 / 089 ist unabhängig. Claude ergänzt beim Abgleich den Datenbankeintrag der Dev-Seite.
