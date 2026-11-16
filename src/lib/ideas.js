@@ -12,7 +12,7 @@ export function loadIdeas(key, params, done) {
   S.ui.aiMap = S.ui.aiMap || {};
   if (S.ui.aiMap[key]) return;
   const e = S.ui.aiMap[key] = { list: [], loaded: false };
-  const q = new URLSearchParams({ ...(S.ui.pb ? { b: S.ui.pb } : {}), ...params });
+  const q = new URLSearchParams({ ...(S.ui.pb ? { b: S.ui.pb } : {}), ...params, review: '089-v1' }); // neue CDN-Adresse statt alter ungeprüfter Antworten
   (params.mode === 'self' || (params.mode === 'wish' && params.t && !params.w) ? sb.auth.getSession().then(({ data }) => (data.session ? { authorization: 'Bearer ' + data.session.access_token } : {})) : Promise.resolve({}))
     .then(headers => fetch('/api/ideas?' + q, { headers, signal: AbortSignal.timeout(50000) }))
     .then(r => (r.ok ? r.json() : { ideas: [] }))

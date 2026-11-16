@@ -18,13 +18,15 @@ export const answeredCount = () => Object.values(answers()).filter(a => a.rating
 /** Lädt die bisherigen Antworten (einmal je Sitzung und Konto). Liefert true, wenn gerade neu geladen wurde. */
 export async function loadAnswers() {
   const id = remote() ? S.me.dbId : 'lokal';
-  if (S.ui.cards && S.ui.cards.id === id && S.ui.cards.loaded) return false;
-  S.ui.cards = { id, loaded: false, map: {}, round: null, i: 0, done: 0, owned: false, cat: 'alle' };
+  if (S.ui.cards && S.ui.cards.id === id && (S.ui.cards.loaded || S.ui.cards.loading)) return false;
+  const state = S.ui.cards = { id, loaded: false, loading: true, map: {}, round: null, i: 0, done: 0, owned: false, cat: 'alle' };
   if (remote()) {
     const { data, error } = await sb.from('taste_cards').select('card_id,rating,owned').eq('profile_id', S.me.dbId).limit(300);
-    if (!error) for (const r of data || []) S.ui.cards.map[r.card_id] = { rating: r.rating, owned: !!r.owned };
-  } else S.ui.cards.map = local();
-  S.ui.cards.loaded = true;
+    state.error = !!error;
+    if (!error) for (const r of data || []) state.map[r.card_id] = { rating: r.rating, owned: !!r.owned };
+  } else state.map = local();
+  state.loading = false;
+  state.loaded = true;
   return true;
 }
 

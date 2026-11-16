@@ -6,6 +6,7 @@ import { CATS, cat } from '../data/content.js';
 import { art } from '../lib/art.js';
 import { answers, answeredCount, remaining, ROUND } from '../lib/cards.js';
 import { BackBar } from './menu.js';
+import { tastePrompt } from '../lib/taste-prompt.js';
 
 const RATE = { like: 'Gefällt mir', dislike: 'Nicht mein Geschmack' };
 
@@ -55,6 +56,6 @@ export function Geschmack() {
 /** Ruhiger Hinweis unter der Wunschliste, solange noch wenige Karten beantwortet sind. */
 export function TasteHint() {
   const c = S.ui.cards;
-  if (S.me.managed || !S.auth.user || !c || !c.loaded || answeredCount() >= 10) return '';
-  return `<p class="tastehint">${ic('spark', 'sm')}<span>Dein Geschmack hilft Wishtale, bessere Ideen für deine Freunde zu finden. <button class="linkbtn" data-act="go" data-v="geschmack">Geschmack schärfen</button></span></p>`;
+  if (S.me.managed || !S.auth.user || !c || c.id !== S.me.dbId || !c.loaded || c.error || answeredCount() >= 10 || !tastePrompt()?.visible) return '';
+  return `<section class="tastehint tasteprompt" aria-label="Deinen Geschmack kennenlernen">${ic('spark', 'sm')}<div><p>Was gefällt dir? Hilf Wishtale, passendere Ideen für deine Freunde zu finden.</p><div class="row"><button type="button" class="linkbtn" data-act="go" data-v="geschmack">Geschmack schärfen</button><button type="button" class="linkbtn" data-act="tasteprompthide">Später</button></div></div></section>`;
 }

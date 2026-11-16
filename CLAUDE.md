@@ -17,6 +17,7 @@
 - Genitiv von Namen mit `gen()` aus `src/lib/util.js` („Jonas’“, „Lenas“)
 
 ## Technik in Kürze
+- Empfehlungen prüfen (089): `api/_lib/idea-review.js` prüft neue Listen gesammelt mit dem leichten Modell gegen öffentliche Fakten; bekannte IDs und Belege sind Pflicht, bei Fehlern keine ungeprüften Ideen. Prüfregel/Modell im Server-Cache, Revision im CDN-Query. Kartenhinweis über `src/lib/taste-prompt.js`, ab drei offenen Wünschen, unter zehn Antworten, maximal wöchentlich, nach drei Ablehnungen aus; atomare profilbezogene Präferenzen in Migration `0029` (nicht automatisch eingespielt).
 - Vite, Vanilla-JS-Module. Landingpage `index.html`, App unter `/app/`, Gast-Ansicht `#p/<handle>`.
 - Daten: Supabase (Migrationen in `supabase/migrations/`), Demo-Modus mit localStorage.
 - Amazon-Partner-ID `jannst-21` in `src/lib/shops.js`, immer mit Hinweis „Anzeige“.
