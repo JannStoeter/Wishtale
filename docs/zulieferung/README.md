@@ -1,0 +1,3 @@
+# Bestellungen an Zulieferer
+
+Claude oder ChatGPT bestellen hier abgegrenzte Codestrecken bei weiteren Sprachmodellen. Eine Datei je Bestellung: `docs/zulieferung/<nr>-<thema>.md` mit Front matter (`bestellt_von`, `an`, `datum`, `status: offen|geliefert|übernommen|verworfen`) und den Abschnitten **Was** (Aufgabe in wenigen Sätzen), **Wo** (Dateien, die geändert werden dürfen), **Schnittstelle** (Eingaben, Ausgaben, Beispiele), **Grenzen** (was nicht angefasst wird) und **Prüfung** (wie die Lieferung getestet wird). Der Zulieferer liefert auf `zulieferung/<modell>-<thema>`, Regeln in `AGENTS.md`.

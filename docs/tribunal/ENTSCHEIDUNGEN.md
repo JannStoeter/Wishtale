@@ -82,6 +82,7 @@ Stand: 2026-11-09
 | 087 | Kurze Reels mit Aufhänger | **Anweisung: drei Reels zu 10 bis 11 Sekunden, Aufhänger im ersten Bild (Geschenk, Zettel, POV)** | ja, `5e42770` |
 | 088 | Ideen erfinden Fakten, Gäste sehen Passt nicht | **Befund behoben: nur belegte Fakten in Begründungen, Passt nicht nicht mehr bei Gästen** | ja, `8153ca9` |
 | 090 | ChatGPT darf programmieren | **Anweisung: nach Konventionen in AGENTS.md, Ankündigung in bau.md, Branch chatgpt/…, Pull Request** | ja, `2bef5b3` |
+| 091 | ChatGPT lädt selbst hoch, mit Log; Zulieferer | **Anweisung: direktes Hochladen nach Regeln in AGENTS.md, Log in docs/log/, weitere Sprachmodelle nur als Zulieferer** | ja, `PENDING` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.

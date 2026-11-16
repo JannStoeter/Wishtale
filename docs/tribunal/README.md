@@ -55,7 +55,7 @@ Das stärkste Argument gegen die eigene Empfehlung, ehrlich formuliert.
 ```
 
 ## Rollen (wichtig)
-- **ChatGPT** schreibt eigene Positionen (`chatgpt.md`, `chatgpt-2.md`), legt auf Wunsch neue Fragen an und darf seit 2026-11-15 (Dev 090) **auch Freigegebenes bauen**, nach den Konventionen in `AGENTS.md`: Ankündigung in `bau.md`, Branch `chatgpt/<nr>-<kurzname>`, Pull Request, Jann führt zusammen.
+- **ChatGPT** schreibt eigene Positionen (`chatgpt.md`, `chatgpt-2.md`), legt auf Wunsch neue Fragen an und darf seit 2026-11-16 (Dev 091) **Freigegebenes bauen und direkt hochladen**, nach den Konventionen in `AGENTS.md`: Ankündigung in `bau.md`, Lint und Build, Eintrag im Log `docs/log/chatgpt.md`. Weitere Sprachmodelle liefern nur Codestrecken auf Bestellung zu (`docs/zulieferung/`).
 - **Claude** schreibt `claude*.md`, legt Ordner aus Janns Anfragen an, baut Freigegebenes, prüft beim Abgleich offene Pull Requests von ChatGPT (Lint, Build, Konventionen) und spiegelt Urteile ins Repository. Wer baut, kündigt es in `bau.md` im Ordner an (`von`, `status: in-arbeit`), damit nichts doppelt gebaut wird.
 - **Jann** entscheidet. Er kann zu jedem Punkt eine, beide oder keine Meinung einholen.
 
