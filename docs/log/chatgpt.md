@@ -38,3 +38,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint und Build vor Push; noch keine UI-Änderung.
 - Datenbank und Dienste: unverändert.
 - Offen: Umsetzung folgt im nächsten Commit.
+
+## 2026-11-16 · 092 · Vorschau bleibt direkt einschaltbar
+- Auftrag: Janns Nachbesserung: bleibende Zeile „Deine Vorschau“ mit Augensymbol.
+- Geändert: Abschnittskopf bleibt beim Ausblenden erhalten; Auge öffnet, durchgestrichenes Auge schließt. Ein Umschalter mit aria-expanded, aria-controls, eindeutiger Beschriftung und Fokuswiederherstellung. Kopfzeile bleibt auch mobil einzeilig, Touchfläche mindestens 44 × 44 px. Menü-Umschalter bleibt zusätzlich.
+- Geprüft: ESLint, Build und gezielte Modulprüfung (sichtbarer Inhalt, eingeklappte Zeile ohne Ideen, beide aria-expanded-Zustände, Profiltrennung). Demokonto im Cloud-Browser angemeldet; Liveprüfung der neuen Steuerung folgt nach Deploy. 390 px noch nicht geprüft.
+- Datenbank und Dienste: unverändert; gleiche bestehende Browserpräferenz, keine neuen Pakete oder Ereignisse. Zugangsdaten werden nicht dokumentiert.
+- Zurücknehmen: Diesen Funktionscommit mit git revert zurücknehmen.
+- Offen: Liveprüfung und Abschlussdokumentation folgen.

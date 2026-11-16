@@ -1135,9 +1135,10 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 
 /* 092: eigene Vorschläge folgen den Wünschen; mobil eine ruhige Liste. */
 .homeideas{margin:28px 0;padding-top:24px;border-top:1px solid var(--line,#dcd4c5)}
-.homeideas-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.homeideas-head h2{margin:4px 0 8px}
-.homeideas-head button{min-height:44px;flex-shrink:0}
+.homeideas-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap}
+.homeideas-head h2{margin:0;font-size:24px}
+.homeideas-head button{min-height:44px;min-width:44px;flex-shrink:0}
+.homeideas-head button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 .homeideas-list.psec{padding:0;border:0;background:transparent;margin-top:16px}
 .homeideas .rec{min-width:0;overflow-wrap:anywhere}
 @media(max-width:719px){
@@ -1145,5 +1146,5 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
  .homeideas .rec{border-radius:0;border-width:0 0 1px;padding:16px 0;box-shadow:none;background:transparent}
  .homeideas .rec .row{flex-wrap:wrap}
  .homeideas .rec .btn{min-height:44px;white-space:normal;text-align:center;max-width:100%}
- .homeideas-head{flex-wrap:wrap}
+ .homeideas-head{flex-wrap:nowrap}
 }

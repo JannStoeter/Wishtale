@@ -457,8 +457,7 @@ async readlink(){
   const o=['','ja','teils','nein'];saveGift({id:g.id,reaction:o[(o.indexOf(g.reaction||'')+1)%4]||null}).then(()=>render());
  },
  givendel(el){if(confirm('Dieses Geschenk aus deiner Liste entfernen?'))removeGift(el.dataset.id).then(()=>render())},
- homeideashide(){setHomeIdeasVisible(false);render();toast('Vorschläge ausgeblendet. Im Menü kannst du sie wieder einblenden.');document.querySelector('.acctbtn')?.focus({preventScroll:true})},
- homeideastoggle(){const show=!homeIdeasVisible();setHomeIdeasVisible(show);render();toast(show?'Vorschläge auf deiner Wunschliste eingeblendet.':'Vorschläge auf deiner Wunschliste ausgeblendet.');document.querySelector('.acctbtn')?.focus({preventScroll:true})},
+ homeideastoggle(){const show=!homeIdeasVisible();setHomeIdeasVisible(show);render();toast(show?'Deine Vorschau ist eingeblendet.':'Deine Vorschau ist ausgeblendet.');(document.getElementById('homeideas-toggle')||document.querySelector('.acctbtn'))?.focus({preventScroll:true})},
  promohide(el){hidePromo(el.dataset.id);render()},
  pinrevoke(){revokePinConsent();location.reload()},
  delacct(){

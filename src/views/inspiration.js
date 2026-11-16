@@ -89,13 +89,15 @@ function AiSelf(home=false){
 
 /** Eigene Empfehlungen unter den Wünschen, niemals Reservierungsdaten oder Gast-Cache. */
 export function HomeIdeas(){
-  if(!S.auth.user||!S.me.handle||!homeIdeasVisible())return '';
-  const st=aiStatus(skey(S.me.handle));
+  if(!S.auth.user||!S.me.handle)return '';
+  const visible=homeIdeasVisible(),st=aiStatus(skey(S.me.handle));
   return `<section class="homeideas" aria-labelledby="homeideas-h">
-   <div class="homeideas-head"><div><p class="eyebrow">Vorschläge von Wishtale</p><h2 id="homeideas-h">Das könnte dir gefallen</h2></div><button class="btn ghost sm" data-act="homeideashide">Ausblenden<span class="vh">: Vorschläge auf deiner Wunschliste</span></button></div>
+   <div class="homeideas-head"><h2 id="homeideas-h">Deine Vorschau</h2><button id="homeideas-toggle" class="btn ghost sm" data-act="homeideastoggle" aria-expanded="${visible}" aria-controls="homeideas-content" aria-label="${visible?'Vorschau ausblenden':'Vorschau einblenden'}" title="${visible?'Vorschau ausblenden':'Vorschau einblenden'}">${ic(visible?'eyeoff':'eye')}</button></div>
+   ${visible?`<div id="homeideas-content"><p class="eyebrow">Vorschläge von Wishtale</p>
    <p class="muted">Deinen Freunden zeigen wir ähnliche Vorschläge. Welche sie auswählen, bleibt eine Überraschung.</p>
    ${st==='loading'||st==='none'?AiLoading('Deine individuellen Empfehlungen werden erstellt …'):st==='empty'?'<p class="muted">Gerade sind keine weiteren Vorschläge da. Mit deinen Interessen und den Geschmackskarten lernt Wishtale dich besser kennen.</p>':AiSelf(true)}
    ${st==='ready'?'<p class="disc"><b>Anzeige:</b> Links zu Amazon sind Partnerlinks. Als Amazon-Partner verdiene ich an qualifizierten Verkäufen. Preise sind Richtwerte und können abweichen.</p>':''}
+   </div>`:'<div id="homeideas-content" hidden></div>'}
   </section>`;
 }
 
