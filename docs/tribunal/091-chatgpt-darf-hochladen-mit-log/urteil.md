@@ -3,7 +3,7 @@ topic: 091-chatgpt-darf-hochladen-mit-log
 status: entschieden
 option: Anweisung
 datum: 2026-11-16
-umgesetzt: PENDING
+umgesetzt: 6acff37
 ---
 Ersetzt die Pull-Request-Pflicht aus 090. Umgesetzt in `AGENTS.md`, `CLAUDE.md`, `docs/tribunal/README.md`, neu `docs/log/` und `docs/zulieferung/`:
 - **Rollentabelle:** Claude und ChatGPT bauen und pushen direkt nach `main`, weitere Sprachmodelle sind Zulieferer für Codestrecken und pushen nie nach `main`.
