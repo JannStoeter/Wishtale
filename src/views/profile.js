@@ -82,7 +82,7 @@ export function Profil(){
     const st=STEPS.find(x=>x.k===k),ed=!pv&&st&&S.ui.editK===k;
     const btn=!pv&&st?`<button class="iconbtn" data-act="pedit" data-k="${k}" aria-label="${esc(title)} ${ed?'fertig':'ändern'}">${ed?ic('check','sm'):'<span aria-hidden="true">✎</span>'}</button>`:'';
     const empty=!ed&&inner==='';
-    return `<section class="psec cmp"><div class="hd"><h3 aria-level="2">${title}</h3><span class="row" style="gap:6px">${btn}${VisPill(vk,pv?null:k)}</span></div>${ed?Picker(st):empty&&st?`<button class="addchip" data-act="pedit" data-k="${k}">${ic('plus','sm')}Hinzufügen</button>`:inner}</section>`;
+    return `<section class="psec cmp" id="sec-${k}"><div class="hd"><h3 aria-level="2">${title}</h3><span class="row" style="gap:6px">${btn}${VisPill(vk,pv?null:k)}</span></div>${ed?Picker(st):empty&&st?`<button class="addchip" data-act="pedit" data-k="${k}">${ic('plus','sm')}Hinzufügen</button>`:inner}</section>`;
   };
   const chips=(a,cls='')=>a.length?`<div class="chips">${a.map(x=>`<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div>`:'';
   return `<div class="wrap">${BackBar()}
@@ -112,7 +112,7 @@ export function Profil(){
 }
 
 function AboutSec(m){
-  return `<section class="psec cmp"><div class="hd"><h3 aria-level="2">Über mich</h3>${VisPill('alle')}</div>
+  return `<section class="psec cmp" id="sec-about"><div class="hd"><h3 aria-level="2">Über mich</h3>${VisPill('alle')}</div>
    ${m.managed?'':`<div class="fld"><label for="pname">Dein Vorname</label><input id="pname" class="inp" data-prof="name" value="${esc(m.name)}" maxlength="60" autocomplete="given-name"></div>`}
    <label for="about" class="muted" style="font-size:14px">Ein paar Sätze über dich, das lesen deine Freunde zuerst.</label>
    <textarea id="about" class="ta" data-prof="about" maxlength="320" placeholder="z. B. Ich koche gern für Freunde, trinke meinen Kaffee selbst gebrüht und richte meine Wohnung Stück für Stück ein.">${esc(m.about||'')}</textarea></section>`;
@@ -123,13 +123,13 @@ function Meter(m){
   const c=completeness(m);
   return `<section class="meter" aria-label="Wie gut kennen wir dich"><div class="row" style="justify-content:space-between;gap:10px"><strong>Dein Wishtale ist zu ${c.pct} % fertig</strong><span class="muted" style="font-size:13px">${c.pct>=80?'Das sieht richtig gut aus':c.pct>=50?'Ein schöner Anfang':'Da geht noch einiges'}</span></div>
    <div class="bar" role="progressbar" aria-label="Fortschritt deines Wishtale" aria-valuenow="${c.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${c.pct}%"></i></div>
-   ${c.next.length?`<p class="muted" style="font-size:13.5px">Als Nächstes: <b>${esc(c.next[0])}</b></p>`:''}</section>`;
+   ${c.next.length?`<button type="button" class="meter-next" data-act="profilenext" data-k="${esc(c.nextSteps[0].key)}"><span>Als Nächstes: <b>${esc(c.next[0])}</b></span>${ic('arrow','sm')}</button>`:''}</section>`;
 }
 
 /* Produkte, die man schon hat. Sie fließen in die Empfehlungen ein, damit nichts doppelt gekauft wird. */
 function OwnedSec(m){
   const owned=m.wishes.filter(w=>w.status==='selbst');
-  return `<details class="psec cmp fold2" ${owned.length?'open':''}><summary class="hd"><h3 aria-level="2">Das habe ich schon</h3></summary><div class="row" style="justify-content:flex-end">${VisPill('alle')}</div>
+  return `<details class="psec cmp fold2" id="sec-owned" ${owned.length?'open':''}><summary class="hd"><h3 aria-level="2">Das habe ich schon</h3></summary><div class="row" style="justify-content:flex-end">${VisPill('alle')}</div>
    <p class="muted" style="font-size:14px">Dafür schlagen wir nichts mehr vor. Erledigte Wünsche stehen auch hier, mit dem Pfeil kommt einer zurück auf deine Wunschliste.</p>
    ${owned.length?`<div class="chips">${owned.map(w=>`<span class="chip ok">${esc(w.t)}<button class="chipx" data-act="selbst" data-id="${w.id}" aria-label="${esc(w.t)} wieder als Wunsch auf die Liste" title="Wieder als Wunsch">↺</button><button class="chipx" data-act="ownedel" data-id="${w.id}" aria-label="${esc(w.t)} entfernen">×</button></span>`).join('')}</div>`:''}
    <form data-form="owned" class="addrow"><label for="ownedt" style="position:absolute;left:-9999px">Was hast du schon?</label><input id="ownedt" name="t" class="inp" placeholder="z. B. Siebträgermaschine, Wanderrucksack" autocomplete="off" maxlength="120"><button class="btn sec sm" type="submit">${ic('plus','sm')}Hinzufügen</button></form></details>`;

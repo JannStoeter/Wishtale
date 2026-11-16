@@ -1,3 +1,4 @@
+import { Guide, syncGuide } from './lib/guide.js';
 import { loadIdeas, gkey, skey } from './lib/ideas.js';
 import { isSpecific } from './lib/products.js';
 import { guestPerson } from './state.js';
@@ -32,6 +33,9 @@ const DEFAULT_VIEW='wuensche';
 
 let lastModalKey='';
 function afterRender(){
+  if(S.ui.focusTarget){const selector=S.ui.focusTarget;S.ui.focusTarget='';const t=document.querySelector(selector);if(t){const d=t.closest('details');if(d)d.open=true;t.scrollIntoView({block:'center',behavior:'instant'});t.focus({preventScroll:true})}}
+  if(S.ui.modal==='tour'&&!document.activeElement?.closest('.tour'))document.querySelector('.tour .sheet-x')?.focus({preventScroll:true});
+  syncGuide();
   if(S.ui.menu&&!document.activeElement?.closest?.('.drawer'))document.querySelector('.drawer .mclose')?.focus({preventScroll:true});
   if(S.ui.modal!=='pins'||!pinConsent())return;
   const box=document.querySelector('.pinwrap');if(!box)return;
@@ -73,7 +77,7 @@ export function render(top){
     return;
   }
   if(v==='gast'){
-    $('#app').innerHTML=GuestHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot()+Modal()+(S.auth.user?Menu():'');
+    $('#app').innerHTML=GuestHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot()+Modal()+(S.auth.user?Menu():'')+Guide();
     window.scrollTo(0,top?0:y);
     const gs=document.querySelector('.sheet');
     if(gs)gs.scrollTop=(modalKey&&modalKey===lastModalKey)?sheetY:0;
@@ -84,7 +88,7 @@ export function render(top){
   $('#app').innerHTML=Header(v)
     +(S.me.managed?`<div class="mgbar">Du verwaltest das Konto von ${esc(S.me.name)}.<button data-act="acct" data-id="me">Zurück zu ${esc(S.accounts.me.name)}</button></div>`:'')
     +`<main id="main" class="appmain">${body}</main>`
-    +LegalFoot()+Modal()+Menu();
+    +LegalFoot()+Modal()+Menu()+Guide();
   // Zurück zur Wunschliste: Position der Liste wiederherstellen; sonst ganz nach oben, bei Sprung zu einem Abschnitt dorthin
   window.scrollTo(0,top?(v==='wuensche'&&S.ui.homeY!=null?S.ui.homeY:0):y);
   if(v==='wuensche')S.ui.homeY=null;

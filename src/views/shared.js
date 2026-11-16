@@ -7,7 +7,7 @@ export function Header(v){
   const sync=S.auth.user?`<span id="syncst" class="syncst" data-state="${S.auth.sync}">${{saving:'Speichert …',saved:'Gespeichert',error:'Nicht gespeichert'}[S.auth.sync]||''}</span>`:'<span class="syncst" data-state="demo">Demo</span>';
   return `<header class="hdr"><div class="wrap">
    <a class="mark" href="#wuensche" data-act="go" data-v="wuensche" data-home="1" aria-label="Wishtale, zu meiner Wunschliste">wishtale<i></i></a>${devMode()?'<span class="pill gold devbadge" title="Entwicklermodus: ausgeblendete Bereiche sind sichtbar">Entwicklermodus</span>':''}
-   <div class="right">${sync}<button class="btn ghost sm helpbtn" data-act="modal" data-v="tour" aria-label="Kurzer Rundgang">${ic('help','sm')}<span>Kurzer Rundgang</span></button>${AcctBtn()}</div>
+   <div class="right">${sync}<button class="btn ghost sm helpbtn" data-act="modal" data-v="tour" aria-label="Hilfe und Rundgang">${ic('help','sm')}<span>Hilfe und Rundgang</span></button>${AcctBtn()}</div>
   </div></header>`;
 }
 /* Avatar: öffnet das Menü. */

@@ -1,3 +1,4 @@
+import { beginGuide, endGuide, guideClick, guideSubmit, focusGuideTarget, currentGuideStep, syncGuide } from './lib/guide.js';
 import { S, W, switchTo, resetState, guestPerson, saveState } from './state.js';
 import { $, toast, kwOf, nid, money, overlap } from './lib/util.js';
 import { CATALOG, PRIO, cat } from './data/content.js';
@@ -205,6 +206,20 @@ const A={
  cardremove(el){removeAnswer(el.dataset.id).then(()=>render());render()},
  cardreset(){if(!confirm('Alle deine Antworten zu den Karten löschen? Deine Wünsche und dein Profil bleiben, wie sie sind.'))return;resetAnswers().then(()=>{toast('Deine Antworten sind gelöscht.');render()});render()},
  jump(el){document.getElementById(el.dataset.to)?.scrollIntoView({behavior:'smooth',block:'start'})},
+ helptab(el){S.ui.helpTab=el.dataset.v;render();document.querySelector('.help-switch [aria-pressed="true"]')?.focus({preventScroll:true})},
+ guidestart(el){if(!beginGuide(el.dataset.id))return;if(S.ui.view==='wuensche')render(true);else location.hash='#wuensche'},
+ guideend(){const step=currentGuideStep(),target=step&&document.querySelector(step.target);endGuide();document.querySelector('.guide-coach')?.remove();syncGuide();(S.ui.modal?(target?.matches('input,button,textarea,a,select')?target:document.querySelector('.sheet input,.sheet button')):document.querySelector('.helpbtn'))?.focus({preventScroll:true})},
+ guidefocus(){focusGuideTarget()},
+ profilenext(el){
+  const k=el.dataset.k;
+  if(k==='wishes'){endGuide();S.ui.preview=false;S.ui.focusTarget='#wt';S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.modal='wish';render();return}
+  if(k==='history'){S.ui.focusTarget='#gw';S.ui.modal='gift';render();return}
+  if(k==='about')S.ui.focusTarget='#about';
+  else if(k==='owned')S.ui.focusTarget='#ownedt';
+  else if(['interests','cats','brands','nogos','tries','alts'].includes(k)){S.ui.editK=k;S.ui.focusTarget='#sec-'+k+' [data-act=pick]'}
+  else return;
+  render();
+ },
  menu(){S.ui.menu=!S.ui.menu;render()},
  menuclose(){S.ui.menu=false;render();document.querySelector('.acctbtn')?.focus({preventScroll:true})},
  menuclosebg(el,e){if(e.target===el)A.menuclose()},
@@ -236,8 +251,8 @@ const A={
  selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Du findest ihn im Profil unter „Das habe ich schon“.':'Der Wunsch ist wieder auf deiner Liste.');render()},
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
  delw(el){S.ui.modal=null;const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
- modal(el){if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
- close(){if(S.ui.modal==='welcome'){markWelcomed();stopWelcome()}S.ui.modal=null;S.ui.editWish=null;render()},
+ modal(el){if(el.dataset.v==='tour'){endGuide();S.ui.helpTab=el.dataset.help||'guides'}if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ close(){if(S.ui.guide)endGuide();if(S.ui.modal==='welcome'){markWelcomed();stopWelcome()}S.ui.modal=null;S.ui.editWish=null;render()},
  wtab(el){showScene(+el.dataset.i,true)},
  inviteopen(){S.ui.invm={list:[],link:'',error:'',busy:false};S.ui.modal='invite';render();listInvites().then(l=>{if(S.ui.invm)S.ui.invm.list=l;if(S.ui.modal==='invite')render()}).catch(()=>{})},
  invitenew(){if(S.ui.invm){S.ui.invm.link='';S.ui.invm.error=''}render()},
@@ -494,7 +509,7 @@ async readlink(){
  wview(el){S.ui.wview=el.dataset.v;render()},
  suggest(el){S.ui.pickId=el.dataset.id;S.ui.wishCtx='guest';S.ui.modal='wishdetail';render()}
 };
-document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;if(t.dataset.step==='people')markStep('people');const f=A[t.dataset.act];if(f)f(t,e)});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;if(t.dataset.step==='people')markStep('people');const f=A[t.dataset.act];if(f){guideClick(t);f(t,e)}});
 document.addEventListener('change',async e=>{
   if(e.target.name!=='img'||!e.target.closest('form[data-form=wish]')||!e.target.files||!e.target.files[0])return;
   try{const d=await downscale(e.target.files[0]);showWishImg({blob:d.blob,preview:d.preview,src:'',manual:true})}catch(err){toast(err.message||'Dieses Bild lässt sich nicht öffnen.')}
@@ -537,9 +552,10 @@ window.addEventListener('focus',()=>{
 });
 document.addEventListener('input',e=>{const f=e.target.dataset?.prof;if(f){S.me[f]=e.target.value;if(f==='birthdate'){const ag=ageOf(e.target.value);if(ag!=null)S.me.age=ag}saveState()}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('[role=button][data-act]')){e.preventDefault();e.target.click()}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(S.ui.menu)A.menuclose();else if(S.ui.modal)A.close()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(S.ui.guide){A.guideend();return}if(S.ui.menu)A.menuclose();else if(S.ui.modal)A.close()}});
 document.addEventListener('submit',e=>{
   const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();
+  guideSubmit(f);
   const fd=new FormData(f),kind=f.dataset.form;
   if(kind==='forgot'){
     const email=(fd.get('email')||'').trim();S.ui.authBusy=true;S.ui.authEmail=email;render();
@@ -686,4 +702,12 @@ document.addEventListener('submit',e=>{
     S.ui.wishImg=null;done(fi.img,fi.src,fi.removed);
     });
   }
+});
+
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Tab'||S.ui.modal!=='tour')return;
+ const list=[...document.querySelectorAll('.tour button,.tour summary,.tour a[href]')].filter(el=>el.getClientRects().length&&!el.disabled);
+ const first=list[0],last=list.at(-1);if(!first)return;
+ if(e.shiftKey&&(document.activeElement===first||!document.activeElement?.closest('.tour'))){e.preventDefault();last.focus()}
+ else if(!e.shiftKey&&(document.activeElement===last||!document.activeElement?.closest('.tour'))){e.preventDefault();first.focus()}
 });

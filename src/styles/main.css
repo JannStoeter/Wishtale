@@ -1148,3 +1148,29 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
  .homeideas .rec .btn{min-height:44px;white-space:normal;text-align:center;max-width:100%}
  .homeideas-head{flex-wrap:nowrap}
 }
+
+/* 093: direkte Profilhilfe und freiwillige Klickführungen. */
+.meter-next{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;margin-top:6px;padding:8px 0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:14px;text-align:left;cursor:pointer}
+.meter-next b{text-decoration:underline;text-underline-offset:3px}
+.meter-next svg{flex-shrink:0}
+.help-switch{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.help-switch button,.help-choice{min-height:44px}
+.help-guides{padding:0;list-style:none}
+.help-guides li{display:block}
+.help-choice{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);text-align:left;font:inherit;cursor:pointer}
+.help-choice>span:nth-child(2){flex:1;font-weight:600}
+.help-choice small{display:block;color:var(--muted);font-size:13px;font-weight:400;margin-top:3px}
+.help-choice>svg{flex-shrink:0}
+.help-faq details{border-bottom:1px solid var(--line)}
+.help-faq summary{padding:14px 0;min-height:44px;cursor:pointer;font-weight:600}
+.help-faq p{font-size:15px;margin:0 0 16px;color:var(--muted)}
+.guide-target{outline:3px solid var(--accent,#2E3B2F)!important;outline-offset:5px;scroll-margin:90px 0}
+.guide-coach{position:fixed;right:16px;top:76px;z-index:90;width:min(420px,calc(100vw - 32px));max-height:calc(50dvh - 24px);overflow:auto;padding:16px;background:var(--surface);color:var(--ink);border:2px solid var(--accent,#2E3B2F);border-radius:18px;box-shadow:0 12px 40px #0003;font-family:var(--body)}
+.guide-head{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.guide-head .eyebrow{margin:0;min-width:0}
+.guide-head button{min-width:44px;min-height:44px;flex-shrink:0}
+.guide-text,.guide-missing{margin:8px 0 14px;font-size:15px;line-height:1.5}
+.guide-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.guide-actions button{min-height:44px;white-space:normal}
+.meter-next:focus-visible,.help-choice:focus-visible,.guide-coach button:focus-visible,.help-faq summary:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media(max-width:719px){.guide-coach{right:12px;width:calc(100vw - 24px);padding:12px}.guide-text{font-size:14px}.help-choice{padding:12px}.help-switch .btn{white-space:normal}}

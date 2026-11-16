@@ -63,20 +63,21 @@ export function completeness(a) {
   const owned = a.wishes.filter(w => w.status === 'selbst').length;
   const open = a.wishes.filter(w => w.status === 'offen').length;
   const steps = [
-    [15, !!(a.about && a.about.trim().length > 20), 'Erzähl in ein paar Sätzen etwas über dich.'],
-    [15, a.interests.length >= 3, 'Such dir mindestens drei Interessen aus, die zu dir passen.'],
-    ...(worldsOn() ? [[10, a.cats.length >= 3, 'Wähle ein paar Welten, in denen du dich zuhause fühlst.']] : []),
-    [10, a.brands.length >= 3, 'Verrate uns ein paar Lieblingsmarken.'],
-    [10, a.nogos.length >= 1, 'Sag uns, was du lieber nicht geschenkt bekommen möchtest.'],
-    [5, a.tries.length >= 1, 'Überlege, was du gern einmal ausprobieren würdest.'],
-    [5, a.alts.length >= 2, 'Such dir ein paar Alternativen aus, falls deinen Freunden nichts einfällt.'],
-    [15, open >= 5, 'Sammle ein paar Wünsche, am besten mindestens fünf.'],
-    [10, owned >= 3, 'Trag ein paar Dinge ein, die du schon hast.'],
-    [5, a.history.length >= 1, 'Erzähl uns von einem Geschenk, das du schon bekommen hast.'],
+    [15, !!(a.about && a.about.trim().length > 20), 'Erzähl in ein paar Sätzen etwas über dich.', 'about'],
+    [15, a.interests.length >= 3, 'Such dir mindestens drei Interessen aus, die zu dir passen.', 'interests'],
+    ...(worldsOn() ? [[10, a.cats.length >= 3, 'Wähle ein paar Welten, in denen du dich zuhause fühlst.', 'cats']] : []),
+    [10, a.brands.length >= 3, 'Verrate uns ein paar Lieblingsmarken.', 'brands'],
+    [10, a.nogos.length >= 1, 'Sag uns, was du lieber nicht geschenkt bekommen möchtest.', 'nogos'],
+    [5, a.tries.length >= 1, 'Überlege, was du gern einmal ausprobieren würdest.', 'tries'],
+    [5, a.alts.length >= 2, 'Such dir ein paar Alternativen aus, falls deinen Freunden nichts einfällt.', 'alts'],
+    [15, open >= 5, 'Sammle ein paar Wünsche, am besten mindestens fünf.', 'wishes'],
+    [10, owned >= 3, 'Trag ein paar Dinge ein, die du schon hast.', 'owned'],
+    [5, a.history.length >= 1, 'Erzähl uns von einem Geschenk, das du schon bekommen hast.', 'history'],
   ];
   const max = steps.reduce((s, [pts]) => s + pts, 0);
   const pct = Math.round(steps.reduce((s, [pts, ok]) => s + (ok ? pts : 0), 0) * 100 / max);
-  return { pct, next: steps.filter(([, ok]) => !ok).map(([, , t]) => t) };
+  const pending = steps.filter(([, ok]) => !ok);
+  return { pct, next: pending.map(([, , t]) => t), nextSteps: pending.map(([, , text, key]) => ({ key, text })) };
 }
 
 /** Profil noch zu dünn für persönliche Ideen (Interessen, Marken, Welten, Über-Text zusammen weniger als vier Angaben). */

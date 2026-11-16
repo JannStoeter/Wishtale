@@ -1,18 +1,26 @@
-/* Kurzer Rundgang: freiwillig, jederzeit über die Kopfzeile erreichbar, startet nie von selbst (Dev 075). */
-import { ic } from '../lib/util.js';
+/* Hilfe: freiwillige Themenwahl, echte Klickführungen und häufige Fragen. */
+import { S } from '../state.js';
+import { ic, esc } from '../lib/util.js';
+import { GUIDES } from '../lib/guide.js';
 
-const STEPS = [
-  ['plus', 'Wünsche hinzufügen', 'Tippe auf „Wunsch hinzufügen“ und schreib, was du dir wünschst. Wishtale erkennt das Produkt und fragt, ob es passt. Eine fertige Liste liest du über „Liste einlesen“ ein, als Text oder Foto.'],
-  ['link', 'Teilen', 'Mit „Teilen“ schickst du deinen Freunden die Wunschliste. Mit „So sehen es deine Freunde“ prüfst du vorher, was sie sehen. Die Überraschung bleibt: Du siehst nie, was reserviert ist.'],
-  ['spark', 'Geschmack schärfen', 'Im Menü findest du kurze Kartenrunden. Mit „Gefällt mir“, „Nicht mein Geschmack“ und „Habe ich schon“ lernt Wishtale, was zu dir passt. Nichts davon kommt auf deine Wunschliste, deine Freunde sehen es nie, und für sie werden die Ideen besser.'],
-  ['user', 'Das Menü', 'Hinter deinem Avatar oben rechts liegen Profil und Persönlichkeit, Social Media, Inspiration, Historie, weitere Profile und Kind-Konten, Einladen und deine Einstellungen. Von dort kommst du mit „Zurück zur Wunschliste“ immer wieder hierher.'],
+export const FAQ = [
+  ['Wie erstelle ich meine Wunschliste?', 'Über „Wunsch hinzufügen“ kannst du ein Produkt, ein Erlebnis oder eine freie Idee eintragen. Ein Link ist optional. Mit „Liste hochladen“ liest du ein Foto oder Text ein und prüfst die erkannten Wünsche vor dem Speichern.'],
+  ['Brauchen meine Freunde ein Konto?', 'Zum Öffnen deines Links und zum Reservieren brauchen deine Freunde kein Konto. Wer ein eigenes Wishtale hat, kann sich anmelden und findet die eigenen Bereiche weiterhin im Avatar-Menü.'],
+  ['Sehe ich, was reserviert oder gekauft wurde?', 'Auf deiner eigenen Wunschliste bleibt die Auswahl deiner Freunde verborgen. Bei einem verwalteten Kind-Profil können die Eltern den Status sehen, damit Geschenke nicht doppelt ankommen.'],
+  ['Wie finde ich als Gast meine Reservierung wieder?', 'Öffne die Wunschliste im selben Browser. Dort kannst du deine Reservierung wieder freigeben oder als gekauft markieren. Ohne Konto hängt die Zuordnung am Browser; beim Löschen der Browserdaten oder beim Gerätewechsel kann sie verloren gehen.'],
+  ['Wer sieht private Wünsche und mein Feedback?', 'Private Wünsche siehst nur du beziehungsweise die berechtigte Verwaltung deines Profils. Deine Kartenantworten und dein persönliches Feedback werden deinen Freunden nicht angezeigt. Wishtale nutzt solche Angaben, um passendere Vorschläge zu finden.'],
+  ['Was machen die Geschmackskarten?', 'Mit den Karten lernt Wishtale deinen Geschmack besser kennen. „Gefällt mir“ legt keinen Wunsch an. „Habe ich schon“ gibt es für konkrete Ideen; eine allgemeine Kategorie wie Mützen ist damit nicht pauschal ausgeschlossen.'],
+  ['Sind die Vorschläge schon meine Wünsche?', 'Vorschläge von Wishtale sind Anregungen. Erst wenn du „Auf meine Wunschliste“ wählst, wird daraus ein eigener Wunsch. Unter „Deine Vorschau“ kannst du die eigenen Vorschläge mit dem Auge aus- und wieder einblenden.'],
+  ['Wo finde ich Profil, Historie und weitere Profile?', 'Tippe oben auf deinen Avatar. Das Menü führt zu Profil und Persönlichkeit, Social Media, Historie, Inspiration, Kind-Profilen und Einstellungen. Das Logo und „Zurück zur Wunschliste“ bringen dich zu deinen Wünschen zurück.'],
+  ['Warum passen manche Vorschläge noch nicht?', 'Interessen, Lieblingsmarken, konkrete Wünsche und die Geschmackskarten geben Wishtale mehr Anhaltspunkte. Vorschläge können trotzdem unpassend sein. Prüfe Produkt, Variante und Preis selbst, bevor du etwas kaufst.'],
+  ['Was bedeutet Anzeige bei einem Shop-Link?', 'Einige Links sind Partnerlinks. Wenn darüber ein Kauf zustande kommt, kann Wishtale eine Provision erhalten. Preise in Vorschlägen sind Richtwerte und können vom Shoppreis abweichen.'],
 ];
-
 export function TourModal() {
+  const faq = S.ui.helpTab === 'faq';
   return `<div class="scrim" data-act="closebg"><div class="sheet tour" role="dialog" aria-modal="true" aria-labelledby="mt">
-   <div class="sheet-head"><h2 id="mt">Ein kurzer Rundgang</h2><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
-   <p class="muted">Vier Dinge, mit denen du dich schnell zurechtfindest. Du kannst den Rundgang jederzeit oben wieder öffnen.</p>
-   <ol class="tour-list">${STEPS.map(([i, t, d]) => `<li><span class="tour-ic">${ic(i)}</span><div><h3 aria-level="3">${t}</h3><p>${d}</p></div></li>`).join('')}</ol>
-   <div class="sheet-foot"><button class="btn pri" data-act="close">Verstanden</button></div>
+   <div class="sheet-head"><h2 id="mt">Hilfe und Rundgang</h2><button type="button" class="sheet-x" data-act="close" aria-label="Hilfe schließen">×</button></div>
+   <div class="help-switch" role="group" aria-label="Hilfebereich"><button type="button" class="btn ${faq?'sec':'pri'} sm" data-act="helptab" data-v="guides" aria-pressed="${!faq}">Geführte Rundgänge</button><button type="button" class="btn ${faq?'pri':'sec'} sm" data-act="helptab" data-v="faq" aria-pressed="${faq}">Häufige Fragen (FAQ)</button></div>
+   ${faq?`<div class="help-faq">${FAQ.map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>`:`<p class="muted">Was möchtest du tun? Wähle ein Thema. Wir zeigen dir die echten Buttons und begleiten dich Schritt für Schritt. Du kannst jederzeit aufhören.</p>
+    <ul class="tour-list help-guides">${Object.entries(GUIDES).filter(([id])=>(id!=='taste'||!S.me.managed)&&(id!=='share'||S.me.wishes.length>0)).map(([id,g])=>`<li><button type="button" class="help-choice" data-act="guidestart" data-id="${id}"><span class="tour-ic">${ic(g.icon)}</span><span>${esc(g.title)}<small>${g.steps.length} Schritte</small></span>${ic('arrow','sm')}</button></li>`).join('')}</ul>`}
   </div></div>`;
 }

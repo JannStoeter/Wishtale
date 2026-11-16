@@ -62,3 +62,12 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: unverändert.
 - Zurücknehmen: Ankündigungscommit mit git revert zurücknehmen.
 - Offen: Implementierung und Bedienprüfung folgen.
+
+## 2026-11-16 · 093 · Geführte Hilfe und direkte Profil-Einstiege
+- Auftrag: Jann: auswählbare Klicktouren, klickbarer nächster Profil-Schritt, FAQ.
+- Geändert: Freiwillige Themenauswahl statt Text-Rundgang; Hilfe hebt die echten Ziele hervor, folgt passenden Klicks und endet vor Eingaben, Speicherung oder Versand. Abbrechen und Escape lassen Formulare unberührt. FAQ in Hilfe und direkt im Avatar-Menü. Profilfortschritt ordnet Hinweise stabilen Zielschlüsseln zu; Klick öffnet Auswahl oder Dialog und fokussiert das Feld.
+- Warum: Wünsche und persönliches Profil ohne Suchwege einrichten können.
+- Geprüft: ESLint und Build; Node-Modulprüfungen mit Vite-env-Adapter für Profilziele, 100%-Zustand, Klickfolgen, falsche Klicks, leere Liste, Kind-Kontext, FAQ-Inhalte und Meter-Aktion. Vor-Push-Sichtprüfung lokal weiterhin nicht möglich; echte Bedienprüfung im Cloud-Browser folgt nach Deploy. 390 px ungeprüft.
+- Datenbank und Dienste: unverändert, keine neuen Pakete, Ereignisse oder Browser-Speichereinträge; die Führung liegt nur im flüchtigen UI-Zustand.
+- Zurücknehmen: Diesen Implementierungscommit mit git revert zurücknehmen.
+- Offen: Live-Bedienprüfung und Abschlussdokumentation folgen.
