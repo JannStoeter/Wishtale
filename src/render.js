@@ -15,6 +15,7 @@ import { Geschmack } from './views/taste.js';
 import { Mitverwalten } from './views/comember.js';
 import { peekCoInvite, validCode as validCo, managersOf } from './lib/coparent.js';
 import { loadAnswers } from './lib/cards.js';
+import { loadTastePrompt } from './lib/taste-prompt.js';
 import { Plan } from './views/plan.js';
 import { loadPlan } from './lib/plan.js';
 import { Gast } from './views/giver.js';
@@ -59,6 +60,7 @@ export function render(top){
   if((v==='profil'||v==='wuensche')&&S.ui.preview&&S.auth.user&&S.me.handle)loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.view===v&&S.ui.preview&&!S.ui.modal)render()});
   if(v==='plan'&&S.auth.user)loadPlan(()=>{if(S.ui.view==='plan'&&!S.ui.modal)render()});
   const body=VIEWS[v]();
+  if(v==='wuensche'&&!S.ui.preview)loadTastePrompt().then(fresh=>{if(fresh&&S.ui.view==='wuensche'&&!S.ui.modal)render()}).catch(()=>{});
   if(v==='login'||v==='recovery'||v==='einladung'||v==='mitverwalten'){
     $('#app').innerHTML=LoginHeader()+`<main id="main" class="appmain">${body}</main>`+LegalFoot();
     window.scrollTo(0,0);

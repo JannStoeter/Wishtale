@@ -19,6 +19,7 @@ import { createCoInvite, revokeCoInvites, removeMember, acceptCoInvite, coLink, 
 import { managersOf } from './lib/coparent.js';
 import { loadMine } from './lib/remote.js';
 import { buildRound, saveAnswer, removeAnswer, resetAnswers } from './lib/cards.js';
+import { dismissTastePrompt } from './lib/taste-prompt.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
@@ -189,6 +190,7 @@ const A={
  coaccept(){const c=S.ui.co;if(!c||c.busy)return;c.busy=true;c.error='';render(true);
   acceptCoInvite(c.code).then(async r=>{await loadMine(S.auth.user);const k=sharedKey(r.kid);S.ui.co=null;S.ui.mgm={};if(k)switchTo(k);location.hash='#wuensche';render(true);toast(`Du verwaltest jetzt gemeinsam mit ${r.from} das Wishtale von ${r.kid}.`)}).catch(e=>{c.busy=false;c.error=e.message;render(true)})},
  cologin(el){const c=S.ui.co;if(c)saveCode(c.code);location.hash='#'+(el.dataset.to||'anmelden')},
+ tasteprompthide(){dismissTastePrompt().then(ok=>{if(!ok)toast('Der Hinweis konnte nicht dauerhaft ausgeblendet werden.');render();document.querySelector('[data-act="share"]')?.focus({preventScroll:true})});render()},
  cardcat(el){const c=S.ui.cards;if(c){c.cat=el.dataset.v;render()}},
  cardstart(){const c=S.ui.cards;if(!c)return;c.round=buildRound(c.cat);c.i=0;c.done=0;c.owned=false;c.hist=[];render();setTimeout(()=>document.getElementById('card-h')?.focus({preventScroll:true}),30)},
  cardmore(){A.cardstart()},

@@ -1132,3 +1132,6 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .pstage .sscenes::after{display:none}
 @media(min-width:900px){.ptabs{flex-wrap:nowrap}}
 @media(max-width:480px){.pstage .stab{padding:6px 10px;font-size:12.5px}.pstage .stab i{width:18px;height:18px}}
+.tasteprompt{align-items:flex-start;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.tasteprompt>div{min-width:0;flex:1}.tasteprompt p{margin:0;overflow-wrap:anywhere}
+.tasteprompt .row{flex-wrap:wrap;gap:8px 20px;margin-top:6px}.tasteprompt button{min-height:44px}
