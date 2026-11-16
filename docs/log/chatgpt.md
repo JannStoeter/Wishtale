@@ -31,3 +31,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Keine Änderungen, keine Pakete; keine Migration erforderlich.
 - Zurücknehmen: git revert 8d70841; Abschlussdokumentation bei Bedarf ebenfalls zurücknehmen.
 - Offen: Echte angemeldete Empfehlungen, deren Bedienung und mobile 390-px-Ansicht konnten nicht visuell geprüft werden. PR 16 / 089 ist unabhängig. Claude ergänzt beim Abgleich den Datenbankeintrag der Dev-Seite.
+
+## 2026-11-16 · 092 · Nachbesserung angekündigt
+- Auftrag: Jann möchte eine bleibende Zeile „Deine Vorschau“ mit Auge zum Aus- und Einblenden.
+- Geändert: Bauankündigung wieder in Arbeit.
+- Geprüft: ESLint und Build vor Push; noch keine UI-Änderung.
+- Datenbank und Dienste: unverändert.
+- Offen: Umsetzung folgt im nächsten Commit.
