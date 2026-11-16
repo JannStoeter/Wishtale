@@ -2,7 +2,7 @@ import { S } from '../state.js';
 import { esc, ic, money } from '../lib/util.js';
 import { WishCard, WishRow } from './card.js';
 import { V, cat, occL, PRIO } from '../data/content.js';
-import { AppPromo } from './inspiration.js';
+import { AppPromo, HomeIdeas } from './inspiration.js';
 import { completeness } from '../lib/tale.js';
 import { viaName } from '../lib/invite.js';
 import { GuestPage } from './giver.js';
@@ -73,6 +73,7 @@ export function Wuensche(){
       ctx:'own'
     })).join('')||`<p class="muted" style="font-size:16px">Dein erster Wunsch wartet schon auf dich. Schreib ihn auf, füge einen Link ein oder lies eine ganze Liste ein, und Wishtale macht den Rest.</p>`}</div>
    <p class="surprise">${ic('lock','sm')}<span>${note}</span></p>
+   ${HomeIdeas()}
    <details class="tips"><summary>Tipps zu deiner Wunschliste</summary><p class="muted">Du musst nicht jedes Produkt kennen. Schreib zum Beispiel „Hochwertige Pfanne bis 100 €“, dann suchen wir für deine Freunde passende Vorschläge heraus. Auch ohne Link finden wir bei Amazon etwas Passendes.</p></details>
    ${TasteHint()}
    ${Steps(m)||Nudge(m)}

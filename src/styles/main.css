@@ -1132,3 +1132,18 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .pstage .sscenes::after{display:none}
 @media(min-width:900px){.ptabs{flex-wrap:nowrap}}
 @media(max-width:480px){.pstage .stab{padding:6px 10px;font-size:12.5px}.pstage .stab i{width:18px;height:18px}}
+
+/* 092: eigene Vorschläge folgen den Wünschen; mobil eine ruhige Liste. */
+.homeideas{margin:28px 0;padding-top:24px;border-top:1px solid var(--line,#dcd4c5)}
+.homeideas-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.homeideas-head h2{margin:4px 0 8px}
+.homeideas-head button{min-height:44px;flex-shrink:0}
+.homeideas-list.psec{padding:0;border:0;background:transparent;margin-top:16px}
+.homeideas .rec{min-width:0;overflow-wrap:anywhere}
+@media(max-width:719px){
+ .homeideas .recs.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+ .homeideas .rec{border-radius:0;border-width:0 0 1px;padding:16px 0;box-shadow:none;background:transparent}
+ .homeideas .rec .row{flex-wrap:wrap}
+ .homeideas .rec .btn{min-height:44px;white-space:normal;text-align:center;max-width:100%}
+ .homeideas-head{flex-wrap:wrap}
+}

@@ -4,6 +4,7 @@
  */
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
+import { homeIdeasVisible } from '../lib/homeideas.js';
 import { inspirationOn } from '../lib/flags.js';
 
 /** Ein Eintrag. `go` wechselt die Ansicht (optional zu einem Abschnitt), `do` ruft eine vorhandene Aktion auf. */
@@ -26,7 +27,7 @@ export function Menu() {
     <button class="sheet-x mclose" data-act="menuclose" aria-label="Menü schließen">×</button></div>
    <nav aria-label="Menü">
     ${g('Mein Wishtale', item('star', 'Meine Wünsche', go('wuensche'), v === 'wuensche') + item('user', 'Profil und Persönlichkeit', go('profil'), v === 'profil') + item('globe', 'Social Media', go('profil', 'social'), false, 'Pinterest und Instagram') + item('clock', 'Historie und Meine Geschenke', go('historie'), v === 'historie'))}
-    ${g('Für dich', item('spark', 'Geschmack schärfen', go('geschmack'), v === 'geschmack', 'Karten, die Wishtale dich besser kennenlernen lassen') + (inspirationOn() ? item('gift', 'Inspiration', go('entdecken'), v === 'entdecken', 'Ideen von Wishtale für dich') : ''))}
+    ${g('Für dich', (u ? item('eye', homeIdeasVisible() ? 'Vorschläge auf der Wunschliste ausblenden' : 'Vorschläge auf der Wunschliste einblenden', dd('homeideastoggle'), false) : '') + item('spark', 'Geschmack schärfen', go('geschmack'), v === 'geschmack', 'Karten, die Wishtale dich besser kennenlernen lassen') + (inspirationOn() ? item('gift', 'Inspiration', go('entdecken'), v === 'entdecken', 'Ideen von Wishtale für dich') : ''))}
     ${g('Meine Profile', mine)}
     ${g('Organisation', item('link', 'Link teilen', dd('share'), false) + item('eye', 'Wer sieht was', go('profil', 'vis'), false, 'Sichtbarkeit im Profil') + (u ? item('bag', 'Mein Plan', go('plan'), v === 'plan') + item('lock', 'Einstellungen und Konto', dd('modal', 'data-v="accounts"'), false, 'Passwort, Konto löschen') + item('back', 'Abmelden', dd('logout'), false) : item('arrow', 'Eigenes Wishtale anlegen', dd('exitdemo'), false)))}
    </nav></aside></div>`;

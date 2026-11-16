@@ -6,7 +6,7 @@ import { devMode } from '../lib/flags.js';
 export function Header(v){
   const sync=S.auth.user?`<span id="syncst" class="syncst" data-state="${S.auth.sync}">${{saving:'Speichert …',saved:'Gespeichert',error:'Nicht gespeichert'}[S.auth.sync]||''}</span>`:'<span class="syncst" data-state="demo">Demo</span>';
   return `<header class="hdr"><div class="wrap">
-   <a class="mark" href="../" aria-label="wishtale, zur Startseite">wishtale<i></i></a>${devMode()?'<span class="pill gold devbadge" title="Entwicklermodus: ausgeblendete Bereiche sind sichtbar">Entwicklermodus</span>':''}
+   <a class="mark" href="#wuensche" data-act="go" data-v="wuensche" data-home="1" aria-label="Wishtale, zu meiner Wunschliste">wishtale<i></i></a>${devMode()?'<span class="pill gold devbadge" title="Entwicklermodus: ausgeblendete Bereiche sind sichtbar">Entwicklermodus</span>':''}
    <div class="right">${sync}<button class="btn ghost sm helpbtn" data-act="modal" data-v="tour" aria-label="Kurzer Rundgang">${ic('help','sm')}<span>Kurzer Rundgang</span></button>${AcctBtn()}</div>
   </div></header>`;
 }
@@ -21,7 +21,7 @@ export const VisPill=(k,btn)=>{const x=V[k];return btn?`<button class="pill pill
 /* Kopfzeile für Gäste: nur Logo und der Einstieg in ein eigenes Wishtale. */
 export function GuestHeader(){
   return `<header class="hdr"><div class="wrap">
-   <a class="mark" href="../" aria-label="wishtale, zur Startseite">wishtale<i></i></a>
+   ${S.auth.user?`<a class="mark" href="#wuensche" data-act="go" data-v="wuensche" data-home="1" aria-label="Wishtale, zu meiner Wunschliste">wishtale<i></i></a>`:'<a class="mark" href="../" aria-label="wishtale, zur Startseite">wishtale<i></i></a>'}
    <div class="right">${S.given.length?`<button class="btn ghost sm" data-act="modal" data-v="given">Meine Geschenke (${S.given.length})</button>`:''}${S.auth.user?'':'<a class="btn ghost sm" href="#anmelden">Anmelden</a>'}${S.auth.user?AcctBtn():'<a class="btn pri sm" href="#start">Wishtale erstellen</a>'}</div>
   </div></header>`;
 }

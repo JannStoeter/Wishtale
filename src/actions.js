@@ -8,6 +8,7 @@ import { parseAmazonInput, searchUrl, normUrl } from './lib/shops.js';
 import { parsePinterest, parseInstagram, givePinConsent, revokePinConsent } from './lib/social.js';
 import { sb } from './lib/supabase.js';
 import { inspectLink, priceField, summary } from './lib/inspect.js';
+import { homeIdeasVisible, setHomeIdeasVisible } from './lib/homeideas.js';
 import { hidePromo } from './views/inspiration.js';
 import { track } from './lib/track.js';
 import { saveGift, removeGift } from './lib/given.js';
@@ -207,9 +208,9 @@ const A={
  menu(){S.ui.menu=!S.ui.menu;render()},
  menuclose(){S.ui.menu=false;render();document.querySelector('.acctbtn')?.focus({preventScroll:true})},
  menuclosebg(el,e){if(e.target===el)A.menuclose()},
- mgo(el){const v=el.dataset.v;S.ui.menu=false;S.ui.scrollTo=el.dataset.to||'';if(v==='profil'&&el.dataset.to==='vis')S.ui.scrollTo='';if(location.hash==='#'+v){render(true)}else location.hash='#'+v},
+ mgo(el){const v=el.dataset.v;if(el.dataset.home){S.ui.preview=false;S.ui.menu=false;}S.ui.menu=false;S.ui.scrollTo=el.dataset.to||'';if(v==='profil'&&el.dataset.to==='vis')S.ui.scrollTo='';if(location.hash==='#'+v){render(true)}else location.hash='#'+v},
  mdo(el,e){S.ui.menu=false;const f=A[el.dataset.do];if(f)f(el,e);else render()},
- go(el){const v=el.dataset.v;if(v==='start')S.ui.step=0;location.hash='#'+v;if(location.hash==='#'+v&&S.ui.view===v)render(true)},
+ go(el){const v=el.dataset.v;if(el.dataset.home){S.ui.preview=false;S.ui.menu=false;}if(v==='start')S.ui.step=0;location.hash='#'+v;if(location.hash==='#'+v&&S.ui.view===v)render(true)},
  pick(el){const k=el.dataset.k,v=el.dataset.v,a=S.me[k],i=a.indexOf(v);i>-1?a.splice(i,1):a.push(v);render()},
  next(){
   if(S.ui.view==='start'&&S.ui.step===1&&!S.auth.user)track('choice',{label:'profile',once:true,path:'/app/'});
@@ -456,6 +457,8 @@ async readlink(){
   const o=['','ja','teils','nein'];saveGift({id:g.id,reaction:o[(o.indexOf(g.reaction||'')+1)%4]||null}).then(()=>render());
  },
  givendel(el){if(confirm('Dieses Geschenk aus deiner Liste entfernen?'))removeGift(el.dataset.id).then(()=>render())},
+ homeideashide(){setHomeIdeasVisible(false);render();toast('Vorschläge ausgeblendet. Im Menü kannst du sie wieder einblenden.');document.querySelector('.acctbtn')?.focus({preventScroll:true})},
+ homeideastoggle(){const show=!homeIdeasVisible();setHomeIdeasVisible(show);render();toast(show?'Vorschläge auf deiner Wunschliste eingeblendet.':'Vorschläge auf deiner Wunschliste ausgeblendet.');document.querySelector('.acctbtn')?.focus({preventScroll:true})},
  promohide(el){hidePromo(el.dataset.id);render()},
  pinrevoke(){revokePinConsent();location.reload()},
  delacct(){

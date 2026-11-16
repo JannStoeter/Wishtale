@@ -12,6 +12,7 @@ import { money } from '../lib/util.js';
 import { searchUrl } from '../lib/shops.js';
 import { ideasOf, aiStatus, skey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
+import { homeIdeasVisible } from '../lib/homeideas.js';
 import { PriceFilter } from './giver.js';
 
 const REL='noopener noreferrer sponsored nofollow';
@@ -75,15 +76,27 @@ function Promo(){
 
 const AI_REL='noopener noreferrer sponsored nofollow';
 /* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto. */
-function AiSelf(){
+function AiSelf(home=false){
   const h=S.me.handle;if(!h||!S.auth.user)return '';
   const list=ideasOf(skey(h));if(!list.length)return '';
-  return `<section class="psec" style="margin-bottom:18px"><p class="eyebrow">Vorschläge von Wishtale</p><h3 aria-level="2">Ideen, die zu dir passen</h3>
-   <p class="muted" style="font-size:14.5px;margin:6px 0 12px">Wishtale schreibt sie nach dem, was du über dich angegeben hast. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.</p>
+  return `<section class="psec${home?' homeideas-list':''}" style="margin-bottom:18px">${home?'':'<p class="eyebrow">Vorschläge von Wishtale</p><h3 aria-level="2">Ideen, die zu dir passen</h3>'}
+   ${home?'':'<p class="muted" style="font-size:14.5px;margin:6px 0 12px">Wishtale schreibt sie nach dem, was du über dich angegeben hast. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.</p>'}
    ${thinProfile(S.me)?`<p class="thinnote">${ic('spark','sm')}<span>Dein Profil ist noch recht leer, darum sind diese Ideen noch allgemein. Wenn du ein paar Interessen und Lieblingsmarken ergänzt, werden sie spürbar persönlicher. <a href="#profil" class="linkbtn">Profil ergänzen</a></span></p>`:''}
    <div class="recs grid">${list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
     <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${i.to?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`}</span>`:''}</div>
     <div class="row" style="margin-top:8px"><button class="btn pri sm" data-act="aiadd" data-t="${esc(i.t)}">Auf meine Wunschliste</button><a class="btn amz sm" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon ansehen (Anzeige)'}</a><button class="btn ghost sm" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="btn ghost sm" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></div></article>`).join('')}</div></section>`;
+}
+
+/** Eigene Empfehlungen unter den Wünschen, niemals Reservierungsdaten oder Gast-Cache. */
+export function HomeIdeas(){
+  if(!S.auth.user||!S.me.handle||!homeIdeasVisible())return '';
+  const st=aiStatus(skey(S.me.handle));
+  return `<section class="homeideas" aria-labelledby="homeideas-h">
+   <div class="homeideas-head"><div><p class="eyebrow">Vorschläge von Wishtale</p><h2 id="homeideas-h">Das könnte dir gefallen</h2></div><button class="btn ghost sm" data-act="homeideashide">Ausblenden<span class="vh">: Vorschläge auf deiner Wunschliste</span></button></div>
+   <p class="muted">Deinen Freunden zeigen wir ähnliche Vorschläge. Welche sie auswählen, bleibt eine Überraschung.</p>
+   ${st==='loading'||st==='none'?AiLoading('Deine individuellen Empfehlungen werden erstellt …'):st==='empty'?'<p class="muted">Gerade sind keine weiteren Vorschläge da. Mit deinen Interessen und den Geschmackskarten lernt Wishtale dich besser kennen.</p>':AiSelf(true)}
+   ${st==='ready'?'<p class="disc"><b>Anzeige:</b> Links zu Amazon sind Partnerlinks. Als Amazon-Partner verdiene ich an qualifizierten Verkäufen. Preise sind Richtwerte und können abweichen.</p>':''}
+  </section>`;
 }
 
 export function Entdecken(){

@@ -9,6 +9,7 @@ import { Start, Profil } from './views/profile.js';
 import { Wuensche } from './views/wishes.js';
 import { Historie } from './views/history.js';
 import { Entdecken } from './views/inspiration.js';
+import { homeIdeasVisible } from './lib/homeideas.js';
 import { inspirationOn } from './lib/flags.js';
 import { Menu } from './views/menu.js';
 import { Geschmack } from './views/taste.js';
@@ -47,7 +48,7 @@ export function render(top){
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
   // Vorladen: Gast-Ideen und eigene Inspiration im Hintergrund holen, damit sie beim Öffnen schon da sind (der Server antwortet bei unverändertem Profil aus dem Zwischenspeicher).
-  if(S.auth.user&&S.me.handle&&v!=='gast'){if(v!=='entdecken'&&inspirationOn())loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()})}
+  if(S.auth.user&&S.me.handle&&v!=='gast'){if(v!=='entdecken'&&inspirationOn()&&(v!=='wuensche'||(!S.ui.preview&&homeIdeasVisible())))loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if((S.ui.view==='entdecken'||(S.ui.view==='wuensche'&&!S.ui.preview&&homeIdeasVisible()))&&!S.ui.modal)render()})}
   if((v==='geschmack'||v==='wuensche')&&S.auth.user&&S.me.dbId&&!S.me.managed)loadAnswers().then(fresh=>{if(fresh&&S.ui.view===v&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()}).catch(()=>{});
   if(v==='geschmack'&&!S.auth.user)loadAnswers().then(fresh=>{if(fresh&&S.ui.view==='geschmack')render()}).catch(()=>{});
   if(v==='profil'&&S.auth.user&&S.me.managed&&S.me.dbId){S.ui.mgm=S.ui.mgm||{};if(!S.ui.mgm[S.me.dbId]){const id=S.me.dbId;S.ui.mgm[id]={loading:true};managersOf(id).then(d=>{S.ui.mgm[id]={data:d};if(S.ui.view==='profil'&&!S.ui.modal)render()}).catch(()=>{S.ui.mgm[id]={data:null};})}}
@@ -55,7 +56,7 @@ export function render(top){
   {const own=v==='wuensche'&&S.auth.user&&S.me.handle,gp=v==='gast'?guestPerson():null,p=own?S.me:gp&&gp.remote&&gp.handle?gp:null;
    if(p)p.wishes.filter(w=>(w.status==='offen')&&!w.link&&!w.noSuggest&&(w.kind==='produkt'||w.kind==='kategorie')&&!isSpecific(w)&&/^[0-9a-f-]{36}$/i.test(String(w.id))).slice(0,12)
     .forEach(w=>loadIdeas('wish:'+w.id,{h:p.handle,mode:'wish',w:w.id,t:w.t.slice(0,80)},()=>{if(S.ui.view===v&&!S.ui.modal)render()}));}
-  if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if(S.ui.view==='entdecken'&&!S.ui.modal)render()});
+  if(v==='entdecken'&&S.auth.user&&S.me.handle)loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if((S.ui.view==='entdecken'||(S.ui.view==='wuensche'&&!S.ui.preview&&homeIdeasVisible()))&&!S.ui.modal)render()});
   if((v==='profil'||v==='wuensche')&&S.ui.preview&&S.auth.user&&S.me.handle)loadIdeas(gkey(S.me.handle),{h:S.me.handle},()=>{if(S.ui.view===v&&S.ui.preview&&!S.ui.modal)render()});
   if(v==='plan'&&S.auth.user)loadPlan(()=>{if(S.ui.view==='plan'&&!S.ui.modal)render()});
   const body=VIEWS[v]();

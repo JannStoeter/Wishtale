@@ -11,3 +11,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: unverändert.
 - Zurücknehmen: Ankündigungscommit mit git revert zurücknehmen.
 - Offen: Implementierung und Ansichtsprüfung folgen.
+
+## 2026-11-16 · 092 · Hauptansicht umgesetzt
+- Commits: dieser Implementierungscommit auf main; Ankündigung `98b99bd`.
+- Auftrag: Von Jann freigegebene eigene Vorschläge unter den Wünschen und Logo als Heimweg.
+- Geändert: Wiederverwendung der eigenen Ideenansicht, Lade-/Leerzustand, mobile Liste, Anzeige-Kennzeichnung. Ausblenden und im Avatar-Menü wieder einschalten, getrennt je Profil im Browser. Karten und TasteHint bleiben. App-Logo führt zur Wunschliste und beendet die Vorschau; Gast ohne Login behält den Landingpage-Link.
+- Warum: Wünsche und passende Ideen gemeinsam zugänglich machen, ohne die Geschenkauswahl offenzulegen. Keine Gast-Ideen oder Reservierungen in der eigenen Empfehlungsansicht.
+- Geprüft: ESLint, Produktionsbuild; Node-Prüfung mit lokalem Vite-env-Adapter: Profiltrennung der Präferenz, ungültiger Speicher, eigener statt Gast-Cache, Ausblenden und Logo-Ziele. Lokaler Browserstart ist in dieser Umgebung gesperrt; visuelle Prüfung bei 390 px und Desktop sowie realer eingeloggter Ablauf vor Push nicht möglich. Prüfung der öffentlichen Produktion folgt.
+- Datenbank und Dienste: Keine Änderungen oder neuen Pakete; nur lokale Anzeigepräferenz, in Datenschutz Abschnitt 7 ergänzt. Bestehende Ideen-API und deren Datenschutz gelten weiter.
+- Zurücknehmen: Implementierungscommit mit git revert zurücknehmen.
+- Offen: Geschmackskarten selbst unverändert; PR 16 / Tribunal 089 wird nicht mit übernommen. Subdomain zurückgestellt. Deploy und Liveprüfung folgen; Datenbank-Dev-Eintrag beim Claude-Abgleich.
