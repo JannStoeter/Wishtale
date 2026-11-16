@@ -79,3 +79,12 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: unverändert, keine neuen Pakete oder gespeicherten Daten. Keine Zugangsdaten dokumentiert. Lediglich vorhandene Ansichten und die bestehende Vorschau-Checkliste im Demokonto bedient.
 - Zurücknehmen: git revert 94b11c1 und diesen Abschlusscommit, in umgekehrter Reihenfolge.
 - Offen: 390 px, echter Safari und Screenreader ungeprüft; Claude ergänzt beim Abgleich den Dev-Datenbankeintrag.
+
+## 2026-11-16 · 093/092 · Sichtprüfung bei exakt 390 CSS-Pixeln
+- Auftrag: Jann: „Führe bitte die Sichtprüfung bei 390px durch“.
+- Geändert: Nur Prüfnachweise in den Urteilen 093 und 092 sowie dieses Log, kein Website-Code.
+- Geprüft: Produktionsstand 46483ef im angemeldeten Demokonto. Cloud-Chromium tatsächlich auf innerWidth 390 / innerHeight 742 CSS-Pixel, 125 % Browserzoom und normale Seitenleiste; gemessen DPR 1,25, ca. 378 px Inhaltsbreite wegen Desktop-Scrollbalken. DevTools-Geräteemulation war per Organisationsrichtlinie gesperrt und blieb gesperrt. Alle fünf Touren bis Ziel, Modal/Fotoauswahl, Menüziel, Karten-Themen und Teilen-Button ohne Zielüberdeckung oder seitlichen Überlauf. FAQ lesbar und aufklappbar; Profiltipp setzt Fokus auf sichtbares #about im unvollständigen Kind-Demoprofil. Vorschauzeile und Auge einzeilig, Augenbutton ca. 45,6 × 44 px, beide Richtungen funktionieren. Keine Inhalte gespeichert, Dateien hochgeladen, Karten bewertet oder Links geteilt. ESLint und Build vor Dokumentationspush.
+- Befund: P3, FAQ-Schließen-Kopfzeile scrollt aus dem Sichtbereich. Sticky-Kopfzeile als Verbesserung vorgeschlagen, kein Funktionsblocker, nicht geändert.
+- Datenbank und Dienste: unverändert, keine Pakete oder neue Datenverarbeitung.
+- Zurücknehmen: Diesen reinen Dokumentationscommit mit git revert zurücknehmen.
+- Offen: Echter iPhone-/Safari-Test einschließlich Touch, VoiceOver und Bildschirmtastatur bleibt ausstehend. 390-px-Layoutprüfung ist erledigt.

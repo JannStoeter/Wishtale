@@ -15,3 +15,5 @@ Geprüft: ESLint und Produktionsbuild, gezielte Modulprüfungen mit Vite-env-Ada
 Umgesetzt mit `e7c27fbc6e364cbb9a1e9e33c027c15aaeedeff6`: „Deine Vorschau“ und Augen-Umschalter bleiben immer stehen, nur der Inhalt verschwindet. Offenes Auge blendet ein, durchgestrichenes Auge blendet aus. Tastaturbedienbarer Button mit Zustand und Bezug zum Inhalt, gleiche bestehende Anzeigepräferenz.
 
 Erfolgreich im angemeldeten Demokonto über den Cloud-Browser geprüft: ausblenden, bleibende Zeile mit Einblend-Button, Neuladen ausgeblendet, wieder einblenden, Neuladen eingeblendet. Desktop 1363 px ohne horizontalen Überlauf; Button 46 × 44 px, Titel und Auge in derselben Zeile. Produktionsdeploy READY. ESLint, Build und Modulprüfungen erfolgreich. 390 px bleibt ungeprüft, da keine Größensteuerung im Cloud-Browser verfügbar. Zugangsdaten nicht dokumentiert.
+
+Nachprüfung 16.11.2026: Vorschauzeile bei gemessenen 390 × 742 CSS-Pixeln im angemeldeten Cloud-Chromium geprüft: Titel und Augenbutton in einer Zeile, 45,6 × 44 px Touchfläche, Aus- und Einblenden erfolgreich, kein horizontaler Überlauf. Methode und Grenzen stehen im Urteil 093.
