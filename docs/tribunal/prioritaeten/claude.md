@@ -37,3 +37,4 @@ Skala: 1 = jetzt, 2 = als Nächstes, 3 = später, 4 = Backlog. Maßstab: Was sch
 - 047: 2 | Gäste sind der Weg zu Reservierungen und Partnerumsatz, die Wünsche gehören auf den ersten Bildschirm, wenig Aufwand.
 - 050: 1 | Betrifft jede Anmeldung und passt die App an die Gastansicht an, wenig Aufwand.
 - 055: 2 | Hilft neuen Konten beim Start, wenig Aufwand, aber nach dem Launch-Kram.
+- 095: 2 | Installierbare Web-App ist schnell und kostenlos, Store-Fassung erst nach Klärung des Plus-Plans
