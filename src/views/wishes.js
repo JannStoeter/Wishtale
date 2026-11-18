@@ -8,6 +8,7 @@ import { viaName } from '../lib/invite.js';
 import { GuestPage } from './giver.js';
 import { TasteHint } from './taste.js';
 import { Steps } from './steps.js';
+import { AppHint } from './appinstall.js';
 
 /** Freundlicher Hinweis, solange das Profil noch dünn ist. Verschwindet für eine Woche, wenn man „Später“ wählt. */
 function Nudge(m){
@@ -74,6 +75,7 @@ export function Wuensche(){
     })).join('')||`<p class="muted" style="font-size:16px">Dein erster Wunsch wartet schon auf dich. Schreib ihn auf, füge einen Link ein oder lies eine ganze Liste ein, und Wishtale macht den Rest.</p>`}</div>
    <p class="surprise">${ic('lock','sm')}<span>${note}</span></p>
    ${HomeIdeas()}
+   ${AppHint(open)}
    <details class="tips"><summary>Tipps zu deiner Wunschliste</summary><p class="muted">Du musst nicht jedes Produkt kennen. Schreib zum Beispiel „Hochwertige Pfanne bis 100 €“, dann suchen wir für deine Freunde passende Vorschläge heraus. Auch ohne Link finden wir bei Amazon etwas Passendes.</p></details>
    ${TasteHint()}
    ${Steps(m)||Nudge(m)}

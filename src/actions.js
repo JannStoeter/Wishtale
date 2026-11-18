@@ -1,4 +1,6 @@
 import { beginGuide, endGuide, guideClick, guideSubmit, focusGuideTarget, currentGuideStep, syncGuide } from './lib/guide.js';
+import { promptInstall } from './lib/pwa.js';
+import { dismissAppHint } from './views/appinstall.js';
 import { S, W, switchTo, resetState, guestPerson, saveState } from './state.js';
 import { $, toast, kwOf, nid, money, overlap } from './lib/util.js';
 import { CATALOG, PRIO, cat } from './data/content.js';
@@ -477,6 +479,8 @@ async readlink(el,auto){
  },
  givendel(el){if(confirm('Dieses Geschenk aus deiner Liste entfernen?'))removeGift(el.dataset.id).then(()=>render())},
  homeideastoggle(){const show=!homeIdeasVisible();setHomeIdeasVisible(show);render();toast(show?'Die Vorschläge von Wishtale sind eingeblendet.':'Die Vorschläge sind eingeklappt, du kannst sie jederzeit wieder öffnen.');(document.getElementById('homeideas-toggle')||document.querySelector('.acctbtn'))?.focus({preventScroll:true})},
+ apphintx(){dismissAppHint();render();toast('Alles klar. Du findest „Wishtale als App“ jederzeit im Menü.')},
+ async appinstall(){dismissAppHint();S.ui.menu=false;const r=await promptInstall();if(r==='manual'){S.ui.modal='appinstall';render();return}S.ui.modal=null;render();if(r==='accepted')toast('Schön, Wishtale liegt jetzt auf deinem Home-Bildschirm.')},
  promohide(el){hidePromo(el.dataset.id);render()},
  pinrevoke(){revokePinConsent();location.reload()},
  delacct(){

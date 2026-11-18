@@ -1,4 +1,5 @@
 import { ZettelModal } from './zettel.js';
+import { AppInstallModal } from './appinstall.js';
 import { WelcomeModal } from './welcome.js';
 import { InviteModal } from './invite.js';
 import { AboutModal } from './about.js';
@@ -60,6 +61,7 @@ export function Modal(){
   const m=S.ui.modal;if(!m)return '';
   if(m==='welcome')return WelcomeModal();
   if(m==='invite')return InviteModal();
+  if(m==='appinstall')return AppInstallModal();
   if(m==='about')return AboutModal();
   if(m==='tour')return TourModal();
   if(m==='amazon')return AmazonModal();

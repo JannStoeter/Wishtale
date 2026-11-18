@@ -12,9 +12,18 @@ import { adoptInvite } from './lib/invite.js';
 import { route, render } from './render.js';
 import './actions.js';
 import { loadPromo } from './lib/promo.js';
+import { initPwa, takeShare, pendingShare } from './lib/pwa.js';
 import { loadGiven, migrateGiven } from './lib/given.js';
 
+initPwa();
+/** Ein an Wishtale geteilter Link (Android) öffnet nach der Anmeldung den Wunschdialog und wird dort eingelesen. */
+function openShared(){
+  const sh=pendingShare();if(!sh)return;
+  S.ui.modal='wish';S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.prefill=sh.title||'';render();
+  setTimeout(()=>{const l=document.getElementById('wl');if(l&&sh.url){l.value=sh.url;l.dispatchEvent(new Event('change',{bubbles:true}))}S.ui.prefill='';},80);
+}
 async function boot(){
+  takeShare();
   const recoveryLink=/type=recovery/.test(location.hash); // vor getSession merken, Supabase räumt die Adresse danach auf
   loadState(); // Demo-Daten (nur ohne Konto relevant)
   // Verarbeitet auch Login-Links aus E-Mails (Tokens im URL-Fragment), bevor der Router läuft.
@@ -47,6 +56,7 @@ async function boot(){
   if(!session)await loadGiven().catch(()=>{});
   window.addEventListener('hashchange',route);
   route();
+  if(session)openShared();
   /* Kein Willkommens-Rundgang mehr: Der erste Bildschirm ist die Wunschliste mit einem Feld (Feedback der ersten Testerinnen). */
   loadPromo().then(p=>{S.promo=p;if(['entdecken','gast','profil','wuensche'].includes(S.ui.view)&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()});
 
@@ -64,6 +74,7 @@ async function boot(){
         if(cod){const k=sharedKey(cod.kid);if(k)switchTo(k)}
         location.hash='#wuensche';
         route();
+        openShared();
         if(cod)toast(`Du verwaltest jetzt gemeinsam mit ${cod.from} das Wishtale von ${cod.kid}.`);
         else if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
         else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);
