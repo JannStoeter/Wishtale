@@ -21,3 +21,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 094 in tribunal_verdicts
 - Zurücknehmen: git revert 3839b2d
 - Offen: Prüfung auf echtem Gerät; Gast-Ideen (AiIdeas) und Varianten im Wunschdialog haben noch die alte Kartenform
+
+## 2026-11-18 · 095 · Wishtale als installierbare Web-App
+- Commits: dee25e9 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („Baue Stufe 1“), Dev 095
+- Geändert: neu public/app/manifest.webmanifest, public/app/sw.js, public/app/offline.html, public/app/icons/*, scripts/app-icons.mjs, src/lib/pwa.js, src/views/appinstall.js; app/index.html (Manifest, Symbole), src/main.js (Service Worker, Teilen), src/views/menu.js, modals.js, wishes.js, tour.js, src/actions.js, src/styles/main.css, vercel.json (Kopfzeilen für sw.js und Manifest), datenschutz.html Abschnitt 7, CLAUDE.md
+- Warum: Wishtale soll sich wie eine App auf den Home-Bildschirm legen lassen, ohne Store und ohne Gebühren
+- Geprüft: ESLint, Build, Playwright (Installierbarkeit laut Chrome ohne Fehler, Service Worker, Offline-Seite, Teilen, Hinweis, Anleitung iPhone und Android), axe ohne Befund
+- Datenbank und Dienste: Eintrag 095 in tribunal_verdicts
+- Zurücknehmen: git revert dee25e9; installierte Service Worker übernehmen danach die neue Fassung, zum vollständigen Entfernen eine sw.js ausliefern, die sich selbst abmeldet
+- Offen: Test auf echten Geräten; Stufe 2 (Stores)

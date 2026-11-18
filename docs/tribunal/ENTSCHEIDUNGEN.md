@@ -86,6 +86,7 @@ Stand: 2026-11-09
 | 090 | ChatGPT darf programmieren | **Anweisung: nach Konventionen in AGENTS.md, Ankündigung in bau.md, Branch chatgpt/…, Pull Request** | ja, `2bef5b3` |
 | 091 | ChatGPT lädt selbst hoch, mit Log; Zulieferer | **Anweisung: direktes Hochladen nach Regeln in AGENTS.md, Log in docs/log/, weitere Sprachmodelle nur als Zulieferer** | ja, `6acff37` |
 | 094 | Vorschläge ruhiger, am Handy eingeklappt, Link mit einem „Passt“ | **Jann im Chat:** Eigene Vorschläge am Handy standardmäßig eingeklappt mit leisem Hinweis zum Öffnen, Karten mit kurzer Begründung und leisen Textknöpfen statt großer Buttons, doppeltes Einlesen des Links behoben. Ändert die Kopfzeile aus 092. | ja, `3839b2d` |
+| 095 | Wishtale als App | **Jann im Chat: Stufe 1 bauen.** Installierbare Web-App mit Manifest, Service Worker, Offline-Seite, Menüpunkt und Hinweis, Teilen an Wishtale auf Android. Stores (Stufe 2) offen bis Plus-Plan und Kaufwege geklärt. | ja, `dee25e9` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
