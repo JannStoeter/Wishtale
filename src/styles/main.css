@@ -1200,3 +1200,91 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .apphint-go span{text-decoration:underline;text-decoration-color:color-mix(in srgb,currentColor 35%,transparent);text-underline-offset:3px}
 .apphint-x{min-width:44px;background:none;border:0;font-size:22px;color:var(--muted);cursor:pointer}
 .apphint-go:focus-visible,.apphint-x:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:6px}
+
+/* 096: nachgebauter iPhone-Bildschirm mit tippendem Finger für „Zum Home-Bildschirm“. */
+.appnote{background:color-mix(in srgb,var(--gold) 14%,transparent);border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:14.5px}
+.appdemo{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:560px){.appdemo{grid-template-columns:minmax(0,1fr);justify-items:center;gap:14px}}
+.appdemo-side{min-width:0;width:100%}
+.appsteps.ios{counter-reset:s;list-style:none;padding:0;gap:6px}
+.appsteps.ios li{counter-increment:s;position:relative;padding:8px 10px 8px 40px;border-radius:10px;color:var(--muted);font-size:14.5px;line-height:1.4;transition:background .25s,color .25s}
+.appsteps.ios li::before{content:counter(s);position:absolute;left:10px;top:8px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12.5px;font-weight:700;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink)}
+.appsteps.ios li.on{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.appsteps.ios li.on::before{background:var(--accent);color:var(--accent-ink)}
+.appdemo-ctl{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}
+.appdemo-pos{font-size:12.5px;margin:2px 0 0}
+.iosdemo{--w:200px;flex:none}
+.ip-phone{position:relative;width:200px;height:412px;border-radius:38px;background:#141414;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.ip-island{position:absolute;top:16px;left:50%;width:62px;height:18px;margin-left:-31px;border-radius:12px;background:#141414;z-index:5}
+.ip-screen{position:relative;width:184px;height:396px;border-radius:30px;overflow:hidden;background:#F3EDE2;font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;color:#1F1B16}
+.ip-scr{position:absolute;inset:0;opacity:0;transition:opacity .35s}
+.ip-s{position:absolute;inset:0}
+.ip-page{padding:44px 14px 0}
+.ip-mark{font:400 19px/1 "Instrument Serif",Georgia,serif}
+.ip-mark span{color:#B8801F}
+.ip-h{font:400 17px/1.1 "Instrument Serif",Georgia,serif;margin:16px 0 10px}
+.ip-card{height:38px;border-radius:9px;background:#FBF8F1;border:1px solid #DDD3C2;margin-bottom:7px}
+.ip-card.short{width:70%}
+.ip-bar{position:absolute;left:10px;right:10px;bottom:14px;height:40px;display:flex;align-items:center;gap:6px}
+.ip-b{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.92);box-shadow:0 1px 6px rgba(0,0,0,.12);font-size:20px;color:#1F1B16;flex:none}
+.ip-b svg{width:18px;height:18px;fill:currentColor}
+.ip-url{flex:1;height:36px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.92);box-shadow:0 1px 6px rgba(0,0,0,.12);font-size:11.5px}
+.ip-url.old{position:absolute;left:12px;right:12px;bottom:60px;flex:none}
+.ip-bar.old{left:0;right:0;bottom:0;height:52px;background:rgba(250,250,250,.96);justify-content:space-around;padding:0 6px 8px;gap:0}
+.ip-bar.old .ip-b{background:none;box-shadow:none;width:30px;height:30px;font-size:16px;color:#2f6fde}
+.ip-bar.old .ip-share svg{fill:none;color:#2f6fde}
+.ip-dim{position:absolute;inset:0;background:rgba(0,0,0,.22)}
+.ip-menu{position:absolute;right:10px;bottom:62px;width:150px;border-radius:16px;background:rgba(250,250,250,.97);box-shadow:0 6px 24px rgba(0,0,0,.2);overflow:hidden;transform-origin:bottom right;transform:scale(.85);opacity:.4;transition:transform .3s,opacity .3s}
+.ip-mi{display:flex;align-items:center;gap:8px;height:34px;white-space:nowrap;padding:0 12px;font-size:11.5px;border-bottom:1px solid #e8e8e8}
+.ip-mi svg{width:15px;height:15px;fill:none;color:#1F1B16}
+.ip-sheet{position:absolute;left:0;right:0;bottom:0;height:300px;border-radius:22px 22px 0 0;background:#f2f2f6;padding:12px 10px;transform:translateY(60px);transition:transform .35s}
+.ip-sh-head{display:flex;align-items:center;gap:9px;font-size:11.5px}
+.ip-sh-head img,.ip-addrow img{width:34px;height:34px;border-radius:8px}
+.ip-sh-head small,.ip-addrow small{display:block;color:#777;font-size:10px}
+.ip-x{margin-left:auto;width:22px;height:22px;border-radius:50%;background:#e2e2e7;display:grid;place-items:center;color:#666}
+.ip-apps{display:flex;gap:10px;margin:12px 2px 10px}
+.ip-apps i{width:34px;height:34px;border-radius:9px;background:#d9d9df}
+.ip-list{border-radius:12px;background:#fff;overflow:hidden}
+.ip-li{display:flex;justify-content:space-between;align-items:center;height:34px;padding:0 12px;font-size:11.5px;border-bottom:1px solid #ececf0}
+.ip-li span{color:#555;font-size:10px}
+.ip-li svg{width:16px;height:16px}
+.ip-li.on,.ip-mi.on{background:#e9eefc}
+.ip-addscr{background:#f2f2f6}
+.ip-top{display:flex;justify-content:space-between;align-items:center;gap:4px;padding:42px 8px 10px;font-size:9.5px;color:#2f6fde}
+.ip-top b{flex:1;min-width:0;text-align:center;color:#1F1B16;font-size:10px;line-height:1.2}
+.ip-top span{white-space:nowrap}
+.ip-add{font-weight:700}
+.ip-addrow{display:flex;gap:10px;align-items:center;margin:8px 10px;padding:10px;background:#fff;border-radius:12px;font-size:12px}
+.ip-toggle{display:flex;justify-content:space-between;align-items:center;margin:0 10px;padding:10px;background:#fff;border-radius:12px;font-size:11px}
+.ip-toggle i{width:34px;height:20px;border-radius:10px;background:#34c759;position:relative}
+.ip-toggle i::after{content:"";position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.ip-note{font-size:10px;color:#777;margin:8px 14px}
+.ip-home{background:linear-gradient(160deg,#6d8a74,#2E3B2F)}
+.ip-grid{display:grid;grid-template-columns:repeat(4,34px);gap:14px 10px;justify-content:center;padding-top:56px}
+.ip-grid i{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.28)}
+.ip-app{display:grid;justify-items:center;gap:3px;transform:scale(.4);opacity:0;transition:transform .45s .25s cubic-bezier(.3,1.6,.5,1),opacity .3s .25s}
+.ip-app img{width:34px;height:34px;border-radius:9px}
+.ip-app small{color:#fff;font-size:8.5px}
+.ip-finger{position:absolute;left:92px;top:200px;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:rgba(31,27,22,.35);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:left .6s ease,top .6s ease,opacity .3s;z-index:6;pointer-events:none}
+.iosdemo.tap .ip-finger{animation:iptap .5s .75s ease-out}
+@keyframes iptap{0%{transform:scale(1)}40%{transform:scale(.7);background:rgba(31,27,22,.6)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.ip-scr,.ip-finger,.ip-menu,.ip-sheet,.ip-app{transition:none}.iosdemo.tap .ip-finger{animation:none}}
+.iosdemo[data-step="0"] .ip-scr[data-i="0"]{opacity:1}
+.iosdemo[data-step="0"] .ip-scr[data-i="0"] .ip-menu{transform:none;opacity:1}.iosdemo[data-step="0"] .ip-scr[data-i="0"] .ip-sheet{transform:none}.iosdemo[data-step="0"] .ip-scr[data-i="0"] .ip-app{transform:none;opacity:1}
+.iosdemo[data-step="1"] .ip-scr[data-i="1"]{opacity:1}
+.iosdemo[data-step="1"] .ip-scr[data-i="1"] .ip-menu{transform:none;opacity:1}.iosdemo[data-step="1"] .ip-scr[data-i="1"] .ip-sheet{transform:none}.iosdemo[data-step="1"] .ip-scr[data-i="1"] .ip-app{transform:none;opacity:1}
+.iosdemo[data-step="2"] .ip-scr[data-i="2"]{opacity:1}
+.iosdemo[data-step="2"] .ip-scr[data-i="2"] .ip-menu{transform:none;opacity:1}.iosdemo[data-step="2"] .ip-scr[data-i="2"] .ip-sheet{transform:none}.iosdemo[data-step="2"] .ip-scr[data-i="2"] .ip-app{transform:none;opacity:1}
+.iosdemo[data-step="3"] .ip-scr[data-i="3"]{opacity:1}
+.iosdemo[data-step="3"] .ip-scr[data-i="3"] .ip-menu{transform:none;opacity:1}.iosdemo[data-step="3"] .ip-scr[data-i="3"] .ip-sheet{transform:none}.iosdemo[data-step="3"] .ip-scr[data-i="3"] .ip-app{transform:none;opacity:1}
+.iosdemo[data-step="4"] .ip-scr[data-i="4"]{opacity:1}
+.iosdemo[data-step="4"] .ip-scr[data-i="4"] .ip-menu{transform:none;opacity:1}.iosdemo[data-step="4"] .ip-scr[data-i="4"] .ip-sheet{transform:none}.iosdemo[data-step="4"] .ip-scr[data-i="4"] .ip-app{transform:none;opacity:1}
+.iosdemo[data-flow="modern"][data-step="0"] .ip-finger{left:152px;top:361px}
+.iosdemo[data-flow="modern"][data-step="1"] .ip-finger{left:120px;top:219px}
+.iosdemo[data-flow="modern"][data-step="2"] .ip-finger{left:148px;top:292px}
+.iosdemo[data-flow="modern"][data-step="3"] .ip-finger{left:166px;top:84px}
+.iosdemo[data-flow="modern"][data-step="4"] .ip-finger{opacity:0}
+.iosdemo[data-flow="old"][data-step="0"] .ip-finger{left:92px;top:374px}
+.iosdemo[data-flow="old"][data-step="1"] .ip-finger{left:148px;top:292px}
+.iosdemo[data-flow="old"][data-step="2"] .ip-finger{left:166px;top:84px}
+.iosdemo[data-flow="old"][data-step="3"] .ip-finger{opacity:0}
