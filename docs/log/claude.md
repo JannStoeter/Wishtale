@@ -31,3 +31,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 095 in tribunal_verdicts
 - Zurücknehmen: git revert dee25e9; installierte Service Worker übernehmen danach die neue Fassung, zum vollständigen Entfernen eine sw.js ausliefern, die sich selbst abmeldet
 - Offen: Test auf echten Geräten; Stufe 2 (Stores)
+
+## 2026-11-19 · 096 · iPhone-Anleitung als nachgebaute Ansicht
+- Commits: d469667 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („bau es einfach als Ansicht nach, am aktuellen iOS“), Dev 096
+- Geändert: neu src/views/iosdemo.js; src/views/appinstall.js (Ansicht, Steuerung), src/actions.js (demoprev, demonext, demotoggle, Start beim Öffnen), src/styles/main.css, CLAUDE.md
+- Warum: Eine reine Textanleitung ist für wenig geübte Menschen schwer, seit Safari 26 liegt „Teilen“ eine Ebene tiefer
+- Geprüft: ESLint, Build, Playwright mit Safari 26, Safari 18 und Chrome auf dem iPhone, alle Schritte als Bild geprüft, axe ohne Befund
+- Datenbank und Dienste: Eintrag 096 in tribunal_verdicts
+- Zurücknehmen: git revert d469667
+- Offen: Abgleich mit einem echten iPhone, vor allem bei Adressleiste oben
