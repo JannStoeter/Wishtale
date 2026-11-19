@@ -15,25 +15,35 @@ import { searchUrl } from '../lib/shops.js';
 import { RememberNote } from './given.js';
 
 const REL = 'noopener noreferrer sponsored nofollow';
+const words = t => String(t || '').toLowerCase().replace(/[^\p{L}\p{N} ]+/gu, ' ').split(/\s+/).filter(x => x.length > 1);
+/** Gleiches Produkt, wenn fast alle Wörter des kürzeren Namens im längeren vorkommen (verhindert doppelte Karten). */
+export function sameItem(a, b) {
+  const A = words(a), B = words(b); if (!A.length || !B.length) return false;
+  const [s, l] = A.length <= B.length ? [A, new Set(B)] : [B, new Set(A)];
+  return s.filter(x => l.has(x)).length / s.length >= 0.8;
+}
 
 function Offer(pr, w, ctx, role) {
   const guestFree = ctx === 'guest' && !w.res && !w.bought;
   const amazon = pr.host === 'amazon.de' || pr.host.endsWith('.amazon.de');
   const label = amazon ? (pr.direct ? 'Bei Amazon ansehen' : 'Bei Amazon suchen') : `Zu ${esc(pr.host)}`;
   const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === pr.t;
-  return `<div class="offer ${role === 'main' ? 'main' : ''} ${pr.source === 'link' || (pr.source === 'erzeugt' && isSpecific(w) && w.kind === 'produkt') ? '' : 'suggest'} ${chosen ? 'chosen' : ''}">
-   ${role === 'main' && (pr.source === 'link' || pr.source === 'erzeugt') && w.img ? `<span class="otn"><img src="${w.img}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></span>` : pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
+  // Der Wunsch selbst steht schon oben mit Bild und Namen: hier nur noch Preis und Weg zum Shop (098)
+  const self = role === 'main' && (pr.source === 'link' || (pr.source === 'erzeugt' && sameItem(pr.t, w.t)));
+  const quiet = role !== 'main';
+  return `<div class="offer ${role === 'main' ? 'main' : ''} ${self ? 'self' : ''} ${quiet ? 'quiet' : ''} ${pr.source === 'link' || (pr.source === 'erzeugt' && isSpecific(w) && w.kind === 'produkt') ? '' : 'suggest'} ${chosen ? 'chosen' : ''}">
+   ${self ? '' : role === 'main' && (pr.source === 'link' || pr.source === 'erzeugt') && w.img ? `<span class="otn"><img src="${w.img}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></span>` : pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
    <div class="obody">
     <span class="eyebrow">${pr.source === 'link' ? 'Gewünschtes Produkt' : pr.source === 'amz' ? 'Preise bei Amazon vergleichen' : pr.source === 'erzeugt' ? (isSpecific(w) && w.kind === 'produkt' ? 'Gewünschtes Produkt, bei Amazon' : 'Suche nach genau diesem Wunsch') : role === 'main' ? 'Vorschlag von Wishtale' : 'Vorschlag'}</span>
-    <strong class="ot">${esc(pr.t)}</strong>
+    ${self ? '' : `<strong class="ot">${esc(pr.t)}</strong>`}
     ${priceLine(pr)}
     ${(pr.why || []).slice(0, 2).map(t => `<span class="why">${esc(t)}</span>`).join('')}
     ${chosen ? `<span class="chip ok">${ic('check', 'sm')}Deine Wahl</span>` : ''}
    </div>
    <div class="oa">
-    <a class="btn amz sm" href="${pr.url}" target="_blank" rel="${REL}">${label} ${ic('arrow', 'sm')}</a>
+    <a class="${quiet ? 'qa' : 'btn amz sm'}" href="${pr.url}" target="_blank" rel="${REL}">${label}${quiet ? (amazon ? ' (Anzeige)' : '') : ` ${ic('arrow', 'sm')}`}</a>
     ${role === 'main' && pr.source === 'erzeugt' && ctx === 'own' && w.kind === 'produkt' ? `<button class="btn ghost sm" data-act="wamz" data-id="${w.id}" ${S.ui.amzBusy === w.id ? 'disabled' : ''}>${S.ui.amzBusy === w.id ? 'Suche läuft …' : 'Direkten Amazon-Link suchen'}</button>` : ''}
-    ${guestFree ? `<button class="btn pri sm" data-act="choose" data-wid="${w.id}" data-pid="${esc(pr.id)}">Diesen wählen</button>` : ''}
+    ${guestFree ? `<button class="${quiet ? 'qa qa-add' : 'btn pri sm'}" data-act="choose" data-wid="${w.id}" data-pid="${esc(pr.id)}">Diesen wählen</button>` : ''}
    </div>
   </div>`;
 }
@@ -49,7 +59,7 @@ function AiVariants(w, ctx) {
   const sim = isSpecific(w);
   return `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${sim ? 'Ähnliche Produkte, falls es das Gewünschte nicht gibt' : w.kind === 'produkt' ? 'Weitere passende Produkte von Wishtale' : 'Passende Produkte von Wishtale'}</p>${list.map(i => {
     const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === i.t;
-    return `<div class="aivar ${chosen ? 'chosen' : ''}"><div><span class="eyebrow">Vorschlag von Wishtale</span><strong class="ot">${esc(i.t)}</strong>${i.to ? `<span class="muted" style="font-size:13px;display:block">${i.from ? `ca. ${i.from} bis ${i.to} €` : `bis ca. ${i.to} €`}, grobe Schätzung</span>` : ''}<span class="why" style="display:block;margin-top:4px">${esc(i.why)}</span>${chosen ? `<span class="chip ok" style="margin-top:6px">${ic('check', 'sm')}Deine Wahl</span>` : ''}</div><div class="oa"><a class="btn amz sm" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${REL}">Bei Amazon suchen ${ic('arrow', 'sm')}</a>${guestFree ? `<button class="btn pri sm" data-act="aichoose" data-wid="${w.id}" data-t="${esc(i.t)}">Diesen wählen</button>` : ''} ${ctx === 'own' ? `<button class="btn pri sm" data-act="aiuse" data-wid="${w.id}" data-t="${esc(i.t)}" title="Dieser Vorschlag ersetzt den Wunsch, du kannst es gleich rückgängig machen">Dieses Produkt übernehmen</button>` : ''}${ctx === 'own' ? `<button class="btn ghost sm" data-act="aivhave" data-wid="${w.id}" data-t="${esc(i.t)}">Habe ich schon</button>` : ''}</div></div>`;
+    return `<div class="aivar ${chosen ? 'chosen' : ''}"><div><span class="eyebrow">Vorschlag von Wishtale</span><strong class="ot">${esc(i.t)}</strong>${i.to ? `<span class="muted" style="font-size:13px;display:block">${i.from ? `ca. ${i.from} bis ${i.to} €` : `bis ca. ${i.to} €`}, grobe Schätzung</span>` : ''}<span class="why" style="display:block;margin-top:4px">${esc(i.why)}</span>${chosen ? `<span class="chip ok" style="margin-top:6px">${ic('check', 'sm')}Deine Wahl</span>` : ''}</div><div class="idea-acts">${guestFree ? `<button class="qa qa-add" data-act="aichoose" data-wid="${w.id}" data-t="${esc(i.t)}">Diesen wählen</button>` : ''}${ctx === 'own' ? `<button class="qa qa-add" data-act="aiuse" data-wid="${w.id}" data-t="${esc(i.t)}" title="Dieser Vorschlag ersetzt den Wunsch, du kannst es gleich rückgängig machen">Dieses Produkt übernehmen</button>` : ''}<a class="qa" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${REL}">Bei Amazon suchen (Anzeige)</a>${ctx === 'own' ? `<button class="qa qa-mute" data-act="aivhave" data-wid="${w.id}" data-t="${esc(i.t)}">Habe ich schon</button>` : ''}</div></div>`;
   }).join('')}</section>`;
 }
 
@@ -89,9 +99,9 @@ export function WishModal() {
     if (mine && !w.bought) footer = `<button class="btn pri" data-act="bought" data-id="${w.id}">Gekauft</button><button class="btn sec" data-act="release" data-id="${w.id}">Freigeben</button>`;
     else if (!taken && !w.bought && !o.main) footer = `<button class="btn pri" data-act="reserve" data-id="${w.id}">Reservieren</button>`;
   } else if (ctx === 'own') {
-    footer = `<button class="btn pri" data-act="wedit" data-id="${w.id}">Bearbeiten</button><button class="btn sec" data-act="selbst" data-id="${w.id}">${w.status === 'selbst' ? 'Wieder offen' : 'Erledigt, habe ich schon'}</button>
+    footer = `<button class="btn sec sm" data-act="wedit" data-id="${w.id}">Bearbeiten</button><button class="btn ghost sm" data-act="selbst" data-id="${w.id}">${w.status === 'selbst' ? 'Wieder offen' : 'Erledigt, habe ich schon'}</button>
       <label class="prio-sel"><span>Wichtigkeit</span><select class="sel sm" data-prio="${w.id}" aria-label="Wichtigkeit">${[3, 2, 1].map(n => `<option value="${n}" ${w.prio === n ? 'selected' : ''}>${PRIO[n]}</option>`).join('')}</select></label>
-      <button class="btn ghost" data-act="delw" data-id="${w.id}">${ic('trash', 'sm')}Löschen</button>`;
+      <button class="btn ghost sm" data-act="delw" data-id="${w.id}">${ic('trash', 'sm')}Löschen</button>`;
   }
 
   return `<div class="scrim" data-act="closebg"><div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="mt">
@@ -113,7 +123,7 @@ export function WishModal() {
    ${byAi && w.kind === 'produkt' ? `<section class="wm-sec">${Offer({ id: 'exact', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'erzeugt', a: 'gift' }, w, 'view', 'main')}</section>` : ''}
    ${o.main && !byAi ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
    ${w.link && o.main && o.main.source === 'link' && !/(^|\.)amazon\./.test(o.main.host) ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">Auch bei Amazon</p>${Offer({ id: 'amz', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'amz', a: 'gift' }, w, 'view', 'alt')}</section>` : ''}
-   ${o.alts.length && !byAi && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
+   ${(o.alts = o.alts.filter(a => !sameItem(a.t, w.t))).length && !byAi && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
    ${AiVariants(w, ctx)}
    ${o.over ? `<p class="muted" style="font-size:13px">${o.over} Produkt${o.over > 1 ? 'e' : ''} über dem Budget ausgeblendet.</p>` : ''}
    ${ctx === 'own' && !w.noSuggest && w.kind !== 'erlebnis' ? `<p style="margin:6px 0"><button class="linkbtn" data-act="wnosug" data-id="${w.id}">Hierfür keine Vorschläge generieren</button></p>` : ''}

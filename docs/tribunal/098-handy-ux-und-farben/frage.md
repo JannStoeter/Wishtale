@@ -15,3 +15,5 @@ Zu entscheiden: welche Befunde der Handy-Prüfung umgesetzt werden und ob die Fa
 Antwort von Jann im Chat:
 
 > Ja gefällt mir - können wir 6 Dinge über die ich mich freuen würde auch in 1 Zeile bekommen? Du kannst bauen
+
+> Ja Bau alles

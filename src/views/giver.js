@@ -48,7 +48,7 @@ function More(p,{preview=false,none=false,open=0}={}){
    ${PriceFilter()}
    ${AiIdeas(p)}
    ${ai?'':Curated(p,open)}
-   ${preview?'':`<details class="sect ideacheck" id="ideen"><summary><h3>Eigene Idee prüfen</h3></summary><p class="muted" style="font-size:14.5px;margin:4px 0 12px">Du hast selbst eine Idee? Wir schauen für dich nach, ob sie zu ${esc(p.name)} passt und ob ${esc(p.name)} das schon hat.</p>${Ideen(p)}</details>`}
+   ${preview?'':`<details class="sect ideacheck" id="ideen"><summary><span class="ic-t"><b>Eigene Idee prüfen</b><small>Wishtale schaut, ob sie passt und noch nicht vorhanden ist</small></span><span class="peek-go">Öffnen</span></summary><p class="muted" style="font-size:14.5px;margin:4px 0 12px">Du hast selbst eine Idee? Wir schauen für dich nach, ob sie zu ${esc(p.name)} passt und ob ${esc(p.name)} das schon hat.</p>${Ideen(p)}</details>`}
   </section>`;
 }
 
@@ -101,10 +101,11 @@ export function AiIdeas(p){
   if(st==='loading')return `<section class="sect curated" id="ideen-ki">${AiLoading(`Wishtale erstellt individuelle Empfehlungen für ${esc(p.name)} …`)}</section>`;
   const list=ideasOf(gkey(p.handle||p.id));if(!list.length)return '';
   const price=i=>i.from&&i.to?`ca. ${i.from} bis ${i.to} €`:i.to?`bis ca. ${i.to} €`:'';
-  return `<section class="sect curated" id="ideen-ki"><p class="muted" style="font-size:14px;margin:0 0 12px">Vorschläge von Wishtale, passend zu ${esc(p.name)}. Anregungen, keine Wünsche.</p>
-   <div class="recs grid">${list.map(i=>`<article class="rec" style="display:block"><div><h3>${esc(i.t)}</h3><p class="why">${esc(i.why)}</p>
-    <div class="row" style="gap:6px"><span class="chip ${i.exp?'gold':''}">${i.exp?'Erlebnis':'Geschenk'}</span>${price(i)?`<span class="chip" title="Grobe Schätzung, kein Live-Preis">${price(i)}</span>`:''}</div>
-    <div class="row" style="margin-top:8px"><a class="btn amz sm" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon suchen (Anzeige)'}</a></div></div></article>`).join('')}</div></section>`;
+  return `<section class="sect curated ideas-quiet" id="ideen-ki"><p class="muted" style="font-size:14px;margin:0 0 12px">Vorschläge von Wishtale, passend zu ${esc(p.name)}. Anregungen, keine Wünsche.</p>
+   <div class="recs grid">${list.map(i=>`<article class="rec idea"><h3>${esc(i.t)}</h3>
+    <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price(i)?` · <span title="Grobe Schätzung, kein Live-Preis">${price(i)}</span>`:''}</p>
+    <p class="why">${esc(i.why)}</p>
+    <div class="idea-acts"><a class="qa qa-add" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon ansehen (Anzeige)'}</a></div></article>`).join('')}</div></section>`;
 }
 export function Curated(p,openWishes){
   const few=openWishes<4;

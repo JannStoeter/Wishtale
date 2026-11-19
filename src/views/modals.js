@@ -81,7 +81,7 @@ export function Modal(){
     <div id="wprev" aria-live="polite">${ed?'':WishRec()}</div>
     <div class="fld linkfirst"><label for="wl">Link zum Produkt <span class="muted" style="font-weight:400">(optional)</span></label>
      <div class="lf-row"><input id="wl" name="link" class="inp" placeholder="Shop-Link einfügen" autocomplete="off" value="${esc(d.link||'')}"><button type="button" class="btn sec" data-act="readlink">Einlesen</button></div>
-     <p id="wlstat" class="hint" role="status" aria-live="polite">Shop-Links lesen wir direkt. Bei Amazon genügt der kopierte Produkttitel oben im Namensfeld, den Link selbst lesen wir nicht aus.${ed?'':` Noch nichts gefunden? <button type="button" class="linkbtn" data-act="azopen">Bei Amazon suchen</button>`}</p></div>
+     <p id="wlstat" class="hint" role="status" aria-live="polite">Shop-Links lesen wir direkt, Amazon-Links werden gespeichert.${ed?'':` <button type="button" class="linkbtn" data-act="azopen">Bei Amazon suchen</button>`}</p></div>
     <div class="fld"><span class="lb">Art</span><div class="radios">${[['produkt','Produkt'],['kategorie','Nur Kategorie'],['erlebnis','Erlebnis'],['frei','Freier Wunsch']].map(([v,l])=>`<label><input type="radio" name="kind" value="${v}" ${(d.kind||'produkt')===v?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
     <div class="fld f-budget"><label for="wb">Budget bis (Euro)</label><input id="wb" name="budget" type="number" min="1" inputmode="numeric" class="inp" placeholder="z. B. 100" value="${d.budget||''}"></div>
     <div class="fld f-price"><label for="wp">Preis (Euro, optional)</label><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="z. B. 69,90" value="${d.price?String(d.price).replace('.',','):''}"></div>
