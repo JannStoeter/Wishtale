@@ -59,15 +59,15 @@ export function Wuensche(){
   const open=m.wishes.filter(w=>w.status==='offen'||w.status==='plan').length;
   if(!m.wishes.length)return `<div class="wrap first">${EmptyWishes(m)}</div>`;
   const active=(u.wc!=='alle'?1:0)+((u.wsort||'prio')!=='prio'?1:0);
-  const filt=m.wishes.length>=6?`<details class="fsort"><summary>${ic('filter','sm')}Filtern und sortieren${active?` <span class="chip gold">${active}</span>`:''}</summary><div class="fsort-body">${used.length>1?`<label class="sortsel"><span class="vh">Kategorie</span><select class="sel sm" data-wc="1" aria-label="Kategorie"><option value="alle">Alle Kategorien</option>${used.map(c=>`<option value="${c}" ${u.wc===c?'selected':''}>${cat(c).n}</option>`).join('')}</select></label>`:''}${sortSeg()}<span class="desk-only">${densSeg(list.length)}</span></div></details>`:'';
+  const filt=m.wishes.length>=6?`<details class="fsort"><summary>${ic('filter','sm')}Filtern und sortieren${active?` <span class="chip gold">${active}</span>`:''}</summary><div class="fsort-body">${used.length>1?`<label class="sortsel"><span class="vh">Kategorie</span><select class="sel sm" data-wc="1" aria-label="Kategorie"><option value="alle">Alle Kategorien</option>${used.map(c=>`<option value="${c}" ${u.wc===c?'selected':''}>${cat(c).n}</option>`).join('')}</select></label>`:''}${sortSeg()}${PrioKey()}<span class="desk-only">${densSeg(list.length)}</span></div></details>`:'';
   const note=m.managed?`Als Elternteil siehst du, was reserviert oder gekauft ist. ${esc(m.name)} sieht es nicht.`:'Die Überraschung bleibt: Du siehst nie, ob jemand einen deiner Wünsche reserviert oder gekauft hat.';
   return `<div class="wrap">
-   <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}.`:open===1?'1 Ding, über das ich mich freuen würde.':`${open} Dinge, über die ich mich freuen würde.`}</h1></div>
+   <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1${open&&!m.managed?' class="oneline"':''}>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}`:open===1?'1 Ding, über das ich mich freuen würde':`${open} Dinge, über die ich mich freuen würde`}</h1></div>
    <div class="row homebar">${ViewSeg()}${m.handle||!S.auth.user?`<button class="btn gold sm" data-act="share">Teilen</button>`:""}</div>
    <button class="newbar" data-act="modal" data-v="zettel"><span class="nb-tag">Jetzt neu</span><span class="nb-t"><b>Einfach Wunschliste hochladen</b><small>Foto vom Wunschzettel oder Text, Wishtale macht daraus Wünsche</small></span>${ic('arrow','sm')}</button>
    ${filt}
    <h2 class="vh">Deine Wünsche</h2>
-   ${list.length?PrioKey():''}<div class="${useList(list.length)?'wlist':'wgrid'}">${list.map(w=>(useList(list.length)?WishRow:WishCard)(w,m,{
+   ${list.length&&!filt?PrioKey():''}<div class="${useList(list.length)?'wlist':'wgrid'}">${list.map(w=>(useList(list.length)?WishRow:WishCard)(w,m,{
       meta:(w.status==='plan'?'<span class="chip ok">Nur für dich</span>':'')+(w.kind==='kategorie'?`<span class="chip gold">Kategorie${w.budget?' bis '+money(w.budget):''}</span>`:'')+(w.kind==='erlebnis'?'<span class="chip">Erlebnis</span>':'')+(w.kind==='frei'?'<span class="chip">Freier Wunsch</span>':'')+(w.via?`<span class="chip gold">Tipp von ${esc(viaName(w.via))}</span>`:'')+w.occ.map(o=>`<span class="chip">${occL(o)}</span>`).join(''),
       status:m.managed&&(w.res||w.bought)?{text:w.bought?'Gekauft':'Reserviert',tone:w.bought?'me':'res'}:null,
       taken:false,
@@ -75,10 +75,7 @@ export function Wuensche(){
     })).join('')||`<p class="muted" style="font-size:16px">Dein erster Wunsch wartet schon auf dich. Schreib ihn auf, füge einen Link ein oder lies eine ganze Liste ein, und Wishtale macht den Rest.</p>`}</div>
    <p class="surprise">${ic('lock','sm')}<span>${note}</span></p>
    ${HomeIdeas()}
-   ${AppHint(open)}
-   <details class="tips"><summary>Tipps zu deiner Wunschliste</summary><p class="muted">Du musst nicht jedes Produkt kennen. Schreib zum Beispiel „Hochwertige Pfanne bis 100 €“, dann suchen wir für deine Freunde passende Vorschläge heraus. Auch ohne Link finden wir bei Amazon etwas Passendes.</p></details>
-   ${TasteHint()}
-   ${Steps(m)||Nudge(m)}
+   ${Steps(m)||AppHint(open)||TasteHint()||Nudge(m)}
    ${AppPromo()}
    <div class="fabspace" aria-hidden="true"></div>
    <div class="fab"><button class="btn pri" data-act="modal" data-v="wish">${ic('plus','sm')}Wunsch hinzufügen</button></div>

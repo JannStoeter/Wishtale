@@ -1289,3 +1289,22 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .iosdemo[data-flow="old"][data-step="2"] .ip-finger{left:166px;top:84px}
 .iosdemo[data-flow="old"][data-step="3"] .ip-finger{opacity:0}
 .authalt .btn{white-space:normal;text-align:left;justify-content:flex-start;max-width:100%}
+
+/* 098 Schritt 1: hellere Farbwelt in der App (Landingpage bleibt), weiße Karten, Platzhalter in Kategoriefarben. */
+:root:has(#app){--bg:#FAF7F1;--surface:#FFFFFF;--line:#E9E1D3}
+.art.mono.t0{--bg2:#F4DCCB;--p1:#8A3E22}
+.art.mono.t1{--bg2:#D7E6DA;--p1:#2D5A3B}
+.art.mono.t2{--bg2:#DCE6F3;--p1:#2E557A}
+.art.mono.t3{--bg2:#EADDF0;--p1:#5B3772}
+.art.mono.t4{--bg2:#F6E6BF;--p1:#80580F}
+.art.mono.t5{--bg2:#F7D9DE;--p1:#8C3346}
+.wrow-img .art.mono b{font-family:var(--body);font-weight:700;font-size:22px}
+.pagehead h1.oneline{font-size:clamp(22px,calc((100vw - 40px) / 14.6),52px);text-wrap:balance}
+.fsort .priokey{display:flex;margin:10px 0 0}
+@media(max-width:560px){
+ .newbar{padding:9px 12px;border-radius:12px;gap:10px;margin-bottom:10px}
+ .newbar .nb-t small{display:none}
+ .newbar .nb-t b{font-size:14.5px}
+ .syncst{display:none}
+ .pagehead{margin-bottom:14px}
+}

@@ -16,7 +16,8 @@ export function WishArt(w,pr){
   if(w.img)return `<span class="imgbox art"><img src="${w.img}" alt="" loading="lazy" decoding="async"></span>`;
   if(w.kind==='erlebnis'||w.kind==='kategorie'||w.kind==='frei')return art(w.a||cat(w.c).a,w.tone??cat(w.c).t??0);
   const ch=(String(w.t||'').trim().match(/[\p{L}\p{N}]/u)||['?'])[0].toUpperCase();
-  return `<span class="art mono t${(w.tone??cat(w.c).t??0)%6}" aria-hidden="true"><b>${esc(ch)}</b><small>${esc(cat(w.c).n)}</small></span>`;
+  // Platzhalter färben nach Kategorie, damit die Liste ohne Bilder nicht einfarbig wirkt (098)
+  return `<span class="art mono t${(cat(w.c).t??w.tone??0)%6}" aria-hidden="true"><b>${esc(ch)}</b><small>${esc(cat(w.c).n)}</small></span>`;
 }
 const hostOf=u=>{try{const h=new URL(u).hostname.replace(/^www\./,'');return /(^|\.)amazon\./.test(h)||/amzn\./.test(h)?'Amazon':h}catch{return ''}};
 
