@@ -89,6 +89,7 @@ Stand: 2026-11-09
 | 095 | Wishtale als App | **Jann im Chat: Stufe 1 bauen.** Installierbare Web-App mit Manifest, Service Worker, Offline-Seite, Menüpunkt und Hinweis, Teilen an Wishtale auf Android. Stores (Stufe 2) offen bis Plus-Plan und Kaufwege geklärt. | ja, `dee25e9` |
 | 096 | iPhone-Anleitung als nachgebaute Ansicht | **Jann im Chat: als Ansicht nachbauen, aktuelles iOS.** Nachgebauter Bildschirm mit tippendem Finger für Safari ab 26, ältere Versionen und andere Browser, mit Steuerung und barrierefreiem Text. | ja, `d469667` |
 | 097 | Geräte je Bereich, Admins nicht mitzählen | **Jann im Chat.** Auswertung nach Landingpage, eigener App und Gast-Link getrennt, Ereignis `app_open`, Migration 0029, Admins zählen nicht mit. | ja, `632c4e7` |
+| 098 | Handy-Prüfung und hellere Farbwelt | **Jann im Chat: Vorschlag gefällt, Überschrift in eine Zeile, bauen.** Schritt 1: hellerer Grund, weiße Karten, Platzhalter in Kategoriefarben, ruhiger erster Bildschirm, ein Hinweis zur Zeit. Schritt 2 (Wunsch-Ansicht, Dialogtexte, Gast-Ideen) folgt. | teilweise, `3c73134` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.

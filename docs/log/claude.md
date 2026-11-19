@@ -51,3 +51,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Migration 0029 eingespielt, Eintrag 097 in tribunal_verdicts
 - Zurücknehmen: git revert 632c4e7; drop function public.admin_usage_devices(int)
 - Offen: Zahlen brauchen einige Wochen, bis sie aussagekräftig sind
+
+## 2026-11-19 · 098 · Handy-Prüfung, Schritt 1: Farbwelt und erster Bildschirm
+- Commits: ebe1e9c (zwei Fehler am Handy), 3c73134 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat (Handy prüfen, weniger Beige, Überschrift in einer Zeile, „Du kannst bauen“), Dev 098
+- Geändert: src/styles/main.css (Farben nur in der App, Kategoriefarben, Kopf, Band), src/views/card.js (Platzhalterfarbe aus der Kategorie), src/views/wishes.js (Überschrift, Legende, ein Hinweis), src/views/tour.js (FAQ), src/views/auth.js nicht geändert, CLAUDE.md
+- Warum: Am Handy begann die Liste erst in der Bildschirmmitte, alles wirkte einfarbig beige
+- Geprüft: ESLint, Build, Playwright 390 und 1280 px, axe ohne Befund
+- Datenbank und Dienste: Eintrag 098 in tribunal_verdicts
+- Zurücknehmen: git revert 3c73134
+- Offen: Schritt 2 (Wunsch-Ansicht, Dialogtexte, Gast-Ideen)
