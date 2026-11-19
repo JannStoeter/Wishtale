@@ -3,6 +3,7 @@ import { esc } from './util.js';
 
 const nf = n => new Intl.NumberFormat('de-DE').format(+n || 0);
 const pct = (a, b) => (b > 0 ? Math.round(a / b * 100) + ' %' : '–');
+const AREA = { landing: 'Landingpage', app: 'Eigene App', guest: 'Gast-Link' };
 const DEV = { mobile: 'Handy', desktop: 'Computer', tablet: 'Tablet', unbekannt: 'Unbekannt' };
 const day = d => new Date(d + 'T12:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
 
@@ -10,8 +11,8 @@ export async function mount(el) {
   let days = 30, data = null, err = '';
   const load = async () => {
     el.innerHTML = head() + '<p class="muted">Wird geladen …</p>';
-    const { data: d, error } = await sb.rpc('admin_usage', { p_days: days });
-    if (error) { err = error.message; data = null; } else { data = d; err = ''; }
+    const [{ data: d, error }, dv] = await Promise.all([sb.rpc('admin_usage', { p_days: days }), sb.rpc('admin_usage_devices', { p_days: days })]);
+    if (error) { err = error.message; data = null; } else { data = d; data.byArea = dv.error ? null : dv.data; err = ''; }
     draw();
   };
   const head = () => `<div class="head"><div><h1>Auswertung</h1><p class="muted">So wird Wishtale genutzt. Die Zahlen kommen ohne Cookies und ohne Wiedererkennung einzelner Menschen zustande.</p></div>
@@ -47,7 +48,9 @@ export async function mount(el) {
      ${table('Woher die Besucher kommen', data.sources, [r => esc(r.source), r => nf(r.visitors)])}
      ${table('Woher die neuen Konten kommen', data.account_sources, [r => esc(r.source), r => nf(r.accounts)])}
      ${table('Aktionen und Anzeigen (UTM-Kürzel)', data.campaigns, [r => esc(r.campaign), r => nf(r.visitors) + ' Besucher', r => nf(r.accounts) + ' Konten'])}
-     ${table('Geräte', data.devices, [r => esc(DEV[r.device] || r.device), r => nf(r.visitors)])}
+     ${table('Geräte (Landingpage)', data.devices, [r => esc(DEV[r.device] || r.device), r => nf(r.visitors)])}
+     ${data.byArea ? `<section class="card"><h2>Geräte je Bereich</h2><table><thead><tr><th>Bereich</th><th style="text-align:right">Handy</th><th style="text-align:right">Computer</th><th style="text-align:right">Tablet</th><th style="text-align:right">Anteil Handy</th></tr></thead><tbody>${data.byArea.areas.map(r => `<tr><td>${esc(AREA[r.area] || r.area)}</td><td style="text-align:right">${nf(r.mobile)}</td><td style="text-align:right">${nf(r.desktop)}</td><td style="text-align:right">${nf(r.tablet)}</td><td style="text-align:right">${r.total ? pct(r.mobile, r.total) : '–'}</td></tr>`).join('')}</tbody></table>
+      <p class="hint">Eigene App zählt Menschen, die angemeldet ihre Wunschliste öffnen; davon ${nf(data.byArea.app_mode.pwa)} vom Home-Bildschirm und ${nf(data.byArea.app_mode.browser)} im Browser. Gast-Link zählt Aufrufe fremder Wunschlisten. Admins werden nicht mitgezählt, sobald sie einmal angemeldet waren.</p></section>` : ''}
      ${table('Länder', data.countries, [r => esc(r.country), r => nf(r.visitors)])}
      <section class="card"><h2>Gesamt</h2><table><tbody>
       <tr><td>Konten insgesamt</td><td style="text-align:right">${nf(t.accounts)}</td></tr>

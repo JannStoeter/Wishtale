@@ -12,7 +12,8 @@ import { adoptInvite } from './lib/invite.js';
 import { route, render } from './render.js';
 import './actions.js';
 import { loadPromo } from './lib/promo.js';
-import { initPwa, takeShare, pendingShare } from './lib/pwa.js';
+import { initPwa, takeShare, pendingShare, standalone } from './lib/pwa.js';
+import { track, setStatsOff } from './lib/track.js';
 import { loadGiven, migrateGiven } from './lib/given.js';
 
 initPwa();
@@ -21,6 +22,11 @@ function openShared(){
   const sh=pendingShare();if(!sh)return;
   S.ui.modal='wish';S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.prefill=sh.title||'';render();
   setTimeout(()=>{const l=document.getElementById('wl');if(l&&sh.url){l.value=sh.url;l.dispatchEvent(new Event('change',{bubbles:true}))}S.ui.prefill='';},80);
+}
+/** Admins zählen nicht mit (bleibt im Browser gemerkt), alle anderen melden einmal „App geöffnet“, im Browser oder vom Home-Bildschirm. */
+async function countOpen(){
+  try{const {data}=await sb.rpc('is_admin');if(data===true){setStatsOff(true);return}}catch{/* ohne Antwort einfach zählen */}
+  if(S.ui.view!=='gast')track('app_open',{once:true,label:standalone()?'pwa':'browser',path:'/app/'});
 }
 async function boot(){
   takeShare();
@@ -56,7 +62,7 @@ async function boot(){
   if(!session)await loadGiven().catch(()=>{});
   window.addEventListener('hashchange',route);
   route();
-  if(session)openShared();
+  if(session){openShared();countOpen()}
   /* Kein Willkommens-Rundgang mehr: Der erste Bildschirm ist die Wunschliste mit einem Feld (Feedback der ersten Testerinnen). */
   loadPromo().then(p=>{S.promo=p;if(['entdecken','gast','profil','wuensche'].includes(S.ui.view)&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()});
 
@@ -74,7 +80,7 @@ async function boot(){
         if(cod){const k=sharedKey(cod.kid);if(k)switchTo(k)}
         location.hash='#wuensche';
         route();
-        openShared();
+        openShared();countOpen();
         if(cod)toast(`Du verwaltest jetzt gemeinsam mit ${cod.from} das Wishtale von ${cod.kid}.`);
         else if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
         else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);
