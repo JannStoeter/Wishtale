@@ -41,3 +41,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 096 in tribunal_verdicts
 - Zurücknehmen: git revert d469667
 - Offen: Abgleich mit einem echten iPhone, vor allem bei Adressleiste oben
+
+## 2026-11-19 · 097 · Geräte je Bereich, Admins nicht mitzählen
+- Commits: 632c4e7 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat (Handy-Anteil auswerten, eigene Tests verfälschen die Zahlen), Dev 097
+- Geändert: supabase/migrations/0029_usage_devices.sql (neu, eingespielt), api/_lib/event.js (app_open), src/main.js (countOpen), src/admin/api.js, src/admin/usage.js, datenschutz.html Abschnitt 8, CLAUDE.md
+- Warum: Entscheidungen zur Gestaltung sollen auf echter Nutzung beruhen, nicht auf eigenen Tests am Rechner
+- Geprüft: ESLint, Build, Playwright für normales Konto und Admin, buildEvent mit app_open
+- Datenbank und Dienste: Migration 0029 eingespielt, Eintrag 097 in tribunal_verdicts
+- Zurücknehmen: git revert 632c4e7; drop function public.admin_usage_devices(int)
+- Offen: Zahlen brauchen einige Wochen, bis sie aussagekräftig sind
