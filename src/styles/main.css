@@ -1288,3 +1288,4 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .iosdemo[data-flow="old"][data-step="1"] .ip-finger{left:148px;top:292px}
 .iosdemo[data-flow="old"][data-step="2"] .ip-finger{left:166px;top:84px}
 .iosdemo[data-flow="old"][data-step="3"] .ip-finger{opacity:0}
+.authalt .btn{white-space:normal;text-align:left;justify-content:flex-start;max-width:100%}
