@@ -61,3 +61,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 098 in tribunal_verdicts
 - Zurücknehmen: git revert 3c73134
 - Offen: Schritt 2 (Wunsch-Ansicht, Dialogtexte, Gast-Ideen)
+
+## 2026-11-19 · 098 · Schritt 2: Wunsch-Ansicht, Dialogtexte, Gast-Ideen
+- Commits: 715d550 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („Ja Bau alles“), Dev 098
+- Geändert: src/views/wishmodal.js (sameItem, kompaktes Hauptangebot, leise Alternativen und Varianten, kleinere Aktionen), src/views/wishprev.js und src/views/modals.js (kürzere Hinweise), src/views/giver.js (Gast-Ideen ruhig, Eigene Idee prüfen), src/styles/main.css
+- Warum: Doppelte Karten und große Knöpfe lenkten am Handy vom Wunsch ab
+- Geprüft: ESLint, Build, Playwright 390 px
+- Datenbank und Dienste: Eintrag 098 in tribunal_verdicts aktualisiert
+- Zurücknehmen: git revert 715d550
+- Offen: Prüfung auf echtem Gerät
