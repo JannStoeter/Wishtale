@@ -65,7 +65,7 @@ export async function adoptInvite() {
     if (keep.length && !keep[i]) return;
     const title = clean(t, 80);
     if (!title || a.wishes.some(w => w.t.toLowerCase() === title.toLowerCase())) return;
-    const c = guessCategory(title, 'wohnen');
+    const c = guessCategory(title);
     a.wishes.unshift(W({ t: title, c, kind: 'produkt', prio: 2, vis: 'alle', via: 'invite:' + clean(r.from, 30), a: cat(c).a, tone: cat(c).t }));
     n++;
   });

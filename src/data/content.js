@@ -1,12 +1,28 @@
 /* Statische Inhalte und Beispieldaten. Später durch API / Produkt-Feed ersetzbar. */
 export const CATS=[
- {id:'wohnen',n:'Wohnen & Interior',a:'vase',t:0},{id:'technik',n:'Technik',a:'headphones',t:4},
- {id:'kochen',n:'Kochen',a:'pan',t:2},{id:'sport',n:'Sport',a:'sneaker',t:5},
- {id:'reisen',n:'Reisen',a:'suitcase',t:1},{id:'mode',n:'Mode',a:'sweater',t:0},
- {id:'genuss',n:'Genuss',a:'mug',t:2},{id:'buecher',n:'Bücher',a:'book',t:3},
- {id:'erlebnisse',n:'Erlebnisse',a:'ticket',t:5},{id:'outdoor',n:'Outdoor',a:'tent',t:1},
- {id:'spielen',n:'Spielzeug & Basteln',a:'game',t:5}];
-export const cat=id=>CATS.find(c=>c.id===id)||CATS[0];
+ {id:'wohnen',n:'Wohnen & Interior',a:'vase',t:0,d:'Möbel, Lampen, Deko, Textilien, Ordnung'},
+ {id:'kochen',n:'Kochen & Backen',a:'pan',t:2,d:'Pfannen, Töpfe, Messer, Küchengeräte, Backzubehör, Kochbücher'},
+ {id:'genuss',n:'Kaffee, Tee & Genuss',a:'mug',t:2,d:'Kaffee und Zubehör, Tee, Wein, Spirituosen, Schokolade, Feinkost'},
+ {id:'technik',n:'Technik',a:'headphones',t:4,d:'Smartphone, Kopfhörer, Laptop, Kamera, Smart Home, Zubehör'},
+ {id:'gaming',n:'Gaming',a:'game',t:3,d:'Konsolen, Videospiele, Controller, Gaming-Zubehör'},
+ {id:'fitness',n:'Fitness & Training',a:'bottle',t:5,d:'Krafttraining, Hanteln, Yoga, Fitnessgeräte, Sportuhren, Sporternährung'},
+ {id:'sport',n:'Sport',a:'sneaker',t:5,d:'Laufen, Ballsport, Schlägersport, Schwimmen, Kampfsport, Sportbekleidung'},
+ {id:'radsport',n:'Fahrrad & Radsport',a:'compass',t:1,d:'Fahrräder, Helme, Radbekleidung, Fahrradzubehör'},
+ {id:'outdoor',n:'Outdoor & Wandern',a:'tent',t:1,d:'Wandern, Camping, Klettern, Rucksäcke, Zelte, Outdoor-Ausrüstung'},
+ {id:'wintersport',n:'Wintersport',a:'mountain',t:2,d:'Ski, Snowboard, Skitouren, Langlauf, Schlitten, Winterausrüstung'},
+ {id:'reisen',n:'Reisen',a:'suitcase',t:1,d:'Koffer, Reisezubehör, Reiseführer'},
+ {id:'mode',n:'Mode & Accessoires',a:'sweater',t:0,d:'Kleidung, Schuhe, Taschen, Schmuck, Uhren'},
+ {id:'beauty',n:'Beauty & Pflege',a:'bottle',t:5,d:'Hautpflege, Make-up, Nagellack, Parfüm, Haarpflege, Rasur'},
+ {id:'buecher',n:'Bücher',a:'book',t:3,d:'Romane, Sachbücher, Bildbände, Hörbücher, Notizbücher'},
+ {id:'musik',n:'Musik',a:'headphones',t:3,d:'Instrumente, Noten, Schallplatten, Musikzubehör'},
+ {id:'garten',n:'Garten & Balkon',a:'plant',t:1,d:'Pflanzen, Gartengeräte, Grill, Balkon, Hochbeet'},
+ {id:'heimwerken',n:'Werkzeug & Heimwerken',a:'scale',t:4,d:'Werkzeug, Akkugeräte, Werkbank, Heimwerkerbedarf'},
+ {id:'spielen',n:'Spielzeug & Basteln',a:'game',t:5,d:'Spielzeug, Lego, Brettspiele, Puzzle, Basteln, Hörfiguren für Kinder'},
+ {id:'baby',n:'Baby & Kleinkind',a:'gift',t:5,d:'Babyausstattung, Kinderwagen, Babyspielzeug, Pflege für Babys'},
+ {id:'haustier',n:'Haustier',a:'gift',t:1,d:'Hund, Katze und andere Tiere: Zubehör, Futter, Spielzeug'},
+ {id:'erlebnisse',n:'Erlebnisse',a:'ticket',t:5,d:'Kurse, Konzerte, Reisen erleben, Gutscheine für Unternehmungen'},
+ {id:'sonstiges',n:'Sonstiges',a:'gift',t:4,d:'Alles, was in keine andere Kategorie passt'}];
+export const cat=id=>CATS.find(c=>c.id===id)||CATS[CATS.length-1];
 export const ACT=[
  {l:'Kaffee brühen',t:'kaffee'},{l:'Kochen',t:'kochen'},{l:'Backen',t:'kochen'},{l:'Einrichten',t:'wohnen'},
  {l:'Lesen',t:'lesen'},{l:'Wandern',t:'wandern'},{l:'Laufen',t:'laufen'},{l:'Radfahren',t:'rad'},
@@ -58,7 +74,7 @@ export const LOOKS=[
 export const LOOKSCOPE=['Alle','Interior','Küche','Outdoor'];
 export const V={alle:{l:'Für alle mit Link',i:'globe'},giver:{l:'Für alle mit Link',i:'globe'},privat:{l:'Privat',i:'lock'},nur:{l:'Nur für dich',i:'eye'}};
 /* Kinder-Konten: nur altersgerechte Auswahl für Welten, Interessen, Marken und Co. */
-export const KID_CATS=['spielen','buecher','sport','outdoor','erlebnisse','mode'];
+export const KID_CATS=['spielen','baby','buecher','sport','outdoor','wintersport','radsport','musik','erlebnisse','mode','sonstiges'];
 export const KID_OPTS={
  interests:['Bauen und Konstruieren','Malen und Basteln','Tiere','Dinosaurier','Autos und Fahrzeuge','Traktoren und Bagger','Fußball','Schwimmen','Radfahren und Rollern','Prinzessinnen und Feen','Ritter und Piraten','Bücher und Vorlesen','Singen und Musik','Hörspiele','Experimentieren','Draußen spielen','Puzzeln','Verkleiden'],
  brands:['LEGO','Playmobil','SIKU','Schleich','Ravensburger','Tonies','Haba','Brio','Duplo','Hot Wheels','Barbie','Paw Patrol','Disney','Pixi','Kosmos','Bruder','Jako-o','Sterntaler'],

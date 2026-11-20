@@ -1,4 +1,5 @@
 import { Guide, syncGuide } from './lib/guide.js';
+import { recatOnce } from './lib/smartcats.js';
 import { loadIdeas, gkey, skey } from './lib/ideas.js';
 import { isSpecific } from './lib/products.js';
 import { guestPerson } from './state.js';
@@ -52,6 +53,7 @@ export function render(top){
   const sheetY=oldSheet?oldSheet.scrollTop:0;
   const modalKey=S.ui.modal?`${S.ui.modal}:${S.ui.pickId||''}:${S.ui.worldId||''}`:'';
   // Vorladen: Gast-Ideen und eigene Inspiration im Hintergrund holen, damit sie beim Öffnen schon da sind (der Server antwortet bei unverändertem Profil aus dem Zwischenspeicher).
+  if(S.auth.user&&v==='wuensche'&&!S.ui.preview)recatOnce(()=>{if(!S.ui.modal)render()}); // einmal je Profil neu einordnen (100)
   if(S.auth.user&&S.me.handle&&v!=='gast'){if(v!=='entdecken'&&inspirationOn()&&(v!=='wuensche'||(!S.ui.preview&&homeIdeasVisible())))loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if((S.ui.view==='entdecken'||(S.ui.view==='wuensche'&&!S.ui.preview&&homeIdeasVisible()))&&!S.ui.modal)render()})}
   if((v==='geschmack'||v==='wuensche')&&S.auth.user&&S.me.dbId&&!S.me.managed)loadAnswers().then(fresh=>{if(fresh&&S.ui.view===v&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()}).catch(()=>{});
   if(v==='geschmack'&&!S.auth.user)loadAnswers().then(fresh=>{if(fresh&&S.ui.view==='geschmack')render()}).catch(()=>{});

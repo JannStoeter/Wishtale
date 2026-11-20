@@ -23,7 +23,7 @@ const thumb = (img, c, t) => img && img.preview ? `<img src="${img.preview}" alt
 export function WishRec() {
   const r = S.ui.wr;
   if (!r || !r.st) return '';
-  const c = cat(r.c || 'wohnen');
+  const c = cat(r.c || 'sonstiges');
   if (r.st === 'vague') return `<p class="wr-hint">${ic('spark', 'sm')}Wir zeigen deinen Freunden passende Ideen dazu.</p>`;
   if (r.st === 'unsure') return `<p class="wr-hint">${ic('spark', 'sm')}<span>${r.err ? 'Die Produktsuche hat gerade nicht geklappt.' : 'Dazu gibt es mehrere passende Produkte.'} Mit Farbe, Sorte oder Größe wird es genauer, und dein Wunsch bleibt sonst einfach so, wie er ist.</span></p>`;
   if (r.st === 'none') return r.msg ? `<p class="wr-hint">${esc(r.msg)}</p>` : '';

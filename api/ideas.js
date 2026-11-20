@@ -2,7 +2,7 @@ import { send, fail, HttpError, requireUser } from './_lib/auth.js';
 import { ideasFor, OCCASIONS } from './_lib/ideas.js';
 import { entitlementsOf, can, recordUsage, ownerOf, manages } from './_lib/entitlements.js';
 import { guardLlm } from './_lib/limits.js';
-import { matchFor } from './_lib/match.js';
+import { matchFor, categorize } from './_lib/match.js';
 
 const seen = new Map(); // einfache Bremse pro Instanz: höchstens 20 Abrufe in 10 Minuten je Adresse
 const limited = ip => { const now = Date.now(), l = (seen.get(ip) || []).filter(t => now - t < 600000); l.push(now); seen.set(ip, l); return l.length > 20; };
@@ -22,6 +22,15 @@ export default async function handler(req, res) {
       if (!can(await entitlementsOf(me.id), 'ideas.wish')) return res.status(200).json({ match: null, locked: true });
       const out = await matchFor(req.query?.t, fetch, { onUsage: (u, model) => recordUsage(me.id, `ideas.match:${model}`, u), guard: () => guardLlm({ ip: '', payer: me.id, feature: 'ideas.wish' }) });
       res.status(200).setHeader('Cache-Control', 'private, max-age=3600');
+      return res.json(out);
+    }
+    if (req.query?.mode === 'cat') { // Kategorien für Wünsche, die die Wortliste nicht kennt (100); nur Namen, nur für die eigene Liste
+      const me = /^Bearer /.test(req.headers?.authorization || '') ? await requireUser(req) : null;
+      if (!me || !(await manages(h, me.id))) throw new HttpError(me ? 403 : 401, 'Bitte melde dich an.');
+      if (!can(await entitlementsOf(me.id), 'ideas.wish')) return res.status(200).json({ cats: null, locked: true });
+      const titles = String(req.query?.t || '').split('\n').slice(0, 24);
+      const out = await categorize(titles, fetch, { onUsage: (u, model) => recordUsage(me.id, `ideas.cat:${model}`, u), guard: () => guardLlm({ ip: '', payer: me.id, feature: 'ideas.wish' }) });
+      res.status(200).setHeader('Cache-Control', 'private, no-store');
       return res.json(out);
     }
     const wid = String(req.query?.w || '');

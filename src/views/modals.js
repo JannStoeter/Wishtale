@@ -87,7 +87,7 @@ export function Modal(){
     <div class="fld f-price"><label for="wp">Preis (Euro, optional)</label><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="z. B. 69,90" value="${d.price?String(d.price).replace('.',','):''}"></div>
     <details class="wmore" ${more?'open':''}><summary>Mehr Angaben <span class="muted">Notiz, Kategorie, Wichtigkeit, Bild, Sichtbarkeit</span></summary>
      <div class="fld"><label for="wn">Notiz</label><textarea id="wn" name="note" class="ta" placeholder="Farbe, Größe, Stimmung">${esc(d.note||'')}</textarea></div>
-     <div class="fld"><label for="wc2">Kategorie</label><select id="wc2" name="c" class="sel">${CATS.filter(c=>!S.me.managed||KID_CATS.includes(c.id)).map(c=>`<option value="${c.id}" ${(d.c||'wohnen')===c.id?'selected':''}>${c.n}</option>`).join('')}</select></div>
+     <div class="fld"><label for="wc2">Kategorie</label><select id="wc2" name="c" class="sel">${CATS.filter(c=>!S.me.managed||KID_CATS.includes(c.id)).map(c=>`<option value="${c.id}" ${(d.c||'sonstiges')===c.id?'selected':''}>${c.n}</option>`).join('')}</select></div>
      <div class="fld"><span class="lb">Wie wichtig ist es dir?</span><div class="radios">${[1,2,3].map(n=>`<label><input type="radio" name="prio" value="${n}" ${n===(d.prio||2)?'checked':''}><span>${PRIO[n]}</span></label>`).join('')}</div></div>
      <div id="wimg" class="wimg">${imgBoxHtml(d.img?{preview:d.img,src:d.imgSrc}:null)}</div>
      <div class="fld"><span class="lb">Bild (optional${ed&&d.img?', ein neues ersetzt das alte':''})</span><label class="filebtn"><input id="wi" name="img" type="file" accept="image/*"><span>Foto auswählen</span></label></div>

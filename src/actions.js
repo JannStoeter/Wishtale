@@ -1,4 +1,5 @@
 import { beginGuide, endGuide, guideClick, guideSubmit, focusGuideTarget, currentGuideStep, syncGuide } from './lib/guide.js';
+import { smartCats } from './lib/smartcats.js';
 import { promptInstall } from './lib/pwa.js';
 import { dismissAppHint } from './views/appinstall.js';
 import { demoStart, demoStop, demoGo, demoStep, demoPlay } from './views/iosdemo.js';
@@ -47,7 +48,7 @@ function azApply(r){
   z.res=r;z.busy=false;
   if(!r.error){
     z.title=z.title||r.title||'';
-    z.c=guessCategory(z.title||r.title,'wohnen');
+    z.c=guessCategory(z.title||r.title);
     z.catAuto=true;
   }
   render();
@@ -124,7 +125,7 @@ function previewWish(title){
   const t=String(title||'').trim().slice(0,120);
   if(S.ui.wr?.st==='found'&&S.ui.wr.accepted&&S.ui.wr.cand.t===t)return; // gerade übernommen
   const kind=f.querySelector('input[name=kind]:checked')?.value;
-  const sel=f.elements.c;if(t.length>=3&&sel&&sel.value==='wohnen'){const g=guessCategory(t,'wohnen');if(g!==sel.value)sel.value=g}
+  const sel=f.elements.c;if(t.length>=3&&sel&&!sel.dataset.touched){const g=guessCategory(t);if(g!==sel.value)sel.value=g}
   if(t.length<3||f.elements.nosug?.checked||kind==='erlebnis'){setRec(null);return}
   if(kind==='frei'||kind==='kategorie'||!concrete(t)||!canAi()){setRec({st:'vague',t});return}
   const seq=(S.ui.wr?.seq||0)+1;setRec({st:'loading',t,seq,c:sel?.value});
@@ -296,7 +297,7 @@ share(){
  azopen(){
   /* Steht im Wunschformular schon ein Name, suchen wir damit direkt bei Amazon und tragen ihn im Fenster ein. */
   const q=(document.querySelector('form[data-form=wish] [name=t]')?.value||'').trim().slice(0,120);
-  S.ui.az={q,text:'',res:null,title:'',price:'',c:'wohnen',searched:!!q};S.ui.modal='amazon';
+  S.ui.az={q,text:'',res:null,title:'',price:'',c:'sonstiges',searched:!!q};S.ui.modal='amazon';
   if(q)window.open(searchUrl.amazon(q),'_blank','noopener');
 render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
  azq(el){S.ui.az.q=el.dataset.v;render()},
@@ -448,7 +449,7 @@ async readlink(el,auto){
   const w=S.me.wishes.find(x=>x.id===el.dataset.wid),i=ideasOf('wish:'+el.dataset.wid).find(x=>x.t===el.dataset.t);if(!w||!i)return;
   const old={t:w.t,price:w.price,link:w.link,img:w.img,imgSrc:w.imgSrc,kw:w.kw,a:w.a,tone:w.tone,c:w.c};
   w.t=i.t.slice(0,160);w.kw=kwOf(w.t);if(altPrice(i))w.price=altPrice(i);
-  const c=guessCategory(w.t,w.c||'wohnen');if(c!==w.c){w.c=c;w.a=cat(c).a;w.tone=cat(c).t}
+  const c=guessCategory(w.t,w.c||'sonstiges');if(c!==w.c){w.c=c;w.a=cat(c).a;w.tone=cat(c).t}
   S.ui.modal=null;
   toast('Übernommen: Dein Wunsch ist jetzt „'+w.t+'“.',{label:'Rückgängig',run:()=>{Object.assign(w,old);render()}});render();
   // Direktlink und Bild im Hintergrund nachladen, nur wenn die Person den Wunsch inzwischen nicht zurückgesetzt hat
@@ -458,19 +459,19 @@ async readlink(el,auto){
  },
  aivhave(el){ // „Habe ich schon“ bei einem Vorschlag zu einem Wunsch: als vorhanden notieren, nie wieder vorschlagen
   const i=ideasOf('wish:'+el.dataset.wid).find(x=>x.t===el.dataset.t);if(!i)return;
-  const c=guessCategory(i.t,'wohnen');
+  const c=guessCategory(i.t);
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===i.t.toLowerCase()))S.me.wishes.unshift(W({t:i.t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
   saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das ist schon vorhanden. Solche Vorschläge zeigen wir nicht mehr.');render();
  },
  aihave(el){
   const i=[...ideasOf(skey(S.me.handle||'')),...ideasOf(gkey(S.me.handle||''))].find(x=>x.t===el.dataset.t);if(!i)return;
-  const c=guessCategory(i.t,'wohnen');
+  const c=guessCategory(i.t);
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===i.t.toLowerCase()))S.me.wishes.unshift(W({t:i.t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
   saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das hast du schon. Solche Ideen zeigen wir dir nicht mehr.');render();
  },
  aiadd(el){
   const i=[...ideasOf(skey(S.me.handle||'')),...ideasOf(gkey(S.me.handle||''))].find(x=>x.t===el.dataset.t);if(!i)return;
-  const c=guessCategory(i.t,'wohnen');
+  const c=guessCategory(i.t);
   S.me.wishes.unshift(W({t:i.t,c,kind:i.exp?'erlebnis':'produkt',prio:2,price:i.to||null,a:i.exp?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
   saveSignal('yes',i.t);hideIdea(i.t);toast('Schön, das steht jetzt auf deiner Wunschliste.');render();
  },
@@ -633,7 +634,7 @@ document.addEventListener('submit',e=>{
   }
   if(kind==='owned'){
     const t=(fd.get('t')||'').trim();if(!t)return;
-    const g=CATALOG.find(i=>overlap(kwOf(t),i.kw));const c=g?g.c:'wohnen';
+    const g=CATALOG.find(i=>overlap(kwOf(t),i.kw));const c=g?g.c:guessCategory(t);
     S.me.wishes.unshift(W({t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(t)}));
     toast(`„${t}“ ist eingetragen. Das schlagen wir dir und deinen Freunden nicht mehr vor.`);render();return;
   }
@@ -676,11 +677,12 @@ document.addEventListener('submit',e=>{
       const w=(z.items||[])[i];let t=(fd.get('t'+i)||'').trim();if(!w||!t)return;
       const m=z.m&&z.m[i],use=m&&m.st==='ok'&&fd.get('use'+i)==='1',cand=use?m.cand:null;
       if(cand)t=cand.t;
-      const c=(m&&(m.cand?.c||m.c))||guessCategory(t,'wohnen');
+      const c=(m&&(m.cand?.c||m.c))||guessCategory(t);
       const nw=W({t,c,kind:w.kind,prio:2,price:cand&&cand.price?cand.price:w.price,note:w.note||'',a:w.kind==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(t)});
       S.me.wishes.unshift(nw);if(cand&&S.auth.user)imgs.push({w:nw,cand});n++;
     });
     if(imgs.length)setTimeout(()=>zettelImages(imgs),50);
+    if(n)setTimeout(()=>smartCats(S.me.wishes.slice(0,n),()=>{if(!S.ui.modal)render()}),400); // Unklare Wünsche ordnet die KI nach (100)
     S.ui.zt=null;S.ui.modal=null;
     if(n)toast(`${n===1?'Ein Wunsch steht':n+' Wünsche stehen'} jetzt auf der Wunschliste. Bei jedem Wunsch kannst du den Link ergänzen.`);
     location.hash='#wuensche';render();return;
@@ -708,6 +710,7 @@ document.addEventListener('submit',e=>{
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
+      if(!f.elements.c?.dataset.touched){const nw=S.me.wishes[0];setTimeout(()=>smartCats([nw],()=>{if(!S.ui.modal)render()}),300)} // nur wenn niemand die Kategorie selbst gewählt hat (100)
       S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';const ideas=!link&&k!=='erlebnis'&&!noSuggest&&!plan;S.ui.wr=null;toast(ideas?'Der Wunsch ist gespeichert, und deine Freunde sehen dazu passende Ideen von Wishtale.':'Der Wunsch ist gespeichert.',ideas?{label:'So sehen es Freunde',run:()=>{S.ui.preview=true;markStep('preview');render();scrollTo({top:0,behavior:'smooth'})}}:null);render();
     };
     if(fi.failed)toast('Das Bild konnte nicht gespeichert werden. Der Wunsch ist ohne Bild gespeichert, du kannst es später erneut versuchen.');
