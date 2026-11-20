@@ -81,3 +81,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 099 in tribunal_verdicts
 - Zurücknehmen: git revert 6db7114
 - Offen: Wischen auf echtem Gerät prüfen
+
+## 2026-11-20 · 100 · Smarte Kategorien, Stufe 1
+- Commits: b903d71 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („Baue Stufe 1“, feiner trennen), Dev 100
+- Geändert: src/data/content.js (CATS, KID_CATS, cat-Rückfall), src/lib/category.js (Wortliste), neu src/lib/smartcats.js, src/actions.js, src/render.js, src/views/modals.js, src/views/wishprev.js, src/lib/invite.js, api/_lib/match.js (CAT_GUIDE, categorize), api/ideas.js (mode=cat), datenschutz.html Abschnitt 11, CLAUDE.md
+- Warum: Fast alles Unbekannte landete in „Wohnen“, große Märkte wie Fitness oder Wintersport fehlten
+- Geprüft: ESLint, Build, Playwright mit Testkonto, parseCats
+- Datenbank und Dienste: keine Migration nötig (Kategorie ist Text), Eintrag 100 in tribunal_verdicts
+- Zurücknehmen: git revert b903d71 (bereits neu sortierte Wünsche behalten ihre neue Kategorie)
+- Offen: Stufe 2, Wirkung in der Auswertung nach einigen Tagen prüfen
