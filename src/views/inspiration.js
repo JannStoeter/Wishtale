@@ -102,8 +102,8 @@ export function HomeIdeas(){
   if(!visible)return `<section class="homeideas closed" aria-labelledby="homeideas-h"><h2 id="homeideas-h" class="vh">Vorschläge von Wishtale</h2>
    <button id="homeideas-toggle" class="homeideas-peek" data-act="homeideastoggle" aria-expanded="false" aria-controls="homeideas-content">${ic('spark','sm')}<span>${n?`Wishtale hat ${n} Ideen für dich`:'Ideen von Wishtale für dich'}</span><span class="peek-go">Anzeigen</span></button>
    <div id="homeideas-content" hidden></div></section>`;
-  return `<section class="homeideas" aria-labelledby="homeideas-h">
-   <div class="homeideas-head"><div><p class="eyebrow">Vorschläge von Wishtale</p><h2 id="homeideas-h">Ideen für dich</h2></div><button id="homeideas-toggle" class="btn ghost sm" data-act="homeideastoggle" aria-expanded="true" aria-controls="homeideas-content" aria-label="Vorschläge ausblenden" title="Vorschläge ausblenden">${ic('eyeoff')}</button></div>
+  return `<section class="homeideas ideas-zone" aria-labelledby="homeideas-h">
+   <div class="homeideas-head"><div><p class="eyebrow zone-eb">${ic('spark','sm')}Vorschläge von Wishtale</p><h2 id="homeideas-h">Ideen für dich</h2></div><button id="homeideas-toggle" class="btn ghost sm" data-act="homeideastoggle" aria-expanded="true" aria-controls="homeideas-content" aria-label="Vorschläge ausblenden" title="Vorschläge ausblenden">${ic('eyeoff')}</button></div>
    <div id="homeideas-content"><p class="muted homeideas-sub">Deinen Freunden zeigen wir ähnliche Vorschläge, und welche sie auswählen, bleibt eine Überraschung.</p>
    ${st==='loading'||st==='none'?AiLoading('Deine individuellen Empfehlungen werden erstellt …'):st==='empty'?'<p class="muted">Gerade sind keine weiteren Vorschläge da. Mit deinen Interessen und den Geschmackskarten lernt Wishtale dich besser kennen.</p>':AiSelf(true)}
    ${st==='ready'?'<p class="disc"><b>Anzeige:</b> Links zu Amazon sind Partnerlinks. Als Amazon-Partner verdiene ich an qualifizierten Verkäufen. Preise sind Richtwerte und können abweichen.</p>':''}

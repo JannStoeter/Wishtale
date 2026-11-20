@@ -1328,3 +1328,24 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .ideacheck>summary .peek-go{font-weight:600;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:14px}
 .ideacheck[open]>summary .peek-go{display:none}
 .ideacheck>summary:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+/* 099: Vorschläge als eigene, leicht getönte Fläche; am Handy waagerecht wischbare Karten. */
+.ideas-zone{--zone:#ECF1E8;background:var(--zone);border:0;border-radius:24px;padding:22px 18px;margin:32px 0}
+.more.ideas-zone{border-top:0;padding-top:22px;margin-top:36px}
+.ideas-zone .zone-eb{display:inline-flex;align-items:center;gap:6px;color:#3F5A43;margin:0 0 4px}
+.ideas-zone .homeideas-head{align-items:flex-start}
+.ideas-zone .pbar .seg{background:rgba(255,255,255,.7)}
+.ideas-zone .ideas-quiet .recs .rec.idea{background:#fff;border:0;border-radius:18px;box-shadow:0 1px 3px rgba(31,27,22,.08);padding:16px;display:flex;flex-direction:column;margin:0}
+.ideas-zone .ideas-quiet .recs .rec.idea .idea-acts{margin-top:auto;padding-top:8px}
+.ideas-zone .ideas-quiet .recs .rec.idea h3{font-size:19px}
+.ideas-zone .ideacheck>summary{background:rgba(255,255,255,.6);border-color:rgba(46,59,47,.2)}
+.ideas-zone .disc{margin-top:12px}
+.ideas-zone .thinnote{background:rgba(255,255,255,.7)}
+@media(max-width:719px){
+ .ideas-zone{border-radius:20px;padding:20px 16px;margin:28px -4px}
+ .ideas-zone .ideas-quiet .recs.grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:0 -16px;padding:4px 16px 10px;scroll-padding:0 16px;scrollbar-width:none}
+ .ideas-zone .ideas-quiet .recs.grid::-webkit-scrollbar{display:none}
+ .ideas-zone .ideas-quiet .recs .rec.idea{flex:0 0 82%;max-width:320px;scroll-snap-align:start}
+}
+@media(max-width:719px){.ideas-zone .pbar .seg button{padding:7px 9px;font-size:13.5px}.ideas-zone .pbar{gap:6px}}
+@media(min-width:720px){.ideas-zone p.muted .swipe-only{display:none}}

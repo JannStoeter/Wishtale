@@ -42,7 +42,8 @@ export function GuestPage(p,{preview=false}={}){
 /* Zweiter Teil: erst wenn auf der Liste nichts passt (oder es keine Wünsche gibt). Hier gilt der Preisrahmen. „Bitte nicht“ und „Hat schon“ stehen in der Seitenleiste. */
 function More(p,{preview=false,none=false,open=0}={}){
   const ai=['ready','loading'].includes(aiStatus(gkey(p.handle||p.id)));
-  return `<section class="more${none?' first':''}" id="mehr" aria-labelledby="mehr-h">
+  return `<section class="more ideas-zone${none?' first':''}" id="mehr" aria-labelledby="mehr-h">
+   <p class="eyebrow zone-eb">${ic('spark','sm')}Vorschläge von Wishtale</p>
    <h2 id="mehr-h">${none?`${esc(p.name)} lässt sich noch inspirieren`:'Ideen von Wishtale'}</h2>
    ${thinProfile(p)?`<p class="thinnote">${ic('spark','sm')}<span>${p.managed?`Das Profil von ${esc(p.name)} ist noch ganz frisch`:`${esc(gen(p.name))} Profil ist noch ganz frisch`}, darum sind unsere Ideen im Moment eher allgemein. Je mehr ${esc(p.name)} über sich erzählt, desto genauer treffen sie.${preview?' <a href="#profil" class="linkbtn">Profil ergänzen</a>':''}</span></p>`:''}
    ${PriceFilter()}
@@ -101,7 +102,7 @@ export function AiIdeas(p){
   if(st==='loading')return `<section class="sect curated" id="ideen-ki">${AiLoading(`Wishtale erstellt individuelle Empfehlungen für ${esc(p.name)} …`)}</section>`;
   const list=ideasOf(gkey(p.handle||p.id));if(!list.length)return '';
   const price=i=>i.from&&i.to?`ca. ${i.from} bis ${i.to} €`:i.to?`bis ca. ${i.to} €`:'';
-  return `<section class="sect curated ideas-quiet" id="ideen-ki"><p class="muted" style="font-size:14px;margin:0 0 12px">Vorschläge von Wishtale, passend zu ${esc(p.name)}. Anregungen, keine Wünsche.</p>
+  return `<section class="sect curated ideas-quiet" id="ideen-ki"><p class="muted" style="font-size:14px;margin:0 0 12px">Passend zu ${esc(p.name)}, als Anregung und nicht als Wunsch.<span class="swipe-only"> Wische für weitere Ideen.</span></p>
    <div class="recs grid">${list.map(i=>`<article class="rec idea"><h3>${esc(i.t)}</h3>
     <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price(i)?` · <span title="Grobe Schätzung, kein Live-Preis">${price(i)}</span>`:''}</p>
     <p class="why">${esc(i.why)}</p>
