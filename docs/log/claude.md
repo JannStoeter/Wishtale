@@ -91,3 +91,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine Migration nötig (Kategorie ist Text), Eintrag 100 in tribunal_verdicts
 - Zurücknehmen: git revert b903d71 (bereits neu sortierte Wünsche behalten ihre neue Kategorie)
 - Offen: Stufe 2, Wirkung in der Auswertung nach einigen Tagen prüfen
+
+## 2026-11-20 · 101 · „Was hast du schon?“ in der Profil-Einrichtung
+- Commits: ff88dfd und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („Besitz über den Profilweg angeben, nicht bei meinen Wünschen“), Dev 101
+- Geändert: src/data/content.js (OWNED, KID_OPTS.owned), src/views/profile.js (Schritt owned, Picker, Abschnitt offen), src/actions.js (addOwned, toggleOwned), CLAUDE.md
+- Warum: Der Weg zum Eintragen war schwer zu finden, in der Einrichtung fehlte er ganz
+- Geprüft: ESLint, Build, Playwright 390 px, axe ohne Befund; Datenbank-Zählung zeigt keine verlorenen Einträge
+- Datenbank und Dienste: Eintrag 101 in tribunal_verdicts
+- Zurücknehmen: git revert ff88dfd
+- Offen: keine

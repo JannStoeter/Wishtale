@@ -92,6 +92,7 @@ Stand: 2026-11-09
 | 098 | Handy-Prüfung und hellere Farbwelt | **Jann im Chat: Vorschlag gefällt, Überschrift in eine Zeile, bauen.** Schritt 1: hellerer Grund, weiße Karten, Platzhalter in Kategoriefarben, ruhiger erster Bildschirm, ein Hinweis zur Zeit. Schritt 2: Wunsch-Ansicht ohne Doppelungen, kürzere Dialogtexte, ruhige Gast-Ideen. | ja, `3c73134`, `715d550` |
 | 099 | Vorschläge als eigene Fläche | **Jann im Chat: Ideen grafisch abgrenzen.** Hell salbeigrüne Fläche mit weißen Karten, am Handy wischbar, eigene und Gastansicht. | ja, `6db7114` |
 | 100 | Kategorien smart machen | **Jann im Chat: Stufe 1 bauen, Sport/Fitness und Outdoor/Wintersport trennen.** 22 Kategorien, Sonstiges als Auffang, KI ordnet Unbekanntes ein, ältere Wünsche einmal neu sortiert. Stufe 2 (eigene Gruppen) offen. | ja, `b903d71` |
+| 101 | Besitz im Profilweg | **Jann im Chat: Besitz über den Profilweg angeben, nicht bei den Wünschen.** Neuer Schritt „Was hast du schon?“ in der Profil-Einrichtung, Profil-Abschnitt immer offen. | ja, `ff88dfd` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
