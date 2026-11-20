@@ -71,3 +71,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 098 in tribunal_verdicts aktualisiert
 - Zurücknehmen: git revert 715d550
 - Offen: Prüfung auf echtem Gerät
+
+## 2026-11-20 · 099 · Vorschläge als eigene Fläche
+- Commits: 6db7114 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („Ideen grafisch abgrenzen, geht sehr unter“), Dev 099
+- Geändert: src/views/giver.js, src/views/inspiration.js (Klasse ideas-zone, Kennzeichnung), src/styles/main.css (Fläche, Karten, Wischen am Handy), CLAUDE.md
+- Warum: Die Ideen gingen nach Schritt 2 von 098 als langer Text unter
+- Geprüft: ESLint, Build, Playwright 390 und 1280 px, axe ohne Befund, kein Überlauf
+- Datenbank und Dienste: Eintrag 099 in tribunal_verdicts
+- Zurücknehmen: git revert 6db7114
+- Offen: Wischen auf echtem Gerät prüfen
