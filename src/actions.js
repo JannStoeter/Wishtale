@@ -179,6 +179,17 @@ function applyCand(cand){
   if(cand.price&&f.elements.price)f.elements.price.value=String(cand.price).replace('.',',');
   if(cand.img&&!(S.ui.wishImg&&!S.ui.wishImg.remove&&S.ui.wishImg.manual))showWishImg({...cand.img});
 }
+/** „Das habe ich schon“ aus dem Profil: als erledigter Wunsch speichern, nie auf der Wunschliste (Dev 101). */
+function addOwned(t){
+  t=String(t).trim().slice(0,120);if(!t||S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===t.toLowerCase()))return;
+  const g=CATALOG.find(i=>overlap(kwOf(t),i.kw));const c=g?g.c:guessCategory(t);
+  S.me.wishes.unshift(W({t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(t)}));
+}
+function toggleOwned(t){
+  const w=S.me.wishes.find(x=>x.status==='selbst'&&x.t.toLowerCase()===String(t).toLowerCase());
+  if(w){if(w.img)dropImage(w.img);S.me.wishes=S.me.wishes.filter(x=>x!==w)}else addOwned(t);
+}
+
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
  coinvite(el){const id=el.dataset.id,z=S.ui.mgm[id];if(!z||z.busy)return;z.busy=true;z.error='';render();
@@ -230,7 +241,7 @@ const A={
  mgo(el){const v=el.dataset.v;if(el.dataset.home){S.ui.preview=false;S.ui.menu=false;}S.ui.menu=false;S.ui.scrollTo=el.dataset.to||'';if(v==='profil'&&el.dataset.to==='vis')S.ui.scrollTo='';if(location.hash==='#'+v){render(true)}else location.hash='#'+v},
  mdo(el,e){S.ui.menu=false;const f=A[el.dataset.do];if(f)f(el,e);else render()},
  go(el){const v=el.dataset.v;if(el.dataset.home){S.ui.preview=false;S.ui.menu=false;}if(v==='start')S.ui.step=0;location.hash='#'+v;if(location.hash==='#'+v&&S.ui.view===v)render(true)},
- pick(el){const k=el.dataset.k,v=el.dataset.v,a=S.me[k],i=a.indexOf(v);i>-1?a.splice(i,1):a.push(v);render()},
+ pick(el){const k=el.dataset.k,v=el.dataset.v;if(k==='owned'){toggleOwned(v);render();return}const a=S.me[k],i=a.indexOf(v);i>-1?a.splice(i,1):a.push(v);render()},
  next(){
   if(S.ui.view==='start'&&S.ui.step===1&&!S.auth.user)track('choice',{label:'profile',once:true,path:'/app/'});
   if(!S.auth.user&&S.ui.step===0&&!(S.me.name||'').trim()){toast('Magst du uns zuerst deinen Vornamen verraten?');document.getElementById('dn')?.focus();return}
@@ -634,8 +645,7 @@ document.addEventListener('submit',e=>{
   }
   if(kind==='owned'){
     const t=(fd.get('t')||'').trim();if(!t)return;
-    const g=CATALOG.find(i=>overlap(kwOf(t),i.kw));const c=g?g.c:guessCategory(t);
-    S.me.wishes.unshift(W({t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(t)}));
+    addOwned(t);
     toast(`„${t}“ ist eingetragen. Das schlagen wir dir und deinen Freunden nicht mehr vor.`);render();return;
   }
   if(kind==='azsearch'){
@@ -659,7 +669,7 @@ document.addEventListener('submit',e=>{
     if(location.hash==='#start')render(true);else location.hash='#start';
     return;
   }
-  if(kind==='custom'){const v=(fd.get('v')||'').trim(),k=fd.get('k');if(v&&!S.me[k].includes(v))S.me[k].push(v);render()}
+  if(kind==='custom'){const v=(fd.get('v')||'').trim(),k=fd.get('k');if(k==='owned'){if(v)addOwned(v);render();return}if(v&&!S.me[k].includes(v))S.me[k].push(v);render()}
   if(kind==='idea'){const v=(fd.get('idea')||'').trim();S.ui.idea=v;S.ui.ideaRes=v?check(guestPerson(),v):null;render()}
   if(kind==='zettel'){
     const files=[...f.elements.files.files],text=(fd.get('text')||'').trim();

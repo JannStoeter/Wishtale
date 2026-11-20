@@ -80,8 +80,10 @@ export const KID_OPTS={
  brands:['LEGO','Playmobil','SIKU','Schleich','Ravensburger','Tonies','Haba','Brio','Duplo','Hot Wheels','Barbie','Paw Patrol','Disney','Pixi','Kosmos','Bruder','Jako-o','Sterntaler'],
  tries:['Schwimmkurs','Zoobesuch','Freizeitpark','Töpfern','Reitstunde','Kindertheater','Klettern','Zelten im Garten','Musikschule schnuppern'],
  nogos:['Laute Spielzeuge','Süßigkeiten','Kleinteile','Gruselige Sachen','Elektronik','Plastikspielzeug','Noch ein Kuscheltier'],
+ owned:['Toniebox','Laufrad','Bobbycar','Kinderküche','Holzeisenbahn','Puppenhaus','Kinderfahrrad','Tiptoi-Stift','Kaufladen','Trampolin'],
  alts:['Spielwarengutschein','Buchhandlung vor Ort','Kinogutschein','Ticket für Zoo oder Freizeitpark','Gemeinsamer Ausflug','Einzahlung aufs Sparbuch'],
 };
+export const OWNED=['Kaffeevollautomat','Siebträgermaschine','Kopfhörer','Smartwatch','E-Reader','Airfryer','Küchenmaschine','Bluetooth-Lautsprecher','Spielkonsole','Wanderrucksack','Yogamatte','Fahrradhelm','Dutch Oven','Gute Messer'];
 export const PRIO=['','Nice to have','Wichtig','Sehr wichtig'];
 export const FB={love:'Genau mein Geschmack!',happy:'Darüber freue ich mich sehr.',meh:'Schön, aber nicht ganz meins.',have:'Bereits vorhanden.',swap:'Ich würde lieber etwas anderes daraus machen.'};
 

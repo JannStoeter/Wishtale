@@ -2,7 +2,7 @@ import { S, initials } from '../state.js';
 import { BackBar } from './menu.js';
 import { esc, ic } from '../lib/util.js';
 import { art } from '../lib/art.js';
-import { ACT, CATS, BRANDS, TRIES, NOGOS, ALTS, KID_CATS, KID_OPTS, cat, crea } from '../data/content.js';
+import { ACT, CATS, BRANDS, TRIES, NOGOS, ALTS, OWNED, KID_CATS, KID_OPTS, cat, crea } from '../data/content.js';
 import { VisPill } from './shared.js';
 import { GuestPage } from './giver.js';
 import { ViewSeg, PreviewBanner } from './wishes.js';
@@ -11,12 +11,15 @@ import { AppPromo } from './inspiration.js';
 import { ManagersBlock } from './comember.js';
 import { worldsOn } from '../lib/flags.js';
 
+/** Was schon da ist, steht als erledigter Wunsch (status selbst) im Konto, nie auf der Wunschliste (Dev 101). */
+export const ownedTitles=()=>S.me.wishes.filter(w=>w.status==='selbst').map(w=>w.t);
 export const STEPS=[
  {k:'interests',t:'Was machst du in deiner freien Zeit am liebsten?',h:'Such dir aus, was zu deinem Alltag passt. Daran erkennen wir später, über welche Geschenke du dich wirklich freuen würdest.',opts:()=>ACT.map(a=>a.l)},
  {k:'cats',t:'In welchen Welten fühlst du dich zuhause?',h:'Tippe auf die Bereiche, die zu dir passen. Du kannst später jederzeit etwas ergänzen oder wieder wegnehmen.',tiles:true},
  {k:'brands',t:'Gibt es Marken, bei denen du gern stöberst?',h:'Das hilft uns, Vorschläge zu finden, die zu deinem Geschmack passen. Wenn dir gerade keine einfällt, ist das auch völlig in Ordnung.',opts:()=>BRANDS},
  {k:'tries',t:'Was würdest du gern einmal ausprobieren?',h:'Vielleicht einen Kurs, ein Wochenende oder etwas ganz Neues? Gerade dafür lassen sich schöne Erlebnisse verschenken.',opts:()=>TRIES},
  {k:'nogos',t:'Gibt es etwas, das du lieber nicht geschenkt bekommen möchtest?',h:'Das sehen nur Menschen, die dir etwas schenken wollen. So ersparst du ihnen und dir manche Enttäuschung.',opts:()=>NOGOS},
+ {k:'owned',t:'Was hast du schon?',h:'Trag ein, was du schon besitzt, damit dir niemand etwas doppelt schenkt. Das kommt nicht auf deine Wunschliste, Wishtale schlägt es nur nicht mehr vor.',opts:()=>OWNED},
  {k:'alts',t:'Und wenn deinen Freunden gar nichts einfällt?',h:'Dann freuen sie sich vielleicht über einen Gutschein, einen Besuch in deinem Lieblingsladen oder eine Spende. Sag uns, was dir davon gefallen würde.',opts:()=>ALTS}
 ];
 /* Auswahl zu einem Thema (Interessen, Welten, Marken …). Wird in der Einrichtung und direkt im Profil genutzt. */
@@ -25,8 +28,9 @@ export function Picker(st){
   if(st.tiles){
     body=`<div class="tiles">${CATS.filter(c=>!S.me.managed||KID_CATS.includes(c.id)).map(c=>{const on=S.me.cats.includes(c.id);return `<button class="tile ${on?'on':''}" data-act="pick" data-k="cats" data-v="${c.id}" aria-pressed="${on}">${art(c.a,c.t)}<span>${c.n}<i class="tick">${ic('check','sm')}</i></span></button>`}).join('')}</div>`;
   }else{
-    const list=[...new Set([...(S.me.managed&&KID_OPTS[st.k]?KID_OPTS[st.k]:st.opts()),...S.me[st.k]])];
-    body=`<div class="opts">${list.map(o=>{const on=S.me[st.k].includes(o);return `<button class="opt ${on?'on':''}" data-act="pick" data-k="${st.k}" data-v="${esc(o)}" aria-pressed="${on}">${esc(o)}</button>`}).join('')}</div>
+    const cur=st.k==='owned'?ownedTitles():S.me[st.k],has=o=>st.k==='owned'?cur.some(x=>x.toLowerCase()===o.toLowerCase()):cur.includes(o);
+    const list=[...new Set([...(S.me.managed&&KID_OPTS[st.k]?KID_OPTS[st.k]:st.opts()),...cur])];
+    body=`<div class="opts">${list.map(o=>{const on=has(o);return `<button class="opt ${on?'on':''}" data-act="pick" data-k="${st.k}" data-v="${esc(o)}" aria-pressed="${on}">${esc(o)}</button>`}).join('')}</div>
     <form data-form="custom" class="addrow"><input type="hidden" name="k" value="${st.k}"><label class="sr" for="cust" style="position:absolute;left:-9999px">Eigene Angabe</label><input id="cust" name="v" class="inp" placeholder="Fehlt etwas? Schreib es einfach dazu" autocomplete="off"><button class="btn sec sm" type="submit">${ic('plus','sm')}Hinzufügen</button></form>`;
   }
   return body;
@@ -40,6 +44,7 @@ const kidText=st=>{const n=esc(S.me.name||'das Kind');const T={
  brands:{t:`Welche Marken und Spielwelten mag ${n}?`,h:'Zum Beispiel LEGO, Playmobil oder SIKU. Wenn euch gerade nichts einfällt, ist das auch in Ordnung.'},
  tries:{t:`Was würde ${n} gern einmal ausprobieren?`,h:'Ein Ausflug, ein Kurs oder etwas ganz Neues? Dafür lassen sich schöne Erlebnisse verschenken.'},
  nogos:{t:`Was soll ${n} lieber nicht geschenkt bekommen?`,h:'Das sehen nur Menschen, die etwas schenken wollen. So bleiben Enttäuschungen aus.'},
+ owned:{t:`Was hat ${n} schon?`,h:'Tragt ein, was schon da ist, damit nichts doppelt ankommt. Das kommt nicht auf die Wunschliste.'},
  alts:{t:'Und wenn den Schenkenden gar nichts einfällt?',h:`Dann freut sich ${n} vielleicht über einen Gutschein oder einen gemeinsamen Ausflug.`},
 };return T[st.k]||{t:st.t,h:st.h}};
 const STEPS_ON=()=>STEPS.filter(x=>worldsOn()||x.k!=='cats');
@@ -129,7 +134,7 @@ function Meter(m){
 /* Produkte, die man schon hat. Sie fließen in die Empfehlungen ein, damit nichts doppelt gekauft wird. */
 function OwnedSec(m){
   const owned=m.wishes.filter(w=>w.status==='selbst');
-  return `<details class="psec cmp fold2" id="sec-owned" ${owned.length?'open':''}><summary class="hd"><h3 aria-level="2">Das habe ich schon</h3></summary><div class="row" style="justify-content:flex-end">${VisPill('alle')}</div>
+  return `<details class="psec cmp fold2" id="sec-owned" open><summary class="hd"><h3 aria-level="2">Das habe ich schon</h3></summary><div class="row" style="justify-content:flex-end">${VisPill('alle')}</div>
    <p class="muted" style="font-size:14px">Dafür schlagen wir nichts mehr vor. Erledigte Wünsche stehen auch hier, mit dem Pfeil kommt einer zurück auf deine Wunschliste.</p>
    ${owned.length?`<div class="chips">${owned.map(w=>`<span class="chip ok">${esc(w.t)}<button class="chipx" data-act="selbst" data-id="${w.id}" aria-label="${esc(w.t)} wieder als Wunsch auf die Liste" title="Wieder als Wunsch">↺</button><button class="chipx" data-act="ownedel" data-id="${w.id}" aria-label="${esc(w.t)} entfernen">×</button></span>`).join('')}</div>`:''}
    <form data-form="owned" class="addrow"><label for="ownedt" style="position:absolute;left:-9999px">Was hast du schon?</label><input id="ownedt" name="t" class="inp" placeholder="z. B. Siebträgermaschine, Wanderrucksack" autocomplete="off" maxlength="120"><button class="btn sec sm" type="submit">${ic('plus','sm')}Hinzufügen</button></form></details>`;
