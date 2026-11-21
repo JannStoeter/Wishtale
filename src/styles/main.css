@@ -1349,3 +1349,18 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 }
 @media(max-width:719px){.ideas-zone .pbar .seg button{padding:7px 9px;font-size:13.5px}.ideas-zone .pbar{gap:6px}}
 @media(min-width:720px){.ideas-zone p.muted .swipe-only{display:none}}
+
+/* 102: Reservieren direkt in der Gastliste, als eigener Knopf neben der Zeile beziehungsweise Kachel. */
+.wrow-wrap{position:relative;border-top:1px solid var(--line)}
+.wrow-wrap:first-child{border-top:0}
+.wrow-wrap .wrow{border-top:0}
+.wrow-wrap+.wrow,.wrow+.wrow-wrap{border-top:1px solid var(--line)}
+.wrow.has-res{padding-bottom:52px}
+.wres{position:absolute;display:inline-flex;align-items:center;min-height:36px;padding:0 16px;border:1.5px solid var(--accent);border-radius:99px;background:var(--surface);color:var(--accent);font:600 14px/1 var(--body);cursor:pointer}
+.wres:hover{background:var(--accent);color:var(--accent-ink)}
+.wres:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.wrow-wrap .wres{left:82px;bottom:12px}
+.wcard-wrap{position:relative;display:flex}
+.wcard-wrap>.wcard{flex:1}
+.wcard.has-res .wbody{padding-bottom:58px}
+.wcard-wrap .wres{left:14px;bottom:14px}

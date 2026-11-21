@@ -299,7 +299,8 @@ const A={
  guestretry(){S.guest=null;route()},
 share(){
   markStep('share');
-  const url=`${location.origin}${location.pathname}#p/${S.me.handle||S.ui.acct}`;
+  // Echte Konten teilen den kurzen Link /w/<kürzel>: Er zeigt in WhatsApp und Co. eine Vorschau mit Namen und leitet zur Gastansicht (102)
+  const url=S.auth.user&&S.me.handle&&!/^(localhost|127\.)/.test(location.hostname)?`${location.origin}/w/${S.me.handle}`:`${location.origin}${location.pathname}#p/${S.me.handle||S.ui.acct}`;
   const done=()=>toast('Dein Link ist kopiert und bereit zum Verschicken. (In der Demo öffnet er dein Profil nur in diesem Browser.)');
   if(navigator.share){navigator.share({title:`${S.me.name} bei Wishtale`,url}).catch(()=>{})}
   else if(navigator.clipboard?.writeText){navigator.clipboard.writeText(url).then(done,()=>toast(url))}

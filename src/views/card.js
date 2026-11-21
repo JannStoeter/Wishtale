@@ -40,17 +40,21 @@ const cardPrice=w=>w.price?money(w.price):w.kind==='kategorie'&&w.budget?'bis '+
 export function WishRow(w,p,o={}){
   const {pr,line}=wishLine(w,p);
   const price=w.price?money(w.price):w.kind==='kategorie'&&w.budget?'bis '+money(w.budget):'';
-  return `<div class="wrow ${o.taken?'taken':''} ${o.dim?'dim':''} ${w.status==='selbst'?'done':''}" role="button" tabindex="0" data-act="wopen" data-id="${w.id}" data-ctx="${o.ctx||'guest'}">
+  const res=o.reserve?`<button class="wres" data-act="reserve" data-id="${w.id}" aria-label="${esc(w.t)} reservieren">Reservieren</button>`:'';
+  const row=`<div class="wrow ${o.taken?'taken':''} ${o.dim?'dim':''} ${w.status==='selbst'?'done':''} ${res?'has-res':''}" role="button" tabindex="0" data-act="wopen" data-id="${w.id}" data-ctx="${o.ctx||'guest'}">
    <span class="wrow-img">${WishArt(w,pr)}</span>
    <div class="wrow-b"><span class="wt">${esc(w.t)}</span><span class="wp">${esc(line)}</span>${o.meta?`<span class="wm">${o.meta}</span>`:''}</div>
    <div class="wrow-m">${price?`<span class="wprice">${price}</span>`:''}${o.status?`<span class="wstate ${o.status.tone}">${ic('lock','sm')}${esc(o.status.text)}</span>`:''}<span class="dots" title="${PRIO[w.prio]}" aria-label="Priorität: ${PRIO[w.prio]}">${[1,2,3].map(n=>`<i class="${n<=w.prio?'on':''}"></i>`).join('')}</span></div>
   </div>`;
+  // Reservieren sitzt neben der Zeile, nicht in ihr: ein Knopf in einem Knopf wäre für Screenreader und Tastatur nicht bedienbar (102)
+  return res?`<div class="wrow-wrap">${row}${res}</div>`:row;
 }
 
 /** o.ctx: 'guest' | 'own' | 'preview'; o.status: {text,tone}; o.taken; o.dim; o.meta: HTML der Label-Zeile */
 export function WishCard(w,p,o={}){
   const {pr,line}=wishLine(w,p);
-  return `<div class="wcard compact ${o.taken?'taken':''} ${o.dim?'dim':''} ${w.status==='selbst'?'done':''}" role="button" tabindex="0" data-act="wopen" data-id="${w.id}" data-ctx="${o.ctx||'guest'}">
+  const res=o.reserve?`<button class="wres" data-act="reserve" data-id="${w.id}" aria-label="${esc(w.t)} reservieren">Reservieren</button>`:'';
+  const card=`<div class="wcard compact ${o.taken?'taken':''} ${o.dim?'dim':''} ${w.status==='selbst'?'done':''} ${res?'has-res':''}" role="button" tabindex="0" data-act="wopen" data-id="${w.id}" data-ctx="${o.ctx||'guest'}">
    <div class="wmedia">${WishArt(w,pr)}
     <div class="top"><span class="tag">${esc(cat(w.c).n)}</span><span class="dots" title="${PRIO[w.prio]}" aria-label="Priorität: ${PRIO[w.prio]}">${[1,2,3].map(n=>`<i class="${n<=w.prio?'on':''}"></i>`).join('')}</span></div>
     ${o.status?`<span class="wstate ${o.status.tone}">${ic('lock','sm')}${esc(o.status.text)}</span>`:''}
@@ -61,4 +65,5 @@ export function WishCard(w,p,o={}){
     <div class="wm">${o.meta||''}${cardPrice(w)?`<span class="wprice">${cardPrice(w)}</span>`:''}<span class="wgo">Ansehen ›</span></div>
    </div>
   </div>`;
+  return res?`<div class="wcard-wrap">${card}${res}</div>`:card;
 }

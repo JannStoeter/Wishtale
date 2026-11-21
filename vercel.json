@@ -127,6 +127,10 @@
   },
   "rewrites": [
     {
+      "source": "/w/:h",
+      "destination": "/api/resolve?op=share&h=:h"
+    },
+    {
       "source": "/api/tribunal",
       "destination": "/api/admin?op=tribunal"
     },

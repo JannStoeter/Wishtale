@@ -83,13 +83,13 @@ export function WishList(p,{preview=false}={}){
     else if(isMine)status={text:'Von dir reserviert',tone:'me'};
     else if(taken)status={text:'Reserviert',tone:'res'};
     const meta=(w.via?`<span class="chip gold">Tipp</span>`:'')+(w.kind==='kategorie'?`<span class="chip">bis ${w.budget?money(w.budget):'offen'}</span>`:'');
-    return (useList(all.length)?WishRow:WishCard)(w,p,{ctx:preview?'preview':'guest',meta,status,taken:taken||(w.bought&&!isMine),dim:r===0&&!taken});
+    return (useList(all.length)?WishRow:WishCard)(w,p,{ctx:preview?'preview':'guest',meta,status,taken:taken||(w.bought&&!isMine),dim:r===0&&!taken,reserve:!preview&&!w.res&&!w.bought});
   };
   const free=vw.filter(w=>w.res!=='other').length;
   const html=`<section id="wunschliste" aria-label="Wunschliste von ${esc(p.name)}">
    <div class="row" style="justify-content:space-between;margin-bottom:8px"><div><p class="eyebrow">Wunschliste · ${only?`${shown.length} offen`:`${all.length} ${all.length===1?'Wunsch':'Wünsche'}`}</p><h2 style="font-size:clamp(30px,4vw,44px)">Was ${esc(p.name)} sich wünscht</h2></div>
     <div class="row" style="gap:8px">${preview?'':`<div class="seg" role="group" aria-label="Filter"><button class="${!only?'on':''}" data-act="onlyopen" data-v="0">Alle</button><button class="${only?'on':''}" data-act="onlyopen" data-v="1">Nur offene${free!==all.length?` (${free})`:''}</button></div>`}${sortSeg()}<span class="desk-only">${densSeg(all.length)}</span></div></div>
-   <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} sieht, was reserviert ist, ${esc(p.name)} nicht.`:`Deine Reservierung bleibt anonym, ${esc(p.name)} erfährt nie davon.`}</p>
+   <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} sieht, was reserviert ist, ${esc(p.name)} nicht.`:`Tippe bei einem Wunsch auf „Reservieren“, dann schenkt niemand doppelt. Deine Reservierung bleibt anonym, und ${esc(p.name)} erfährt nie davon.`}</p>
    ${PrioKey()}<div class="${useList(all.length)?'wlist':'wgrid'}">${shown.map(cardOf).join('')||`<p class="muted">Alle Wünsche sind schon vergeben. Schau dir unten die Ideen an.</p>`}</div></section>`;
   return {html,open:free,count:all.length};
 }

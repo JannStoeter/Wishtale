@@ -1,3 +1,4 @@
+import { shareHandler } from './_lib/share.js';
 /*
  * Löst Amazon-Kurzlinks (amzn.to, amzn.eu, a.co) zur langen amazon.de-Adresse auf.
  * Der Browser darf das nicht selbst (CORS), darum läuft es hier auf dem Server.
@@ -43,6 +44,7 @@ export async function follow(start, fetchImpl = fetch, maxHops = 5) {
 }
 
 export default async function handler(req, res) {
+  if (req.query?.op === 'share') return shareHandler(req, res); // Teilen-Link mit Vorschau, /w/<kürzel> (102)
   res.setHeader('Cache-Control', 'public, s-maxage=86400');
   const u = String(req.query?.u || '');
   try {
