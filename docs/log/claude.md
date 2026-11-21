@@ -101,3 +101,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 101 in tribunal_verdicts
 - Zurücknehmen: git revert ff88dfd
 - Offen: keine
+
+## 2026-11-21 · 102 · Teilen-Link mit Vorschau, Reservieren in der Gastliste
+- Commits: a94caaa und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („Punkt 1 und 2 als Erstes bauen“), Dev 102
+- Geändert: neu api/_lib/share.js, scripts/og-image.mjs, public/og/wunschliste.jpg; api/resolve.js (op=share), vercel.json (Rewrite /w/:h), src/actions.js (share-Link), src/views/welcome.js, src/views/card.js (o.reserve), src/views/giver.js (Hinweis, reserve), src/styles/main.css, CLAUDE.md
+- Warum: Geteilte Links zeigten in Messengern keine Vorschau, Gäste fanden das Reservieren kaum (1 Reservierung bei 38 Aufrufen)
+- Geprüft: ESLint, Build, Vorschauseite mit nachgestelltem Profil, Playwright Gastansicht 390 und 1280 px, axe ohne Befund; live: /og/wunschliste.jpg 200, /w/jonas (Demo) zeigt „Jonas’ Wunschliste“ mit 4 Wünschen, ungültiges Kürzel 404
+- Datenbank und Dienste: keine Migration, weiterhin 11 Server-Funktionen; Eintrag 102 in tribunal_verdicts
+- Zurücknehmen: git revert a94caaa
+- Offen: Vorschau in einer echten WhatsApp-Nachricht prüfen (Messenger cachen Vorschauen teils lange)
