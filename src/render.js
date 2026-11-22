@@ -132,7 +132,11 @@ export function route(){
   S.ui.menu=false;
   S.ui.modal=null;
   if(S.ui.view==='start'&&anon)track('start',{once:true,path:'/app/'});
-  if(S.ui.view==='gast')track('guest_view',{once:true,path:'/app/'});
+  if(S.ui.view==='gast'){ // Aufruf über den geteilten Link /w/<kürzel> trägt ?via=link, die Markierung verschwindet danach aus der Adresse (105)
+    const via=new URLSearchParams(location.search).get('via')==='link';
+    track('guest_view',{once:true,path:'/app/',label:via?'link':undefined});
+    if(via)history.replaceState(null,'',location.pathname+location.hash);
+  }
   render(true);
 }
 

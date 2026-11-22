@@ -23,7 +23,7 @@ export function shareText(p) {
 }
 
 export function sharePage(handle, t) {
-  const target = handle ? `/app/#p/${encodeURIComponent(handle)}` : '/app/';
+  const target = handle ? `/app/?via=link#p/${encodeURIComponent(handle)}` : '/app/'; // via=link: die Gastansicht zählt den Aufruf als „über geteilten Link“ (105)
   const url = `${ORIGIN}/w/${encodeURIComponent(handle)}`;
   return `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(t.title)} · Wishtale</title>

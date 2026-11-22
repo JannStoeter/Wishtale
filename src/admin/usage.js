@@ -40,6 +40,10 @@ export async function mount(el) {
     <section class="card"><h2>Der Weg vom Besuch zum Wunsch</h2>
      <ol class="funnel">${steps.map(([l, n, h], i) => `<li><div class="frow"><span>${esc(l)}</span><b>${nf(n)}</b></div><div class="fbar"><i style="width:${Math.min(100, Math.round(n / top * 100))}%"></i></div><small class="muted">${i ? `${pct(n, steps[i - 1][1])} vom Schritt davor` : ''}${h ? (i ? ' · ' : '') + esc(h) : ''}</small></li>`).join('')}</ol>
      <p class="hint">Bei der Einrichtung wählten ${nf(f.quick)} „Direkt Wünsche aufschreiben“ und ${nf(f.profile)} „Erst mein Profil einrichten“. Besucher, die „Do Not Track“ nutzen, werden nicht gezählt, die Zahlen sind deshalb etwas niedriger als die Wirklichkeit.</p></section>
+    ${data.byArea && data.byArea.links ? (() => { const L = data.byArea.links; return `<section class="card"><h2>Geteilte Links</h2>
+     <div class="stats">${[['Geöffnet', L.opens], ['Verschiedene Menschen', L.visitors], ['Davon am Handy', L.visitors ? pct(L.mobile, L.visitors) : '–'], ['Alle Gastaufrufe', L.guest_all]].map(([l, n]) => `<div class="stat"><b>${typeof n === 'number' ? nf(n) : n}</b><span>${l}</span></div>`).join('')}</div>
+     ${bars(L.daily, 'n', 'Geöffnete geteilte Links pro Tag')}
+     <p class="hint">Gezählt wird, wie oft jemand über einen geteilten Link (wishtale.de/w/…) eine Wunschliste geöffnet hat. Links aus der Zeit vor dem 22.11.2026 und direkt aufgerufene Gastansichten zählen nur unter „Alle Gastaufrufe“. Menschen mit „Do Not Track“ fehlen, Admins zählen nicht mit.</p></section>`; })() : ''}
     <div class="grid2">
      <section class="card"><h2>Besucher pro Tag</h2>${bars(data.daily, 'visitors', 'Besucher pro Tag')}</section>
      <section class="card"><h2>Neue Konten pro Tag</h2>${bars(data.daily, 'signups', 'Neue Konten pro Tag')}</section>
