@@ -1291,7 +1291,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .authalt .btn{white-space:normal;text-align:left;justify-content:flex-start;max-width:100%}
 
 /* 098 Schritt 1: hellere Farbwelt in der App (Landingpage bleibt), weiße Karten, Platzhalter in Kategoriefarben. */
-:root:has(#app){--bg:#FAF7F1;--surface:#FFFFFF;--line:#E9E1D3}
+:root{--bg:#FAF7F1;--surface:#FFFFFF;--line:#E9E1D3} /* 103: auch Landingpage und Rechtsseiten */
 .art.mono.t0{--bg2:#F4DCCB;--p1:#8A3E22}
 .art.mono.t1{--bg2:#D7E6DA;--p1:#2D5A3B}
 .art.mono.t2{--bg2:#DCE6F3;--p1:#2E557A}
@@ -1364,3 +1364,18 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .wcard-wrap>.wcard{flex:1}
 .wcard.has-res .wbody{padding-bottom:58px}
 .wcard-wrap .wres{left:14px;bottom:14px}
+
+/* 103: Sichtbarkeit im Profil am Handy mit kurzem Wort statt nur Weltkugel. */
+.pill .vshort{display:none}
+@media(max-width:600px){.psec.cmp .pill .vshort{display:inline;font-size:12.5px;font-weight:600}.psec.cmp .pill{padding:6px 10px;gap:5px}}
+.jumpbtn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border:0;border-radius:99px;background:#ECF1E8;color:#2E4A33;font:600 13.5px/1 var(--body);cursor:pointer}
+.jumpbtn:hover{background:#E1EADC}
+.jumpbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.newbar-wrap{position:relative}
+.newbar-wrap .newbar{padding-right:52px}
+.newbar-x{position:absolute;top:50%;right:6px;transform:translateY(-50%);width:44px;height:44px;border:0;background:transparent;color:#F6F0E4;font-size:22px;line-height:1;cursor:pointer;border-radius:50%}
+.newbar-x:hover{background:rgba(255,255,255,.1)}
+.newbar-x:focus-visible{outline:2px solid #F6F0E4;outline-offset:-4px}
+.newbar-wrap .newbar>.ico:last-of-type{display:none}
+.wl-alt{margin:4px 0 0;font-size:14px}
+.psec.cmp .hd>span.row{flex-wrap:nowrap;flex-shrink:0}

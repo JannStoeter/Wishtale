@@ -72,7 +72,7 @@ export const LOOKS=[
  {id:'l6',cid:'hanna',t:'Packliste Wochenende',d:'Ordnung im Rucksack, ohne zu viel mitzunehmen.',scene:'packen',objs:[{k:'suitcase',x:120,y:420,s:1.6,tone:5,pid:'z5'},{k:'compass',x:275,y:380,s:1.4,tone:1,pid:'z4'}]}
 ];
 export const LOOKSCOPE=['Alle','Interior','Küche','Outdoor'];
-export const V={alle:{l:'Für alle mit Link',i:'globe'},giver:{l:'Für alle mit Link',i:'globe'},privat:{l:'Privat',i:'lock'},nur:{l:'Nur für dich',i:'eye'}};
+export const V={alle:{l:'Für alle mit Link',s:'Für alle',i:'globe'},giver:{l:'Für alle mit Link',s:'Für alle',i:'globe'},privat:{l:'Privat',s:'Privat',i:'lock'},nur:{l:'Nur für dich',s:'Nur du',i:'eye'}};
 /* Kinder-Konten: nur altersgerechte Auswahl für Welten, Interessen, Marken und Co. */
 export const KID_CATS=['spielen','baby','buecher','sport','outdoor','wintersport','radsport','musik','erlebnisse','mode','sonstiges'];
 export const KID_OPTS={

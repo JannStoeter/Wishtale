@@ -29,8 +29,10 @@ function wishLine(w,p){
   // Konkret statt allgemein: wo es das gibt, und bei ungenauen Wünschen der erste Tipp von Wishtale (klar als Tipp gekennzeichnet).
   const host=w.link?hostOf(w.link):'';
   const linkLine=!host?'Mit Link':host==='Amazon'?'Bei Amazon':`${host}, auch bei Amazon`;
-  const vague=ai?`Tipp von Wishtale: ${ai.t}`:aiStatus('wish:'+w.id)==='loading'?'Wishtale sucht passende Produkte …':pr&&!['erzeugt','link'].includes(pr.source)?`Tipp von Wishtale: ${pr.t}`:'Tipps von Wishtale ansehen';
-  const line=w.status==='selbst'?'Schon vorhanden':w.link?linkLine:w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':w.noSuggest?'Bei Amazon suchen':byAi||w.kind==='kategorie'?vague:isSpecific(w)?'Bei Amazon zu finden':pr?`Tipp von Wishtale: ${pr.t}`:'';
+  // Kurz und eindeutig statt abgeschnittener Produktnamen (098/103): Die Ideen selbst stehen in der Wunsch-Ansicht.
+  const n=ideasOf('wish:'+w.id).length;
+  const vague=aiStatus('wish:'+w.id)==='loading'?'Wishtale sucht passende Produkte …':n>1?`Wishtale hat ${n} Ideen dazu`:(ai||(pr&&!['erzeugt','link'].includes(pr.source)))?'Wishtale hat eine Idee dazu':'Ohne Link, Wishtale hat Ideen dazu';
+  const line=w.status==='selbst'?'Schon vorhanden':w.link?linkLine:w.kind==='erlebnis'?'Erlebnis':w.kind==='frei'?'Ideen ansehen':w.noSuggest?'Bei Amazon suchen':byAi||w.kind==='kategorie'?vague:isSpecific(w)?'Bei Amazon zu finden':pr?'Wishtale hat eine Idee dazu':'';
   return {pr,line};
 }
 
@@ -40,7 +42,7 @@ const cardPrice=w=>w.price?money(w.price):w.kind==='kategorie'&&w.budget?'bis '+
 export function WishRow(w,p,o={}){
   const {pr,line}=wishLine(w,p);
   const price=w.price?money(w.price):w.kind==='kategorie'&&w.budget?'bis '+money(w.budget):'';
-  const res=o.reserve?`<button class="wres" data-act="reserve" data-id="${w.id}" aria-label="${esc(w.t)} reservieren">Reservieren</button>`:'';
+  const res=o.reserve?`<button class="wres" data-act="${o.reserve==='preview'?'previewres':'reserve'}" data-id="${w.id}" aria-label="${esc(w.t)} reservieren">Reservieren</button>`:'';
   const row=`<div class="wrow ${o.taken?'taken':''} ${o.dim?'dim':''} ${w.status==='selbst'?'done':''} ${res?'has-res':''}" role="button" tabindex="0" data-act="wopen" data-id="${w.id}" data-ctx="${o.ctx||'guest'}">
    <span class="wrow-img">${WishArt(w,pr)}</span>
    <div class="wrow-b"><span class="wt">${esc(w.t)}</span><span class="wp">${esc(line)}</span>${o.meta?`<span class="wm">${o.meta}</span>`:''}</div>
@@ -53,7 +55,7 @@ export function WishRow(w,p,o={}){
 /** o.ctx: 'guest' | 'own' | 'preview'; o.status: {text,tone}; o.taken; o.dim; o.meta: HTML der Label-Zeile */
 export function WishCard(w,p,o={}){
   const {pr,line}=wishLine(w,p);
-  const res=o.reserve?`<button class="wres" data-act="reserve" data-id="${w.id}" aria-label="${esc(w.t)} reservieren">Reservieren</button>`:'';
+  const res=o.reserve?`<button class="wres" data-act="${o.reserve==='preview'?'previewres':'reserve'}" data-id="${w.id}" aria-label="${esc(w.t)} reservieren">Reservieren</button>`:'';
   const card=`<div class="wcard compact ${o.taken?'taken':''} ${o.dim?'dim':''} ${w.status==='selbst'?'done':''} ${res?'has-res':''}" role="button" tabindex="0" data-act="wopen" data-id="${w.id}" data-ctx="${o.ctx||'guest'}">
    <div class="wmedia">${WishArt(w,pr)}
     <div class="top"><span class="tag">${esc(cat(w.c).n)}</span><span class="dots" title="${PRIO[w.prio]}" aria-label="Priorität: ${PRIO[w.prio]}">${[1,2,3].map(n=>`<i class="${n<=w.prio?'on':''}"></i>`).join('')}</span></div>

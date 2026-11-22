@@ -49,6 +49,10 @@ function EmptyWishes(m){
    <p class="fw-alt">Schon eine Liste? <button type="button" class="linkbtn" data-act="modal" data-v="zettel">Liste einlesen</button></p>
   </section>`;
 }
+/* Das Band „Jetzt neu“ bleibt nur, bis man es benutzt oder wegklickt (103). Hochladen gibt es danach weiter im Wunschdialog und im Menü. */
+const NB='wishtale:newbar-done';
+export const newbarDone=()=>{try{return localStorage.getItem(NB)==='1'}catch{return false}};
+export const setNewbarDone=()=>{try{localStorage.setItem(NB,'1')}catch{/* egal */}};
 export function Wuensche(){
   const m=S.me,u=S.ui;
   if(u.preview)return `<div class="wrap"><div class="row" style="margin:18px 0 4px">${ViewSeg()}</div>${PreviewBanner()}${GuestPage(m,{preview:true})}</div>`;
@@ -64,7 +68,7 @@ export function Wuensche(){
   return `<div class="wrap">
    <div class="pagehead"><p class="eyebrow">Meine Wünsche</p><h1${open&&!m.managed?' class="oneline"':''}>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}`:open===1?'1 Ding, über das ich mich freuen würde':`${open} Dinge, über die ich mich freuen würde`}</h1></div>
    <div class="row homebar">${ViewSeg()}${m.handle||!S.auth.user?`<button class="btn gold sm" data-act="share">Teilen</button>`:""}</div>
-   <button class="newbar" data-act="modal" data-v="zettel"><span class="nb-tag">Jetzt neu</span><span class="nb-t"><b>Einfach Wunschliste hochladen</b><small>Foto vom Wunschzettel oder Text, Wishtale macht daraus Wünsche</small></span>${ic('arrow','sm')}</button>
+   ${newbarDone()?'':`<div class="newbar-wrap"><button class="newbar" data-act="newbar"><span class="nb-tag">Jetzt neu</span><span class="nb-t"><b>Einfach Wunschliste hochladen</b><small>Foto vom Wunschzettel oder Text, Wishtale macht daraus Wünsche</small></span>${ic('arrow','sm')}</button><button class="newbar-x" data-act="newbarx" aria-label="Hinweis ausblenden">×</button></div>`}
    ${filt}
    <h2 class="vh">Deine Wünsche</h2>
    ${list.length&&!filt?PrioKey():''}<div class="${useList(list.length)?'wlist':'wgrid'}">${list.map(w=>(useList(list.length)?WishRow:WishCard)(w,m,{

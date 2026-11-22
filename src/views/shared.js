@@ -15,7 +15,7 @@ export function AcctBtn(){
   return `<button class="acctbtn" data-act="menu" aria-haspopup="dialog" aria-expanded="${S.ui.menu?'true':'false'}"><span class="av t${S.me.tone}">${initials(S.me.name)}</span><span class="hide-s">${esc(S.me.name)}${S.me.managed?' (Kind)':''}</span><span class="vh">, Menü öffnen</span></button>`;
 }
 export const Legend=()=>`<div class="legend">${[V.alle,V.privat].map(x=>`<span>${ic(x.i,'sm')}${x.l}</span>`).join('')}<span>Tippe auf das Zeichen neben einem Abschnitt, um die Sichtbarkeit zu ändern.</span></div>`;
-export const VisPill=(k,btn)=>{const x=V[k];return btn?`<button class="pill pillbtn" data-act="vis" data-k="${btn}" title="Sichtbarkeit ändern" aria-label="Sichtbarkeit: ${x.l}, ändern">${ic(x.i,'sm')}<span class="vl">${x.l}</span><i aria-hidden="true">▾</i></button>`:`<span class="pill">${ic(x.i,'sm')}<span class="vl">${x.l}</span></span>`};
+export const VisPill=(k,btn)=>{const x=V[k];return btn?`<button class="pill pillbtn" data-act="vis" data-k="${btn}" title="Sichtbarkeit ändern" aria-label="Sichtbarkeit: ${x.l}, ändern">${ic(x.i,'sm')}<span class="vl">${x.l}</span><span class="vshort" aria-hidden="true">${x.s||x.l}</span><i aria-hidden="true">▾</i></button>`:`<span class="pill">${ic(x.i,'sm')}<span class="vl">${x.l}</span><span class="vshort" aria-hidden="true">${x.s||x.l}</span></span>`};
 
 
 /* Kopfzeile für Gäste: nur Logo und der Einstieg in ein eigenes Wishtale. */

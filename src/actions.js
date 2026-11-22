@@ -1,4 +1,5 @@
 import { beginGuide, endGuide, guideClick, guideSubmit, focusGuideTarget, currentGuideStep, syncGuide } from './lib/guide.js';
+import { setNewbarDone } from './views/wishes.js';
 import { smartCats } from './lib/smartcats.js';
 import { promptInstall } from './lib/pwa.js';
 import { dismissAppHint } from './views/appinstall.js';
@@ -496,6 +497,9 @@ async readlink(el,auto){
  demoprev(){demoStop();demoGo(demoStep()-1)},
  demonext(){demoStop();demoGo(demoStep()+1)},
  demotoggle(el){if(el.getAttribute('aria-pressed')==='true')demoStop();else{demoGo(demoStep()+1);demoPlay()}},
+ previewres(){toast('So sehen es deine Freunde: Mit einem Tipp reservieren sie einen Wunsch, und du erfährst nicht, wer es war.')},
+ newbar(){setNewbarDone();S.ui.zt=null;S.ui.modal='zettel';render()},
+ newbarx(){setNewbarDone();render();toast('Alles klar. Einen Wunschzettel hochladen kannst du weiterhin über „Wunsch hinzufügen“ oder im Menü.')},
  apphintx(){dismissAppHint();render();toast('Alles klar. Du findest „Wishtale als App“ jederzeit im Menü.')},
  async appinstall(){dismissAppHint();S.ui.menu=false;const r=await promptInstall();if(r==='manual'){S.ui.modal='appinstall';render();demoStart();return}S.ui.modal=null;render();if(r==='accepted')toast('Schön, Wishtale liegt jetzt auf deinem Home-Bildschirm.')},
  promohide(el){hidePromo(el.dataset.id);render()},

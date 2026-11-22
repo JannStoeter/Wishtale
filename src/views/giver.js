@@ -30,7 +30,7 @@ export function GuestPage(p,{preview=false}={}){
     <div class="pheadslot">${ProfileHead(p,{preview})}</div>
     <div class="pmain">
      ${preview?'':PastGifts(p)}
-     ${none||preview?'':`<p class="jumpideas"><button class="linkbtn" data-act="jump" data-to="mehr">${ic('spark','sm')}Zu den Ideen von Wishtale</button></p>`}
+     ${none||preview?'':`<p class="jumpideas"><button class="jumpbtn" data-act="jump" data-to="mehr">${ic('spark','sm')}Ideen von Wishtale für ${esc(p.name)} ansehen</button></p>`}
      ${none?'':wl.html}
      ${More(p,{preview,none,open:wl.open})}
      <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis bei Amazon.</p>
@@ -83,7 +83,7 @@ export function WishList(p,{preview=false}={}){
     else if(isMine)status={text:'Von dir reserviert',tone:'me'};
     else if(taken)status={text:'Reserviert',tone:'res'};
     const meta=(w.via?`<span class="chip gold">Tipp</span>`:'')+(w.kind==='kategorie'?`<span class="chip">bis ${w.budget?money(w.budget):'offen'}</span>`:'');
-    return (useList(all.length)?WishRow:WishCard)(w,p,{ctx:preview?'preview':'guest',meta,status,taken:taken||(w.bought&&!isMine),dim:r===0&&!taken,reserve:!preview&&!w.res&&!w.bought});
+    return (useList(all.length)?WishRow:WishCard)(w,p,{ctx:preview?'preview':'guest',meta,status,taken:taken||(w.bought&&!isMine),dim:r===0&&!taken,reserve:!w.res&&!w.bought?(preview?'preview':true):false});
   };
   const free=vw.filter(w=>w.res!=='other').length;
   const html=`<section id="wunschliste" aria-label="Wunschliste von ${esc(p.name)}">
