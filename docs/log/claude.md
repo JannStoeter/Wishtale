@@ -131,3 +131,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 104 in tribunal_verdicts
 - Zurücknehmen: git revert 118fc42
 - Offen: weitere Hinweise (Zweites Elternteil, Teilen, nach dem Reservieren, Habe ich schon, Geschmackskarten)
+
+## 2026-11-22 · 105 · Geteilte Links im CMS zählen
+- Commits: 49fd530 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („wie oft auf einen geteilten Profillink geklickt wurde“), Dev 105
+- Geändert: api/_lib/share.js (?via=link), src/render.js (guest_view mit label link), supabase/migrations/0030_usage_links.sql (eingespielt), src/admin/usage.js (Karte), datenschutz.html Abschnitt 8, CLAUDE.md
+- Warum: Sichtbar machen, ob geteilte Listen tatsächlich geöffnet werden
+- Geprüft: ESLint, Build, Playwright Gastansicht und CMS mit Beispieldaten
+- Datenbank und Dienste: Migration 0030, Eintrag 105 in tribunal_verdicts
+- Zurücknehmen: git revert 49fd530; Funktion mit 0029 wiederherstellen
+- Offen: Zahlen sammeln sich erst ab jetzt
