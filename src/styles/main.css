@@ -1379,3 +1379,10 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .newbar-wrap .newbar>.ico:last-of-type{display:none}
 .wl-alt{margin:4px 0 0;font-size:14px}
 .psec.cmp .hd>span.row{flex-wrap:nowrap;flex-shrink:0}
+
+/* 104: Hinweis im richtigen Moment, ruhig und wegklickbar. */
+.ctip{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;margin:20px 0;padding:16px;border-radius:var(--r);background:#ECF1E8}
+.ctip-i{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#3F5A43}
+.ctip h2{font:600 16px/1.3 var(--body);margin:4px 0 4px}
+.ctip p{font-size:14.5px;color:var(--muted);margin:0}
+.ctip-a{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:10px}

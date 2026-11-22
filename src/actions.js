@@ -1,4 +1,5 @@
 import { beginGuide, endGuide, guideClick, guideSubmit, focusGuideTarget, currentGuideStep, syncGuide } from './lib/guide.js';
+import { markDone } from './lib/tips.js';
 import { setNewbarDone } from './views/wishes.js';
 import { smartCats } from './lib/smartcats.js';
 import { promptInstall } from './lib/pwa.js';
@@ -497,6 +498,8 @@ async readlink(el,auto){
  demoprev(){demoStop();demoGo(demoStep()-1)},
  demonext(){demoStop();demoGo(demoStep()+1)},
  demotoggle(el){if(el.getAttribute('aria-pressed')==='true')demoStop();else{demoGo(demoStep()+1);demoPlay()}},
+ tipgo(el){const id=el.dataset.id;markDone(id);if(id==='kids'){S.ui.modal='accounts';render();setTimeout(()=>document.querySelector('form[data-form=child] input')?.focus(),60);return}render()},
+ tipno(el){markDone(el.dataset.id);render();toast('Alles klar, dann zeigen wir das nicht mehr.')},
  previewres(){toast('So sehen es deine Freunde: Mit einem Tipp reservieren sie einen Wunsch, und du erfährst nicht, wer es war.')},
  newbar(){setNewbarDone();S.ui.zt=null;S.ui.modal='zettel';render()},
  newbarx(){setNewbarDone();render();toast('Alles klar. Einen Wunschzettel hochladen kannst du weiterhin über „Wunsch hinzufügen“ oder im Menü.')},
