@@ -111,3 +111,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine Migration, weiterhin 11 Server-Funktionen; Eintrag 102 in tribunal_verdicts
 - Zurücknehmen: git revert a94caaa
 - Offen: Vorschau in einer echten WhatsApp-Nachricht prüfen (Messenger cachen Vorschauen teils lange)
+
+## 2026-11-22 · 103 · Restliche optische Befunde
+- Commits: af0d97e und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („die anderen optischen Bugs auch ändern“), Dev 103
+- Geändert: src/views/card.js, wishes.js, modals.js, menu.js, shared.js, giver.js, src/data/content.js (V.s), src/actions.js (newbar, newbarx, previewres), src/styles/main.css (Farben überall, Band, Profil, Sprungknopf), public/landing/*.jpg, CLAUDE.md
+- Warum: Restpunkte aus der Durchsicht vom 21.11.
+- Geprüft: ESLint, Build, Playwright 390 px, axe ohne Befund; Vercel-Variable BRAVE_SEARCH_API_KEY vorhanden
+- Datenbank und Dienste: Eintrag 103 in tribunal_verdicts
+- Zurücknehmen: git revert af0d97e
+- Offen: keine

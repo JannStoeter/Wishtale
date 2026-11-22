@@ -94,6 +94,7 @@ Stand: 2026-11-09
 | 100 | Kategorien smart machen | **Jann im Chat: Stufe 1 bauen, Sport/Fitness und Outdoor/Wintersport trennen.** 22 Kategorien, Sonstiges als Auffang, KI ordnet Unbekanntes ein, ältere Wünsche einmal neu sortiert. Stufe 2 (eigene Gruppen) offen. | ja, `b903d71` |
 | 101 | Besitz im Profilweg | **Jann im Chat: Besitz über den Profilweg angeben, nicht bei den Wünschen.** Neuer Schritt „Was hast du schon?“ in der Profil-Einrichtung, Profil-Abschnitt immer offen. | ja, `ff88dfd` |
 | 102 | Teilen-Link mit Vorschau, Reservieren in der Gastliste | **Jann im Chat: Punkt 1 und 2 als Erstes bauen.** Link wishtale.de/w/<kürzel> mit Vorschau für Messenger, Knopf „Reservieren“ an jedem freien Wunsch. | ja, `a94caaa` |
+| 103 | Restliche optische Befunde | **Jann im Chat: die anderen optischen Bugs auch ändern.** Klare Unterzeilen, Band wegklickbar, Profil-Sichtbarkeit lesbar, Sprung zu Ideen, Landingpage hell mit neuen App-Bildern. | ja, `af0d97e` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
