@@ -121,3 +121,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 103 in tribunal_verdicts
 - Zurücknehmen: git revert af0d97e
 - Offen: keine
+
+## 2026-11-22 · 104 · Hinweise im richtigen Moment, Kind-Konten
+- Commits: 118fc42 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat (Funktionen smart zeigen statt bewerben, Kind-Konten bei Kinderspielzeug), Dev 104
+- Geändert: neu src/lib/tips.js, src/views/tips.js; src/views/wishes.js (Hinweis über der Liste), src/actions.js (tipgo, tipno), src/styles/main.css, CLAUDE.md
+- Warum: Funktionen wie Kind-Konten kennt sonst niemand, Werbung im Produkt ist unerwünscht
+- Geprüft: ESLint, Build, Playwright 390 px, axe ohne Befund
+- Datenbank und Dienste: Eintrag 104 in tribunal_verdicts
+- Zurücknehmen: git revert 118fc42
+- Offen: weitere Hinweise (Zweites Elternteil, Teilen, nach dem Reservieren, Habe ich schon, Geschmackskarten)

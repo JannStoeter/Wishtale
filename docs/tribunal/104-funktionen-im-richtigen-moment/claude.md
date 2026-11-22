@@ -14,7 +14,7 @@ Kind-Konten: Erwachsene ohne Kind-Konto, die etwas eindeutig Kindliches eintrage
 ## Vorschläge nach demselben Muster
 1. **Zweites Elternteil:** Direkt nach dem Anlegen eines Kind-Kontos: „Pflegst du das zusammen mit jemandem? Lade das zweite Elternteil ein.“
 2. **Teilen:** Ab drei Wünschen, solange noch nie geteilt wurde: „Deine Liste ist bereit für deine Familie“ mit „Link teilen“.
-3. **Nach dem Reservieren (für Gäste):** „Möchtest du auch so eine Liste? Mia hat sich gefreut, dass du gefragt hast“ — besser schlicht: „Leg dir auch ein Wishtale an, dann weiß deine Familie, was dich freut“. Das ist der Moment, in dem Word of Mouth entsteht, weil die Person gerade selbst erlebt hat, wie leicht es war.
+3. **Nach dem Reservieren (für Gäste):** „Leg dir auch ein Wishtale an, dann weiß deine Familie, was dich freut.“ Das ist der Moment, in dem Word of Mouth entsteht, weil die Person gerade selbst erlebt hat, wie leicht es war.
 4. **Was du schon hast:** Ab fünf Wünschen ohne einen Eintrag „Das habe ich schon“.
 5. **Geschmackskarten:** Nachdem jemand zweimal „Passt nicht“ gewählt hat.
 
