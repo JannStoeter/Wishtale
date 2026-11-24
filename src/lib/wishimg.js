@@ -55,7 +55,7 @@ export async function fetchProductImage(imageUrl, query) {
 export async function fetchWishImage(w) {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return null;
-  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ imageFor: { t: String(w.q || w.t || '').slice(0, 120), link: String(w.link || ''), img: String(w.imgHint || '').slice(0, 800) } }), signal: AbortSignal.timeout(25000) });
+  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ imageFor: { t: String(w.t || '').slice(0, 120), q: String(w.q || '').slice(0, 120), brand: String(w.brand || '').slice(0, 40), link: String(w.link || ''), img: String(w.imgHint || '').slice(0, 800) } }), signal: AbortSignal.timeout(25000) });
   if (r.status === 429) throw Object.assign(new Error('limit'), { limit: true });
   const j = r.ok ? await r.json().catch(() => ({})) : {};
   if (!j.image) return null;

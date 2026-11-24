@@ -3,7 +3,7 @@
  * ein Bild über die Websuche (fetchWishImage -> api/inspect.js imageFor -> imageForWish, Brave). Reihenfolge: eigener Shop-Link der
  * Person, Herstellerseite, Bildersuche. Ohne guten Treffer bleibt das Symbol. Das Bild wird verkleinert in den eigenen Speicher gelegt
  * und lässt sich wie jedes andere Bild entfernen. Ein eigenes Foto wird nie ersetzt. Gesucht wird nur für angemeldete Personen, jeder
- * Wunsch höchstens einmal je Browser (wishtale:img-tried3), ältere Wünsche höchstens 8 je Tag und Profil (wishtale:img-day).
+ * Wunsch höchstens einmal je Browser (wishtale:img-tried4), ältere Wünsche höchstens 8 je Tag und Profil (wishtale:img-day).
  */
 import { S } from '../state.js';
 import { isSpecific } from './products.js';
@@ -11,7 +11,7 @@ import { fetchWishImage, storeImage } from './wishimg.js';
 import { scheduleSync } from './remote.js';
 import { loadMatch } from './ideas.js';
 
-const TRIED = 'wishtale:img-tried3', DAY = 'wishtale:img-day';
+const TRIED = 'wishtale:img-tried4', DAY = 'wishtale:img-day';
 const key = w => String(w.t || '').toLowerCase().replace(/\s+/g, ' ').trim() + '|' + (w.link || '');
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch { return d; } };
 const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* dann sucht die nächste Sitzung erneut */ } };
@@ -26,8 +26,8 @@ async function target(w) {
   const m = await loadMatch(h, w.t).catch(() => null);
   if (!m) return null;
   // Sicher erkannt, oder eine feste Marke plus ein klares Produktwort („Hue Bewegungsmelder“): dann suchen. Eine bloße Produktart ohne Marke behält ihr Symbol.
-  if (m.ok) return { t: w.t, q: m.t || m.q || w.t, link: '', imgHint: m.img || '' };
-  if (m.brand && (m.conf || m.lc || 0) >= 0.4) return { t: w.t, q: m.t || m.q || w.t, link: '', imgHint: '' };
+  if (m.ok) return { t: w.t, q: m.t || m.q || '', brand: m.brand || '', link: '', imgHint: m.img || '' };
+  if (m.brand && (m.conf || m.lc || 0) >= 0.4) return { t: w.t, q: m.t || m.q || '', brand: m.brand, link: '', imgHint: '' };
   return null;
 }
 

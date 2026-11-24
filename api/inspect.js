@@ -23,9 +23,9 @@ export default async function handler(req, res) {
     if ((req.body?.imageQuery || req.body?.amazonQuery || req.body?.imageFor) && searchOn()) await guardSearch(id);
     if (req.body?.imageQuery) return send(res, 200, { image: await findProductImage(req.body.imageQuery) }); // Bild per Websuche (nur mit Schlüssel), sonst null
     if (req.body?.imageFor) { // Bild zu einem gespeicherten Wunsch: eigener Shop-Link zuerst, dann Herstellerseite, dann Bildersuche
-      const t = String(req.body.imageFor.t || '').slice(0, 120), link = String(req.body.imageFor.link || '').slice(0, 1000), img = String(req.body.imageFor.img || '').slice(0, 800);
-      const image = await imageForWish({ t, link, img }).catch(() => null);
-      console.log('bild-wunsch', JSON.stringify({ via: image?.via || 'keins', quelle: image?.source || '' }));
+      const f = req.body.imageFor, t = String(f.t || '').slice(0, 120), q = String(f.q || '').slice(0, 120), brand = String(f.brand || '').slice(0, 40), link = String(f.link || '').slice(0, 1000), img = String(f.img || '').slice(0, 800);
+      const image = await imageForWish({ t, q, brand, link, img }).catch(() => null);
+      console.log('bild-wunsch', JSON.stringify({ via: image?.via || 'keins', quelle: image?.source || '', titel: image?.title || '' }));
       return send(res, 200, { image });
     }
     if (req.body?.amazonQuery) return send(res, 200, { amazon: await amazonDirect(req.body.amazonQuery) }); // direkter Amazon-Link über die Websuche (nur mit Schlüssel), sonst null

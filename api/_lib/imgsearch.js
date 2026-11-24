@@ -13,24 +13,24 @@ const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } ca
 
 /** Wählt aus der Antwort der Bildsuche die brauchbaren Kandidaten: https, mindestens 300 px, kein extremes Format, keine Bildagentur,
  *  und der Titel des Treffers muss zum Wunsch passen (fits). Hersteller- und Händlerseiten mit der Marke in der Adresse zuerst. */
-export function candidates(json, query = '') {
+export function candidates(json, query = '', check = null) {
   const brand = core(query)[0] || '';
   return (json?.results || [])
     .map((r, i) => ({ img: r?.properties?.url, w: +r?.properties?.width || 0, h: +r?.properties?.height || 0, page: r?.meta_url?.hostname || host(r?.url) || r?.source || '', title: String(r?.title || ''), i }))
     .filter(c => /^https:\/\//i.test(c.img || '') && c.img.length <= 800 && (!c.w || c.w >= 300) && (!c.h || c.h >= 300)
       && (!c.w || !c.h || (c.w / c.h <= 2.2 && c.h / c.w <= 2.2)) && !STOCK.test(host(c.img)) && !STOCK.test(c.page)
-      && (!query || fits(query, c.title, c.page)))
+      && (check ? check(c.title, c.page) : !query || fits(query, c.title, c.page)))
     .map(c => ({ ...c, page: c.page.replace(/^www\./, ''), score: (brand && c.page.includes(brand) ? 10 : 0) - c.i }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 6);
 }
 
-export async function searchImage(query, { fetchJson, load = fetchImage } = {}) {
+export async function searchImage(query, { fetchJson, load = fetchImage, check = null } = {}) {
   const key = process.env.BRAVE_SEARCH_API_KEY, q = clean(query);
   if (!q || (!key && !fetchJson)) return null;
   const json = fetchJson ? await fetchJson(q) : await fetch('https://api.search.brave.com/res/v1/images/search?count=10&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
-  for (const c of candidates(json, q)) {
-    try { const im = await load(c.img); return { ...im, source: c.page || im.source, via: 'bild' }; } catch { /* nächster Treffer */ }
+  for (const c of candidates(json, q, check)) {
+    try { const im = await load(c.img); return { ...im, source: c.page || im.source, via: 'bild', title: c.title.slice(0, 80) }; } catch { /* nächster Treffer */ }
   }
   return null;
 }
@@ -57,13 +57,13 @@ export async function webJson(query, { fetchJson } = {}) {
   return fetchJson ? fetchJson(q) : fetch('https://api.search.brave.com/res/v1/web/search?count=8&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
 }
 
-export async function searchOfficialImage(query, { fetchJson, read = inspect, load = fetchImage } = {}) {
+export async function searchOfficialImage(query, { fetchJson, read = inspect, load = fetchImage, check = null } = {}) {
   const q = clean(query);
   const json = await webJson(q, { fetchJson });
   if (!json) return null;
   for (const c of pageCandidates(json, q)) {
-    try { const p = await read(c.url); if (!p?.imageUrl || !fits(q, p.title || '', c.host)) continue; const im = await load(p.imageUrl); // eine Kategorieseite des Herstellers liefert das falsche Bild, darum muss der Seitentitel zum Produkt passen
-      return { ...im, source: c.host, via: 'seite' }; } catch { /* nächster Treffer */ }
+    try { const p = await read(c.url); if (!p?.imageUrl || !(check ? check(p.title || '', c.host) : fits(q, p.title || '', c.host))) continue; const im = await load(p.imageUrl); // eine Kategorieseite des Herstellers liefert das falsche Bild, darum muss der Seitentitel zum Produkt passen
+      return { ...im, source: c.host, via: 'seite', title: String(p.title || '').slice(0, 80) }; } catch { /* nächster Treffer */ }
   }
   return null;
 }
@@ -72,19 +72,21 @@ export async function searchOfficialImage(query, { fetchJson, read = inspect, lo
  * Bild zu einem Wunsch: Hat die Person selbst einen Shop-Link gesetzt (nicht Amazon), zuerst das Bild dieser Seite. Sonst erst die
  * Herstellerseite, dann die Bildersuche. Ohne guten Treffer null, dann bleibt das Symbol.
  */
-export async function imageForWish({ t, link, img } = {}, deps = {}) {
+export async function imageForWish({ t, q, brand, link, img } = {}, deps = {}) {
   const read = deps.read || inspect, load = deps.load || fetchImage;
+  // Treffer muss zum Wunsch oder zum erkannten Produktnamen passen (deutsch „Bewegungsmelder“ oder englisch „Motion Sensor“)
+  const check = (title, site) => fits(t || q, title, site, brand) || (!!q && q !== t && fits(q, title, site, brand));
   // Bild der Seite, die die Produkterkennung schon gefunden hat (Herstellerseite), dann braucht es keine neue Suche
   if (img && /^https:\/\//i.test(img) && !STOCK.test(host(img))) { try { return { ...(await load(img)), via: 'erkannt' }; } catch { /* weiter */ } }
   if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
     try { const p = await read(link); if (p?.imageUrl) return { ...(await load(p.imageUrl)), source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
   }
-  return t ? findProductImage(t, deps) : null;
+  return (q || t) ? findProductImage(q || t, { ...deps, check }) : null;
 }
 
 /** Erst die Herstellerseite, dann die Bildersuche. */
 export async function findProductImage(query, deps = {}) {
-  return (await searchOfficialImage(query, deps).catch(() => null)) || searchImage(query, deps.images || {});
+  return (await searchOfficialImage(query, deps).catch(() => null)) || searchImage(query, { check: deps.check, ...(deps.images || {}) });
 }
 
 export const toks = t => String(t || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').split(/[^a-z0-9]+/).filter(w => w.length > 1 || /^\d$/.test(w));
@@ -100,19 +102,27 @@ export function overlap(wish, title) {
 /* Füllwörter und beschreibende Zusätze zählen beim Vergleich nicht mit („für Flur und Treppe“). */
 const STOP = new Set('fur fuer und mit ohne der die das den dem des ein eine einen einer im in am an auf aus von zum zur fuer als oder for the and with of to a an set neu new'.split(' '));
 export const core = t => toks(t).filter(w => !STOP.has(w));
+/* Wörter, die ein anderes Produkt derselben Marke benennen: Steht so ein Wort im Titel, aber nicht im Wunsch, ist es ein anderes Produkt. */
+const OTHER = ['taster', 'schalter', 'dimmer', 'dimmschalter', 'switch', 'dial', 'button', 'remote', 'fernbedienung', 'bridge', 'lampe', 'leuchte', 'lightstrip', 'bulb', 'gluehbirne', 'zubehoer', 'halterung', 'ersatzteil', 'akku', 'ladegeraet', 'kabel', 'adapter', 'huelle', 'case', 'cover'];
 /**
- * Passt ein gefundener Titel zum Wunsch? Ja, wenn die Hälfte der Kernwörter vorkommt, oder wenn die Marke (erstes Wort, im Titel oder in
- * der Adresse) und mindestens ein langes, unterscheidendes Wort (ab 6 Zeichen, etwa „bewegungsmelder“) vorkommen. Zahlen müssen immer stimmen,
- * damit ein anderes Modell nicht durchrutscht.
+ * Passt ein gefundener Titel zum Wunsch? Die Marke allein reicht nie. Das Produktwort des Wunsches (das erste Wort ab 5 Buchstaben,
+ * das nicht zur Marke gehört, etwa „bewegungsmelder“) muss im Titel stehen, und Zahlen müssen stimmen. Dazu kommt die Marke im Titel
+ * oder in der Adresse, oder die Hälfte der übrigen Wörter. Nennt der Titel ein anderes Produktwort (Taster, Schalter …), das der Wunsch
+ * nicht enthält, ist es ein anderes Produkt (Jann, 114: lieber das Symbol als ein falsches Bild).
  */
-export function fits(wish, title, site = '') {
-  const a = core(wish), b = new Set(toks(title)), h = String(site).toLowerCase();
+export function fits(wish, title, site = '', brand = '') {
+  const a = core(wish), tt = toks(title), b = new Set(tt), tl = tt.join(' '), h = String(site).toLowerCase();
   if (!a.length) return false;
   if (a.filter(w => /^\d+$/.test(w)).some(w => !b.has(w))) return false;
-  const hit = a.filter(w => b.has(w));
-  if (hit.length / a.length >= 0.5) return true;
-  const brand = a[0], brandOk = b.has(brand) || (brand.length >= 3 && h.includes(brand));
-  return brandOk && a.slice(1).some(w => w.length >= 6 && b.has(w));
+  const bt = new Set(brand ? toks(brand) : [a[0]]);
+  const rest = a.filter(w => !bt.has(w) && !(w.length >= 3 && h.includes(w)));
+  if (OTHER.some(o => b.has(o) && !a.includes(o))) return false;
+  const head = rest.find(w => w.length >= 5 && /[a-z]/.test(w) && !/^\d/.test(w));
+  const has = w => b.has(w) || (w.length >= 6 && tl.includes(w)); // zusammengesetzte Wörter („Innen-Bewegungsmelder“)
+  if (head && !has(head)) return false;
+  const brandOk = [...bt].some(w => b.has(w) || (w.length >= 3 && h.includes(w)));
+  const share = rest.length ? rest.filter(has).length / rest.length : 0;
+  return head ? (brandOk || share >= 0.5) : a.filter(has).length / a.length >= 0.5;
 }
 
 const ASIN = /\/(?:dp|gp\/product)\/([A-Z0-9]{10})(?:[/?]|$)/;
