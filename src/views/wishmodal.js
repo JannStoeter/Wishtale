@@ -81,6 +81,14 @@ function Suggest(p, w, o, ctx) {
  * sonst die genaue Suche bei Amazon. Nie ein Vorschlag von Wishtale, damit es nicht wie die Wahl der Person aussieht.
  * Bewusst ein Textlink in einem ganzen Satz, mit „Laden deiner Wahl“ als ehrlicher Alternative.
  */
+/* Neben Amazon auch Otto (über Awin), wie bei den Ideenkarten (110): eine leise Zeile unter dem Kaufweg, wenn der Wunsch zu Amazon führt. */
+function OttoLine(w, o, byAi, ctx) {
+  if (w.kind !== 'produkt' || w.status === 'selbst') return '';
+  const amz = byAi || (o.main && /(^|\.)amazon\./.test(o.main.host || '') && ['link', 'erzeugt', 'amz'].includes(o.main.source));
+  if (!amz) return '';
+  return `<p class="also-shop">Auch <a class="qa" href="${esc(searchUrl.otto(w.t, ctx === 'guest' ? 'gast' : 'eigen'))}" target="_blank" rel="${REL}" data-place="wunsch">bei Otto suchen</a> <span class="ad-note">Anzeige</span></p>`;
+}
+
 function BuyLine(w, o, byAi, chosen) {
   if (w.kind === 'erlebnis' || w.kind === 'frei') return '';
   let host = 'amazon.de';
@@ -144,6 +152,7 @@ export function WishModal() {
    ${byAi || w.noSuggest ? '' : Suggest(p, w, o, ctx)}
    ${byAi && w.kind === 'produkt' ? `<section class="wm-sec">${Offer({ id: 'exact', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'erzeugt', a: 'gift' }, w, 'view', 'main')}</section>` : ''}
    ${o.main && !byAi ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
+   ${OttoLine(w, o, byAi, ctx)}
    ${w.link && o.main && o.main.source === 'link' && !/(^|\.)amazon\./.test(o.main.host) ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">Auch bei Amazon</p>${Offer({ id: 'amz', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'amz', a: 'gift' }, w, 'view', 'alt')}</section>` : ''}
    ${(o.alts = o.alts.filter(a => !sameItem(a.t, w.t))).length && !byAi && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
    ${AiVariants(w, ctx)}

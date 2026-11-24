@@ -11,14 +11,18 @@ import { esc } from './util.js';
 const MAX = 640;
 const load = src => new Promise((resolve, reject) => { const i = new Image(); i.onload = () => resolve(i); i.onerror = () => reject(new Error('Dieses Bild lässt sich nicht öffnen.')); i.src = src; });
 
-/** Fast leeres Bild (weiß oder einfarbig, etwa ein Platzhalter oder ein transparentes Logo)? Prüft ein kleines Raster. */
+/**
+ * Fast leeres Bild (ein Platzhalter, ein leeres transparentes Bild)? Verglichen wird mit der Farbe der Ecken, nicht mit Weiß, damit ein
+ * weißes Produkt auf weißem Grund (etwa ein Hue-Bewegungsmelder) erhalten bleibt: Es reicht, wenn sich ein kleiner Teil vom Grund abhebt.
+ */
 function isBlank(g, w, h) {
   try {
-    const d = g.getImageData(0, 0, w, h).data, step = Math.max(1, Math.floor((w * h) / 2500)) * 4;
-    let n = 0, busy = 0, sum = 0, sum2 = 0;
-    for (let i = 0; i < d.length; i += step) { const v = (d[i] + d[i + 1] + d[i + 2]) / 3; n++; sum += v; sum2 += v * v; if (v < 235) busy++; }
-    const sd = Math.sqrt(Math.max(0, sum2 / n - (sum / n) ** 2));
-    return busy / n < 0.04 || sd < 6;
+    const d = g.getImageData(0, 0, w, h).data, at = (x, y) => { const k = (y * w + x) * 4; return [d[k], d[k + 1], d[k + 2]]; };
+    const cs = [at(0, 0), at(w - 1, 0), at(0, h - 1), at(w - 1, h - 1)], bg = [0, 1, 2].map(c => cs.reduce((a, p) => a + p[c], 0) / 4);
+    const step = Math.max(1, Math.floor((w * h) / 4000)) * 4;
+    let n = 0, busy = 0;
+    for (let k = 0; k < d.length; k += step) { n++; if (Math.abs(d[k] - bg[0]) + Math.abs(d[k + 1] - bg[1]) + Math.abs(d[k + 2] - bg[2]) > 24) busy++; }
+    return busy / n < 0.005;
   } catch { return false; }
 }
 
