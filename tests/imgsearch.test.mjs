@@ -71,3 +71,22 @@ test('parseMatch: feste Marke wird mitgeliefert, Produktart ohne Marke nicht', a
   const koffer = parseMatch('{"erkannt": false, "marke": null, "titel": "", "sicherheit": 0.2}');
   assert.equal(koffer.brand, null);
 });
+
+test('fits: Marke allein reicht nicht, anderes Produkt derselben Marke fällt raus (Hue Taster)', () => {
+  const B = 'Philips Hue';
+  assert.equal(fits(HUE, 'Hue Bewegungsmelder | Philips Hue DE', 'philips-hue.com', B), true);
+  assert.equal(fits(HUE, 'Hue Tap Dial Schalter | Philips Hue DE', 'philips-hue.com', B), false);
+  assert.equal(fits(HUE, 'Philips Hue Dimmschalter Bewegungsmelder Set', 'philips-hue.com', B), false);
+  assert.equal(fits(HUE, 'Philips Hue Smart Button', 'philips-hue.com', B), false);
+  assert.equal(fits('Philips Hue Motion Sensor', 'Hue Motion Sensor', 'philips-hue.com', B), true);
+  assert.equal(fits('Philips Hue Motion Sensor', 'Hue Dimmer Switch', 'philips-hue.com', B), false);
+});
+
+test('imageForWish: deutscher Wunsch oder erkannter englischer Name, aber nie ein anderes Produkt', async () => {
+  const web = { web: { results: [{ url: 'https://www.philips-hue.com/de-de/p/hue-tap-dial' }, { url: 'https://www.philips-hue.com/de-de/p/hue-motion-sensor' }] } };
+  const titles = { 'hue-tap-dial': 'Hue Tap Dial Schalter', 'hue-motion-sensor': 'Hue Motion Sensor' };
+  const read = async url => ({ title: titles[url.split('/').pop()], imageUrl: url + '.jpg' });
+  const load = async u => ({ type: 'image/jpeg', data: 'x', source: new URL(u).hostname });
+  const im = await imageForWish({ t: HUE, q: 'Philips Hue Motion Sensor', brand: 'Philips Hue' }, { fetchJson: async () => web, read, load });
+  assert.equal(im.title, 'Hue Motion Sensor');
+});
