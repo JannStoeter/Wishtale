@@ -266,7 +266,10 @@ const A={
  stepsshow(){hideSteps(false);S.ui.modal=null;location.hash='#wuensche';render(true);scrollTo({top:0,behavior:'smooth'})},
  vis(el){const k=el.dataset.k;S.me.vis[k]=(S.me.vis[k]||'alle')==='privat'?'alle':'privat';render()},
  wf(el){S.ui.wf=el.dataset.v;render()},wc(el){S.ui.wc=el.dataset.v;render()},
- selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Du findest ihn im Profil unter „Das habe ich schon“.':'Der Wunsch ist wieder auf deiner Liste.');render()},
+ selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';
+  if(w.status==='selbst'&&(el.dataset.from==='view'||el.dataset.from==='undo')){if(el.dataset.from==='view'){S.ui.ff={id:w.id};S.ui.modal='fulfilled'}render();return} // 108: Glückwunsch statt Toast, Wunschfenster schließt
+  if(el.dataset.from==='undo'){S.ui.ff=null;S.ui.modal=null;toast('Der Wunsch ist wieder auf deiner Liste.');render();return}
+  toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Du findest ihn im Profil unter „Das habe ich schon“.':'Der Wunsch ist wieder auf deiner Liste.');render()},
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
  delw(el){S.ui.modal=null;const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
  modal(el){if(el.dataset.v==='tour'){endGuide();S.ui.helpTab=el.dataset.help||'guides'}if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null}if(el.dataset.v==='zettel')S.ui.zt=null;if(el.dataset.v==='mailme')S.ui.mm=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
@@ -499,6 +502,7 @@ async readlink(el,auto){
  demoprev(){demoStop();demoGo(demoStep()-1)},
  demonext(){demoStop();demoGo(demoStep()+1)},
  demotoggle(el){if(el.getAttribute('aria-pressed')==='true')demoStop();else{demoGo(demoStep()+1);demoPlay()}},
+ ffsee(){S.ui.ff=null;S.ui.modal=null;S.ui.scrollTo='owned';if(location.hash==='#profil')render();else location.hash='#profil'},
  tipgo(el){const id=el.dataset.id;markDone(id);
   if(id==='kids'){S.ui.modal='accounts';render();setTimeout(()=>document.querySelector('form[data-form=child] input')?.focus(),60);return}
   if(id==='share'){A.share();render();return}

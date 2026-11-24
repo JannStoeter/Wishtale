@@ -64,6 +64,7 @@ export function Modal(){
   if(m==='invite')return InviteModal();
   if(m==='appinstall')return AppInstallModal();
   if(m==='mailme')return MailMeModal();
+  if(m==='fulfilled')return FulfilledModal();
   if(m==='about')return AboutModal();
   if(m==='tour')return TourModal();
   if(m==='amazon')return AmazonModal();
@@ -112,4 +113,17 @@ export function Modal(){
     <div class="fld"><span class="lb">Würdest du dich erneut darüber freuen?</span><div class="radios"><label><input type="radio" name="again" value="1" checked><span>Ja</span></label><label><input type="radio" name="again" value="0"><span>Eher nicht</span></label></div></div>
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" type="submit">Speichern</button></div>
    </form></div></div>`;
+}
+
+/* 108: Ein Wunsch wurde selbst erfüllt. Kleines Fenster mit Glückwunsch, Fundort und Rückweg. */
+function FulfilledModal(){
+  const w=(S.me.wishes||[]).find(x=>x.id===S.ui.ff?.id);
+  if(!w||w.status!=='selbst'){S.ui.modal=null;return ''}
+  const own=S.me.managed?`im Profil von ${esc(S.me.name)}`:'in deinem Profil';
+  return `<div class="scrim" data-act="closebg"><div class="sheet narrow ff" role="dialog" aria-modal="true" aria-labelledby="mt">
+   <div class="ff-ic" aria-hidden="true">${ic('check')}</div>
+   <h2 id="mt">${S.me.managed?`Schön, dieser Wunsch von ${esc(S.me.name)} ist erfüllt`:'Glückwunsch, du hast dir diesen Wunsch selbst erfüllt'}</h2>
+   <p class="muted">„${esc(w.t)}“ findest du jetzt ${own} unter „Das habe ich schon“. Wishtale schlägt dafür nichts mehr vor, damit niemand etwas doppelt schenkt.</p>
+   <div class="ff-a"><button type="button" class="qa" data-act="selbst" data-from="undo" data-id="${w.id}">Rückgängig</button><span style="flex:1"></span><button type="button" class="btn sec sm" data-act="ffsee">Ansehen</button><button type="button" class="btn pri sm" data-act="close">Fertig</button></div>
+  </div></div>`;
 }

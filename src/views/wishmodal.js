@@ -99,7 +99,7 @@ export function WishModal() {
     if (mine && !w.bought) footer = `<button class="btn pri" data-act="bought" data-id="${w.id}">Gekauft</button><button class="btn sec" data-act="release" data-id="${w.id}">Freigeben</button>`;
     else if (!taken && !w.bought && !o.main) footer = `<button class="btn pri" data-act="reserve" data-id="${w.id}">Reservieren</button>`;
   } else if (ctx === 'own') {
-    footer = `<button class="btn sec sm" data-act="wedit" data-id="${w.id}">Bearbeiten</button><button class="btn ghost sm" data-act="selbst" data-id="${w.id}">${w.status === 'selbst' ? 'Wieder offen' : 'Erledigt, habe ich schon'}</button>
+    footer = `<button class="btn sec sm" data-act="wedit" data-id="${w.id}">Bearbeiten</button><button class="qa qa-done" data-act="selbst" data-from="view" data-id="${w.id}">${w.status === 'selbst' ? 'Wieder auf die Wunschliste' : `${ic('check', 'sm')}Selbst erfüllt`}</button>
       <label class="prio-sel"><span>Wichtigkeit</span><select class="sel sm" data-prio="${w.id}" aria-label="Wichtigkeit">${[3, 2, 1].map(n => `<option value="${n}" ${w.prio === n ? 'selected' : ''}>${PRIO[n]}</option>`).join('')}</select></label>
       <button class="btn ghost sm" data-act="delw" data-id="${w.id}">${ic('trash', 'sm')}Löschen</button>`;
   }

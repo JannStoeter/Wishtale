@@ -1388,3 +1388,12 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .ctip-a{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:10px}
 /* 106: Gast-Kopfzeile passt am Handy auch mit „Meine Geschenke“ */
 @media(max-width:480px){.hdr .givenbtn~.hdrlogin{display:none}.hdr .givenbtn .gl{display:none}.hdr .givenbtn{padding-left:8px;padding-right:8px;gap:4px}.hdr .right{gap:4px}.hdr .right .btn.sm{padding-left:10px;padding-right:10px}}
+
+/* 108: Wunsch selbst erfüllt */
+.qa-done{color:var(--muted);font-weight:500}
+.sheet.ff{max-width:420px;text-align:center}
+.ff .ff-ic{width:48px;height:48px;margin:4px auto 12px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.ff .ff-ic svg{width:24px;height:24px}
+.ff h2{font-size:24px;line-height:1.2}
+.ff p{margin:10px 0 18px;font-size:15px}
+.ff .ff-a{display:flex;align-items:center;gap:8px;text-align:left}
