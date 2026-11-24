@@ -28,8 +28,16 @@ async function countOpen(){
   try{const {data}=await sb.rpc('is_admin');if(data===true){setStatsOff(true);return}}catch{/* ohne Antwort einfach zählen */}
   if(S.ui.view!=='gast')track('app_open',{once:true,label:standalone()?'pwa':'browser',path:'/app/'});
 }
+/** Link aus der Reservierungs-Mail (?gt=…): Gast-Schlüssel auf diesem Gerät übernehmen, Adresse aufräumen (106). */
+function takeGuestToken(){
+  try{
+    const q=new URLSearchParams(location.search),t=q.get('gt');if(!t)return;
+    if(/^[0-9a-f]{32,200}$/i.test(t)){const old=localStorage.getItem('wishtale:guest');if(old&&old!==t)localStorage.setItem('wishtale:guest-prev',old);localStorage.setItem('wishtale:guest',t);setTimeout(()=>toast('Deine Reservierungen sind jetzt auch auf diesem Gerät da.'),900)}
+    q.delete('gt');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash);
+  }catch{/* ohne Speicher bleibt es beim bisherigen Schlüssel */}
+}
 async function boot(){
-  takeShare();
+  takeShare();takeGuestToken();
   const recoveryLink=/type=recovery/.test(location.hash); // vor getSession merken, Supabase räumt die Adresse danach auf
   loadState(); // Demo-Daten (nur ohne Konto relevant)
   // Verarbeitet auch Login-Links aus E-Mails (Tokens im URL-Fragment), bevor der Router läuft.

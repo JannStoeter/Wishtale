@@ -22,7 +22,7 @@ const TEXT = {
   },
   guestown: {
     t: () => `Schön, dass du etwas für ${esc(guestPerson()?.name || 'jemanden')} gefunden hast`,
-    b: 'Leg dir auch ein Wishtale an, dann weiß deine Familie, was dich freut. Deine Reservierung merken wir uns dabei, damit du sie wiederfindest.',
+    b: 'Leg dir auch ein Wishtale an, dann weiß deine Familie, was dich freut. Deine Reservierung merken wir uns dabei. Ohne Konto kannst du dir den Link zu deiner Reservierung per Mail schicken, dann findest du sie auf jedem Gerät wieder.',
     go: 'Mein Wishtale anlegen', no: 'Vielleicht später',
   },
 };
@@ -30,5 +30,5 @@ export function Tip(where = 'own') {
   const id = currentTip(where); if (!id) return '';
   const x0 = TEXT[id], x = { ...x0, t: typeof x0.t === 'function' ? x0.t() : x0.t };
   return `<aside class="ctip" aria-labelledby="ctip-h"><span class="ctip-i">${ic('spark', 'sm')}</span><div><h2 id="ctip-h">${x.t}</h2><p>${x.b}</p>
-   <div class="ctip-a"><button class="btn sec sm" data-act="tipgo" data-id="${id}">${x.go}</button><button class="qa qa-mute" data-act="tipno" data-id="${id}">${x.no}</button></div></div></aside>`;
+   <div class="ctip-a"><button class="btn sec sm" data-act="tipgo" data-id="${id}">${x.go}</button>${id === 'guestown' ? '<button class="qa" data-act="modal" data-v="mailme">Link per Mail sichern</button>' : ''}<button class="qa qa-mute" data-act="tipno" data-id="${id}">${x.no}</button></div></div></aside>`;
 }

@@ -1,10 +1,13 @@
 import { createHash } from 'node:crypto';
 import { requireUser, send, fail, HttpError, SUPABASE_URL, SUPABASE_KEY } from './_lib/auth.js';
 import { ipHash } from './_lib/limits.js';
+import { validMail, mailReady, guestMail, sendGuestMail } from './_lib/guestmail.js';
+import { fetchProfile } from './_lib/ideas.js';
 
 /*
  * Sammelstelle für Aufrufe, die nicht direkt aus dem Browser an die Datenbank gehen dürfen (Befund 043):
  *   POST ?op=reserve | release | bought   Reservieren, Freigeben, „gekauft“ (Gäste, ohne Konto, je Adresse begrenzt)
+ *   POST ?op=mailme                       Gast schickt sich den Link zu den eigenen Reservierungen per Mail (Adresse wird nicht gespeichert)
  *   POST ?op=delete                       Konto löschen inklusive der Wunschbilder im Speicher (nur angemeldete Person)
  * Der Dienstschlüssel steht nur in Vercel (SUPABASE_SECRET_KEY oder SUPABASE_SERVICE_ROLE_KEY).
  */
@@ -40,6 +43,23 @@ export async function guestOp(op, body, ip, fetchImpl = fetch) {
   return r.json();
 }
 
+/** Reservierungs-Link per Mail. Begrenzt je Adresse (Hash), je Empfänger (Hash) und insgesamt; Inhalt fest, nur der Vorname des Profils. */
+export async function mailMe(body, ip, fetchImpl = fetch, transport) {
+  if (!mailReady() && !transport) throw new HttpError(503, 'Der Mailversand ist gerade nicht eingerichtet.');
+  const to = String(body?.email || '').trim(), handle = String(body?.handle || '').toLowerCase(), token = String(body?.token || '');
+  if (!validMail(to) || !/^[a-z0-9][a-z0-9-]{1,59}$/.test(handle) || token.length < 32 || token.length > 200 || !/^[0-9a-z]+$/i.test(token)) throw new HttpError(400, 'Bitte prüfe die E-Mail-Adresse.');
+  const k = key();
+  if (k) {
+    const ok = await hit(k, `mail:ip:${ipHash(ip || 'x')}`, 3600, 5, fetchImpl) && await hit(k, `mail:to:${sha(to.toLowerCase()).slice(0, 24)}`, 86400, 3, fetchImpl) && await hit(k, 'mail:all', 86400, 300, fetchImpl);
+    if (!ok) throw new HttpError(429, 'Es wurden gerade sehr viele Mails verschickt. Bitte versuche es später noch einmal.');
+  }
+  let name = '';
+  try { name = (await fetchProfile(handle, fetchImpl))?.name || ''; } catch { throw new HttpError(404, 'Diese Wunschliste gibt es nicht.'); }
+  const link = `https://wishtale.de/app/?gt=${encodeURIComponent(token)}#p/${encodeURIComponent(handle)}`;
+  try { await sendGuestMail(to, guestMail({ name, link }), transport); } catch { throw new HttpError(502, 'Die Mail konnte gerade nicht verschickt werden.'); }
+  return { ok: true };
+}
+
 /** Löscht alle Dateien im Ordner <Konto>/ im Bucket wish-images. */
 export async function removeImages(userId, fetchImpl = fetch) {
   const k = key();
@@ -64,6 +84,10 @@ export default async function handler(req, res) {
     if (GUEST_FN[op]) {
       const ip = String(req.headers?.['x-forwarded-for'] || '').split(',')[0].trim();
       return send(res, 200, await guestOp(op, req.body, ip));
+    }
+    if (op === 'mailme') {
+      const ip = String(req.headers?.['x-forwarded-for'] || '').split(',')[0].trim();
+      return send(res, 200, await mailMe(req.body, ip));
     }
     if (op === 'delete') {
       const { token, id } = await requireUser(req);

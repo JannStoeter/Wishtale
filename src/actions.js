@@ -37,7 +37,7 @@ import { WishRec, draftKey, concrete, altPrice } from './views/wishprev.js';
 import { ZmRow } from './views/zettel.js';
 import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
-import { guestRpc } from './lib/remote.js';
+import { guestRpc, guestToken } from './lib/remote.js';
 import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
 
 export const MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
@@ -269,7 +269,7 @@ const A={
  selbst(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.status=w.status==='selbst'?'offen':'selbst';toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Du findest ihn im Profil unter „Das habe ich schon“.':'Der Wunsch ist wieder auf deiner Liste.');render()},
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
  delw(el){S.ui.modal=null;const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
- modal(el){if(el.dataset.v==='tour'){endGuide();S.ui.helpTab=el.dataset.help||'guides'}if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null}if(el.dataset.v==='zettel')S.ui.zt=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ modal(el){if(el.dataset.v==='tour'){endGuide();S.ui.helpTab=el.dataset.help||'guides'}if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null}if(el.dataset.v==='zettel')S.ui.zt=null;if(el.dataset.v==='mailme')S.ui.mm=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  close(){if(S.ui.guide)endGuide();if(S.ui.modal==='welcome'){markWelcomed();stopWelcome()}S.ui.modal=null;S.ui.editWish=null;render()},
  wtab(el){showScene(+el.dataset.i,true)},
  inviteopen(){S.ui.invm={list:[],link:'',error:'',busy:false};S.ui.modal='invite';render();listInvites().then(l=>{if(S.ui.invm)S.ui.invm.list=l;if(S.ui.modal==='invite')render()}).catch(()=>{})},
@@ -656,6 +656,14 @@ document.addEventListener('submit',e=>{
     if(!i.ok){toast(i.error);return}
     S.me.social={...(p.value?{pinterest:p.value}:{}),...(i.value?{instagram:i.value}:{})};
     toast(p.value||i.value?'Gespeichert. Deine Freunde sehen jetzt, was dich inspiriert.':'Die Links sind wieder entfernt.');render();return;
+  }
+  if(kind==='mailme'){ // Gast: Link zu den eigenen Reservierungen per Mail (106)
+    const email=(fd.get('email')||'').trim(),handle=S.guest?.handle||S.ui.person||'';
+    S.ui.mm={email,busy:true};render();
+    fetch('/api/account?op=mailme',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email,handle,token:guestToken()})})
+      .then(async r=>{const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Das hat leider nicht geklappt.');S.ui.mm={sent:true};render()})
+      .catch(e=>{S.ui.mm={email,error:e.message};render()});
+    return;
   }
   if(kind==='owned'){
     const t=(fd.get('t')||'').trim();if(!t)return;

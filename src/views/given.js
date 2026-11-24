@@ -36,7 +36,7 @@ export function PastGifts(p) {
 /** Nach dem Reservieren: Hinweis, was mit dem Geschenk passiert, und bei Gästen der Weg zum eigenen Wishtale. */
 export function RememberNote() {
   if (S.auth.user) return `<span class="muted" style="display:block;margin-top:4px">Wir merken uns das Geschenk für dich. Du findest es im Verlauf unter „Was ich verschenkt habe“.</span>`;
-  return `<span class="muted" style="display:block;margin-top:4px">Wir merken uns das Geschenk auf diesem Gerät. Mit einem eigenen Wishtale bleibt es dauerhaft gespeichert, und du bekommst deinen eigenen Wunschzettel dazu.</span><button class="btn pri sm" data-act="tologin" style="margin-top:8px">Mein Wishtale anlegen</button>`;
+  return `<span class="muted" style="display:block;margin-top:4px">Wir merken uns das Geschenk auf diesem Gerät. Mit einem eigenen Wishtale bleibt es dauerhaft gespeichert, und du bekommst deinen eigenen Wunschzettel dazu.</span><span class="row" style="gap:8px;margin-top:8px"><button class="btn pri sm" data-act="tologin">Mein Wishtale anlegen</button><button class="btn ghost sm" data-act="modal" data-v="mailme">Link per Mail sichern</button></span>`;
 }
 
 export function GivenModal() {
@@ -63,4 +63,18 @@ export function GiftGivenModal() {
     <div class="fld"><label for="gg-n">Notiz (optional)</label><textarea id="gg-n" name="note" class="ta" maxlength="400" placeholder="z. B. Hat sich besonders über die Verpackung gefreut"></textarea></div>
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" type="submit">Speichern</button></div>
    </form></div></div>`;
+}
+
+/** Gast ohne Konto: Link zu den eigenen Reservierungen per Mail (106). Die Adresse wird nur für diese Mail genutzt. */
+export function MailMeModal() {
+  const z = S.ui.mm || {};
+  return `<div class="scrim" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
+   <div class="sheet-head"><h2 id="mt">Reservierung per Mail sichern</h2><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
+   ${z.sent ? `<div class="banner green" role="status"><span>Die Mail ist unterwegs. Mit dem Link darin siehst du deine Reservierung auf jedem Gerät wieder.</span></div>
+    <div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" class="btn pri" data-act="close">Fertig</button></div>`
+   : `<p class="muted" style="margin:6px 0 12px">Wir schicken dir einen Link, mit dem du deine Reservierung auch auf einem anderen Gerät wiederfindest. Deine Adresse nutzen wir nur für diese eine Mail und speichern sie nicht.</p>
+   <form data-form="mailme"><div class="fld"><label for="mme">Deine E-Mail-Adresse</label><input id="mme" name="email" type="email" class="inp" required autocomplete="email" maxlength="254" value="${esc(z.email || '')}"></div>
+    ${z.error ? `<p role="alert" class="comerr">${esc(z.error)}</p>` : ''}
+    <div class="row" style="justify-content:flex-end;gap:8px;margin-top:12px"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" ${z.busy ? 'disabled' : ''}>${z.busy ? 'Wird verschickt …' : 'Link schicken'}</button></div></form>`}
+  </div></div>`;
 }
