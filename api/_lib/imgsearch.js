@@ -7,20 +7,30 @@ import { fetchImage, inspect } from './inspect.js';
 
 const clean = q => String(q || '').replace(/\s+/g, ' ').trim().slice(0, 120);
 
-/** Wählt aus der Antwort der Bildsuche die brauchbaren Kandidaten (mindestens 300 px, https). */
-export function candidates(json) {
+/* Bildagenturen und Sammelseiten zeigen Wasserzeichen oder fremde Rechte deutlich, Marktplätze sperren das Laden ohnehin. */
+const STOCK = /(^|\.)(alamy\.|shutterstock\.|istockphoto\.|gettyimages\.|dreamstime\.|123rf\.|depositphotos\.|stock\.adobe\.|adobestock\.|freepik\.|vecteezy\.|pinterest\.|pinimg\.|ebayimg\.|ebay\.|amazon\.|media-amazon\.|ssl-images-amazon\.|idealo\.|geizhals\.|aliexpress\.|alicdn\.|temu\.|wish\.com|facebook\.|fbcdn\.|instagram\.|cdninstagram\.|youtube\.|ytimg\.|tiktok\.)/i;
+const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
+
+/** Wählt aus der Antwort der Bildsuche die brauchbaren Kandidaten: https, mindestens 300 px, kein extremes Format, keine Bildagentur,
+ *  und der Titel des Treffers muss zum Wunsch passen (fits). Hersteller- und Händlerseiten mit der Marke in der Adresse zuerst. */
+export function candidates(json, query = '') {
+  const brand = core(query)[0] || '';
   return (json?.results || [])
-    .map(r => ({ img: r?.properties?.url, w: +r?.properties?.width || 0, h: +r?.properties?.height || 0, page: r?.source || '' }))
-    .filter(c => /^https:\/\//i.test(c.img || '') && c.img.length <= 800 && (!c.w || c.w >= 300) && (!c.h || c.h >= 300))
+    .map((r, i) => ({ img: r?.properties?.url, w: +r?.properties?.width || 0, h: +r?.properties?.height || 0, page: r?.meta_url?.hostname || host(r?.url) || r?.source || '', title: String(r?.title || ''), i }))
+    .filter(c => /^https:\/\//i.test(c.img || '') && c.img.length <= 800 && (!c.w || c.w >= 300) && (!c.h || c.h >= 300)
+      && (!c.w || !c.h || (c.w / c.h <= 2.2 && c.h / c.w <= 2.2)) && !STOCK.test(host(c.img)) && !STOCK.test(c.page)
+      && (!query || fits(query, c.title, c.page)))
+    .map(c => ({ ...c, page: c.page.replace(/^www\./, ''), score: (brand && c.page.includes(brand) ? 10 : 0) - c.i }))
+    .sort((a, b) => b.score - a.score)
     .slice(0, 6);
 }
 
 export async function searchImage(query, { fetchJson, load = fetchImage } = {}) {
   const key = process.env.BRAVE_SEARCH_API_KEY, q = clean(query);
   if (!q || (!key && !fetchJson)) return null;
-  const json = fetchJson ? await fetchJson(q) : await fetch('https://api.search.brave.com/res/v1/images/search?count=10&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q + ' Produktbild'), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
-  for (const c of candidates(json)) {
-    try { const im = await load(c.img); return { ...im, source: c.page || im.source }; } catch { /* nächster Treffer */ }
+  const json = fetchJson ? await fetchJson(q) : await fetch('https://api.search.brave.com/res/v1/images/search?count=10&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+  for (const c of candidates(json, q)) {
+    try { const im = await load(c.img); return { ...im, source: c.page || im.source, via: 'bild' }; } catch { /* nächster Treffer */ }
   }
   return null;
 }
@@ -28,7 +38,7 @@ export async function searchImage(query, { fetchJson, load = fetchImage } = {}) 
 /* Herstellerseite zuerst: Websuche nach dem Produktnamen, erster Treffer, der kein Marktplatz oder Preisvergleich ist,
    davon das Produktbild der Seite (og:image, wie bei „Link lesen“). Das offizielle Bild passt fast immer besser als eine Bildersuche. */
 const MARKET = /(^|\.)(amazon\.|ebay\.|idealo\.|geizhals\.|billiger\.de|guenstiger\.de|otto\.de|kaufland\.|check24\.|preis\.de|youtube\.|facebook\.|instagram\.|pinterest\.|reddit\.|wikipedia\.|support\.|help\.|hilfe\.|forum\.|community\.|blog\.)/i;
-const words = q => clean(q).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').split(/[^a-z0-9]+/).filter(w => w.length > 2);
+const words = q => core(q).filter(w => w.length > 2);
 
 /** Ordnet Treffer: Seiten, deren Adresse die Marke (erstes Wort) enthält, zuerst; Marktplätze fallen raus. */
 export function pageCandidates(json, query) {
@@ -52,10 +62,22 @@ export async function searchOfficialImage(query, { fetchJson, read = inspect, lo
   const json = await webJson(q, { fetchJson });
   if (!json) return null;
   for (const c of pageCandidates(json, q)) {
-    try { const p = await read(c.url); if (!p?.imageUrl || overlap(q, p.title || '') < 0.5) continue; const im = await load(p.imageUrl); // eine Kategorieseite des Herstellers liefert das falsche Bild, darum muss der Seitentitel zum Produkt passen
-      return { ...im, source: c.host }; } catch { /* nächster Treffer */ }
+    try { const p = await read(c.url); if (!p?.imageUrl || !fits(q, p.title || '', c.host)) continue; const im = await load(p.imageUrl); // eine Kategorieseite des Herstellers liefert das falsche Bild, darum muss der Seitentitel zum Produkt passen
+      return { ...im, source: c.host, via: 'seite' }; } catch { /* nächster Treffer */ }
   }
   return null;
+}
+
+/**
+ * Bild zu einem Wunsch: Hat die Person selbst einen Shop-Link gesetzt (nicht Amazon), zuerst das Bild dieser Seite. Sonst erst die
+ * Herstellerseite, dann die Bildersuche. Ohne guten Treffer null, dann bleibt das Symbol.
+ */
+export async function imageForWish({ t, link } = {}, deps = {}) {
+  const read = deps.read || inspect, load = deps.load || fetchImage;
+  if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
+    try { const p = await read(link); if (p?.imageUrl) return { ...(await load(p.imageUrl)), source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
+  }
+  return t ? findProductImage(t, deps) : null;
 }
 
 /** Erst die Herstellerseite, dann die Bildersuche. */
@@ -72,6 +94,24 @@ export function overlap(wish, title) {
   return a.filter(w => b.has(w)).length / a.length;
 }
 
+
+/* Füllwörter und beschreibende Zusätze zählen beim Vergleich nicht mit („für Flur und Treppe“). */
+const STOP = new Set('fur fuer und mit ohne der die das den dem des ein eine einen einer im in am an auf aus von zum zur fuer als oder for the and with of to a an set neu new'.split(' '));
+export const core = t => toks(t).filter(w => !STOP.has(w));
+/**
+ * Passt ein gefundener Titel zum Wunsch? Ja, wenn die Hälfte der Kernwörter vorkommt, oder wenn die Marke (erstes Wort, im Titel oder in
+ * der Adresse) und mindestens ein langes, unterscheidendes Wort (ab 6 Zeichen, etwa „bewegungsmelder“) vorkommen. Zahlen müssen immer stimmen,
+ * damit ein anderes Modell nicht durchrutscht.
+ */
+export function fits(wish, title, site = '') {
+  const a = core(wish), b = new Set(toks(title)), h = String(site).toLowerCase();
+  if (!a.length) return false;
+  if (a.filter(w => /^\d+$/.test(w)).some(w => !b.has(w))) return false;
+  const hit = a.filter(w => b.has(w));
+  if (hit.length / a.length >= 0.5) return true;
+  const brand = a[0], brandOk = b.has(brand) || (brand.length >= 3 && h.includes(brand));
+  return brandOk && a.slice(1).some(w => w.length >= 6 && b.has(w));
+}
 
 const ASIN = /\/(?:dp|gp\/product)\/([A-Z0-9]{10})(?:[/?]|$)/;
 const AMAZON_TAG = 'jannst-21'; // Partner-Kennung, muss mit src/lib/shops.js übereinstimmen

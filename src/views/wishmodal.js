@@ -134,6 +134,7 @@ export function WishModal() {
      <h2 id="mt">${esc(w.t)}</h2>
      ${w.note ? `<p class="muted" style="margin-top:6px">${esc(w.note)}</p>` : ''}
      ${w.via ? `<span class="chip gold" style="margin-top:8px">Tipp von ${esc(viaName(w.via))}</span>` : ''}
+     ${w.img && w.imgSrc ? `<p class="muted tiny" style="margin-top:6px">Bild von ${esc(String(w.imgSrc).slice(0, 60))}</p>` : ''}
     </div>
    </div>
    ${ctx === 'preview' ? `<div class="banner green">${ic('eye')}<span>So sehen Schenkende diesen Wunsch.</span></div>` : ''}

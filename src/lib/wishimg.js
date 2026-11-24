@@ -20,7 +20,7 @@ export async function downscale(source) {
     const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
     const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.82));
     if (!blob) throw new Error('Das Bild konnte nicht verarbeitet werden.');
-    return { blob, preview: c.toDataURL('image/jpeg', 0.82) };
+    return { blob, preview: c.toDataURL('image/jpeg', 0.82), w: img.width, h: img.height };
   } finally { if (typeof source !== 'string') URL.revokeObjectURL(url); }
 }
 
@@ -33,6 +33,19 @@ export async function fetchProductImage(imageUrl, query) {
   if (!r.ok) throw new Error(j.error || 'Das Bild konnte nicht geladen werden.');
   if (!j.image) throw new Error('Kein Bild gefunden.');
   const d = await downscale(`data:${j.image.type};base64,${j.image.data}`);
+  return { ...d, src: j.image.source };
+}
+
+/** Bild zu einem gespeicherten Wunsch über die Websuche (eigener Shop-Link zuerst). Rückgabe wie fetchProductImage oder null. */
+export async function fetchWishImage(w) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return null;
+  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ imageFor: { t: String(w.t || '').slice(0, 120), link: String(w.link || '') } }), signal: AbortSignal.timeout(25000) });
+  if (r.status === 429) throw Object.assign(new Error('limit'), { limit: true });
+  const j = r.ok ? await r.json().catch(() => ({})) : {};
+  if (!j.image) return null;
+  const d = await downscale(`data:${j.image.type};base64,${j.image.data}`);
+  if (Math.min(d.w, d.h) < 200) return null; // zu klein für eine Karte, dann lieber das Symbol
   return { ...d, src: j.image.source };
 }
 

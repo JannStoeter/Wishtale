@@ -1,6 +1,9 @@
 import { requireUser, send, fail, HttpError } from './_lib/auth.js';
 import { inspect, fetchImage } from './_lib/inspect.js';
-import { findProductImage, amazonDirect } from './_lib/imgsearch.js';
+import { findProductImage, amazonDirect, imageForWish } from './_lib/imgsearch.js';
+import { guardSearch } from './_lib/limits.js';
+
+const searchOn = () => !!process.env.BRAVE_SEARCH_API_KEY;
 
 const seen = new Map(); // einfache Bremse pro Instanz: höchstens 20 Abrufe in 10 Minuten je Person
 const limited = id => { const now = Date.now(), l = (seen.get(id) || []).filter(t => now - t < 600000); l.push(now); seen.set(id, l); return l.length > 40; };
@@ -16,7 +19,15 @@ export default async function handler(req, res) {
       if (iu.length > 800) throw new HttpError(400, 'Das ist keine gültige Bildadresse.');
       return send(res, 200, { image: await fetchImage(iu) });
     }
+    // Alles, was Brave fragt, zählt gegen die Tagesgrenzen (nur mit Schlüssel, sonst gibt es ohnehin null)
+    if ((req.body?.imageQuery || req.body?.amazonQuery || req.body?.imageFor) && searchOn()) await guardSearch(id);
     if (req.body?.imageQuery) return send(res, 200, { image: await findProductImage(req.body.imageQuery) }); // Bild per Websuche (nur mit Schlüssel), sonst null
+    if (req.body?.imageFor) { // Bild zu einem gespeicherten Wunsch: eigener Shop-Link zuerst, dann Herstellerseite, dann Bildersuche
+      const t = String(req.body.imageFor.t || '').slice(0, 120), link = String(req.body.imageFor.link || '').slice(0, 1000);
+      const image = await imageForWish({ t, link }).catch(() => null);
+      console.log('bild-wunsch', JSON.stringify({ via: image?.via || 'keins', quelle: image?.source || '' }));
+      return send(res, 200, { image });
+    }
     if (req.body?.amazonQuery) return send(res, 200, { amazon: await amazonDirect(req.body.amazonQuery) }); // direkter Amazon-Link über die Websuche (nur mit Schlüssel), sonst null
     const url = String(req.body?.url || '').trim();
     if (!url || url.length > 1000) throw new HttpError(400, 'Bitte füge einen Link ein.');

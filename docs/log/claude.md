@@ -221,3 +221,12 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Zurücknehmen: Commit reverten
 - Offen: Blick auf echtem Gerät
 - Nachtrag: Karte öffnet sich als Fenster (`IdeaModal()` in src/views/inspiration.js, `ideaopen` in src/actions.js, Eintrag in src/views/modals.js), Name und Preis führen nicht mehr direkt zum Shop
+
+## 2026-11-24 · 114 · Echte Produktbilder über Brave
+- Auftrag: Jann im Projekt-Thread, Dev 114 (Entscheidungskarte: Ideenkarten behalten das Symbol)
+- Geändert: api/_lib/imgsearch.js (`fits`, `core`, strengere `candidates`, `imageForWish`), api/inspect.js (`imageFor`, Tagesgrenze), api/_lib/limits.js (`guardSearch`), src/lib/imgfill.js (neu), src/lib/wishimg.js (`fetchWishImage`, Maße in `downscale`), src/actions.js (nach Speichern, Wunschzettel, „Auf meine Wunschliste“), src/render.js (Nachziehen), src/views/wishmodal.js („Bild von …“), datenschutz.html (Abschnitt Bildsuche), tests/imgsearch.test.mjs, CLAUDE.md
+- Warum: Viele genaue Wünsche zeigten nur ein Symbol, obwohl es ein gutes Herstellerbild gibt
+- Geprüft: ESLint, Build, `npm test` (16 Tests, davon 4 neu mit simulierten Suchantworten)
+- Datenbank und Dienste: keine Migration; nutzt `hit_limit` (0021) und `BRAVE_SEARCH_API_KEY` in Vercel
+- Zurücknehmen: Commit reverten
+- Offen: Live-Test mit echtem Schlüssel (Hue Bewegungsmelder), Eintrag in `tribunal_verdicts` nach dem Merge
