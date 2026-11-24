@@ -34,7 +34,7 @@ export function track(name, { label, path = location.pathname, once = false } = 
 }
 
 /**
- * Klicks auf Partner- und Shop-Links zählen (Dev 109, Ereignis shop_click): nur welcher Shop (amazon, otto, vergleich oder shop),
+ * Klicks auf Partner- und Shop-Links zählen (Dev 111, Ereignis shop_click): nur welcher Shop (amazon, otto, vergleich oder shop),
  * ob eigene Ansicht oder Gastansicht und von welcher Stelle (wunsch, ideen, liste, reserviert). Kein Produkt, keine Adresse.
  */
 export const shopLabel = (a, hash = location.hash) => {

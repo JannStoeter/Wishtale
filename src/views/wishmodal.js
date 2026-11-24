@@ -77,7 +77,7 @@ function Suggest(p, w, o, ctx) {
 }
 
 /**
- * Nach dem Reservieren ein leiser Kaufweg (Dev 109): der Moment mit der größten Kaufabsicht. Eigener Link des Wunsches zuerst,
+ * Nach dem Reservieren ein leiser Kaufweg (Dev 111): der Moment mit der größten Kaufabsicht. Eigener Link des Wunsches zuerst,
  * sonst die genaue Suche bei Amazon. Nie ein Vorschlag von Wishtale, damit es nicht wie die Wahl der Person aussieht.
  * Bewusst ein Textlink in einem ganzen Satz, mit „Laden deiner Wahl“ als ehrlicher Alternative.
  */

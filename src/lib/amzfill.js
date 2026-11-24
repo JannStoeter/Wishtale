@@ -1,5 +1,5 @@
 /*
- * Direkte Amazon-Produktseite statt Amazon-Suche (Dev 109, Jann): Genaue Wünsche ohne Link bekommen im Hintergrund den direkten
+ * Direkte Amazon-Produktseite statt Amazon-Suche (Dev 111, Jann): Genaue Wünsche ohne Link bekommen im Hintergrund den direkten
  * Produktlink aus der Websuche (findAmazonLink -> api/inspect.js -> amazonDirect, Brave). Eine Produktseite verkauft besser als eine
  * Trefferliste, und die Partner-Kennung bleibt sicher dran. Nur für angemeldete Personen, nur genaue Produkt-Wünsche, nie über einen
  * Link, den jemand selbst gesetzt hat. Jeder Titel wird in diesem Browser nur einmal gesucht (wishtale:amz-tried).

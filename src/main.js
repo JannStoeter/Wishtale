@@ -69,7 +69,7 @@ async function boot(){
   }
   if(!session)await loadGiven().catch(()=>{});
   window.addEventListener('hashchange',route);
-  watchShopClicks(); // Klicks zu Shops zählen, ohne Produkt (109)
+  watchShopClicks(); // Klicks zu Shops zählen, ohne Produkt (111)
   route();
   if(session){openShared();countOpen()}
   /* Kein Willkommens-Rundgang mehr: Der erste Bildschirm ist die Wunschliste mit einem Feld (Feedback der ersten Testerinnen). */
