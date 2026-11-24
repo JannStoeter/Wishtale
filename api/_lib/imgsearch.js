@@ -76,13 +76,8 @@ export function overlap(wish, title) {
 const ASIN = /\/(?:dp|gp\/product)\/([A-Z0-9]{10})(?:[/?]|$)/;
 const AMAZON_TAG = 'jannst-21'; // Partner-Kennung, muss mit src/lib/shops.js übereinstimmen
 
-/**
- * Direkter Amazon-Produktlink über die Websuche: „<Produkt> amazon.de“, erster amazon.de-Treffer mit Produktnummer (ASIN), dessen
- * Titel zum Wunsch passt. Wir lesen Amazon selbst nicht, nur die Titelzeile der Suchmaschine. Der Link bekommt die Partner-Kennung.
- */
-export async function amazonDirect(query, { fetchJson, pick = pickWithModel } = {}) {
-  const q = clean(query);
-  const json = await webJson(q + ' amazon.de', { fetchJson });
+/** Amazon-Produktseiten (mit ASIN) aus einer Antwort der Websuche, ohne doppelte Produkte. */
+function amazonItems(json, q) {
   console.log('amazon-direkt', JSON.stringify({ q, treffer: (json?.web?.results || []).slice(0, 8).map(r => { try { const u = new URL(r.url); return u.hostname + u.pathname.slice(0, 40) + ' | ' + String(r.title).slice(0, 60); } catch { return ''; } }) }));
   const items = [];
   for (const r of json?.web?.results || []) {
@@ -92,14 +87,31 @@ export async function amazonDirect(query, { fetchJson, pick = pickWithModel } = 
     if (!asin || items.some(x => x.asin === asin)) continue;
     items.push({ asin, title: String(r.title || '').replace(/^Amazon\.de\s*:\s*/i, '').replace(/:\s*Amazon\.de.*$/i, '').slice(0, 120) });
   }
+  return items;
+}
+
+/**
+ * Direkter Amazon-Produktlink über die Websuche: „<Produkt> amazon.de“, erster amazon.de-Treffer mit Produktnummer (ASIN), dessen
+ * Titel zum Wunsch passt. Wir lesen Amazon selbst nicht, nur die Titelzeile der Suchmaschine. Der Link bekommt die Partner-Kennung.
+ */
+export async function amazonDirect(query, { fetchJson, pick = pickWithModel } = {}) {
+  const q = clean(query);
   const link = x => ({ asin: x.asin, title: x.title.slice(0, 90), url: `https://www.amazon.de/dp/${x.asin}?tag=${AMAZON_TAG}` });
-  // 1. Titel stimmt fast wörtlich überein (deutsche Angebote)
-  const exact = items.find(x => overlap(q, x.title) >= 0.85);
-  if (exact) return link(exact);
-  // 2. Viele Amazon-Titel sind englisch oder umgebaut: ein kurzer Modellaufruf entscheidet, welcher Treffer genau dasselbe Produkt ist (Sprache egal), im Zweifel keiner
-  if (!items.length) return null;
-  const n = await pick(q, items.slice(0, 6)).catch(() => null);
-  return n >= 1 && n <= Math.min(6, items.length) ? link(items[n - 1]) : null;
+  const best = async items => {
+    // 1. Titel stimmt fast wörtlich überein (deutsche Angebote)
+    const exact = items.find(x => overlap(q, x.title) >= 0.85);
+    if (exact) return link(exact);
+    // 2. Viele Amazon-Titel sind englisch oder umgebaut: ein kurzer Modellaufruf entscheidet, welcher Treffer genau dasselbe Produkt ist (Sprache egal), im Zweifel keiner
+    if (!items.length) return null;
+    const n = await pick(q, items.slice(0, 6)).catch(() => null);
+    return n >= 1 && n <= Math.min(6, items.length) ? link(items[n - 1]) : null;
+  };
+  // Zuerst gezielt nur auf amazon.de suchen (dort stehen mehr Produktseiten unter den Treffern), danach wie bisher „<Produkt> amazon.de“ (Dev 109)
+  const first = amazonItems(await webJson('site:amazon.de ' + q, { fetchJson }), q);
+  const hit = await best(first);
+  if (hit) return hit;
+  const seen = new Set(first.map(x => x.asin));
+  return best(amazonItems(await webJson(q + ' amazon.de', { fetchJson }), q).filter(x => !seen.has(x.asin)));
 }
 
 /** Fragt das schnelle Modell, welcher Amazon-Treffer exakt der gewünschte Artikel ist. Liefert die Nummer (ab 1) oder null. */

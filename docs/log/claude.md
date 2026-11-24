@@ -162,6 +162,25 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Zurücknehmen: git revert 7e50069
 - Offen: keine
 
+## 2026-11-24 · 111 · Mehr Amazon-Käufe ohne Werbeseite
+- Commits: 5a4d6df und der folgende Eintrags-Commit (Branch: claude/project-thread-danupz, Pull Request nach main)
+- Auftrag: Jann im Chat („Ja alle vier … Brave … ausbauen und nutzen“), Dev 111 (zuerst als 109 angelegt, wegen doppelter Nummer umbenannt)
+- Geändert: api/_lib/imgsearch.js (amazonDirect mit zweitem Suchweg), neu src/lib/amzfill.js, src/actions.js, src/render.js, src/views/wishmodal.js (BuyLine), src/views/modals.js, src/lib/track.js, src/main.js, api/_lib/event.js, src/styles/main.css, datenschutz.html (Abschnitte 8 und Bildsuche), CLAUDE.md
+- Warum: Die meisten Wünsche haben keinen Link, Amazon-Suche verkauft schlechter als die Produktseite
+- Geprüft: ESLint, Build, amazonDirect mit simulierten Brave-Antworten
+- Datenbank und Dienste: keine Migration; braucht BRAVE_SEARCH_API_KEY in Vercel (vorhanden); shop_click erscheint noch nicht im CMS
+- Zurücknehmen: git revert 5a4d6df
+- Offen: CMS-Karte für shop_click, eigene Tracking-ID für Ideen in PartnerNet
+
+## 2026-11-24 · 110 · Otto-Links über Awin
+- Commits: siehe Pull Request (Branch: claude/project-thread-d9qygv, aufbauend auf 111)
+- Auftrag: Jann im Projekt-Thread (Awin-Deeplink für Otto DE), Dev 110
+- Geändert: src/lib/shops.js (Awin-Konstanten, `partnerLink`, `withAwin`, `partnerOf`, `shopHost`, `clickRef`), src/lib/products.js (eigener Wunschlink mit Click Reference), src/lib/promo.js (`safeUrl` für CMS-Produkte und Aktionen), src/lib/track.js (Otto hinter Awin zählen), src/views/wishmodal.js, given.js, giver.js, inspiration.js (Kennzeichnung und Hinweise), datenschutz.html Abschnitt 9, neu tests/shops.test.mjs und `npm test`, CLAUDE.md
+- Warum: Otto-Käufe über Wishtale sollen Provision bringen, die Wunsch-ID als Click Reference zeigt, welcher Wunsch verkauft hat
+- Geprüft: ESLint, Build, `npm test` (8 Tests)
+- Datenbank und Dienste: keine Migration; Eintrag 110 in tribunal_verdicts nach dem Merge
+- Zurücknehmen: Commit reverten
+- Offen: Echter Klick auf einen Deeplink und Sichtung im Awin-Dashboard nach dem Deploy
 ## 2026-11-24 · 109 · Weihnachtsabschnitt auf der Landingpage
 - Commits: siehe Pull Request vom Branch claude/project-thread-7zgklr
 - Auftrag: Jann im Chat („wir müssen die Landing mit umbauen oder?“), Dev 109
@@ -171,3 +190,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: vorher ohne Code site_content `schritte.p4` und Aktion „Weihnachten 2026 (Landingpage)“ in campaigns
 - Zurücknehmen: Revert des Merge-Commits; der Abschnitt verschwindet ohnehin ab 27.12.2026
 - Offen: Sitelinks in Google Ads auf die Sprungmarken umstellen
+
+## 2026-11-24 · 110 · Ideen-Karten mit Otto, Preis klickbar
+- Commits: siehe Pull Request #18 (Branch: claude/project-thread-d9qygv)
+- Auftrag: Jann im Projekt-Thread (Inspirationen ohne Otto, Klick auf den Preis tut nichts), Dev 110
+- Geändert: src/lib/shops.js (`searchUrl.otto`, `ideaShops`, `ideaHref`), src/views/inspiration.js (`IdeaHead`, `IdeaRow`), src/views/giver.js (`AiIdeas`), src/styles/main.css, tests/shops.test.mjs, CLAUDE.md
+- Warum: Otto soll auch bei Vorschlägen verdienen, und Name und Preis sind die Stellen, auf die man intuitiv tippt
+- Geprüft: ESLint, Build, `npm test` (9 Tests), Bildschirmfoto der Karten mit App-Stylesheet
+- Datenbank und Dienste: keine
+- Zurücknehmen: Commit reverten
+- Offen: Prüfung auf echtem Gerät nach dem Merge

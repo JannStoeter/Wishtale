@@ -8,7 +8,7 @@
 import { same, overlap, norm, kwOf } from './util.js';
 import { PRODUCTS, CATALOG } from '../data/content.js';
 import { isKid } from './age.js';
-import { AMAZON_TAG, normUrl, searchUrl } from './shops.js';
+import { AMAZON_TAG, normUrl, searchUrl, partnerLink, shopHost } from './shops.js';
 import { picks, excluded, recommend } from '../logic.js';
 import { weightOf } from './weights.js';
 import { fits, wanted } from './fit.js';
@@ -40,7 +40,7 @@ export function productFor(person, w) {
     if (top) return fromProduct(top.x, 'vorschlag');
   }
   const own = deepLink(w.link);
-  if (own) return { t: w.t, url: own, host: new URL(own).hostname.replace(/^www\./, ''), price: w.price || null, priceBy: 'user', source: 'link', direct: true };
+  if (own) return { t: w.t, url: partnerLink(own, w.id), host: shopHost(own), price: w.price || null, priceBy: 'user', source: 'link', direct: true };
   // Nur Produkte, die zu den genannten Eigenschaften passen (z. B. „beschichtet“)
   const match = livePRODUCTS().filter(x => w.kw.some(k => same(k, x.cat)) && fits(w, x) && covers(w, x));
   const brandHit = match.find(x => norm(w.t).includes(norm(x.brand)));
@@ -76,7 +76,7 @@ export function ideasFor(person, w, n = 3) {
 export function offersFor(person, w) {
   if (w.noSuggest) { // „Hierfür keine Vorschläge“: nur der eigene Link der Person bleibt
     const own = deepLink(w.link);
-    return { main: own ? { t: w.t, url: own, host: new URL(own).hostname.replace(/^www\./, ''), price: w.price || null, priceBy: 'user', source: 'link', direct: true, id: 'main' } : (productFor(person, w) && { ...productFor(person, w), id: 'main' }), alts: [], over: 0 };
+    return { main: own ? { t: w.t, url: partnerLink(own, w.id), host: shopHost(own), price: w.price || null, priceBy: 'user', source: 'link', direct: true, id: 'main' } : (productFor(person, w) && { ...productFor(person, w), id: 'main' }), alts: [], over: 0 };
   }
   const main = productFor(person, w);
   if (w.kind === 'kategorie') {

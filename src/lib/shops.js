@@ -20,6 +20,64 @@ export function withAmazonTag(url) {
   } catch { return url; }
 }
 
+/*
+ * Awin (Publisher 3165716). Je zugesagtem Programm eine Händler-ID (awinmid). Bisher nur Otto DE.
+ * Gespeichert wird immer die ursprüngliche Shop-Adresse, der Awin-Deeplink entsteht erst beim Anzeigen (partnerLink),
+ * damit das Bearbeiten-Feld die echte Adresse zeigt und eine geänderte ID sofort überall gilt.
+ */
+export const AWIN_PUBLISHER = '3165716';
+export const AWIN_MERCHANTS = [
+  { shop: 'otto', name: 'Otto', mid: '14336', host: /(^|\.)otto\.de$/i },
+];
+const AWIN_HOST = /(^|\.)awin1\.com$/i;
+
+/** Click Reference für Awin: nur Buchstaben und Ziffern, höchstens 40 Zeichen (Wunsch-ID, nie Personendaten). */
+export const clickRef = v => String(v ?? '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
+
+/** Awin-Händler zu einer Adresse, oder null. */
+export function awinMerchant(url) {
+  try { const h = new URL(url).hostname; return AWIN_MERCHANTS.find(m => m.host.test(h)) || null; } catch { return null; }
+}
+
+/** Macht aus einer Händler-Adresse (z. B. otto.de) den Awin-Deeplink, mit Click Reference. Andere Adressen bleiben gleich. */
+export function withAwin(url, ref) {
+  const m = awinMerchant(url);
+  if (!m) return url;
+  let target;
+  try { const u = new URL(url); u.protocol = 'https:'; target = u.href; } catch { return url; }
+  const r = clickRef(ref);
+  return `https://www.awin1.com/cread.php?awinmid=${m.mid}&awinaffid=${AWIN_PUBLISHER}${r ? `&clickref=${r}` : ''}&ued=${enc(target)}`;
+}
+
+/** Ein Awin-Deeplink zeigt auf diese Shop-Adresse (ued), sonst null. */
+export function awinTarget(url) {
+  try {
+    const u = new URL(url);
+    if (!AWIN_HOST.test(u.hostname)) return null;
+    const t = u.searchParams.get('ued');
+    return t && /^https?:\/\//i.test(t) ? t : null;
+  } catch { return null; }
+}
+
+/** Shop, den ein Partnerlink erreicht: 'amazon', 'otto' oder null (kein Partnerlink). */
+export function partnerOf(url) {
+  const real = awinTarget(url) || url;
+  try { if (/(^|\.)amazon\.de$/i.test(new URL(real).hostname)) return 'amazon'; } catch { return null; }
+  const m = awinMerchant(real);
+  return m && awinTarget(url) ? m.shop : null;
+}
+
+/** Hostname zum Anzeigen ohne www, auch hinter einem Awin-Deeplink („otto.de“ statt „awin1.com“). */
+export function shopHost(url) {
+  try { return new URL(awinTarget(url) || url).hostname.replace(/^www\./, ''); } catch { return ''; }
+}
+
+/** Zentrale Stelle für ausgehende Shop-Links: Amazon bekommt die Partner-ID, Awin-Händler den Deeplink. */
+export function partnerLink(url, ref) {
+  if (!url || awinTarget(url)) return url;
+  return withAwin(withAmazonTag(url), ref);
+}
+
 /** Macht aus "shop.de/produkt" eine gültige https-URL; liefert null bei leerer/ungültiger Eingabe. */
 export function normUrl(raw) {
   const v = (raw || '').trim();
@@ -32,7 +90,22 @@ export const searchUrl = {
   idealo: q => `https://www.idealo.de/preisvergleich/MainSearchProductCategory.html?q=${enc(q)}`,
   google: q => `https://www.google.de/search?tbm=shop&q=${enc(q)}`,
   amazon: q => `https://www.amazon.de/s?k=${enc(q)}&tag=${AMAZON_TAG}`,
+  /* Otto-Suche, immer als Awin-Deeplink (Click Reference: Stelle in Wishtale, nie Personendaten). */
+  otto: (q, ref = 'idee') => withAwin(`https://www.otto.de/suche/${enc(String(q || '').trim())}/`, ref),
 };
+
+/**
+ * Shop-Wege einer Idee als leise Textknöpfe: Amazon und Otto, gemeinsam einmal als Anzeige gekennzeichnet (110).
+ * Erlebnisse führen zur Suche in der Nähe, ohne Partnerlink.
+ */
+export function ideaShops(i, ref = 'idee', cls = 'qa') {
+  const R = 'noopener noreferrer sponsored nofollow';
+  if (i.exp) return `<a class="${cls}" href="https://www.google.de/search?q=${enc(i.q)}+in+meiner+N%C3%A4he" target="_blank" rel="noopener noreferrer">In der Nähe suchen</a>`;
+  return `<span class="idea-shops"><a class="${cls}" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${R}">Bei Amazon</a><a class="${cls}" href="${searchUrl.otto(i.q, ref)}" target="_blank" rel="${R}">Bei Otto</a><span class="ad-note">Anzeige</span></span>`;
+}
+
+/** Hauptweg einer Idee für Titel und Preis (Amazon-Suche, bei Erlebnissen die Suche in der Nähe). */
+export const ideaHref = i => i.exp ? `https://www.google.de/search?q=${enc(i.q)}+in+meiner+N%C3%A4he` : searchUrl.amazon(i.q);
 
 export const shopLinks = q => [
   { n: 'idealo', u: searchUrl.idealo(q) },

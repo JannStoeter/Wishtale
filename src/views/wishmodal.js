@@ -11,7 +11,7 @@ import { ideasOf, aiStatus } from '../lib/ideas.js';
 import { viaName } from '../lib/invite.js';
 import { AiLoading } from './ailoading.js';
 import { isSpecific } from '../lib/products.js';
-import { searchUrl } from '../lib/shops.js';
+import { searchUrl, partnerOf, shopHost, partnerLink } from '../lib/shops.js';
 import { RememberNote } from './given.js';
 
 const REL = 'noopener noreferrer sponsored nofollow';
@@ -26,6 +26,7 @@ export function sameItem(a, b) {
 function Offer(pr, w, ctx, role) {
   const guestFree = ctx === 'guest' && !w.res && !w.bought;
   const amazon = pr.host === 'amazon.de' || pr.host.endsWith('.amazon.de');
+  const ad = amazon || !!partnerOf(pr.url); // Partnerlinks (Amazon, Awin-Händler wie Otto) gleich kennzeichnen
   const label = amazon ? (pr.direct ? 'Bei Amazon ansehen' : 'Bei Amazon suchen') : `Zu ${esc(pr.host)}`;
   const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === pr.t;
   // Der Wunsch selbst steht schon oben mit Bild und Namen: hier nur noch Preis und Weg zum Shop (098)
@@ -41,7 +42,7 @@ function Offer(pr, w, ctx, role) {
     ${chosen ? `<span class="chip ok">${ic('check', 'sm')}Deine Wahl</span>` : ''}
    </div>
    <div class="oa">
-    <a class="${quiet ? 'qa' : 'btn amz sm'}" href="${pr.url}" target="_blank" rel="${REL}">${label}${quiet ? (amazon ? ' (Anzeige)' : '') : ` ${ic('arrow', 'sm')}`}</a>
+    <a class="${quiet ? 'qa' : 'btn amz sm'}" href="${pr.url}" target="_blank" rel="${REL}">${label}${quiet ? (ad ? ' (Anzeige)' : '') : ` ${ic('arrow', 'sm')}`}</a>
     ${role === 'main' && pr.source === 'erzeugt' && ctx === 'own' && w.kind === 'produkt' ? `<button class="btn ghost sm" data-act="wamz" data-id="${w.id}" ${S.ui.amzBusy === w.id ? 'disabled' : ''}>${S.ui.amzBusy === w.id ? 'Suche läuft …' : 'Direkten Amazon-Link suchen'}</button>` : ''}
     ${guestFree ? `<button class="${quiet ? 'qa qa-add' : 'btn pri sm'}" data-act="choose" data-wid="${w.id}" data-pid="${esc(pr.id)}">Diesen wählen</button>` : ''}
    </div>
@@ -75,6 +76,25 @@ function Suggest(p, w, o, ctx) {
   return `<div class="sugg"><b>Vorschlag von Wishtale</b><span>${esc(p.name)} hat kein bestimmtes Produkt ausgewählt. ${crit ? `Diese Auswahl passt zu den Kriterien des Wunsches (${esc(crit)}).` : 'Diese Auswahl passt zum Wunsch.'} Es ist nicht ${esc(gen(p.name))} Wahl. Wir testen und bewerten die Produkte nicht, schau dir deshalb vor dem Kauf Preis und Bewertungen an.</span></div>`;
 }
 
+/**
+ * Nach dem Reservieren ein leiser Kaufweg (Dev 111): der Moment mit der größten Kaufabsicht. Eigener Link des Wunsches zuerst,
+ * sonst die genaue Suche bei Amazon. Nie ein Vorschlag von Wishtale, damit es nicht wie die Wahl der Person aussieht.
+ * Bewusst ein Textlink in einem ganzen Satz, mit „Laden deiner Wahl“ als ehrlicher Alternative.
+ */
+function BuyLine(w, o, byAi, chosen) {
+  if (w.kind === 'erlebnis' || w.kind === 'frei') return '';
+  let host = 'amazon.de';
+  if (chosen && chosen.url) host = shopHost(chosen.url) || host; // hinter einem Awin-Deeplink der echte Shop
+  const own = chosen && chosen.url ? { url: partnerLink(chosen.url, w.id), host } : !byAi && o.main && ['link', 'erzeugt', 'amz'].includes(o.main.source) ? o.main : null;
+  const url = own ? own.url : w.kind === 'produkt' ? searchUrl.amazon(w.t) : '';
+  if (!url) return '';
+  host = own ? own.host || host : 'amazon.de';
+  const amazon = /(^|\.)amazon\./.test(host);
+  const ad = amazon || !!partnerOf(url);
+  const where = amazon ? 'bei Amazon' : `bei ${esc(host.replace(/^www\./, ''))}`;
+  return `<p class="buyline">Wenn du es gleich besorgen möchtest, findest du es <a href="${esc(url)}" target="_blank" rel="${REL}" data-place="reserviert">${where}</a>${ad ? ' (Anzeige)' : ''} oder in einem Laden deiner Wahl.</p>`;
+}
+
 export function WishModal() {
   const ctx = S.ui.wishCtx || 'guest';
   const p = ctx === 'guest' ? guestPerson() : S.me;
@@ -91,6 +111,7 @@ export function WishModal() {
   if (ctx === 'guest') {
     if (w.bought) state = `<div class="banner green">${ic('check')}<span>Das hast du schon besorgt. Die Überraschung bleibt natürlich bestehen.</span></div>`;
     else if (mine) state = `<div class="banner green">${ic('lock')}<span>Du hast diesen Wunsch reserviert.${chosen ? ` Deine Wahl: <b>${esc(chosen.t)}</b>.` : ''} ${esc(p.name)} erfährt davon nichts.${p.managed ? '' : RememberNote()}</span></div>`;
+    if (mine && !w.bought) state += BuyLine(w, o, byAi, chosen);
     else if (taken) state = `<div class="banner">${ic('lock')}<span>Um diesen Wunsch kümmert sich schon jemand anderes.</span></div>`;
   }
 
@@ -127,7 +148,7 @@ export function WishModal() {
    ${AiVariants(w, ctx)}
    ${o.over ? `<p class="muted" style="font-size:13px">${o.over} Produkt${o.over > 1 ? 'e' : ''} über dem Budget ausgeblendet.</p>` : ''}
    ${ctx === 'own' && !w.noSuggest && w.kind !== 'erlebnis' ? `<p style="margin:6px 0"><button class="linkbtn" data-act="wnosug" data-id="${w.id}">Hierfür keine Vorschläge generieren</button></p>` : ''}
-   <p class="disc">Die Links zu Amazon sind Partnerlinks (Anzeige). Dir entstehen dadurch keine Mehrkosten. Maßgeblich ist immer der Preis bei Amazon. Vorschläge von Wishtale wählen wir nach den Kriterien des Wunsches aus. Wir testen und bewerten die Produkte nicht.</p>
+   <p class="disc">Die Links zu Amazon und Otto sind Partnerlinks (Anzeige). Dir entstehen dadurch keine Mehrkosten. Maßgeblich ist immer der Preis im Shop. Vorschläge von Wishtale wählen wir nach den Kriterien des Wunsches aus. Wir testen und bewerten die Produkte nicht.</p>
    <div class="row wm-foot"><span style="flex:1"></span><button class="btn ghost" data-act="close">Schließen</button></div>
   </div></div>`;
 }
