@@ -99,6 +99,7 @@ Stand: 2026-11-09
 | 105 | Geteilte Links im CMS zählen | **Jann im Chat.** Gastansicht meldet Aufrufe über /w/ getrennt, CMS-Karte „Geteilte Links“, Migration 0030. | ja, `49fd530` |
 | 106 | Launch-Checkliste | **Jann im Chat: Vercel und Supabase auf Pro, „Bitte baue alles“.** Sicherheitsfix (0031), drei Hinweise, Reservierung per Mail für Gäste. Teil A (Mail-Einstellungen, Verträge, Limits) bei Jann. | ja, `bcb9a99`, `ebaca53` |
 | 108 | Wunsch selbst erfüllt | **Jann im Chat: dezent in der Ansicht, danach Glückwunsch mit Fundort.** Textknopf „Selbst erfüllt“, kleines Fenster mit Rückgängig, Ansehen, Fertig. | ja, `7e50069` |
+| 109 | Landingpage zur Weihnachtskampagne | **Jann im Chat: „Bau ruhig so zu Ende“.** Weihnachtsabschnitt mit Familie, Kinder, Ideen und Sprungmarken für Sitelinks, verschwindet ab 27.12. | ja, `1d6f7a0` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
