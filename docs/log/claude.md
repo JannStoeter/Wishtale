@@ -151,3 +151,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Migration 0031; Einträge 106 in tribunal_verdicts; Vercel braucht SMTP-Variablen
 - Zurücknehmen: git revert ebaca53 bcb9a99; grant execute on function public.guard_profile_update() to authenticated
 - Offen: echter Mailversand nach Eintragen der SMTP-Daten testen
+
+## 2026-11-24 · 108 · Wunsch selbst erfüllt
+- Commits: 7e50069 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („selbst erfüllen direkt in der Ansicht, aber dezent“, danach Glückwunsch mit Fundort), Dev 108
+- Geändert: src/views/wishmodal.js (Knopf), src/views/modals.js (FulfilledModal), src/actions.js (selbst, ffsee), src/styles/main.css, CLAUDE.md
+- Warum: Bisher blieb nach „Erledigt“ das Wunschfenster offen, ohne klare Rückmeldung, wo der Wunsch hin ist
+- Geprüft: ESLint, Build, Playwright iPhone 13
+- Datenbank und Dienste: Eintrag 108 in tribunal_verdicts
+- Zurücknehmen: git revert 7e50069
+- Offen: keine
