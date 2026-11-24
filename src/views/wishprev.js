@@ -11,6 +11,7 @@
 import { S } from '../state.js';
 import { esc, ic, money } from '../lib/util.js';
 import { cat } from '../data/content.js';
+import { wishGlyph } from '../lib/wishicon.js';
 import { ideasOf, aiStatus } from '../lib/ideas.js';
 
 export const draftKey = t => 'draft:' + String(t || '').toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 80);
@@ -18,7 +19,7 @@ export const draftKey = t => 'draft:' + String(t || '').toLowerCase().replace(/\
 export const concrete = t => { const w = String(t || '').split(/\s+/).filter(x => /\p{L}{2,}|\d/u.test(x)); return w.length >= 2; };
 export const altPrice = i => (i.from && i.to ? Math.round((i.from + i.to) / 2) : i.to || i.from || null);
 
-const thumb = (img, c, t) => img && img.preview ? `<img src="${img.preview}" alt="">` : `<span class="art mono t${c.t % 6}" aria-hidden="true"><b>${esc(((String(t || '').match(/[\p{L}\p{N}]/u) || ['?'])[0]).toUpperCase())}</b></span>`;
+const thumb = (img, c, t) => img && img.preview ? `<img src="${img.preview}" alt="">` : `<span class="art mono t${c.t % 6}" aria-hidden="true">${wishGlyph(t, c.id)}</span>`;
 
 export function WishRec() {
   const r = S.ui.wr;

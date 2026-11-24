@@ -200,3 +200,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Commit reverten
 - Offen: Prüfung auf echtem Gerät nach dem Merge
+
+## 2026-11-24 · 112 · Symbole statt Buchstaben bei Wünschen ohne Bild
+- Commits: f3ccb21 (Pull Request #20)
+- Auftrag: Jann im Projekt-Thread, Dev 112
+- Geändert: src/lib/wishicon.js (neu), src/views/card.js (`WishArt`), src/views/wishprev.js (`thumb`), src/styles/main.css (`.wglyph`), tests/wishicon.test.mjs, CLAUDE.md
+- Warum: Ein Buchstabe sagt nichts über den Wunsch, ein Symbol erkennt man in der Liste sofort
+- Geprüft: ESLint, Build, `npm test` (12 Tests), Bildschirmfotos der Platzhalter mit App-Stylesheet bei 390 und 1200 px
+- Datenbank und Dienste: keine
+- Zurücknehmen: Commit reverten
+- Offen: Eintrag in `tribunal_verdicts` nach dem Merge, Blick auf echte Wunschlisten
