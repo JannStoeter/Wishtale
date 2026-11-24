@@ -1,7 +1,7 @@
 ---
 topic: 115-auffindbarkeit-seo
 status: entschieden
-option: Kleine SEO-Grundlagen per Pull Request, Inhaltsseiten nur als Vorschlag
+option: SEO-Grundlagen und Ratgeberseiten
 datum: 2026-11-24
 umgesetzt: offen
 ---
@@ -15,4 +15,6 @@ Umgesetzt im Pull Request:
 - Startseite: Teilen-Bild im Querformat (`/og/wunschliste.jpg`, 1200×630 statt Hochformat), `og:url`, `og:type`, `og:locale`, `og:site_name`, strukturierte Daten (Organization, WebSite, WebApplication mit Preis 0 Euro).
 - Rechtsseiten mit `canonical`, Fußzeilen verlinken direkt auf `/impressum`, `/datenschutz`, `/barrierefreiheit` (vorher Umweg über eine Weiterleitung von `.html`).
 
-Vorschlag (nicht gebaut): eigene Inhaltsseiten zu Suchbegriffen wie „Wunschliste online erstellen“, „Wunschzettel Weihnachten“, „Wunschliste für Kinder“, „Geschenkideen“.
+Nachtrag (Jann im Thread): „Baue die Seite so um das es passt! Also die Unterseiten“. Die Search Console richtet Jann selbst ein.
+
+Gebaut: Ratgeber unter `/ratgeber` mit vier Seiten (`ratgeber/*.html`, Einstieg `src/ratgeber.js`, Stil `.guide` in `src/styles/main.css`): „Wunschliste online erstellen“, „Wunschzettel für Weihnachten“, „Wunschzettel für Kinder“, „Geschenke nicht doppelt kaufen“. Jede Seite hat eigenen Titel, Beschreibung, canonical, Open Graph, JSON-LD (Article und BreadcrumbList), ein echtes App-Bild aus `public/landing/`, Querverweise und einen Knopf zur App. Verlinkt aus der Fußzeile der Startseite (Schlüssel `footer.rg0` bis `footer.rg4`), aus dem Weihnachtsabschnitt (`weihnachten.rg`) und den Rechtsseiten, eingetragen in `public/sitemap.xml`. Statistik nutzt die vorhandenen Ereignisse `view` und `cta` (Label `ratgeber:…`), nichts Neues für die Datenschutzerklärung.
