@@ -161,3 +161,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 108 in tribunal_verdicts
 - Zurücknehmen: git revert 7e50069
 - Offen: keine
+
+## 2026-11-24 · 109 · Weihnachtsabschnitt auf der Landingpage
+- Commits: siehe Pull Request vom Branch claude/project-thread-7zgklr
+- Auftrag: Jann im Chat („wir müssen die Landing mit umbauen oder?“), Dev 109
+- Geändert: index.html (neuer Abschnitt `#weihnachten` mit Schlüsseln `weihnachten.*` und Sprungmarken `#familie`, `#kinder`, `#ideen`), src/landing.js (Abschnitte mit `data-until` blenden sich nach dem Datum aus)
+- Warum: Die Google-Ads-Kampagne wirbt mit Weihnachtswunschliste, Kinder-Wunschzettel und Ideen; die Seite soll das aufgreifen und echte Ziele für Sitelinks bieten
+- Geprüft: ESLint, Build, Playwright 390 und 1280 px
+- Datenbank und Dienste: vorher ohne Code site_content `schritte.p4` und Aktion „Weihnachten 2026 (Landingpage)“ in campaigns
+- Zurücknehmen: Revert des Merge-Commits; der Abschnitt verschwindet ohnehin ab 27.12.2026
+- Offen: Sitelinks in Google Ads auf die Sprungmarken umstellen
