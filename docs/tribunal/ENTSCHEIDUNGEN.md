@@ -101,6 +101,7 @@ Stand: 2026-11-09
 | 108 | Wunsch selbst erfüllt | **Jann im Chat: dezent in der Ansicht, danach Glückwunsch mit Fundort.** Textknopf „Selbst erfüllt“, kleines Fenster mit Rückgängig, Ansehen, Fertig. | ja, `7e50069` |
 | 109 | Mehr Amazon-Käufe ohne Werbeseite | **Jann im Chat: alle vier, Direktlink über Brave ausbauen.** Kaufweg nach dem Reservieren, direkter Amazon-Link für genaue Wünsche, neutraler Link-Hinweis, Klickmessung `shop_click`. | ja, `5a4d6df` |
 | 110 | Otto-Links über Awin | **Jann im Chat: bei Awin für Otto angenommen, Links umstellen.** Otto-Adressen werden beim Anzeigen zum Awin-Deeplink mit Click Reference je Wunsch, Kennzeichnung „Anzeige“, Datenschutz Abschnitt 9. | Pull Request offen |
+| 109 | Landingpage zur Weihnachtskampagne | **Jann im Chat: „Bau ruhig so zu Ende“.** Weihnachtsabschnitt mit Familie, Kinder, Ideen und Sprungmarken für Sitelinks, verschwindet ab 27.12. | ja, `1d6f7a0` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
