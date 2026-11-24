@@ -33,7 +33,7 @@ function Offer(pr, w, ctx, role) {
   const self = role === 'main' && (pr.source === 'link' || (pr.source === 'erzeugt' && sameItem(pr.t, w.t)));
   const quiet = role !== 'main';
   return `<div class="offer ${role === 'main' ? 'main' : ''} ${self ? 'self' : ''} ${quiet ? 'quiet' : ''} ${pr.source === 'link' || (pr.source === 'erzeugt' && isSpecific(w) && w.kind === 'produkt') ? '' : 'suggest'} ${chosen ? 'chosen' : ''}">
-   ${self ? '' : role === 'main' && (pr.source === 'link' || pr.source === 'erzeugt') && w.img ? `<span class="otn"><img src="${w.img}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></span>` : pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
+   ${self ? '' : role === 'main' && (pr.source === 'link' || pr.source === 'erzeugt') && w.img ? `<span class="otn"><img src="${w.img}" alt="" onerror="this.remove()" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></span>` : pr.brand ? `<span class="otn brand" aria-hidden="true"><b>${esc(pr.brand.slice(0, 1))}</b><small>${esc(pr.brand)}</small></span>` : `<span class="otn">${artIllu(pr.a || 'gift', pr.tone || 0)}</span>`}
    <div class="obody">
     <span class="eyebrow">${pr.source === 'link' ? 'Gewünschtes Produkt' : pr.source === 'amz' ? 'Preise bei Amazon vergleichen' : pr.source === 'erzeugt' ? (isSpecific(w) && w.kind === 'produkt' ? 'Gewünschtes Produkt, bei Amazon' : 'Suche nach genau diesem Wunsch') : role === 'main' ? 'Vorschlag von Wishtale' : 'Vorschlag'}</span>
     ${self ? '' : `<strong class="ot">${esc(pr.t)}</strong>`}

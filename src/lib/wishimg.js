@@ -11,6 +11,17 @@ import { esc } from './util.js';
 const MAX = 640;
 const load = src => new Promise((resolve, reject) => { const i = new Image(); i.onload = () => resolve(i); i.onerror = () => reject(new Error('Dieses Bild lässt sich nicht öffnen.')); i.src = src; });
 
+/** Fast leeres Bild (weiß oder einfarbig, etwa ein Platzhalter oder ein transparentes Logo)? Prüft ein kleines Raster. */
+function isBlank(g, w, h) {
+  try {
+    const d = g.getImageData(0, 0, w, h).data, step = Math.max(1, Math.floor((w * h) / 2500)) * 4;
+    let n = 0, busy = 0, sum = 0, sum2 = 0;
+    for (let i = 0; i < d.length; i += step) { const v = (d[i] + d[i + 1] + d[i + 2]) / 3; n++; sum += v; sum2 += v * v; if (v < 235) busy++; }
+    const sd = Math.sqrt(Math.max(0, sum2 / n - (sum / n) ** 2));
+    return busy / n < 0.04 || sd < 6;
+  } catch { return false; }
+}
+
 /** Verkleinert ein Bild (Blob oder Adresse) auf höchstens 640 Pixel als JPEG. Rückgabe: { blob, preview } */
 export async function downscale(source) {
   const url = typeof source === 'string' ? source : URL.createObjectURL(source);
@@ -20,7 +31,7 @@ export async function downscale(source) {
     const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
     const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.82));
     if (!blob) throw new Error('Das Bild konnte nicht verarbeitet werden.');
-    return { blob, preview: c.toDataURL('image/jpeg', 0.82), w: img.width, h: img.height };
+    return { blob, preview: c.toDataURL('image/jpeg', 0.82), w: img.width, h: img.height, blank: isBlank(g, c.width, c.height) };
   } finally { if (typeof source !== 'string') URL.revokeObjectURL(url); }
 }
 
@@ -40,12 +51,12 @@ export async function fetchProductImage(imageUrl, query) {
 export async function fetchWishImage(w) {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return null;
-  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ imageFor: { t: String(w.t || '').slice(0, 120), link: String(w.link || '') } }), signal: AbortSignal.timeout(25000) });
+  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ imageFor: { t: String(w.q || w.t || '').slice(0, 120), link: String(w.link || ''), img: String(w.imgHint || '').slice(0, 800) } }), signal: AbortSignal.timeout(25000) });
   if (r.status === 429) throw Object.assign(new Error('limit'), { limit: true });
   const j = r.ok ? await r.json().catch(() => ({})) : {};
   if (!j.image) return null;
   const d = await downscale(`data:${j.image.type};base64,${j.image.data}`);
-  if (Math.min(d.w, d.h) < 200) return null; // zu klein für eine Karte, dann lieber das Symbol
+  if (Math.min(d.w, d.h) < 200 || d.blank) return null; // zu klein oder fast leer, dann lieber das Symbol
   return { ...d, src: j.image.source };
 }
 

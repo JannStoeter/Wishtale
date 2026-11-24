@@ -14,7 +14,11 @@ import { cat, PRIO } from '../data/content.js';
  * Kein Katalogbild mehr, das passte oft nicht (Kopfhörer beim Staubsauger). Erlebnisse und Kategorie-Wünsche behalten ihr Motiv.
  */
 export function WishArt(w,pr){
-  if(w.img)return `<span class="imgbox art"><img src="${w.img}" alt="" loading="lazy" decoding="async"></span>`;
+  // Lädt ein Bild nicht, tritt das Symbol an seine Stelle, damit nie eine leere Fläche bleibt (114)
+  if(w.img)return `<span class="imgbox art" data-fb="${esc(WishGlyphArt(w))}"><img src="${esc(w.img)}" alt="" loading="lazy" decoding="async" onerror="var p=this.parentNode;p.outerHTML=p.dataset.fb"></span>`;
+  return WishGlyphArt(w);
+}
+function WishGlyphArt(w){
   if(w.kind==='erlebnis'||w.kind==='kategorie'||w.kind==='frei')return art(w.a||cat(w.c).a,w.tone??cat(w.c).t??0);
   // Platzhalter färben nach Kategorie, damit die Liste ohne Bilder nicht einfarbig wirkt (098); Symbol statt Buchstabe (112)
   return `<span class="art mono t${(cat(w.c).t??w.tone??0)%6}" aria-hidden="true">${wishGlyph(w.t,w.c)}<small>${esc(cat(w.c).n)}</small></span>`;

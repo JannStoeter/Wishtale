@@ -49,3 +49,17 @@ test('imageForWish: eigener Shop-Link zuerst, Amazon-Links nie', async () => {
   assert.equal(b, null);
   assert.deepEqual(seen, ['https://www.shop.de/hue-sensor']);
 });
+
+test('modelCode: Modellangaben ja, Mengen und Maße nein', async () => {
+  const { modelCode } = await import('../api/_lib/match.js');
+  for (const t of ['Stirnlampe aufladbar 150 lm - UL500 grau', 'OOONO CO-DRIVER NO2', 'LEGO Technic 42115', 'Sony WH-1000XM5']) assert.equal(modelCode(t), true, t);
+  for (const t of ['Großer Reisekoffer 4 Rollen', 'Fernseher 65 Zoll', 'Powerbank 20000mAh', 'Becher 500ml', 'Hue Bewegungsmelder für Flur und Treppe']) assert.equal(modelCode(t), false, t);
+});
+
+test('imageForWish: Bild der erkannten Seite zuerst, Deal-Seiten nie', async () => {
+  const load = async u => ({ type: 'image/jpeg', data: 'x', source: new URL(u).hostname });
+  const a = await imageForWish({ t: HUE, img: 'https://www.philips-hue.com/sensor.jpg' }, { load });
+  assert.equal(a.via, 'erkannt');
+  const r = (hostname) => ({ title: 'Hue Bewegungsmelder', url: 'https://' + hostname + '/p', meta_url: { hostname }, properties: { url: 'https://' + hostname + '/a.jpg', width: 800, height: 800 } });
+  assert.deepEqual(candidates({ results: [r('www.monsterdealz.de'), r('www.mydealz.de')] }, HUE), []);
+});

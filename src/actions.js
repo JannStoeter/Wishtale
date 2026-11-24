@@ -161,7 +161,7 @@ function zettelMatch(){
 function zettelImages(list){
   list.forEach(async({w,cand})=>{
     if(!w.link)findAmazonLink(cand.t).then(r=>{if(r&&!w.link){w.link=r.url;render()}}).catch(()=>{});
-    try{const im=await fetchProductImage(cand.img||null,cand.img?undefined:(cand.q||cand.t));
+    try{const im=await fetchProductImage(cand.img||null,cand.img?undefined:(cand.q||cand.t));if(im.blank)return;
       let url=im.preview,src=im.src||'';
       if(S.auth.user&&S.me.dbId&&im.blob){try{url=await storeImage(im.blob)}catch{return}}
       w.img=url;w.imgSrc=src;render()}catch{/* ohne Bild bleibt das Monogramm */}
@@ -502,7 +502,7 @@ async readlink(el,auto){
   saveSignal('yes',i.t);hideIdea(i.t);toast('Schön, das steht jetzt auf deiner Wunschliste.');render();
   // Ideenkarten behalten ihr Symbol, das echte Bild kommt erst mit dem Wunsch (Jann, 2026-11-24): einmal suchen, im eigenen Speicher ablegen
   const w=S.me.wishes[0];
-  if(S.auth.user&&S.me.dbId&&!i.exp)fetchProductImage(null,i.q||i.t).then(async im=>{if(w.img||w.t!==i.t||Math.min(im.w||0,im.h||0)<200)return;const url=await storeImage(im.blob);if(w.img||w.t!==i.t)return;w.img=url;w.imgSrc=im.src||'';if(!S.ui.modal)render()}).catch(()=>{});
+  if(S.auth.user&&S.me.dbId&&!i.exp)fetchProductImage(null,i.q||i.t).then(async im=>{if(w.img||w.t!==i.t||im.blank||Math.min(im.w||0,im.h||0)<200)return;const url=await storeImage(im.blob);if(w.img||w.t!==i.t)return;w.img=url;w.imgSrc=im.src||'';if(!S.ui.modal)render()}).catch(()=>{});
  },
  givenreact(el){
   const g=S.given.find(x=>x.id===el.dataset.id);if(!g)return;

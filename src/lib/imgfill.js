@@ -3,17 +3,29 @@
  * ein Bild über die Websuche (fetchWishImage -> api/inspect.js imageFor -> imageForWish, Brave). Reihenfolge: eigener Shop-Link der
  * Person, Herstellerseite, Bildersuche. Ohne guten Treffer bleibt das Symbol. Das Bild wird verkleinert in den eigenen Speicher gelegt
  * und lässt sich wie jedes andere Bild entfernen. Ein eigenes Foto wird nie ersetzt. Gesucht wird nur für angemeldete Personen, jeder
- * Wunsch höchstens einmal je Browser (wishtale:img-tried), ältere Wünsche höchstens 8 je Tag und Profil (wishtale:img-day).
+ * Wunsch höchstens einmal je Browser (wishtale:img-tried2), ältere Wünsche höchstens 8 je Tag und Profil (wishtale:img-day).
  */
 import { S } from '../state.js';
 import { isSpecific } from './products.js';
 import { fetchWishImage, storeImage } from './wishimg.js';
 import { scheduleSync } from './remote.js';
+import { loadMatch } from './ideas.js';
 
-const TRIED = 'wishtale:img-tried', DAY = 'wishtale:img-day';
+const TRIED = 'wishtale:img-tried2', DAY = 'wishtale:img-day';
 const key = w => String(w.t || '').toLowerCase().replace(/\s+/g, ' ').trim() + '|' + (w.link || '');
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch { return d; } };
 const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* dann sucht die nächste Sitzung erneut */ } };
+
+/* Ohne eigenen Shop-Link entscheidet die Produkterkennung (wie im Wunsch-Dialog, mode=match, Zwischenspeicher): Nur wenn sie sicher genau
+   ein Produkt erkennt, suchen wir ein Bild. Allgemeine Wünsche wie „Großer Reisekoffer 4 Rollen“ behalten ihr Symbol (Jann, 114). */
+const ownLink = w => !!w.link && !/amazon\.|amzn\./i.test(w.link);
+async function target(w) {
+  if (ownLink(w)) return w;
+  const h = S.me?.handle;
+  if (!h || !/^[a-z0-9-]{3,31}$/.test(h)) return null;
+  const m = await loadMatch(h, w.t).catch(() => null);
+  return m && m.ok ? { t: w.t, q: m.t || m.q || w.t, link: '', imgHint: m.img || '' } : null;
+}
 
 /** Kommt der Wunsch für ein gesuchtes Bild in Frage? Nur Produkte ohne Bild, die genau genug benannt sind oder einen Shop-Link haben. */
 export const wantsImage = w => !!w && !w.img && w.kind !== 'erlebnis' && w.kind !== 'kategorie' && w.kind !== 'frei'
@@ -32,7 +44,9 @@ export async function imgFill(list, onChange, { max = 4 } = {}) {
     const t = w.t, k = key(w);
     tried.push(k); write(TRIED, tried.slice(-400));
     try {
-      const im = await fetchWishImage(w);
+      const goal = await target(w);
+      if (!goal) continue;
+      const im = await fetchWishImage(goal);
       if (!im || w.img || w.t !== t) continue;
       const url = await storeImage(im.blob);
       if (w.img || w.t !== t) continue;
