@@ -33,6 +33,7 @@ import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
 import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage, storeImage, findAmazonLink } from './lib/wishimg.js';
 import { amzFill, wantsAmazon } from './lib/amzfill.js';
+import { imgFill, wantsImage, skipImage } from './lib/imgfill.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishRec, draftKey, concrete, altPrice } from './views/wishprev.js';
 import { ZmRow } from './views/zettel.js';
@@ -499,6 +500,9 @@ async readlink(el,auto){
   const c=guessCategory(i.t);
   S.me.wishes.unshift(W({t:i.t,c,kind:i.exp?'erlebnis':'produkt',prio:2,price:i.to||null,a:i.exp?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
   saveSignal('yes',i.t);hideIdea(i.t);toast('Schön, das steht jetzt auf deiner Wunschliste.');render();
+  // Ideenkarten behalten ihr Symbol, das echte Bild kommt erst mit dem Wunsch (Jann, 2026-11-24): einmal suchen, im eigenen Speicher ablegen
+  const w=S.me.wishes[0];
+  if(S.auth.user&&S.me.dbId&&!i.exp)fetchProductImage(null,i.q||i.t).then(async im=>{if(w.img||w.t!==i.t||Math.min(im.w||0,im.h||0)<200)return;const url=await storeImage(im.blob);if(w.img||w.t!==i.t)return;w.img=url;w.imgSrc=im.src||'';if(!S.ui.modal)render()}).catch(()=>{});
  },
  givenreact(el){
   const g=S.given.find(x=>x.id===el.dataset.id);if(!g)return;
@@ -727,6 +731,7 @@ document.addEventListener('submit',e=>{
     if(imgs.length)setTimeout(()=>zettelImages(imgs),50);
     if(n)setTimeout(()=>smartCats(S.me.wishes.slice(0,n),()=>{if(!S.ui.modal)render()}),400); // Unklare Wünsche ordnet die KI nach (100)
     if(n)setTimeout(()=>amzFill(S.me.wishes.slice(0,n).filter(w=>!imgs.some(x=>x.w===w)),()=>{if(!S.ui.modal)render()}),1500); // genaue Wünsche ohne Treffer direkt mit Amazon verlinken (111)
+    if(n)setTimeout(()=>imgFill(S.me.wishes.slice(0,n).filter(w=>!imgs.some(x=>x.w===w)),()=>{if(!S.ui.modal)render()},{max:6}),2500); // echte Produktbilder für genaue Wünsche ohne Treffer
     S.ui.zt=null;S.ui.modal=null;
     if(n)toast(`${n===1?'Ein Wunsch steht':n+' Wünsche stehen'} jetzt auf der Wunschliste. Bei jedem Wunsch kannst du den Link ergänzen.`);
     location.hash='#wuensche';render();return;
@@ -751,10 +756,12 @@ document.addEventListener('submit',e=>{
       if(S.ui.editWish){
         const w=S.me.wishes.find(x=>x.id===S.ui.editWish);
         if(w){const keep=w.c===c&&w.kind===k;if(w.img&&(removed||(img&&img!==w.img)))dropImage(w.img);Object.assign(w,{noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:removed?null:(img||w.img||null),imgSrc:removed?'':(img?(imgSrc||''):(w.imgSrc||'')),...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
+        if(w&&removed)skipImage(w);else if(w&&wantsImage(w))setTimeout(()=>imgFill([w],()=>{if(!S.ui.modal)render()}),600); // neuer Name oder Link ohne Bild: echtes Produktbild suchen
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
       if(!f.elements.c?.dataset.touched){const nw=S.me.wishes[0];setTimeout(()=>smartCats([nw],()=>{if(!S.ui.modal)render()}),300)} // nur wenn niemand die Kategorie selbst gewählt hat (100)
+      {const nw=S.me.wishes[0];if(removed)skipImage(nw);else if(wantsImage(nw))setTimeout(()=>imgFill([nw],()=>{if(!S.ui.modal)render()}),700)} // echtes Produktbild im Hintergrund, eigenes Foto bleibt immer
       {const nw=S.me.wishes[0];if(wantsAmazon(nw))setTimeout(()=>amzFill([nw],(w,r)=>{if(!S.ui.modal)render();toast('Wishtale hat genau dieses Produkt bei Amazon gefunden und verlinkt: '+r.title,{label:'Rückgängig',run:()=>{w.link='';render()}})}),900)} // direkte Produktseite statt Suche (111)
       S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';const ideas=!link&&k!=='erlebnis'&&!noSuggest&&!plan;S.ui.wr=null;toast(ideas?'Der Wunsch ist gespeichert, und deine Freunde sehen dazu passende Ideen von Wishtale.':'Der Wunsch ist gespeichert.',ideas?{label:'So sehen es Freunde',run:()=>{S.ui.preview=true;markStep('preview');render();scrollTo({top:0,behavior:'smooth'})}}:null);render();
     };

@@ -46,3 +46,16 @@ export async function guardLlm({ ip, payer, feature }, fetchImpl = fetch) {
     if (!r.ok) throw new HttpError(429, msg);
   }
 }
+
+/**
+ * Grenzen für die Websuche über Brave (Bild und Amazon-Direktlink). Eine Anfrage kostet bis zu zwei Suchen, Brave rechnet etwa 5 Dollar
+ * je 1.000 Suchen ab (5 Dollar Guthaben im Monat sind frei). Je Konto 60 Anfragen am Tag, alle zusammen 500 am Tag
+ * (LIMIT_SEARCH_USER_PER_DAY, LIMIT_SEARCH_GLOBAL_PER_DAY), im schlimmsten Fall also etwa 5 Dollar am Tag.
+ */
+export async function guardSearch(uid, fetchImpl = fetch) {
+  const user = num(process.env.LIMIT_SEARCH_USER_PER_DAY, 60), all = num(process.env.LIMIT_SEARCH_GLOBAL_PER_DAY, 500);
+  for (const [b, m, msg] of [['search:global', all, 'Die Bildsuche ruht für heute. Morgen geht es weiter.'], [`search:u:${uid}`, user, 'Für heute hat Wishtale genug gesucht. Morgen geht es weiter.']]) {
+    const r = await hit(b, DAY, m, fetchImpl);
+    if (!r.ok) throw new HttpError(429, msg);
+  }
+}
