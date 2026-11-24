@@ -229,5 +229,6 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, `npm test` (16 Tests, davon 4 neu mit simulierten Suchantworten)
 - Datenbank und Dienste: keine Migration; nutzt `hit_limit` (0021) und `BRAVE_SEARCH_API_KEY` in Vercel
 - Zurücknehmen: Commit reverten
-- Offen: Live-Test mit echtem Schlüssel (Hue Bewegungsmelder), Eintrag in `tribunal_verdicts` nach dem Merge
+- Merge 8a027c5 (Pull Request #23), `tribunal_verdicts` auf umgesetzt
+- Offen: Live-Test mit echtem Schlüssel (Hue Bewegungsmelder)
 - Nachtrag Symbol statt leerer Fläche (Jann, Screenshot): api/_lib/match.js (`modelCode`, `lc`, Cache `match4`), api/_lib/imgsearch.js (Deal-Seiten raus, Bild der Erkennung zuerst), src/lib/imgfill.js (nur bei sicherer Erkennung), src/lib/wishimg.js (`isBlank`), src/views/card.js (Symbol bei Ladefehler), 18 Tests

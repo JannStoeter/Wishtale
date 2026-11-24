@@ -104,7 +104,7 @@ Stand: 2026-11-09
 | 111 | Mehr Amazon-Käufe ohne Werbeseite | **Jann im Chat: alle vier, Direktlink über Brave ausbauen.** Kaufweg nach dem Reservieren, direkter Amazon-Link für genaue Wünsche, neutraler Link-Hinweis, Klickmessung `shop_click`. | ja, `5a4d6df` |
 | 112 | Symbole statt Buchstaben bei Wünschen ohne Bild | **Jann im Projekt-Thread: passendes Icon statt Buchstabe (Pullover bei Kleidung).** Stichwort im Namen, dann Kategorie, sonst Geschenk (`src/lib/wishicon.js`). | ja, `f3ccb21` |
 | 113 | Inspirationskarte neu gestalten | **Jann im Projekt-Thread: Karte der Inspiration gefällt nicht, überarbeiten.** Symbol, ein Hauptknopf, Shops als Pillen, Nebenaktionen leise; Amazon und Otto direkt, sonst öffnet die Karte ein Fenster (`IdeaCard()`, `IdeaModal()`). | ja, `1aa2803` |
-| 114 | Echte Produktbilder über Brave | **Jann im Projekt-Thread: möglichst viele echte Bilder über Brave; Karte: Ideenkarten behalten das Symbol, Bild erst auf der Wunschliste.** Bilder je Wunsch nach dem Speichern und nach und nach für ältere Wünsche, bessere Trefferprüfung, Tagesgrenzen für Brave. | offen |
+| 114 | Echte Produktbilder über Brave | **Jann im Projekt-Thread: möglichst viele echte Bilder über Brave; Karte: Ideenkarten behalten das Symbol, Bild erst auf der Wunschliste.** Bilder je Wunsch nach dem Speichern und nach und nach für ältere Wünsche, bessere Trefferprüfung, Tagesgrenzen für Brave. | ja, `8a027c5` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
