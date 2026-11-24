@@ -161,3 +161,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Eintrag 108 in tribunal_verdicts
 - Zurücknehmen: git revert 7e50069
 - Offen: keine
+
+## 2026-11-24 · 109 · Mehr Amazon-Käufe ohne Werbeseite
+- Commits: 5a4d6df und der folgende Eintrags-Commit (Branch: claude/project-thread-danupz, Pull Request nach main)
+- Auftrag: Jann im Chat („Ja alle vier … Brave … ausbauen und nutzen“), Dev 109
+- Geändert: api/_lib/imgsearch.js (amazonDirect mit zweitem Suchweg), neu src/lib/amzfill.js, src/actions.js, src/render.js, src/views/wishmodal.js (BuyLine), src/views/modals.js, src/lib/track.js, src/main.js, api/_lib/event.js, src/styles/main.css, datenschutz.html (Abschnitte 8 und Bildsuche), CLAUDE.md
+- Warum: Die meisten Wünsche haben keinen Link, Amazon-Suche verkauft schlechter als die Produktseite
+- Geprüft: ESLint, Build, amazonDirect mit simulierten Brave-Antworten
+- Datenbank und Dienste: keine Migration; braucht BRAVE_SEARCH_API_KEY in Vercel (vorhanden); shop_click erscheint noch nicht im CMS
+- Zurücknehmen: git revert 5a4d6df
+- Offen: CMS-Karte für shop_click, eigene Tracking-ID für Ideen in PartnerNet
