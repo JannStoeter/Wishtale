@@ -13,6 +13,8 @@ import { ideaShops, ideaHref } from '../lib/shops.js';
 import { ideasOf, aiStatus, skey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
 import { homeIdeasVisible } from '../lib/homeideas.js';
+import { wishGlyph } from '../lib/wishicon.js';
+import { guessCategory } from '../lib/category.js';
 import { PriceFilter } from './giver.js';
 
 const REL='noopener noreferrer sponsored nofollow';
@@ -75,20 +77,33 @@ function Promo(){
 }
 
 const AI_REL='noopener noreferrer sponsored nofollow';
-/** Name und Preis einer Idee führen direkt zum Shop, damit man dort mehr erfährt (Preis ist nur eine Schätzung). Auch für die Gastansicht. */
+export const ideaPrice=i=>i.to?(i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`):'';
+/** Symbol einer Idee im selben Stil wie Wünsche ohne Bild (112): Stichwort im Namen, sonst die geschätzte Kategorie. */
+function IdeaIcon(i){
+  const c=i.exp?'erlebnisse':guessCategory(i.t),tone=(cat(c).t??0)%6;
+  return `<span class="idea-ic art mono t${tone}" aria-hidden="true">${wishGlyph(i.exp?'erlebnis':i.t,c)}</span>`;
+}
+/** Kopf einer Idee: Symbol, Name und Preis. Name und Preis führen direkt zum Shop (Preis ist nur eine Schätzung). Auch für die Gastansicht. */
 export function IdeaHead(i,price){
   const rel=i.exp?'noopener noreferrer':AI_REL,h=esc(ideaHref(i));
-  return `<h3><a class="idea-link" href="${h}" target="_blank" rel="${rel}">${esc(i.t)}</a></h3>
-   <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price?` · <a class="idea-price" href="${h}" target="_blank" rel="${rel}" title="Grobe Schätzung, den aktuellen Preis siehst du im Shop">${price}</a>`:''}</p>`;
+  return `<div class="idea-top">${IdeaIcon(i)}<div class="idea-ht"><h3><a class="idea-link" href="${h}" target="_blank" rel="${rel}">${esc(i.t)}</a></h3>
+   <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price?` · <a class="idea-price" href="${h}" target="_blank" rel="${rel}" title="Grobe Schätzung, den aktuellen Preis siehst du im Shop">${price}</a>`:''}</p></div></div>`;
 }
-/* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto.
-   Ruhige Karten: der Name trägt, die Begründung ist kurz gehalten, Aktionen sind leise Textknöpfe. */
-function IdeaRow(i){
-  const price=i.to?(i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`):'';
-  return `<article class="rec idea">${IdeaHead(i,price)}
+/**
+ * Eine Ideenkarte (113): oben Symbol, Name und Preis, darunter die Begründung.
+ * Eigene Inspiration: ein klarer Hauptknopf „Auf meine Wunschliste“, Shops als kleine Pillen mit einem „Anzeige“,
+ * „Habe ich schon“ und „Passt nicht“ ganz leise darunter. Gastansicht: die Shops sind der Hauptweg.
+ */
+export function IdeaCard(i,{own=false,ref='idee'}={}){
+  const t=esc(i.t);
+  return `<article class="rec idea">${IdeaHead(i,ideaPrice(i))}
    <p class="why">${esc(i.why)}</p>
-   <div class="idea-acts"><button class="qa qa-add" data-act="aiadd" data-t="${esc(i.t)}">${ic('plus','sm')}Auf meine Wunschliste</button>${ideaShops(i,'inspiration')}<button class="qa qa-mute" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="qa qa-mute" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></article>`;
+   <div class="idea-acts">${own?`<button class="idea-add" data-act="aiadd" data-t="${t}">${ic('plus','sm')}Auf meine Wunschliste</button>`:''}
+    ${ideaShops(i,ref,own?'shop-pill':'shop-pill main')}</div>
+   ${own?`<div class="idea-more"><button class="qa-soft" data-act="aihave" data-t="${t}">Habe ich schon</button><span aria-hidden="true">·</span><button class="qa-soft" data-act="ideano" data-self="1" data-t="${t}">Passt nicht</button></div>`:''}</article>`;
 }
+/* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto. */
+const IdeaRow=i=>IdeaCard(i,{own:true,ref:'inspiration'});
 function AiSelf(home=false){
   const h=S.me.handle;if(!h||!S.auth.user)return '';
   const list=ideasOf(skey(h));if(!list.length)return '';

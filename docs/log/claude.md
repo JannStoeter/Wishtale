@@ -210,3 +210,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Commit reverten
 - Offen: Eintrag in `tribunal_verdicts` nach dem Merge, Blick auf echte Wunschlisten
+
+## 2026-11-24 · 113 · Inspirationskarte neu gestalten
+- Commits: siehe Pull Request (Branch `claude/project-thread-q5omw6`)
+- Auftrag: Jann im Projekt-Thread, Dev 113
+- Geändert: src/views/inspiration.js (`IdeaCard`, `IdeaHead` mit Symbol, `ideaPrice`), src/views/giver.js (`AiIdeas` nutzt `IdeaCard`), src/lib/shops.js (`ideaShops` auch bei Erlebnissen in `.idea-shops`), src/lib/wishicon.js (Hue, Bewegungsmelder, Smart Home als Lampe), src/styles/main.css (Block 113, alte Regeln 094/110 der Ideenkarte entfernt), CLAUDE.md
+- Warum: Die Karte hatte acht unterstrichene Links ohne klare Hauptaktion und kein Bild
+- Geprüft: ESLint, Build, `npm test` (12 Tests), Bildschirmfotos (iPhone 13 eigene und Gastansicht, 1200 px)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Commit reverten
+- Offen: Janns Urteil zum Design, danach `tribunal_verdicts`

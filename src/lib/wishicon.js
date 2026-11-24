@@ -115,7 +115,7 @@ const WORDS = [
   ['grill', /grill|smoker|feuerschale|plancha/],
   ['plant', /pflanze|blume|garten|hochbeet|samen|saatgut|kaktus|monstera|blumentopf|gießkanne|balkon|bonsai|orchidee/],
   ['hammer', /werkzeug|akkuschrauber|bohr|säge|schleifer|hammer|zange|schraub|werkbank|makita|dewalt|metabo|wasserwaage|lötkolben/],
-  ['lamp', /lampe|leuchte|licht/],
+  ['lamp', /lampe|leuchte|licht|\bhue\b|bewegungsmelder|smart ?home/],
   ['sofa', /sofa|sessel|couch|kissen|decke|plaid|sitzsack|bettwäsche/],
   ['vase', /vase|deko|bilderrahmen|poster|teppich|spiegel/],
   ['lipstick', /lippenstift|make-?up|mascara|nagellack|lidschatten|rouge|lipgloss|essie/],
