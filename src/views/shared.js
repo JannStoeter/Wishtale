@@ -22,7 +22,7 @@ export const VisPill=(k,btn)=>{const x=V[k];return btn?`<button class="pill pill
 export function GuestHeader(){
   return `<header class="hdr"><div class="wrap">
    ${S.auth.user?`<a class="mark" href="#wuensche" data-act="go" data-v="wuensche" data-home="1" aria-label="Wishtale, zu meiner Wunschliste">wishtale<i></i></a>`:'<a class="mark" href="../" aria-label="wishtale, zur Startseite">wishtale<i></i></a>'}
-   <div class="right">${S.given.length?`<button class="btn ghost sm" data-act="modal" data-v="given">Meine Geschenke (${S.given.length})</button>`:''}${S.auth.user?'':'<a class="btn ghost sm" href="#anmelden">Anmelden</a>'}${S.auth.user?AcctBtn():'<a class="btn pri sm" href="#start">Wishtale erstellen</a>'}</div>
+   <div class="right">${S.given.length?`<button class="btn ghost sm givenbtn" data-act="modal" data-v="given" aria-label="Meine Geschenke (${S.given.length})">${ic('gift','sm')}<span class="gl">Meine Geschenke </span>(${S.given.length})</button>`:''}${S.auth.user?'':'<a class="btn ghost sm hdrlogin" href="#anmelden">Anmelden</a>'}${S.auth.user?AcctBtn():'<a class="btn pri sm" href="#start">Wishtale erstellen</a>'}</div>
   </div></header>`;
 }
 

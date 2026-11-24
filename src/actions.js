@@ -1,5 +1,6 @@
 import { beginGuide, endGuide, guideClick, guideSubmit, focusGuideTarget, currentGuideStep, syncGuide } from './lib/guide.js';
-import { markDone } from './lib/tips.js';
+import { markDone, markShared } from './lib/tips.js';
+window.addEventListener('wishtale:tips',()=>{if(!S.ui.modal)render()}); // Hinweis, der erst nach dem Nachladen feststeht (104/106)
 import { setNewbarDone } from './views/wishes.js';
 import { smartCats } from './lib/smartcats.js';
 import { promptInstall } from './lib/pwa.js';
@@ -300,7 +301,7 @@ const A={
  logout(){signOut().finally(()=>{location.hash='';location.reload()})},
  guestretry(){S.guest=null;route()},
 share(){
-  markStep('share');
+  markStep('share');markShared();
   // Echte Konten teilen den kurzen Link /w/<kürzel>: Er zeigt in WhatsApp und Co. eine Vorschau mit Namen und leitet zur Gastansicht (102)
   const url=S.auth.user&&S.me.handle&&!/^(localhost|127\.)/.test(location.hostname)?`${location.origin}/w/${S.me.handle}`:`${location.origin}${location.pathname}#p/${S.me.handle||S.ui.acct}`;
   const done=()=>toast('Dein Link ist kopiert und bereit zum Verschicken. (In der Demo öffnet er dein Profil nur in diesem Browser.)');
@@ -498,7 +499,12 @@ async readlink(el,auto){
  demoprev(){demoStop();demoGo(demoStep()-1)},
  demonext(){demoStop();demoGo(demoStep()+1)},
  demotoggle(el){if(el.getAttribute('aria-pressed')==='true')demoStop();else{demoGo(demoStep()+1);demoPlay()}},
- tipgo(el){const id=el.dataset.id;markDone(id);if(id==='kids'){S.ui.modal='accounts';render();setTimeout(()=>document.querySelector('form[data-form=child] input')?.focus(),60);return}render()},
+ tipgo(el){const id=el.dataset.id;markDone(id);
+  if(id==='kids'){S.ui.modal='accounts';render();setTimeout(()=>document.querySelector('form[data-form=child] input')?.focus(),60);return}
+  if(id==='share'){A.share();render();return}
+  if(id==='guestown'){A.tologin();return}
+  if(id==='coparent'){S.ui.scrollTo='managers';location.hash='#profil';return}
+  render()},
  tipno(el){markDone(el.dataset.id);render();toast('Alles klar, dann zeigen wir das nicht mehr.')},
  previewres(){toast('So sehen es deine Freunde: Mit einem Tipp reservieren sie einen Wunsch, und du erfährst nicht, wer es war.')},
  newbar(){setNewbarDone();S.ui.zt=null;S.ui.modal='zettel';render()},

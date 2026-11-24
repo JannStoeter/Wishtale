@@ -62,7 +62,7 @@ export function Wuensche(){
   list=sortWishes(list);
   const used=[...new Set(m.wishes.map(w=>w.c))];
   const open=m.wishes.filter(w=>w.status==='offen'||w.status==='plan').length;
-  if(!m.wishes.length)return `<div class="wrap first">${EmptyWishes(m)}</div>`;
+  if(!m.wishes.length)return `<div class="wrap first">${m.managed?Tip():''}${EmptyWishes(m)}</div>`; // im leeren Kind-Konto passt nur der Elternteil-Hinweis (106)
   const active=(u.wc!=='alle'?1:0)+((u.wsort||'prio')!=='prio'?1:0);
   const filt=m.wishes.length>=6?`<details class="fsort"><summary>${ic('filter','sm')}Filtern und sortieren${active?` <span class="chip gold">${active}</span>`:''}</summary><div class="fsort-body">${used.length>1?`<label class="sortsel"><span class="vh">Kategorie</span><select class="sel sm" data-wc="1" aria-label="Kategorie"><option value="alle">Alle Kategorien</option>${used.map(c=>`<option value="${c}" ${u.wc===c?'selected':''}>${cat(c).n}</option>`).join('')}</select></label>`:''}${sortSeg()}${PrioKey()}<span class="desk-only">${densSeg(list.length)}</span></div></details>`:'';
   const tip=Tip(); // Hinweis im passenden Moment steht über der Liste und ersetzt solange die übrigen (104)

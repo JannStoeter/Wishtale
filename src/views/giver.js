@@ -7,6 +7,7 @@ import { CATS, crea, cprod } from '../data/content.js';
 import { excluded, recommend } from '../logic.js';
 import { densSeg, sortSeg, sortWishes, useList, PrioKey } from './wishes.js';
 import { WishCard, WishRow } from './card.js';
+import { Tip } from './tips.js';
 import { AMAZON_DISCLOSURE, searchUrl } from '../lib/shops.js';
 import { PastGifts } from './given.js';
 import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
@@ -90,6 +91,7 @@ export function WishList(p,{preview=false}={}){
    <div class="row" style="justify-content:space-between;margin-bottom:8px"><div><p class="eyebrow">Wunschliste · ${only?`${shown.length} offen`:`${all.length} ${all.length===1?'Wunsch':'Wünsche'}`}</p><h2 style="font-size:clamp(30px,4vw,44px)">Was ${esc(p.name)} sich wünscht</h2></div>
     <div class="row" style="gap:8px">${preview?'':`<div class="seg" role="group" aria-label="Filter"><button class="${!only?'on':''}" data-act="onlyopen" data-v="0">Alle</button><button class="${only?'on':''}" data-act="onlyopen" data-v="1">Nur offene${free!==all.length?` (${free})`:''}</button></div>`}${sortSeg()}<span class="desk-only">${densSeg(all.length)}</span></div></div>
    <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} sieht, was reserviert ist, ${esc(p.name)} nicht.`:`Tippe bei einem Wunsch auf „Reservieren“, dann schenkt niemand doppelt. Deine Reservierung bleibt anonym, und ${esc(p.name)} erfährt nie davon.`}</p>
+   ${preview?'':Tip('guest')}
    ${PrioKey()}<div class="${useList(all.length)?'wlist':'wgrid'}">${shown.map(cardOf).join('')||`<p class="muted">Alle Wünsche sind schon vergeben. Schau dir unten die Ideen an.</p>`}</div></section>`;
   return {html,open:free,count:all.length};
 }
