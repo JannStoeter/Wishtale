@@ -8,7 +8,7 @@ import { fetchImage, inspect } from './inspect.js';
 const clean = q => String(q || '').replace(/\s+/g, ' ').trim().slice(0, 120);
 
 /* Bildagenturen und Sammelseiten zeigen Wasserzeichen oder fremde Rechte deutlich, Marktplätze sperren das Laden ohnehin. */
-const STOCK = /(^|\.)(alamy\.|shutterstock\.|istockphoto\.|gettyimages\.|dreamstime\.|123rf\.|depositphotos\.|stock\.adobe\.|adobestock\.|freepik\.|vecteezy\.|pinterest\.|pinimg\.|ebayimg\.|ebay\.|amazon\.|media-amazon\.|ssl-images-amazon\.|idealo\.|geizhals\.|aliexpress\.|alicdn\.|temu\.|wish\.com|facebook\.|fbcdn\.|instagram\.|cdninstagram\.|youtube\.|ytimg\.|tiktok\.)/i;
+const STOCK = /(^|\.)(alamy\.|shutterstock\.|istockphoto\.|gettyimages\.|dreamstime\.|123rf\.|depositphotos\.|stock\.adobe\.|adobestock\.|freepik\.|vecteezy\.|pinterest\.|pinimg\.|ebayimg\.|ebay\.|amazon\.|media-amazon\.|ssl-images-amazon\.|idealo\.|geizhals\.|aliexpress\.|alicdn\.|temu\.|wish\.com|facebook\.|fbcdn\.|instagram\.|cdninstagram\.|youtube\.|ytimg\.|tiktok\.|mydealz\.|monsterdealz\.|dealdoktor\.|schnaeppchenfuchs\.|preisjaeger\.|dealclub\.|sparwelt\.|gutscheine?\.|coupons?\.)/i;
 const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
 
 /** Wählt aus der Antwort der Bildsuche die brauchbaren Kandidaten: https, mindestens 300 px, kein extremes Format, keine Bildagentur,
@@ -37,7 +37,7 @@ export async function searchImage(query, { fetchJson, load = fetchImage } = {}) 
 
 /* Herstellerseite zuerst: Websuche nach dem Produktnamen, erster Treffer, der kein Marktplatz oder Preisvergleich ist,
    davon das Produktbild der Seite (og:image, wie bei „Link lesen“). Das offizielle Bild passt fast immer besser als eine Bildersuche. */
-const MARKET = /(^|\.)(amazon\.|ebay\.|idealo\.|geizhals\.|billiger\.de|guenstiger\.de|otto\.de|kaufland\.|check24\.|preis\.de|youtube\.|facebook\.|instagram\.|pinterest\.|reddit\.|wikipedia\.|support\.|help\.|hilfe\.|forum\.|community\.|blog\.)/i;
+const MARKET = /(^|\.)(mydealz\.|monsterdealz\.|dealdoktor\.|schnaeppchenfuchs\.|preisjaeger\.|amazon\.|ebay\.|idealo\.|geizhals\.|billiger\.de|guenstiger\.de|otto\.de|kaufland\.|check24\.|preis\.de|youtube\.|facebook\.|instagram\.|pinterest\.|reddit\.|wikipedia\.|support\.|help\.|hilfe\.|forum\.|community\.|blog\.)/i;
 const words = q => core(q).filter(w => w.length > 2);
 
 /** Ordnet Treffer: Seiten, deren Adresse die Marke (erstes Wort) enthält, zuerst; Marktplätze fallen raus. */
@@ -72,8 +72,10 @@ export async function searchOfficialImage(query, { fetchJson, read = inspect, lo
  * Bild zu einem Wunsch: Hat die Person selbst einen Shop-Link gesetzt (nicht Amazon), zuerst das Bild dieser Seite. Sonst erst die
  * Herstellerseite, dann die Bildersuche. Ohne guten Treffer null, dann bleibt das Symbol.
  */
-export async function imageForWish({ t, link } = {}, deps = {}) {
+export async function imageForWish({ t, link, img } = {}, deps = {}) {
   const read = deps.read || inspect, load = deps.load || fetchImage;
+  // Bild der Seite, die die Produkterkennung schon gefunden hat (Herstellerseite), dann braucht es keine neue Suche
+  if (img && /^https:\/\//i.test(img) && !STOCK.test(host(img))) { try { return { ...(await load(img)), via: 'erkannt' }; } catch { /* weiter */ } }
   if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
     try { const p = await read(link); if (p?.imageUrl) return { ...(await load(p.imageUrl)), source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
   }
