@@ -100,7 +100,7 @@ export const searchUrl = {
  */
 export function ideaShops(i, ref = 'idee', cls = 'qa') {
   const R = 'noopener noreferrer sponsored nofollow';
-  if (i.exp) return `<a class="${cls}" href="https://www.google.de/search?q=${enc(i.q)}+in+meiner+N%C3%A4he" target="_blank" rel="noopener noreferrer">In der Nähe suchen</a>`;
+  if (i.exp) return `<span class="idea-shops"><a class="${cls}" href="https://www.google.de/search?q=${enc(i.q)}+in+meiner+N%C3%A4he" target="_blank" rel="noopener noreferrer">In der Nähe suchen</a></span>`;
   return `<span class="idea-shops"><a class="${cls}" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${R}">Bei Amazon</a><a class="${cls}" href="${searchUrl.otto(i.q, ref)}" target="_blank" rel="${R}">Bei Otto</a><span class="ad-note">Anzeige</span></span>`;
 }
 

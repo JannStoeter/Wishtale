@@ -8,8 +8,8 @@ import { excluded, recommend } from '../logic.js';
 import { densSeg, sortSeg, sortWishes, useList, PrioKey } from './wishes.js';
 import { WishCard, WishRow } from './card.js';
 import { Tip } from './tips.js';
-import { AMAZON_DISCLOSURE, searchUrl, ideaShops } from '../lib/shops.js';
-import { IdeaHead } from './inspiration.js';
+import { AMAZON_DISCLOSURE, searchUrl } from '../lib/shops.js';
+import { IdeaCard } from './inspiration.js';
 import { PastGifts } from './given.js';
 import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
@@ -103,11 +103,8 @@ export function AiIdeas(p){
   const st=aiStatus(gkey(p.handle||p.id));
   if(st==='loading')return `<section class="sect curated" id="ideen-ki">${AiLoading(`Wishtale erstellt individuelle Empfehlungen für ${esc(p.name)} …`)}</section>`;
   const list=ideasOf(gkey(p.handle||p.id));if(!list.length)return '';
-  const price=i=>i.from&&i.to?`ca. ${i.from} bis ${i.to} €`:i.to?`bis ca. ${i.to} €`:'';
   return `<section class="sect curated ideas-quiet" id="ideen-ki"><p class="muted" style="font-size:14px;margin:0 0 12px">Passend zu ${esc(p.name)}, als Anregung und nicht als Wunsch.<span class="swipe-only"> Wische für weitere Ideen.</span></p>
-   <div class="recs grid">${list.map(i=>`<article class="rec idea">${IdeaHead(i,price(i))}
-    <p class="why">${esc(i.why)}</p>
-    <div class="idea-acts">${ideaShops(i,'gast','qa qa-add')}</div></article>`).join('')}</div></section>`;
+   <div class="recs grid">${list.map(i=>IdeaCard(i,{ref:'gast',k:gkey(p.handle||p.id)})).join('')}</div></section>`;
 }
 export function Curated(p,openWishes){
   const few=openWishes<4;
