@@ -9,7 +9,7 @@ import { CATS, cat } from '../data/content.js';
 import { priceLine } from './product.js';
 import { safeUrl } from '../lib/promo.js';
 import { money } from '../lib/util.js';
-import { searchUrl } from '../lib/shops.js';
+import { ideaShops, ideaHref } from '../lib/shops.js';
 import { ideasOf, aiStatus, skey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
 import { homeIdeasVisible } from '../lib/homeideas.js';
@@ -75,15 +75,19 @@ function Promo(){
 }
 
 const AI_REL='noopener noreferrer sponsored nofollow';
+/** Name und Preis einer Idee führen direkt zum Shop, damit man dort mehr erfährt (Preis ist nur eine Schätzung). Auch für die Gastansicht. */
+export function IdeaHead(i,price){
+  const rel=i.exp?'noopener noreferrer':AI_REL,h=esc(ideaHref(i));
+  return `<h3><a class="idea-link" href="${h}" target="_blank" rel="${rel}">${esc(i.t)}</a></h3>
+   <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price?` · <a class="idea-price" href="${h}" target="_blank" rel="${rel}" title="Grobe Schätzung, den aktuellen Preis siehst du im Shop">${price}</a>`:''}</p>`;
+}
 /* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto.
    Ruhige Karten: der Name trägt, die Begründung ist kurz gehalten, Aktionen sind leise Textknöpfe. */
 function IdeaRow(i){
   const price=i.to?(i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`):'';
-  const href=i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q);
-  return `<article class="rec idea"><h3>${esc(i.t)}</h3>
-   <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price?` · <span title="Grobe Schätzung, kein Live-Preis">${price}</span>`:''}</p>
+  return `<article class="rec idea">${IdeaHead(i,price)}
    <p class="why">${esc(i.why)}</p>
-   <div class="idea-acts"><button class="qa qa-add" data-act="aiadd" data-t="${esc(i.t)}">${ic('plus','sm')}Auf meine Wunschliste</button><a class="qa" href="${href}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Ansehen (Anzeige)'}</a><button class="qa qa-mute" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="qa qa-mute" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></article>`;
+   <div class="idea-acts"><button class="qa qa-add" data-act="aiadd" data-t="${esc(i.t)}">${ic('plus','sm')}Auf meine Wunschliste</button>${ideaShops(i,'inspiration')}<button class="qa qa-mute" data-act="aihave" data-t="${esc(i.t)}">Habe ich schon</button><button class="qa qa-mute" data-act="ideano" data-self="1" data-t="${esc(i.t)}">Passt nicht</button></div></article>`;
 }
 function AiSelf(home=false){
   const h=S.me.handle;if(!h||!S.auth.user)return '';

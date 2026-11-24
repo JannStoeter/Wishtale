@@ -90,7 +90,22 @@ export const searchUrl = {
   idealo: q => `https://www.idealo.de/preisvergleich/MainSearchProductCategory.html?q=${enc(q)}`,
   google: q => `https://www.google.de/search?tbm=shop&q=${enc(q)}`,
   amazon: q => `https://www.amazon.de/s?k=${enc(q)}&tag=${AMAZON_TAG}`,
+  /* Otto-Suche, immer als Awin-Deeplink (Click Reference: Stelle in Wishtale, nie Personendaten). */
+  otto: (q, ref = 'idee') => withAwin(`https://www.otto.de/suche/${enc(String(q || '').trim())}/`, ref),
 };
+
+/**
+ * Shop-Wege einer Idee als leise Textknöpfe: Amazon und Otto, gemeinsam einmal als Anzeige gekennzeichnet (110).
+ * Erlebnisse führen zur Suche in der Nähe, ohne Partnerlink.
+ */
+export function ideaShops(i, ref = 'idee', cls = 'qa') {
+  const R = 'noopener noreferrer sponsored nofollow';
+  if (i.exp) return `<a class="${cls}" href="https://www.google.de/search?q=${enc(i.q)}+in+meiner+N%C3%A4he" target="_blank" rel="noopener noreferrer">In der Nähe suchen</a>`;
+  return `<span class="idea-shops"><a class="${cls}" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${R}">Bei Amazon</a><a class="${cls}" href="${searchUrl.otto(i.q, ref)}" target="_blank" rel="${R}">Bei Otto</a><span class="ad-note">Anzeige</span></span>`;
+}
+
+/** Hauptweg einer Idee für Titel und Preis (Amazon-Suche, bei Erlebnissen die Suche in der Nähe). */
+export const ideaHref = i => i.exp ? `https://www.google.de/search?q=${enc(i.q)}+in+meiner+N%C3%A4he` : searchUrl.amazon(i.q);
 
 export const shopLinks = q => [
   { n: 'idealo', u: searchUrl.idealo(q) },

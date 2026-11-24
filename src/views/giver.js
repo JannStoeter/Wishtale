@@ -8,7 +8,8 @@ import { excluded, recommend } from '../logic.js';
 import { densSeg, sortSeg, sortWishes, useList, PrioKey } from './wishes.js';
 import { WishCard, WishRow } from './card.js';
 import { Tip } from './tips.js';
-import { AMAZON_DISCLOSURE, searchUrl } from '../lib/shops.js';
+import { AMAZON_DISCLOSURE, searchUrl, ideaShops } from '../lib/shops.js';
+import { IdeaHead } from './inspiration.js';
 import { PastGifts } from './given.js';
 import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
@@ -97,7 +98,6 @@ export function WishList(p,{preview=false}={}){
 }
 
 /* "Das würde auch gut passen": von uns kuratiert. Steht bewusst unter der Wunschliste. */
-const AI_REL='noopener noreferrer sponsored nofollow';
 /* Ideen von der KI (api/ideas.js): Produktarten mit Suchbegriff, klar als Vorschlag von Wishtale gekennzeichnet. */
 export function AiIdeas(p){
   const st=aiStatus(gkey(p.handle||p.id));
@@ -105,10 +105,9 @@ export function AiIdeas(p){
   const list=ideasOf(gkey(p.handle||p.id));if(!list.length)return '';
   const price=i=>i.from&&i.to?`ca. ${i.from} bis ${i.to} €`:i.to?`bis ca. ${i.to} €`:'';
   return `<section class="sect curated ideas-quiet" id="ideen-ki"><p class="muted" style="font-size:14px;margin:0 0 12px">Passend zu ${esc(p.name)}, als Anregung und nicht als Wunsch.<span class="swipe-only"> Wische für weitere Ideen.</span></p>
-   <div class="recs grid">${list.map(i=>`<article class="rec idea"><h3>${esc(i.t)}</h3>
-    <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price(i)?` · <span title="Grobe Schätzung, kein Live-Preis">${price(i)}</span>`:''}</p>
+   <div class="recs grid">${list.map(i=>`<article class="rec idea">${IdeaHead(i,price(i))}
     <p class="why">${esc(i.why)}</p>
-    <div class="idea-acts"><a class="qa qa-add" href="${i.exp?`https://www.google.de/search?q=${encodeURIComponent(i.q)}+in+meiner+N%C3%A4he`:searchUrl.amazon(i.q)}" target="_blank" rel="${AI_REL}">${i.exp?'In der Nähe suchen':'Bei Amazon ansehen (Anzeige)'}</a></div></article>`).join('')}</div></section>`;
+    <div class="idea-acts">${ideaShops(i,'gast','qa qa-add')}</div></article>`).join('')}</div></section>`;
 }
 export function Curated(p,openWishes){
   const few=openWishes<4;

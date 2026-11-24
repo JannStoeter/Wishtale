@@ -11,3 +11,7 @@ Jann wurde bei Awin vom Programm Otto DE angenommen (Publisher 3165716, Händler
 > https://www.awin1.com/cread.php?awinmid=14336&awinaffid=3165716&ued=https%3A%2F%2Fotto.de
 
 Auftrag: Alle ausgehenden Links zu otto.de (Wunschlinks, Kaufweg nach dem Reservieren, Shop-Klicks) zentral in Awin-Deeplinks umwandeln, je Wunsch eine Click Reference ohne Personendaten mitgeben, Amazon-Logik und Klick-Zählung (109) nicht beschädigen, Kennzeichnung und Datenschutz prüfen, Tests ergänzen, als Pull Request zur Prüfung durch Jann.
+
+Nachtrag von Jann:
+
+> Ist das fertig? Ich sehe noch keine Anpassung alter Karten oder Inspirationen? Außerdem möchte ich bei Inspirationen auf das Geld klicken um mehr darüber zu erfahren aber das geht nur bei Klick auf „Anzeige“ das irritiert

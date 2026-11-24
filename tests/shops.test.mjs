@@ -62,3 +62,16 @@ test('Klick-Zählung erkennt Otto hinter Awin (shop_click)', async () => {
   assert.equal(shopLabel(a, '#p/mia-abc123'), 'otto.gast.reserviert');
   assert.equal(shopLabel({ ...a, href: 'https://www.amazon.de/s?k=x' }, '#wuensche'), 'amazon.eigen.reserviert');
 });
+
+test('Otto-Suche für Ideen läuft über Awin, Anzeige einmal je Karte', async () => {
+  const { searchUrl, ideaShops, ideaHref } = await import('../src/lib/shops.js');
+  const u = new URL(searchUrl.otto('Kaffeemühle Hand', 'inspiration'));
+  assert.equal(u.hostname, 'www.awin1.com');
+  assert.equal(u.searchParams.get('ued'), 'https://www.otto.de/suche/Kaffeem%C3%BChle%20Hand/');
+  assert.equal(u.searchParams.get('clickref'), 'inspiration');
+  const html = ideaShops({ q: 'Kaffeemühle', t: 'Handmühle' });
+  assert.equal((html.match(/Anzeige/g) || []).length, 1);
+  assert.match(html, /Bei Amazon/); assert.match(html, /Bei Otto/);
+  assert.doesNotMatch(ideaShops({ q: 'Kletterhalle', exp: true }), /sponsored|Anzeige/);
+  assert.match(ideaHref({ q: 'x' }), /amazon\.de\/s\?k=x&tag=jannst-21/);
+});

@@ -190,3 +190,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: vorher ohne Code site_content `schritte.p4` und Aktion „Weihnachten 2026 (Landingpage)“ in campaigns
 - Zurücknehmen: Revert des Merge-Commits; der Abschnitt verschwindet ohnehin ab 27.12.2026
 - Offen: Sitelinks in Google Ads auf die Sprungmarken umstellen
+
+## 2026-11-24 · 110 · Ideen-Karten mit Otto, Preis klickbar
+- Commits: siehe Pull Request #18 (Branch: claude/project-thread-d9qygv)
+- Auftrag: Jann im Projekt-Thread (Inspirationen ohne Otto, Klick auf den Preis tut nichts), Dev 110
+- Geändert: src/lib/shops.js (`searchUrl.otto`, `ideaShops`, `ideaHref`), src/views/inspiration.js (`IdeaHead`, `IdeaRow`), src/views/giver.js (`AiIdeas`), src/styles/main.css, tests/shops.test.mjs, CLAUDE.md
+- Warum: Otto soll auch bei Vorschlägen verdienen, und Name und Preis sind die Stellen, auf die man intuitiv tippt
+- Geprüft: ESLint, Build, `npm test` (9 Tests), Bildschirmfoto der Karten mit App-Stylesheet
+- Datenbank und Dienste: keine
+- Zurücknehmen: Commit reverten
+- Offen: Prüfung auf echtem Gerät nach dem Merge
