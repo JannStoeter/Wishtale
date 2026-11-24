@@ -60,7 +60,7 @@ export function Login(){
      <div class="fld"><label for="ae">E-Mail</label><input id="ae" name="email" type="email" class="inp" required autocomplete="email" value="${esc(S.ui.authEmail||'')}"></div>
      <div class="fld"><label for="ap">Passwort (mindestens 8 Zeichen)</label><input id="ap" name="password" type="password" class="inp" required minlength="8" autocomplete="new-password"></div>
      <button class="btn pri" type="submit" ${busy?'disabled':''}>Konto anlegen</button>
-     <p class="disc" style="margin:0">Wie wir mit deinen Daten umgehen, steht in der <a href="../datenschutz.html">Datenschutzerklärung</a>.</p></form>`
+     <p class="disc" style="margin:0">Wie wir mit deinen Daten umgehen, steht in der <a href="/datenschutz">Datenschutzerklärung</a>.</p></form>`
    :`<form data-form="signin" class="authform">
      <div class="fld"><label for="ae">E-Mail</label><input id="ae" name="email" type="email" class="inp" required autocomplete="email" value="${esc(S.ui.authEmail||'')}"></div>
      <div class="fld"><label for="ap">Passwort</label><input id="ap" name="password" type="password" class="inp" required autocomplete="current-password"></div>
