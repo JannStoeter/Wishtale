@@ -449,7 +449,11 @@ async readlink(el,auto){
  portal(){
   openPortal().then(r=>{location.href=r.url}).catch(e=>{S.plan.error=e.message;render()});
  },
- ideano(el){hideIdea(el.dataset.t);if(el.dataset.self)saveSignal('no',el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
+ ideaopen(el,e){ // 113: Karte als Fenster, Shop-Links und Knöpfe in der Karte wirken direkt
+  const hit=e&&e.target.closest('a,button');if(hit&&hit!==el)return;
+  S.ui.ideaOpen={k:el.dataset.k,t:el.dataset.t};S.ui.modal='idea';render();
+ },
+ ideano(el){if(S.ui.modal==='idea')S.ui.modal=null;hideIdea(el.dataset.t);if(el.dataset.self)saveSignal('no',el.dataset.t);track('choice',{label:'idea_no',path:'/app/'});render()},
  wnosug(el){ // Vorschläge für einen Wunsch aus- oder wieder einschalten
   const w=S.me.wishes.find(x=>x.id===el.dataset.id);if(!w)return;
   w.noSuggest=!w.noSuggest;toast(w.noSuggest?'Für diesen Wunsch zeigt Wishtale keine Vorschläge mehr.':'Wishtale darf für diesen Wunsch wieder Vorschläge zeigen.');
@@ -483,12 +487,14 @@ async readlink(el,auto){
   saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das ist schon vorhanden. Solche Vorschläge zeigen wir nicht mehr.');render();
  },
  aihave(el){
+  if(S.ui.modal==='idea')S.ui.modal=null;
   const i=[...ideasOf(skey(S.me.handle||'')),...ideasOf(gkey(S.me.handle||''))].find(x=>x.t===el.dataset.t);if(!i)return;
   const c=guessCategory(i.t);
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===i.t.toLowerCase()))S.me.wishes.unshift(W({t:i.t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
   saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das hast du schon. Solche Ideen zeigen wir dir nicht mehr.');render();
  },
  aiadd(el){
+  if(S.ui.modal==='idea')S.ui.modal=null;
   const i=[...ideasOf(skey(S.me.handle||'')),...ideasOf(gkey(S.me.handle||''))].find(x=>x.t===el.dataset.t);if(!i)return;
   const c=guessCategory(i.t);
   S.me.wishes.unshift(W({t:i.t,c,kind:i.exp?'erlebnis':'produkt',prio:2,price:i.to||null,a:i.exp?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));

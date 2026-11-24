@@ -104,7 +104,7 @@ export function AiIdeas(p){
   if(st==='loading')return `<section class="sect curated" id="ideen-ki">${AiLoading(`Wishtale erstellt individuelle Empfehlungen für ${esc(p.name)} …`)}</section>`;
   const list=ideasOf(gkey(p.handle||p.id));if(!list.length)return '';
   return `<section class="sect curated ideas-quiet" id="ideen-ki"><p class="muted" style="font-size:14px;margin:0 0 12px">Passend zu ${esc(p.name)}, als Anregung und nicht als Wunsch.<span class="swipe-only"> Wische für weitere Ideen.</span></p>
-   <div class="recs grid">${list.map(i=>IdeaCard(i,{ref:'gast'})).join('')}</div></section>`;
+   <div class="recs grid">${list.map(i=>IdeaCard(i,{ref:'gast',k:gkey(p.handle||p.id)})).join('')}</div></section>`;
 }
 export function Curated(p,openWishes){
   const few=openWishes<4;

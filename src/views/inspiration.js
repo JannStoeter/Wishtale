@@ -9,7 +9,7 @@ import { CATS, cat } from '../data/content.js';
 import { priceLine } from './product.js';
 import { safeUrl } from '../lib/promo.js';
 import { money } from '../lib/util.js';
-import { ideaShops, ideaHref } from '../lib/shops.js';
+import { ideaShops } from '../lib/shops.js';
 import { ideasOf, aiStatus, skey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
 import { homeIdeasVisible } from '../lib/homeideas.js';
@@ -76,34 +76,50 @@ function Promo(){
   return AppPromo()+fs;
 }
 
-const AI_REL='noopener noreferrer sponsored nofollow';
 export const ideaPrice=i=>i.to?(i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`):'';
 /** Symbol einer Idee im selben Stil wie Wünsche ohne Bild (112): Stichwort im Namen, sonst die geschätzte Kategorie. */
 function IdeaIcon(i){
   const c=i.exp?'erlebnisse':guessCategory(i.t),tone=(cat(c).t??0)%6;
   return `<span class="idea-ic art mono t${tone}" aria-hidden="true">${wishGlyph(i.exp?'erlebnis':i.t,c)}</span>`;
 }
-/** Kopf einer Idee: Symbol, Name und Preis. Name und Preis führen direkt zum Shop (Preis ist nur eine Schätzung). Auch für die Gastansicht. */
-export function IdeaHead(i,price){
-  const rel=i.exp?'noopener noreferrer':AI_REL,h=esc(ideaHref(i));
-  return `<div class="idea-top">${IdeaIcon(i)}<div class="idea-ht"><h3><a class="idea-link" href="${h}" target="_blank" rel="${rel}">${esc(i.t)}</a></h3>
-   <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price?` · <a class="idea-price" href="${h}" target="_blank" rel="${rel}" title="Grobe Schätzung, den aktuellen Preis siehst du im Shop">${price}</a>`:''}</p></div></div>`;
+/** Kopf einer Idee: Symbol, Name und Preis. Der Name öffnet die ganze Karte als Fenster (113), der Preis ist nur eine Schätzung. */
+export function IdeaHead(i,price,k=''){
+  return `<div class="idea-top">${IdeaIcon(i)}<div class="idea-ht"><h3><button type="button" class="idea-link" data-act="ideaopen" data-k="${esc(k)}" data-t="${esc(i.t)}" aria-haspopup="dialog">${esc(i.t)}</button></h3>
+   <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price?` · <span title="Grobe Schätzung, den aktuellen Preis siehst du im Shop">${price}</span>`:''}</p></div></div>`;
+}
+/** Aktionen einer Idee, auf der Karte und im Fenster gleich. Eigene Ansicht: Hauptknopf, Shops, leise Nebenaktionen. Gast: Shops als Hauptweg. */
+function IdeaActs(i,own,ref){
+  const t=esc(i.t);
+  return `<div class="idea-acts">${own?`<button class="idea-add" data-act="aiadd" data-t="${t}">${ic('plus','sm')}Auf meine Wunschliste</button>`:''}
+    ${ideaShops(i,ref,own?'shop-pill':'shop-pill main')}</div>
+   ${own?`<div class="idea-more"><button class="qa-soft" data-act="aihave" data-t="${t}">Habe ich schon</button><span aria-hidden="true">·</span><button class="qa-soft" data-act="ideano" data-self="1" data-t="${t}">Passt nicht</button></div>`:''}`;
 }
 /**
- * Eine Ideenkarte (113): oben Symbol, Name und Preis, darunter die Begründung.
- * Eigene Inspiration: ein klarer Hauptknopf „Auf meine Wunschliste“, Shops als kleine Pillen mit einem „Anzeige“,
- * „Habe ich schon“ und „Passt nicht“ ganz leise darunter. Gastansicht: die Shops sind der Hauptweg.
+ * Eine Ideenkarte (113): oben Symbol, Name und Preis, darunter die Begründung, dann die Aktionen.
+ * Amazon, Otto und die Knöpfe wirken direkt, ein Tipp auf den Namen oder die übrige Karte öffnet das Fenster `idea` mit dem ganzen Text.
+ * k: Schlüssel der Ideenliste (skey oder gkey), damit das Fenster die Idee wiederfindet.
  */
-export function IdeaCard(i,{own=false,ref='idee'}={}){
-  const t=esc(i.t);
-  return `<article class="rec idea">${IdeaHead(i,ideaPrice(i))}
+export function IdeaCard(i,{own=false,ref='idee',k=''}={}){
+  return `<article class="rec idea" data-act="ideaopen" data-k="${esc(k)}" data-t="${esc(i.t)}">${IdeaHead(i,ideaPrice(i),k)}
    <p class="why">${esc(i.why)}</p>
-   <div class="idea-acts">${own?`<button class="idea-add" data-act="aiadd" data-t="${t}">${ic('plus','sm')}Auf meine Wunschliste</button>`:''}
-    ${ideaShops(i,ref,own?'shop-pill':'shop-pill main')}</div>
-   ${own?`<div class="idea-more"><button class="qa-soft" data-act="aihave" data-t="${t}">Habe ich schon</button><span aria-hidden="true">·</span><button class="qa-soft" data-act="ideano" data-self="1" data-t="${t}">Passt nicht</button></div>`:''}</article>`;
+   ${IdeaActs(i,own,ref)}</article>`;
+}
+/** Fenster zu einer Idee (S.ui.ideaOpen = {k, t}): ganze Begründung und dieselben Aktionen wie auf der Karte. */
+export function IdeaModal(){
+  const o=S.ui.ideaOpen||{},i=o.k&&ideasOf(o.k).find(x=>x.t===o.t);
+  if(!i){S.ui.modal=null;return ''}
+  const own=o.k.startsWith('self:'),price=ideaPrice(i);
+  return `<div class="scrim" data-act="closebg"><div class="sheet narrow ideasheet" role="dialog" aria-modal="true" aria-labelledby="mt">
+   <div class="sheet-head"><p class="eyebrow zone-eb">${ic('spark','sm')}Vorschlag von Wishtale</p><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
+   <div class="idea-top">${IdeaIcon(i)}<div class="idea-ht"><h2 id="mt">${esc(i.t)}</h2>
+    <p class="idea-meta">${i.exp?'Erlebnis':'Geschenk'}${price?` · ${price}, grobe Schätzung`:''}</p></div></div>
+   <p class="idea-why">${esc(i.why)}</p>
+   ${IdeaActs(i,own,own?'inspiration':'gast')}
+   <p class="disc">${i.exp?'Die Suche in der Nähe läuft über Google, ohne Partnerlink.':'<b>Anzeige:</b> Links zu Amazon und Otto sind Partnerlinks. Preise sind Richtwerte und können abweichen.'}</p>
+  </div></div>`;
 }
 /* Ideen von der KI für die eigene Wunschliste (api/ideas.js, mode=self), nur mit gespeichertem Konto. */
-const IdeaRow=i=>IdeaCard(i,{own:true,ref:'inspiration'});
+const IdeaRow=i=>IdeaCard(i,{own:true,ref:'inspiration',k:skey(S.me.handle)});
 function AiSelf(home=false){
   const h=S.me.handle;if(!h||!S.auth.user)return '';
   const list=ideasOf(skey(h));if(!list.length)return '';

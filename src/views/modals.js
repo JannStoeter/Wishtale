@@ -14,6 +14,7 @@ import { WishModal } from './wishmodal.js';
 import { GivenModal, GiftGivenModal } from './given.js';
 import { WorldModal } from './world.js';
 import { PinsModal } from './pins.js';
+import { IdeaModal } from './inspiration.js';
 import { AMAZON_DISCLOSURE, searchUrl } from '../lib/shops.js';
 
 export function AcctModal(){
@@ -74,6 +75,7 @@ export function Modal(){
   if(m==='wishdetail')return WishModal();
   if(m==='world')return WorldModal();
   if(m==='pins')return PinsModal();
+  if(m==='idea')return IdeaModal();
   if(m==='accounts')return AcctModal();
   if(m==='wish'){}
   const d=(m==='wish'&&S.ui.editWish&&S.me.wishes.find(w=>w.id===S.ui.editWish))||{};

@@ -220,3 +220,4 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Commit reverten
 - Offen: Janns Urteil zum Design, danach `tribunal_verdicts`
+- Nachtrag: Karte öffnet sich als Fenster (`IdeaModal()` in src/views/inspiration.js, `ideaopen` in src/actions.js, Eintrag in src/views/modals.js), Name und Preis führen nicht mehr direkt zum Shop
