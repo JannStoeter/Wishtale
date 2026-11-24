@@ -141,3 +141,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: Migration 0030, Eintrag 105 in tribunal_verdicts
 - Zurücknehmen: git revert 49fd530; Funktion mit 0029 wiederherstellen
 - Offen: Zahlen sammeln sich erst ab jetzt
+
+## 2026-11-24 · 106 · Launch-Checkliste, Teil B
+- Commits: 1c6307a (Checkliste), bcb9a99, ebaca53 und der folgende Eintrags-Commit (Branch: main)
+- Auftrag: Jann im Chat („Bitte baue alles“), Dev 106; dazu Position zu Dev 107 (Kosten einspielen)
+- Geändert: supabase/migrations/0031 (eingespielt), src/lib/tips.js, src/views/tips.js, src/views/wishes.js, src/views/giver.js, src/views/profile.js, src/views/shared.js, src/views/given.js, src/views/modals.js, src/actions.js, src/main.js, api/account.js, neu api/_lib/guestmail.js, package.json (nodemailer), datenschutz.html Abschnitt 5, CLAUDE.md
+- Warum: Startbereitschaft, Mundpropaganda, Reservierungen für Gäste geräteübergreifend
+- Geprüft: ESLint, Build, Playwright, mailMe mit simuliertem Versand, Trigger nach 0031, axe ohne Befund
+- Datenbank und Dienste: Migration 0031; Einträge 106 in tribunal_verdicts; Vercel braucht SMTP-Variablen
+- Zurücknehmen: git revert ebaca53 bcb9a99; grant execute on function public.guard_profile_update() to authenticated
+- Offen: echter Mailversand nach Eintragen der SMTP-Daten testen

@@ -97,6 +97,7 @@ Stand: 2026-11-09
 | 103 | Restliche optische Befunde | **Jann im Chat: die anderen optischen Bugs auch ändern.** Klare Unterzeilen, Band wegklickbar, Profil-Sichtbarkeit lesbar, Sprung zu Ideen, Landingpage hell mit neuen App-Bildern. | ja, `af0d97e` |
 | 104 | Funktionen im richtigen Moment zeigen | **Jann im Chat: smart statt Werbung, Kind-Konten-Hinweis bei Kinderspielzeug.** Baustein für Hinweise, erster Fall Kind-Konten. Weitere Hinweise offen (Vorschläge in claude.md). | teilweise, `118fc42` |
 | 105 | Geteilte Links im CMS zählen | **Jann im Chat.** Gastansicht meldet Aufrufe über /w/ getrennt, CMS-Karte „Geteilte Links“, Migration 0030. | ja, `49fd530` |
+| 106 | Launch-Checkliste | **Jann im Chat: Vercel und Supabase auf Pro, „Bitte baue alles“.** Sicherheitsfix (0031), drei Hinweise, Reservierung per Mail für Gäste. Teil A (Mail-Einstellungen, Verträge, Limits) bei Jann. | ja, `bcb9a99`, `ebaca53` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
