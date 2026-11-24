@@ -17,14 +17,18 @@ const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'nul
 const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* dann sucht die nächste Sitzung erneut */ } };
 
 /* Ohne eigenen Shop-Link entscheidet die Produkterkennung (wie im Wunsch-Dialog, mode=match, Zwischenspeicher): Nur wenn sie sicher genau
-   ein Produkt erkennt, suchen wir ein Bild. Allgemeine Wünsche wie „Großer Reisekoffer 4 Rollen“ behalten ihr Symbol (Jann, 114). */
+   ein Produkt erkennt oder eine feste Marke im Wunsch steht, suchen wir ein Bild. Allgemeine Wünsche wie „Großer Reisekoffer 4 Rollen“ behalten ihr Symbol (Jann, 114). */
 const ownLink = w => !!w.link && !/amazon\.|amzn\./i.test(w.link);
 async function target(w) {
   if (ownLink(w)) return w;
   const h = S.me?.handle;
   if (!h || !/^[a-z0-9-]{3,31}$/.test(h)) return null;
   const m = await loadMatch(h, w.t).catch(() => null);
-  return m && m.ok ? { t: w.t, q: m.t || m.q || w.t, link: '', imgHint: m.img || '' } : null;
+  if (!m) return null;
+  // Sicher erkannt, oder eine feste Marke plus ein klares Produktwort („Hue Bewegungsmelder“): dann suchen. Eine bloße Produktart ohne Marke behält ihr Symbol.
+  if (m.ok) return { t: w.t, q: m.t || m.q || w.t, link: '', imgHint: m.img || '' };
+  if (m.brand && (m.conf || m.lc || 0) >= 0.4) return { t: w.t, q: m.t || m.q || w.t, link: '', imgHint: '' };
+  return null;
 }
 
 /** Kommt der Wunsch für ein gesuchtes Bild in Frage? Nur Produkte ohne Bild, die genau genug benannt sind oder einen Shop-Link haben. */

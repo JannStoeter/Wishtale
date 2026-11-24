@@ -63,3 +63,11 @@ test('imageForWish: Bild der erkannten Seite zuerst, Deal-Seiten nie', async () 
   const r = (hostname) => ({ title: 'Hue Bewegungsmelder', url: 'https://' + hostname + '/p', meta_url: { hostname }, properties: { url: 'https://' + hostname + '/a.jpg', width: 800, height: 800 } });
   assert.deepEqual(candidates({ results: [r('www.monsterdealz.de'), r('www.mydealz.de')] }, HUE), []);
 });
+
+test('parseMatch: feste Marke wird mitgeliefert, Produktart ohne Marke nicht', async () => {
+  const { parseMatch } = await import('../api/_lib/match.js');
+  const hue = parseMatch('{"erkannt": true, "marke": "Philips Hue", "titel": "Philips Hue Bewegungsmelder", "sicherheit": 0.6}');
+  assert.equal(hue.brand, 'Philips Hue');
+  const koffer = parseMatch('{"erkannt": false, "marke": null, "titel": "", "sicherheit": 0.2}');
+  assert.equal(koffer.brand, null);
+});
