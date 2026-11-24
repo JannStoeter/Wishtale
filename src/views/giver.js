@@ -34,7 +34,7 @@ export function GuestPage(p,{preview=false}={}){
      ${none||preview?'':`<p class="jumpideas"><button class="jumpbtn" data-act="jump" data-to="mehr">${ic('spark','sm')}Ideen von Wishtale für ${esc(p.name)} ansehen</button></p>`}
      ${none?'':wl.html}
      ${More(p,{preview,none,open:wl.open})}
-     <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis bei Amazon.</p>
+     <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis im Shop.</p>
     </div>
    </div>
   </div>`;

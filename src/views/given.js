@@ -3,6 +3,7 @@ import { S } from '../state.js';
 import { esc, ic } from '../lib/util.js';
 import { OCC, occL } from '../data/content.js';
 import { STATUS, giftsFor } from '../lib/given.js';
+import { partnerLink, partnerOf } from '../lib/shops.js';
 
 const when = d => { const x = new Date(String(d).slice(0, 10) + 'T12:00:00'); return Number.isNaN(+x) ? '' : x.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }); };
 const REACT = { ja: 'Kam gut an', teils: 'Teils, teils', nein: 'Kam nicht so gut an' };
@@ -13,7 +14,7 @@ function Item(g) {
    ${g.note ? `<p style="font-size:14px;margin-top:4px">${esc(g.note)}</p>` : ''}
    <div class="chips" style="margin-top:8px"><span class="chip ${g.status === 'reserved' ? 'gold' : 'ok'}">${esc(STATUS[g.status] || g.status)}</span>
     <button class="chip" data-act="givenreact" data-id="${esc(g.id)}" title="Wie kam es an? Das siehst nur du.">${g.reaction ? esc(REACT[g.reaction]) : 'Wie kam es an?'}</button>
-    ${g.url ? `<a class="chip" href="${esc(g.url)}" target="_blank" rel="noopener noreferrer">Produkt ansehen</a>` : ''}
+    ${g.url ? (u => `<a class="chip" href="${esc(u)}" target="_blank" rel="noopener noreferrer${partnerOf(u) ? ' sponsored nofollow' : ''}">Produkt ansehen${partnerOf(u) ? ' (Anzeige)' : ''}</a>`)(partnerLink(g.url, String(g.ref || '').split(':').pop())) : ''}
     <button class="chip" data-act="givendel" data-id="${esc(g.id)}" aria-label="${esc(g.what)} entfernen">Entfernen</button></div></div></article>`;
 }
 

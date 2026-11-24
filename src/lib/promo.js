@@ -4,7 +4,7 @@
  * Fehlt die Tabelle oder ist die Verbindung weg, bleibt alles einfach leer.
  */
 import { sb } from './supabase.js';
-import { withAmazonTag } from './shops.js';
+import { partnerLink } from './shops.js';
 import { setWeights } from './weights.js';
 import { setCatalogOff } from './catalog.js';
 import { loadDbCatalog } from './dbcatalog.js';
@@ -24,4 +24,4 @@ export async function loadPromo() {
   } catch { cache = { campaigns: [], products: [] }; }
   return cache;
 }
-export const safeUrl = u => { try { const x = new URL(u, location.origin); return /^https?:$/.test(x.protocol) ? withAmazonTag(x.href) : '#'; } catch { return '#'; } };
+export const safeUrl = u => { try { const x = new URL(u, location.origin); return /^https?:$/.test(x.protocol) ? partnerLink(x.href, 'cms') : '#'; } catch { return '#'; } };

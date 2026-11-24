@@ -133,6 +133,6 @@ export function Entdecken(){
    ${AiSelf()}
    ${st==='loading'?`<section class="psec" style="margin-bottom:18px">${AiLoading('Deine individuellen Empfehlungen werden erstellt …')}</section>`:''}
    ${!useCatalog?'':secs.length?secs.join(''):`<section class="psec" style="margin-bottom:18px"><p class="eyebrow">Zum Anfangen</p><h3 aria-level="2">Beliebte Wunschideen</h3><p class="muted">Sobald du in deinem Profil Interessen und Marken angibst, wird es persönlicher. Bis dahin ein paar Anregungen.</p><div class="offers" style="margin-top:10px">${popularOffers(4).map(o=>Card(o,'wohnen',mine.has(o.t.toLowerCase()))).join('')}</div></section>`}
-   <p class="disc" style="margin-top:18px"><b>Anzeige:</b> Links zu Amazon sind Partnerlinks. ${'Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.'} Preise sind Richtwerte und können abweichen.</p>
+   <p class="disc" style="margin-top:18px"><b>Anzeige:</b> Links zu Amazon und Otto sind Partnerlinks. ${'Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.'} Preise sind Richtwerte und können abweichen.</p>
   </div>`;
 }

@@ -4,6 +4,7 @@
  * Wer „Do Not Track“ oder „Global Privacy Control“ nutzt oder die Statistik selbst ausschaltet, wird nicht gezählt.
  */
 const OFF = 'wishtale:no-stats';
+import { shopHost } from './shops.js';
 
 export const statsOff = () => {
   try { if (localStorage.getItem(OFF) === '1') return true; } catch { /* ohne Speicher */ }
@@ -37,8 +38,8 @@ export function track(name, { label, path = location.pathname, once = false } = 
  * ob eigene Ansicht oder Gastansicht und von welcher Stelle (wunsch, ideen, liste, reserviert). Kein Produkt, keine Adresse.
  */
 export const shopLabel = (a, hash = location.hash) => {
-  let h = '';
-  try { h = new URL(a.href).hostname.replace(/^www\./, ''); } catch { return null; }
+  const h = shopHost(a.href); // hinter einem Awin-Deeplink der echte Shop (otto.de statt awin1.com)
+  if (!h) return null;
   const shop = /(^|\.)amazon\.|amzn\./.test(h) ? 'amazon' : /(^|\.)otto\.de$/.test(h) ? 'otto' : /idealo\.|google\./.test(h) ? 'vergleich' : 'shop';
   const ctx = /^#p\//.test(hash) ? 'gast' : 'eigen';
   const place = a.dataset.place || (a.closest('.ideas-zone') ? 'ideen' : a.closest('.sheet') ? 'wunsch' : 'liste');

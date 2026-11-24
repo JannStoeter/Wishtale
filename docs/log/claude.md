@@ -171,3 +171,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine Migration; braucht BRAVE_SEARCH_API_KEY in Vercel (vorhanden); shop_click erscheint noch nicht im CMS
 - Zurücknehmen: git revert 5a4d6df
 - Offen: CMS-Karte für shop_click, eigene Tracking-ID für Ideen in PartnerNet
+
+## 2026-11-24 · 110 · Otto-Links über Awin
+- Commits: siehe Pull Request (Branch: claude/project-thread-d9qygv, aufbauend auf 109)
+- Auftrag: Jann im Projekt-Thread (Awin-Deeplink für Otto DE), Dev 110
+- Geändert: src/lib/shops.js (Awin-Konstanten, `partnerLink`, `withAwin`, `partnerOf`, `shopHost`, `clickRef`), src/lib/products.js (eigener Wunschlink mit Click Reference), src/lib/promo.js (`safeUrl` für CMS-Produkte und Aktionen), src/lib/track.js (Otto hinter Awin zählen), src/views/wishmodal.js, given.js, giver.js, inspiration.js (Kennzeichnung und Hinweise), datenschutz.html Abschnitt 9, neu tests/shops.test.mjs und `npm test`, CLAUDE.md
+- Warum: Otto-Käufe über Wishtale sollen Provision bringen, die Wunsch-ID als Click Reference zeigt, welcher Wunsch verkauft hat
+- Geprüft: ESLint, Build, `npm test` (8 Tests)
+- Datenbank und Dienste: keine Migration; Eintrag 110 in tribunal_verdicts nach dem Merge
+- Zurücknehmen: Commit reverten
+- Offen: Echter Klick auf einen Deeplink und Sichtung im Awin-Dashboard nach dem Deploy
