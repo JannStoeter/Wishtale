@@ -102,7 +102,7 @@ Stand: 2026-11-09
 | 109 | Landingpage zur Weihnachtskampagne | **Jann im Chat: „Bau ruhig so zu Ende“.** Weihnachtsabschnitt mit Familie, Kinder, Ideen und Sprungmarken für Sitelinks, verschwindet ab 27.12. | ja, `1d6f7a0` |
 | 110 | Otto-Links über Awin | **Jann im Chat: bei Awin für Otto angenommen, Links umstellen.** Otto-Adressen werden beim Anzeigen zum Awin-Deeplink mit Click Reference je Wunsch, Kennzeichnung „Anzeige“, Datenschutz Abschnitt 9. | ja, `9b1458a`, `a500bcc` |
 | 111 | Mehr Amazon-Käufe ohne Werbeseite | **Jann im Chat: alle vier, Direktlink über Brave ausbauen.** Kaufweg nach dem Reservieren, direkter Amazon-Link für genaue Wünsche, neutraler Link-Hinweis, Klickmessung `shop_click`. | ja, `5a4d6df` |
-| 112 | Symbole statt Buchstaben bei Wünschen ohne Bild | **Jann im Projekt-Thread: passendes Icon statt Buchstabe (Pullover bei Kleidung).** Stichwort im Namen, dann Kategorie, sonst Geschenk (`src/lib/wishicon.js`). | Pull Request offen |
+| 112 | Symbole statt Buchstaben bei Wünschen ohne Bild | **Jann im Projekt-Thread: passendes Icon statt Buchstabe (Pullover bei Kleidung).** Stichwort im Namen, dann Kategorie, sonst Geschenk (`src/lib/wishicon.js`). | ja, `f3ccb21` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.
