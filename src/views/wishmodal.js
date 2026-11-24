@@ -75,6 +75,24 @@ function Suggest(p, w, o, ctx) {
   return `<div class="sugg"><b>Vorschlag von Wishtale</b><span>${esc(p.name)} hat kein bestimmtes Produkt ausgewählt. ${crit ? `Diese Auswahl passt zu den Kriterien des Wunsches (${esc(crit)}).` : 'Diese Auswahl passt zum Wunsch.'} Es ist nicht ${esc(gen(p.name))} Wahl. Wir testen und bewerten die Produkte nicht, schau dir deshalb vor dem Kauf Preis und Bewertungen an.</span></div>`;
 }
 
+/**
+ * Nach dem Reservieren ein leiser Kaufweg (Dev 109): der Moment mit der größten Kaufabsicht. Eigener Link des Wunsches zuerst,
+ * sonst die genaue Suche bei Amazon. Nie ein Vorschlag von Wishtale, damit es nicht wie die Wahl der Person aussieht.
+ * Bewusst ein Textlink in einem ganzen Satz, mit „Laden deiner Wahl“ als ehrlicher Alternative.
+ */
+function BuyLine(w, o, byAi, chosen) {
+  if (w.kind === 'erlebnis' || w.kind === 'frei') return '';
+  let host = 'amazon.de';
+  try { if (chosen && chosen.url) host = new URL(chosen.url).hostname; } catch { /* Amazon bleibt */ }
+  const own = chosen && chosen.url ? { url: chosen.url, host } : !byAi && o.main && ['link', 'erzeugt', 'amz'].includes(o.main.source) ? o.main : null;
+  const url = own ? own.url : w.kind === 'produkt' ? searchUrl.amazon(w.t) : '';
+  if (!url) return '';
+  host = own ? own.host || host : 'amazon.de';
+  const amazon = /(^|\.)amazon\./.test(host);
+  const where = amazon ? 'bei Amazon' : `bei ${esc(host.replace(/^www\./, ''))}`;
+  return `<p class="buyline">Wenn du es gleich besorgen möchtest, findest du es <a href="${esc(url)}" target="_blank" rel="${REL}" data-place="reserviert">${where}</a>${amazon ? ' (Anzeige)' : ''} oder in einem Laden deiner Wahl.</p>`;
+}
+
 export function WishModal() {
   const ctx = S.ui.wishCtx || 'guest';
   const p = ctx === 'guest' ? guestPerson() : S.me;
@@ -91,6 +109,7 @@ export function WishModal() {
   if (ctx === 'guest') {
     if (w.bought) state = `<div class="banner green">${ic('check')}<span>Das hast du schon besorgt. Die Überraschung bleibt natürlich bestehen.</span></div>`;
     else if (mine) state = `<div class="banner green">${ic('lock')}<span>Du hast diesen Wunsch reserviert.${chosen ? ` Deine Wahl: <b>${esc(chosen.t)}</b>.` : ''} ${esc(p.name)} erfährt davon nichts.${p.managed ? '' : RememberNote()}</span></div>`;
+    if (mine && !w.bought) state += BuyLine(w, o, byAi, chosen);
     else if (taken) state = `<div class="banner">${ic('lock')}<span>Um diesen Wunsch kümmert sich schon jemand anderes.</span></div>`;
   }
 

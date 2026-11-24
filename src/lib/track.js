@@ -31,3 +31,24 @@ export function track(name, { label, path = location.pathname, once = false } = 
     fetch('/api/event', { method: 'POST', body, keepalive: true, headers: { 'content-type': 'text/plain' } }).catch(() => {});
   } catch { /* Statistik darf nie etwas kaputt machen */ }
 }
+
+/**
+ * Klicks auf Partner- und Shop-Links zählen (Dev 109, Ereignis shop_click): nur welcher Shop (amazon, otto, vergleich oder shop),
+ * ob eigene Ansicht oder Gastansicht und von welcher Stelle (wunsch, ideen, liste, reserviert). Kein Produkt, keine Adresse.
+ */
+export const shopLabel = (a, hash = location.hash) => {
+  let h = '';
+  try { h = new URL(a.href).hostname.replace(/^www\./, ''); } catch { return null; }
+  const shop = /(^|\.)amazon\.|amzn\./.test(h) ? 'amazon' : /(^|\.)otto\.de$/.test(h) ? 'otto' : /idealo\.|google\./.test(h) ? 'vergleich' : 'shop';
+  const ctx = /^#p\//.test(hash) ? 'gast' : 'eigen';
+  const place = a.dataset.place || (a.closest('.ideas-zone') ? 'ideen' : a.closest('.sheet') ? 'wunsch' : 'liste');
+  return `${shop}.${ctx}.${place}`;
+};
+export function watchShopClicks(path = '/app/') {
+  document.addEventListener('click', e => {
+    const a = e.target && e.target.closest && e.target.closest('a[rel~="sponsored"]');
+    if (!a) return;
+    const label = shopLabel(a);
+    if (label) track('shop_click', { label, path });
+  }, true);
+}

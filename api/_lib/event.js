@@ -5,7 +5,7 @@
  */
 import crypto from 'node:crypto';
 
-export const EVENTS = new Set(['view', 'cta', 'start', 'choice', 'signup_submit', 'demo', 'guest_view', 'app_open']);
+export const EVENTS = new Set(['view', 'cta', 'start', 'choice', 'signup_submit', 'demo', 'guest_view', 'app_open', 'shop_click']);
 const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|embedly|headless|lighthouse|monitor|curl|wget|python|node-fetch|axios/i;
 const token = (v, n = 60) => { const s = String(v ?? '').trim().slice(0, n); return /^[a-z0-9_.\-+ ]+$/i.test(s) ? s.toLowerCase() : null; };
 const cleanPath = v => { const s = String(v ?? '').split(/[?#]/)[0].slice(0, 120); return /^\/[\w\-./]*$/.test(s) ? s : null; };
