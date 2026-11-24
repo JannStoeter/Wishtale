@@ -38,6 +38,8 @@ document.querySelectorAll('.art[data-kind]').forEach(el=>el.insertAdjacentHTML('
 
 /* Geschichte: Schritt für Schritt einblenden, sobald er sichtbar wird. Ohne JavaScript bleibt alles sichtbar. */
 document.documentElement.classList.add('js');
+/* Saisonale Abschnitte (data-until) verschwinden nach ihrem Datum von selbst. */
+document.querySelectorAll('[data-until]').forEach(el=>{if(Date.now()>Date.parse(el.dataset.until))el.hidden=true});
 document.querySelectorAll('.tstep').forEach(step=>step.querySelectorAll('.chip,.mini').forEach((el,i)=>el.style.setProperty('--i',i)));
 const steps=document.querySelectorAll('.tstep');
 if('IntersectionObserver' in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
