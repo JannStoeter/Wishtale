@@ -3,7 +3,7 @@ topic: 114-echte-produktbilder-ueber-brave
 status: entschieden
 option: Bilder je Wunsch, Ideenkarten behalten das Symbol
 datum: 2026-11-24
-umgesetzt: offen
+umgesetzt: 8a027c5f05a3b2fd396224fbb35d99c59af4b316
 ---
 **Jann im Projekt-Thread:** möglichst viele echte Produktbilder über Brave. Auf der Entscheidungskarte: Ideenkarten behalten ihr Symbol, das Bild kommt erst mit dem Wunsch.
 

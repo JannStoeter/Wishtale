@@ -229,4 +229,5 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, `npm test` (16 Tests, davon 4 neu mit simulierten Suchantworten)
 - Datenbank und Dienste: keine Migration; nutzt `hit_limit` (0021) und `BRAVE_SEARCH_API_KEY` in Vercel
 - Zurücknehmen: Commit reverten
-- Offen: Live-Test mit echtem Schlüssel (Hue Bewegungsmelder), Eintrag in `tribunal_verdicts` nach dem Merge
+- Merge 8a027c5 (Pull Request #23), `tribunal_verdicts` auf umgesetzt
+- Offen: Live-Test mit echtem Schlüssel (Hue Bewegungsmelder)
