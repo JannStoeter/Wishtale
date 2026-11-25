@@ -3,7 +3,7 @@ topic: 119-konto-loeschen-absichern
 status: entschieden
 option: auftrag
 datum: 2026-11-25
-umgesetzt: OFFEN
+umgesetzt: 78814197ad42dfe68ee6e69d75fdb8c8c7206480
 ---
 **Jann im Projekt:** „Daran müssen wir arbeiten“ (nach einem versehentlich gelöschten Konto).
 
