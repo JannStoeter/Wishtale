@@ -376,3 +376,9 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geändert: src/admin/main.js (fehlt ein Programmteil nach neuem Deploy, lädt das CMS einmal selbst neu, sonst Hinweis „Bitte lade die Seite neu“)
 - Geprüft: ESLint, Build
 - Datenbank und Dienste: keine
+
+## 2026-11-25 · 131 · Nachtrag: Plan „Wishtale für Kinder“ eingearbeitet
+- Auftrag: Jann im Projekt-Chat („Verbinde dich bitte mit dem Thread Strategie für Kinder - da liegt ein Artefakt zur Instagram Strategie“)
+- Geändert: src/admin/scenes.js (Kinder-Szenen kgast, kreserviert, kkaufen, kinfo), src/admin/ideas.js (zehn Ideen nach den vier Säulen des Plans, Highlight-Storys „Für Großeltern“ und „Fragen“)
+- Geprüft: ESLint, Build, alle neuen Ideen gerendert und angesehen
+- Datenbank und Dienste: keine
