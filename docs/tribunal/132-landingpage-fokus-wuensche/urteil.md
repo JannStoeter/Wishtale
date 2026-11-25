@@ -1,5 +1,5 @@
 ---
-topic: 131-landingpage-fokus-wuensche
+topic: 132-landingpage-fokus-wuensche
 status: entschieden
 option: umsetzen
 datum: 2026-11-25

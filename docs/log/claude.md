@@ -352,7 +352,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 
-## 2026-11-25 · 131 · Landingpage, nur Wünsche im Fokus
+## 2026-11-25 · 131 · Instagram-Erklärserie
+- Auftrag: Jann im Projekt-Chat („baue gute reels und Posts und Storys die wir direkt über unser cms raushauen können“)
+- Geändert: src/admin/scenes.js (neu, App-Szenen als gezeichnetes Handy), src/admin/canvas.js (Folienart `screen`), src/admin/instagram.js (Auswahl der Szene, Assistent überspringt Handy-Folien), src/admin/ideas.js (elf neue Ideen), CLAUDE.md
+- Geprüft: ESLint, Build, alle neuen Ideen in Beitrag, Story und Reel mit Playwright gerendert und angesehen
+- Datenbank und Dienste: keine, nichts veröffentlicht
+
+## 2026-11-25 · 132 · Landingpage, nur Wünsche im Fokus
 - Auftrag: Jann im Projekt-Chat („Beim Ankommen soll es nur um Wünsche gehen“), Nachtrag zu Sprungmarken bei Google
 - Geändert: index.html (Einstieg, Rubriken, Navigation, `alternateName`), src/landing.js (Vorführung raus, Rubriken per Anker), src/styles/main.css (Block `body.lp`), CLAUDE.md
 - Geprüft: ESLint, Build, Bildschirmfotos Handy und Computer

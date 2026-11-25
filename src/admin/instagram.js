@@ -4,6 +4,7 @@ import { esc, toast, slug, toLocal, fromLocal, fmtDate, lines } from './util.js'
 import { drawSlide, loadFonts, blank, blob, TYPES, THEMES, FORMATS } from './canvas.js';
 import { makeReel } from './reel.js';
 import { IDEAS } from './ideas.js';
+import { SCENES } from './scenes.js';
 import { PHOTOS, photoUrl } from '../data/photos.js';
 
 const STATUS = { draft: 'Entwurf', ready: 'Bereit', posted: 'Gepostet' };
@@ -53,6 +54,7 @@ export async function mount(el) {
      ${s.type === 'quote' ? `<div class="fld wide"><label for="s-q">Zitat</label><textarea id="s-q" data-s="quote" class="ta" rows="3">${esc(s.quote)}</textarea></div>` : ''}
      ${s.type === 'chips' ? `<div class="fld wide"><label for="s-ch">Chips (eine pro Zeile, ein * davor hebt hervor)</label><textarea id="s-ch" data-s="chips" class="ta" rows="5">${esc((s.chips || []).join('\n'))}</textarea></div>` : ''}
      ${s.type === 'photo' ? `<div class="fld"><label for="s-pk">Foto aus der Bibliothek</label><select id="s-pk" data-s="photoKey" class="sel"><option value="">Eigenes Foto oder keins</option>${Object.keys(PHOTOS).map(k => `<option value="${k}" ${s.photoKey === k ? 'selected' : ''}>${esc(k)}</option>`).join('')}</select></div><div class="fld"><label for="s-img">Oder eigenes Foto (nur in dieser Sitzung)</label><input id="s-img" type="file" accept="image/*" class="inp"></div>` : ''}
+     ${s.type === 'screen' ? `<div class="fld wide"><label for="s-sc">Was das Handy zeigt</label><select id="s-sc" data-s="scene" class="sel">${Object.entries(SCENES).map(([k, v]) => `<option value="${k}" ${(s.scene || 'liste') === k ? 'selected' : ''}>${esc(v.label)}</option>`).join('')}</select></div>` : ''}
      ${s.type === 'cta' ? `<div class="fld"><label for="s-h">Instagram-Name</label><input id="s-h" data-s="handle" class="inp" value="${esc(s.handle)}"></div><div class="fld"><label for="s-d">Webadresse</label><input id="s-d" data-s="domain" class="inp" value="${esc(s.domain)}"></div>` : ''}
      <div class="fld wide"><label for="s-f">Fußzeile</label><input id="s-f" data-s="footer" class="inp" value="${esc(s.footer ?? 'Jeder Wunsch hat eine Geschichte.')}"></div></div></div>`;
   };
@@ -202,7 +204,7 @@ export async function mount(el) {
       }
       else if (a === 'revise') {
         const ins = el.querySelector('#rv')?.value.trim(); if (!ins) return toast('Bitte schreibe, was sich ändern soll.', true);
-        if (cur.slides.some(x => x.type === 'photo')) return toast('Beiträge mit Foto-Folien kann der Assistent noch nicht überarbeiten. Ändere sie von Hand.', true);
+        if (cur.slides.some(x => x.type === 'photo' || x.type === 'screen')) return toast('Beiträge mit Foto- oder Handy-Folien kann der Assistent noch nicht überarbeiten. Ändere sie von Hand.', true);
         busy = 'ai'; draw();
         try {
           const before = JSON.stringify({ caption: cur.caption, slides: cur.slides });
@@ -261,7 +263,7 @@ export async function mount(el) {
     if (t.dataset.p === 'format') { cur.format = t.value; cur.image_urls = []; draw(); return; }
     if (t.dataset.r === 'secs') { reel.secs = +t.value; reel.blob = null; if (reel.url) URL.revokeObjectURL(reel.url); reel.url = ''; draw(); return; }
     if (t.dataset.r === 'audio') { reel.audio = t.files[0] || null; return; }
-    if (t.dataset.s === 'type' || t.dataset.s === 'theme' || t.dataset.s === 'photoKey') { cur.slides[sel][t.dataset.s] = t.value; if (t.dataset.s === 'photoKey') imgs.delete(sel); draw(); }
+    if (t.dataset.s === 'type' || t.dataset.s === 'theme' || t.dataset.s === 'photoKey' || t.dataset.s === 'scene') { cur.slides[sel][t.dataset.s] = t.value; if (t.dataset.s === 'photoKey') imgs.delete(sel); draw(); }
     if (t.id === 's-img' && t.files[0]) { const f = t.files[0]; createImageBitmap(f).then(bm => { imgs.set(sel, bm); paint(); }).catch(() => toast('Das Bild konnte nicht gelesen werden.', true)); }
   };
   await load(); status();

@@ -1,10 +1,11 @@
 /* Zeichnet Instagram-Folien (1080 x 1350) direkt auf ein Canvas. Keine Fremdbibliothek, Schriften kommen von der eigenen Domain. */
+import { drawPhone } from './scenes.js';
 export const W = 1080, H = 1350, PAD = 84;
 export const THEMES = {
   creme: { bg: '#F3EDE2', ink: '#1F1B16', muted: '#5E564C', gold: '#B8801F', chip: '#FBF8F1', line: '#DDD3C2', on: '#2E3B2F', onInk: '#F6F0E4' },
   gruen: { bg: '#2E3B2F', ink: '#F6F0E4', muted: '#C9D3BD', gold: '#D9A441', chip: '#3A4A3B', line: '#4B5E4C', on: '#D9A441', onInk: '#1F1B16' },
 };
-export const TYPES = { cover: 'Titel', chips: 'Auswahl (Chips)', quote: 'Zitat', photo: 'Foto', cta: 'Abschluss' };
+export const TYPES = { cover: 'Titel', chips: 'Auswahl (Chips)', quote: 'Zitat', photo: 'Foto', screen: 'App-Ansicht (Handy)', cta: 'Abschluss' };
 export const DISP = '"Instrument Serif", Georgia, serif', BODY = '"Schibsted Grotesk Variable", "Schibsted Grotesk", system-ui, sans-serif';
 
 export async function loadFonts() {
@@ -54,6 +55,8 @@ export function drawSlide(canvas, s, index, total, opts = {}) {
   const lw = ctx.measureText('wishtale').width;
   ctx.fillStyle = th.gold; ctx.beginPath(); ctx.arc(PAD + lw + 14, 134 + TOP, 7, 0, Math.PI * 2); ctx.fill();
   if (!tall && total > 1 && s.type !== 'cta') { ctx.fillStyle = th.muted; ctx.font = `500 30px ${BODY}`; ctx.textAlign = 'right'; ctx.fillText(`${index + 1} / ${total}`, W - PAD, 136); ctx.textAlign = 'left'; }
+
+  if (s.type === 'screen') { screenSlide(ctx, s, th, { H, TOP, BOT, tall, cw, last: index >= total - 1 }); return; }
 
   // Inhalt vorbereiten, damit er senkrecht mittig steht
   const blocks = [];
@@ -111,9 +114,22 @@ export function drawSlide(canvas, s, index, total, opts = {}) {
   if (!tall && index < total - 1) { ctx.strokeStyle = th.ink; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(W - PAD - 44, H - 106); ctx.lineTo(W - PAD, H - 106); ctx.moveTo(W - PAD - 16, H - 122); ctx.lineTo(W - PAD, H - 106); ctx.lineTo(W - PAD - 16, H - 90); ctx.stroke(); }
 }
 
+/** Folie mit App-Ansicht: Text oben, darunter ein Handy mit einer Szene aus scenes.js, das unten aus dem Bild läuft. */
+function screenSlide(ctx, s, th, { H, TOP, BOT, tall, cw, last }) {
+  let y = 200 + TOP;
+  const eyebrow = (s.eyebrow || '').toUpperCase();
+  if (eyebrow) { ctx.fillStyle = th.muted; ctx.font = `600 26px ${BODY}`; try { ctx.letterSpacing = '4px'; } catch { /* ältere Browser */ } ctx.fillText(eyebrow, PAD, y + 26); try { ctx.letterSpacing = '0px'; } catch { /* */ } y += 56; }
+  const t = fitTitle(ctx, s.title, cw, 3, tall ? 104 : 92, 56), tl = Math.round(t.size * 0.98);
+  ctx.fillStyle = th.ink; ctx.font = `400 ${t.size}px ${DISP}`; t.lines.forEach((l, i) => ctx.fillText(l, PAD, y + t.size * 0.82 + i * tl)); y += t.lines.length * tl;
+  if (s.sub) { ctx.font = `400 36px ${BODY}`; const sl = wrap(ctx, s.sub, cw).slice(0, 2); ctx.fillStyle = th.muted; sl.forEach((l, i) => ctx.fillText(l, PAD, y + 30 + 36 + i * 50)); y += 30 + sl.length * 50; }
+  const pw = tall ? 700 : 620, px = (W - pw) / 2, py = y + (tall ? 70 : 54);
+  drawPhone(ctx, s.scene, px, py, pw, H - BOT - py, H);
+  if (!tall && !last) { ctx.fillStyle = th.bg; ctx.beginPath(); ctx.arc(W - PAD - 22, H - 106, 40, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = th.ink; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(W - PAD - 44, H - 106); ctx.lineTo(W - PAD, H - 106); ctx.moveTo(W - PAD - 16, H - 122); ctx.lineTo(W - PAD, H - 106); ctx.lineTo(W - PAD - 16, H - 90); ctx.stroke(); }
+}
+
 export const blank = type => ({
   type, theme: type === 'cta' ? 'gruen' : 'creme', eyebrow: '', title: type === 'cta' ? 'Dein Wishtale wartet schon auf dich' : 'Neue Folie',
-  sub: '', quote: '', chips: [], handle: type === 'cta' ? '@wishtale.de' : '', domain: type === 'cta' ? 'wishtale.de' : '',
+  sub: '', quote: '', chips: [], scene: type === 'screen' ? 'liste' : '', handle: type === 'cta' ? '@wishtale.de' : '', domain: type === 'cta' ? 'wishtale.de' : '',
 });
 
 export const blob = (canvas, type = 'image/png', q) => new Promise(res => canvas.toBlob(res, type, q));

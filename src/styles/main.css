@@ -1628,7 +1628,7 @@ html:has(.scrim),html:has(.scrim) body{overflow:hidden}
   .wishsheet #wpane-eingeben .sheet-foot{margin-top:auto}
 }
 
-/* Landingpage (Dev 130, Jann): Beim Ankommen nur Wünsche, alles andere beim Scrollen oder aufgeklappt. Nur auf body.lp. */
+/* Landingpage (Dev 132, Jann): Beim Ankommen nur Wünsche, alles andere beim Scrollen oder aufgeklappt. Nur auf body.lp. */
 .lp{--sage:#E4EBDF;--sage-ink:#2D5A3B}
 .lp .lp-hero{padding:28px 0 44px;overflow:hidden}
 .lp .lp-hero-grid{display:grid;gap:32px;align-items:center}
@@ -1717,7 +1717,7 @@ html:has(.scrim),html:has(.scrim) body{overflow:hidden}
 /* Hauptnavigation der Landingpage (die App hat seit 075 keine, darum eigene Klasse) */
 .lp-nav{display:none}
 @media(min-width:960px){.lp-nav{display:flex;gap:2px;margin-left:28px}.lp-nav + .right{margin-left:auto}}
-/* 131 Nachtrag (Jann: „mehr akzentuieren“): tiefes Grün und Gold als Akzente, Rubriken mit Farbsymbol */
+/* 132 Nachtrag (Jann: „mehr akzentuieren“): tiefes Grün und Gold als Akzente, Rubriken mit Farbsymbol */
 .lp .lp-hero{background:radial-gradient(60% 70% at 85% 30%,#E3ECDD 0,transparent 70%),radial-gradient(40% 50% at 0% 100%,#F6E6BF 0,transparent 70%)}
 .lp .lp-hero h1 em{color:var(--gold)}
 .lp .lp-visual::before{background:#2E3B2F;inset:10% -10% -8% 14%;opacity:1}
@@ -1739,7 +1739,7 @@ html:has(.scrim),html:has(.scrim) body{overflow:hidden}
 @media(max-width:520px){.lp .lp-body{padding-left:0}.lp .lp-ic{width:44px;height:44px;border-radius:14px}}
 .lp .lp-end{background:#F6E6BF;border-top:0}
 .lp .lp-end h2 em{color:var(--gold)}
-/* 131 Nachtrag (Jann): Seitengrund heller als die Kopfzeile */
+/* 132 Nachtrag (Jann): Seitengrund heller als die Kopfzeile */
 body.lp{background:#FFFDFA}
 .lp .hdr{background:color-mix(in srgb,#F6F1E7 94%,transparent)}
 .lp .lp-visual .lp-note{background:#FFFDFA}
