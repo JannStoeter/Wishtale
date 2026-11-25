@@ -7,28 +7,9 @@ import { illustration } from './lib/art.js';
 
 document.querySelectorAll('.art[data-kind]').forEach(el=>el.insertAdjacentHTML('afterbegin',illustration(el.dataset.kind)));
 
-/* Vorführung im Einstieg: vier Ansichten, wechselt von selbst, lässt sich anhalten und per Tab wählen. */
-(function(){
-  const stage=document.getElementById('stage');if(!stage)return;
-  const scenes=[...stage.querySelectorAll('.vs')],tabs=[...stage.querySelectorAll('.stab')],typed=document.getElementById('typed'),live=document.getElementById('slive'),pause=document.getElementById('spause');
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let cur=0,timer=null,typer=null,paused=reduce,visible=true;
-  const full=typed?typed.dataset.full:'';
-  const type=()=>{if(!typed)return;clearInterval(typer);if(reduce){typed.textContent=full;return}typed.textContent='';let n=0;typer=setInterval(()=>{n++;typed.textContent=full.slice(0,n);if(n>=full.length)clearInterval(typer)},55)};
-  const show=(i,announce)=>{cur=(i+scenes.length)%scenes.length;scenes.forEach((s,k)=>s.classList.toggle('on',k===cur));tabs.forEach((t,k)=>{t.classList.toggle('on',k===cur);t.setAttribute('aria-pressed',k===cur)});if(scenes[cur].querySelector('#typed'))type();if(announce&&live)live.textContent=scenes[cur].dataset.label};
-  const stop=()=>{clearInterval(timer);timer=null};
-  const start=()=>{stop();if(paused||!visible||reduce)return;timer=setInterval(()=>show(cur+1),cur===0?6500:5500)};
-  const restart=()=>{stop();start()};
-  tabs.forEach(t=>t.addEventListener('click',()=>{show(+t.dataset.i,true);restart()}));
-  if(pause){pause.textContent=reduce?'Abspielen':'Anhalten';pause.addEventListener('click',()=>{paused=!paused;pause.textContent=paused?'Abspielen':'Anhalten';pause.setAttribute('aria-label',paused?'Vorführung abspielen':'Vorführung anhalten');if(paused)stop();else{show(cur+1,true);start()}})}
-  stage.addEventListener('focusin',()=>stop());stage.addEventListener('focusout',()=>start());
-  if('IntersectionObserver' in window)new IntersectionObserver(es=>{visible=es[0].isIntersecting;visible?start():stop()},{threshold:.2}).observe(stage);
-  type();start();
-})();
-
 /* Klebender Knopf am Handy: erscheint, sobald der Knopf im Einstieg aus dem Bild ist, und verschwindet beim Abschluss-Knopf. */
 (function(){
-  const bar=document.getElementById('stickycta'),hero=document.querySelector('.herocta'),end=document.querySelector('.cta');
+  const bar=document.getElementById('stickycta'),hero=document.querySelector('.herocta'),end=document.querySelector('.lp-end');
   if(!bar||!hero||!('IntersectionObserver' in window))return;
   let heroOut=false,endIn=false;
   const upd=()=>{const on=heroOut&&!endIn;bar.classList.toggle('show',on);bar.setAttribute('aria-hidden',on?'false':'true');bar.querySelector('a').tabIndex=on?0:-1};
@@ -46,6 +27,10 @@ if('IntersectionObserver' in window&&!matchMedia('(prefers-reduced-motion: reduc
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.35,rootMargin:'0px 0px -8% 0px'});
   steps.forEach(s=>io.observe(s));
 }else steps.forEach(s=>s.classList.add('in'));
+
+/* Rubriken: Ein Sprung auf einen Anker (#weihnachten, #kinder, #fragen …) klappt die passende Rubrik auf. */
+const openTarget=()=>{const id=decodeURIComponent(location.hash.slice(1));if(!id)return;let el;try{el=document.getElementById(id)}catch{return}if(!el)return;const d=el.closest('details');if(d&&!d.hidden){d.open=true;requestAnimationFrame(()=>el.scrollIntoView({block:'start'}))}};
+addEventListener('hashchange',openTarget);openTarget();
 
 /* Texte aus der Datenbank, und der Einstieg in den Bearbeitungsmodus (wird erst bei Bedarf geladen). */
 initContent();
@@ -71,6 +56,6 @@ import('./lib/track.js').then(({track,utmFromUrl})=>{
   for(const k of Object.keys(u))qs.set('utm_'+k,u[k]);
   document.querySelectorAll('a[href^="app/"]').forEach(a=>{
     if([...qs].length){const [path,hash='']=a.getAttribute('href').split('#');a.setAttribute('href',path+(path.includes('?')?'&':'?')+qs.toString()+(hash?'#'+hash:''))}
-    a.addEventListener('click',()=>track('cta',{label:(a.closest('header')?'kopfzeile':a.closest('.hero')?'start':a.closest('section')?.id||'seite')+':'+(a.getAttribute('href').split('#')[1]||'app')}));
+    a.addEventListener('click',()=>track('cta',{label:(a.closest('header')?'kopfzeile':a.closest('.lp-hero')?'start':a.closest('section')?.id||'seite')+':'+(a.getAttribute('href').split('#')[1]||'app')}));
   });
 }).catch(()=>{});

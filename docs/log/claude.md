@@ -351,3 +351,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Tests, Bildschirmfotos Handy und Computer
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 131 · Landingpage, nur Wünsche im Fokus
+- Auftrag: Jann im Projekt-Chat („Beim Ankommen soll es nur um Wünsche gehen“), Nachtrag zu Sprungmarken bei Google
+- Geändert: index.html (Einstieg, Rubriken, Navigation, `alternateName`), src/landing.js (Vorführung raus, Rubriken per Anker), src/styles/main.css (Block `body.lp`), CLAUDE.md
+- Geprüft: ESLint, Build, Bildschirmfotos Handy und Computer
+- Datenbank und Dienste: keine (bestehende Textänderungen in `site_content` für schritte.p3/p4 bleiben gültig)
+- Zurücknehmen: Merge-Commit reverten
