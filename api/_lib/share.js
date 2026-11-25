@@ -14,6 +14,12 @@ export function shareText(p) {
   const name = String(p?.name || '').trim().slice(0, 40);
   const open = (p?.wishes || []).filter(w => !w.reserved && !w.bought && (w.status || 'offen') === 'offen').length;
   if (!name) return { title: 'Eine Wunschliste bei Wishtale', desc: 'Schau dir die Wünsche an und reserviere still einen davon, die Überraschung bleibt.' };
+  if (p.occasion) { // Liste für einen Anlass (Dev 009): der Name der Liste ist der Titel
+    return {
+      title: name,
+      desc: open ? `Auf dieser Liste ${open === 1 ? 'steht ein Wunsch' : `stehen ${open} Wünsche`}. Reserviere still einen davon, damit nichts doppelt kommt.` : 'Schau dir die Wünsche an und reserviere still einen davon.',
+    };
+  }
   return {
     title: `${gen(name)} Wunschliste`,
     desc: open

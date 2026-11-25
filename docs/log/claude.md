@@ -271,6 +271,50 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Zurücknehmen: Merge-Commit reverten
 
 
+## 2026-11-25 · 123 · Fragen und Antworten nach Wishbob-Analyse
+- Auftrag: Jann im Projekt („zieh dir mal aus dem chat Wishbob Seitenanalyse alle infos und lass uns an den Verbesserungen arbeiten“)
+- Geändert: index.html (Abschnitt `#fragen` mit Schlüsseln `faq.*`, Kopfzeile `nav.nav3`, `nav.nav4`, `FAQPage` im JSON-LD), ratgeber/wunschzettel-kinder.html und ratgeber/wunschzettel-weihnachten.html (Häufige Fragen mit `FAQPage`), src/styles/main.css (`.faq-*`), CLAUDE.md
+- Warum: Wishbob hat auf jeder Anlass-Seite Fragen und Antworten, Wishtale hatte keine; hilft Suchmaschinen und Menschen, die vor der Anmeldung zögern
+- Geprüft: ESLint, Build, Tests, Bildschirmfotos (Desktop, iPhone)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 124 · Wunschdialog schlank
+- Auftrag: Jann im Projekt-Chat („in allem minimalistischer werden und weniger Text und das Wünsche hinzufügen verbessern“, Wishbob-Suche ohne Seitenwechsel)
+- Geändert: src/views/modals.js (ein Feld für Name oder Link mit Lupe, Link-Zeile erst mit Link, Knöpfe Liste einlesen, Amazon-Suche, Aus dem Shop, Art unter Mehr Angaben, Euro-Zeichen), src/actions.js (Link-Zeile einblenden), src/lib/util.js (Symbole camera, store), src/lib/guide.js, src/styles/main.css (`.wq`, `.wl-row`, `.wq-chip`, `.eur`), Dev 124, Dev 009 (claude-2.md)
+- Geprüft: ESLint, Build, Tests, Bildschirmfotos Handy und Computer im Demo
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 124 · Wunschdialog mit Ideen, Suchen und Eingeben
+- Auftrag: Jann im Projekt-Chat („also erstmal würde ich das interface Ideen / Wunsch suchen / Wunsch eingeben übernehmen“), Quelle „Websuche jetzt, Amazon später“
+- Geändert: src/views/wishadd.js (neu: Reiter, Suchfeld und Treffer, eigene Ideen mit „Habe ich schon“, „Erfülle ich mir selbst“, „Passt nicht“), src/views/modals.js, src/actions.js (`wdtab`, `wsown`, `wsadd`, `aiplan`, Suche `runSearch`, Pfeiltasten), src/main.js (geteilte Links und erster Wunsch starten bei „Eingeben“), src/lib/wishimg.js (`searchProducts`), api/inspect.js (op `searchQuery`, Tagesgrenze `guardSearch`), api/_lib/imgsearch.js (`searchProducts`), src/styles/main.css, datenschutz.html (Abschnitt 11, Produktsuche)
+- Warum: Wünsche finden, ohne die Seite zu verlassen; Bilder laufen über den eigenen Server, Treffer werden nicht gespeichert
+- Geprüft: ESLint, Build, `npm test` (26 Tests), Bildschirmfotos Handy und Computer im Demo mit nachgestellten Treffern (die echte Suche braucht Konto und BRAVE_SEARCH_API_KEY)
+- Datenbank und Dienste: keine neue Tabelle, Brave wie bisher
+- Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 125 · Ratgeber Geburtstag und Kindergeburtstag
+- Auftrag: Jann im Projekt-Chat („Die Landingpage bekommt Aus Vorschlag A Seiten mit Tipps“)
+- Geändert: ratgeber/wunschliste-geburtstag.html, ratgeber/kindergeburtstag-wunschliste.html (neu, Article, Breadcrumb und FAQPage im JSON-LD), ratgeber/index.html (Karten), Fußzeilen aller Ratgeber-Seiten, index.html (Fußzeile mit neuen Schlüsseln `footer.rg6`, `footer.rg7`), public/sitemap.xml, vite.config.js
+- Geprüft: Build, Bildschirmfotos am Handy
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 126 · Anmelden mit Google
+- Auftrag: Jann im Projekt-Chat („Wir aktivieren Anmelden über Google.. Apple lassen wir noch zurück“)
+- Geändert: src/lib/auth.js (`signInGoogle`, `googleOn`, `viaOAuth`, UTM-Kürzel über `wishtale:utm`), src/lib/remote.js (bei Google nur der Vorname fürs Profil), src/views/auth.js (Knopf und Trenner), src/actions.js (`google`), src/main.js (Knopf erst, wenn Google in Supabase an ist; passende Begrüßung), src/styles/main.css (`.gbtn`, `.auth-or`), datenschutz.html (Abschnitt 3 und 7)
+- Geprüft: ESLint, Build, Tests, Bildschirmfoto der Registrierung am Handy; der echte Ablauf braucht die Einrichtung bei Google und Supabase
+- Datenbank und Dienste: Google als Anmeldeanbieter in Supabase (Einrichtung durch Jann)
+- Zurücknehmen: Anbieter in Supabase ausschalten, dann verschwindet der Knopf
+
+## 2026-11-25 · 009 · Listen für besondere Anlässe
+- Auftrag: Jann im Projekt-Chat („Wir bauen eine Listenfunktion für besondere Anlässe, legen Sie aber in der Sidebar ab damit sie nicht im Fokus steht“)
+- Geändert: supabase/migrations/0032_occasion_lists.sql (neu, `occasion`, `occasion_date`, `public_profile`), src/views/occasion.js (neu), src/lib/remote.js (Abbildung, `deleteProfile`), src/views/menu.js (Gruppe „Besondere Anlässe“), src/views/modals.js, src/views/wishes.js, src/views/giver.js, src/views/wishadd.js (kein Reiter „Ideen“), src/render.js (keine Ideen laden), src/actions.js (`occnew`, `occedit`, `occdel`, Formular `occlist`), api/_lib/share.js (Vorschau mit Listennamen), src/styles/main.css, datenschutz.html (Abschnitt 3)
+- Geprüft: ESLint, Build, Tests, Bildschirmfotos im Demo (Anlegen, Liste, Menü, Gastansicht)
+- Datenbank und Dienste: Migration 0032 nach Janns Freigabe eingespielt (2026-11-25)
+- Zurücknehmen: Merge-Commit reverten; die Spalten können bleiben
+
 ## 2026-11-25 · 114 · Nachtrag 4: Modell prüft jedes gefundene Bild
 - Auftrag: Jann im Projekt-Thread („noch falsch“, Hue Taster statt Bewegungsmelder)
 - Geändert: api/_lib/imgsearch.js (`seesProduct`, `lookFor`, Blick in `searchImage`, `searchOfficialImage`, `imageForWish`), api/inspect.js (`imageQuery` mit Blick), src/lib/imgfill.js (`img-tried5`), datenschutz.html (Abschnitt 11), tests/imgsearch.test.mjs, CLAUDE.md

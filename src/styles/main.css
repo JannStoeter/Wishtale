@@ -1480,3 +1480,116 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .ss-bm{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1.5px dashed var(--accent);color:var(--ink);background:var(--surface);font-weight:600;text-decoration:none;cursor:grab}
 .ss-bm:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .fw-alt.ss-alt{margin-top:-4px}
+
+/* Fragen und Antworten (Startseite und Ratgeber): ruhige Aufklapp-Liste, links Überschrift, rechts die Fragen. */
+.faq-grid{display:grid;gap:28px}
+.faq-intro h2{margin:12px 0 14px;max-width:520px}
+.faq-intro a{color:var(--ink)}
+.faq-list{border-top:1px solid var(--line)}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:56px;padding:16px 0;font-weight:600;font-size:17px;line-height:1.35}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:'';flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231F1B16' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E") center/16px no-repeat;transition:transform .2s ease,background-color .2s ease}
+.faq-item[open] summary::after{transform:rotate(45deg);background-color:var(--bg)}
+.faq-item summary:hover::after{border-color:var(--ink)}
+.faq-item summary:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.faq-item p{margin:0 0 20px;max-width:640px;color:var(--muted);font-size:16px;line-height:1.6}
+.faq-more{display:inline-block;margin-left:2px;color:var(--ink);font-weight:500}
+.guide .faq-list{margin:6px 0 10px}
+.guide .faq-item p{margin-top:0}
+@media (min-width:900px){.faq-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:start}.faq-intro{position:sticky;top:92px}}
+@media (prefers-reduced-motion:reduce){.faq-item summary::after{transition:none}}
+
+/* Wunschdialog schlank (123): ein Suchfeld für Name oder Link, Link-Zeile erst bei Bedarf, Zusatzwege als kleine Knöpfe, Preis mit Euro-Zeichen. */
+.wishsheet form{display:grid;gap:0}
+.wq{position:relative;margin-bottom:12px}
+.wq-ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;display:flex}
+.wq-ic .ico{width:20px;height:20px}
+.inp.wq-inp{padding:16px 16px 16px 46px;font-size:17px;border-radius:16px;background:var(--surface);border-width:1.5px}
+.inp.wq-inp:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--ink) 8%,transparent)}
+.wl-row{position:relative;margin:-2px 0 12px}
+.wl-ic{position:absolute;left:14px;top:21px;transform:translateY(-50%);color:var(--muted);display:flex;pointer-events:none}
+.inp.wl-inp{padding:10px 12px 10px 38px;font-size:14.5px;border-radius:12px;background:transparent;color:var(--muted)}
+.wl-row[hidden]{display:none}
+.wishsheet #wlstat{font-size:13px;line-height:1.45;margin:6px 2px 0;color:var(--muted)}
+.wishsheet #wlstat:empty{display:none}
+.wq-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.wq-chip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 13px;border:1px solid var(--line);border-radius:99px;background:var(--surface);font-size:13.5px;font-weight:500;color:var(--ink);white-space:nowrap;transition:border-color .15s,background-color .15s}
+.wq-chip .ico{color:var(--muted)}
+.wq-chip:hover{border-color:var(--ink)}
+.wq-chip:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wishsheet .f-price,.wishsheet .f-budget{max-width:220px;margin-bottom:6px}
+.wishsheet .f-price label,.wishsheet .f-budget label{font-size:13.5px;font-weight:600}
+.wishsheet .f-price .muted{font-weight:400}
+.eur{position:relative}
+.eur .inp{padding-right:34px}
+.eur span{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.wishsheet .wmore summary{font-weight:500;color:var(--muted);font-size:14.5px}
+.wishsheet .wmore summary:hover{color:var(--ink)}
+.wishsheet #wprev .wr-card,.wishsheet #wprev .wr-alts{margin-top:0}
+.wishsheet #wprev .wr-hint{margin:-4px 2px 12px}
+@media (max-width:420px){.wq-chips{flex-wrap:nowrap}.wq-chip{padding:0 11px;font-size:13px}.wq-chip .ico{display:none}}
+
+/* Wunschdialog mit drei Reitern (124): helle, ruhige Fläche, Reiter als Segmentleiste */
+.wtabs{display:flex;gap:4px;padding:4px;margin:2px 0 16px;background:#F1ECE2;border-radius:99px}
+.wtab{flex:1;min-height:40px;border:0;border-radius:99px;background:none;font:inherit;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;transition:background-color .15s,color .15s,box-shadow .15s}
+.wtab:hover{color:var(--ink)}
+.wtab.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(31,27,22,.08),0 0 0 1px rgba(31,27,22,.05)}
+.wtab:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wpane[hidden]{display:none}
+.wishsheet form.ws-form,.ws-form{position:relative;display:flex;gap:8px;align-items:center}
+.ws-form .wq-ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;display:flex}
+.inp.wq-inp,.inp.big.wq-inp{padding-left:42px}
+.ws-form .inp{flex:1;min-width:0}
+.ws-go{flex:none;min-height:48px}
+#wsres{margin-top:14px}
+.ws-note{margin:6px 2px 10px;font-size:14px;line-height:1.5;color:var(--muted)}
+.ws-fine{margin:10px 2px 0;font-size:12px;color:var(--muted)}
+.ws-list,.wi-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ws-item,.wi-item{display:flex;gap:12px;align-items:center;padding:10px;background:#fff;border:1px solid var(--line);border-radius:14px}
+.wi-item{align-items:flex-start}
+.ws-thumb{flex:none;width:56px;height:56px;border-radius:10px;overflow:hidden;background:#F6F2EA;display:grid;place-items:center}
+.ws-thumb img{width:100%;height:100%;object-fit:contain;background:#fff}
+.ws-thumb .art{width:100%;height:100%;display:grid;place-items:center;border-radius:0}
+.ws-body{flex:1;min-width:0;display:grid;gap:2px}
+.ws-body b{font-weight:500;font-size:14.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ws-body small{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-price{color:var(--ink);font-weight:600}
+.wi-why{font-size:13px;line-height:1.45;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wi-acts{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;color:var(--line)}
+.ws-add{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}
+.ws-add:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.ws-add:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.ws-add[disabled]{opacity:.6;cursor:default}
+.ws-own{display:flex;align-items:center;gap:8px;width:100%;margin-top:10px;padding:12px 14px;border:1px dashed var(--line);border-radius:14px;background:none;font:inherit;font-size:14px;color:var(--ink);text-align:left;cursor:pointer}
+.ws-own:hover{border-color:var(--ink)}
+.ws-own span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws-amz{margin:10px 2px 0;font-size:13px;color:var(--muted)}
+.ws-amz a{color:var(--ink)}
+.ws-load{display:flex;align-items:center;gap:10px;margin:4px 2px 12px;font-size:14px;color:var(--muted)}
+.ws-skel{display:grid;gap:8px}
+.ws-skel div{height:76px;border-radius:14px;background:linear-gradient(90deg,#F3EEE5 0%,#FBF8F2 50%,#F3EEE5 100%);background-size:200% 100%;animation:wsskel 1.4s ease-in-out infinite}
+@keyframes wsskel{from{background-position:100% 0}to{background-position:-100% 0}}
+@media (prefers-reduced-motion:reduce){.ws-skel div{animation:none}}
+@media (max-width:420px){.ws-go{padding:0 14px}.ws-thumb{width:48px;height:48px}}
+
+/* Anmelden mit Google (Jann 2026-11-25): heller Knopf nach den Vorgaben von Google, darunter die E-Mail-Variante */
+.btn.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1F1F1F;border:1px solid #D6D0C4;font-weight:500}
+.btn.gbtn:hover{background:#F8F6F1;border-color:#BDB5A6}
+.auth-or{display:flex;align-items:center;gap:12px;margin:14px 0;font-size:13px;color:var(--muted)}
+.auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* Listen für besondere Anlässe (Dev 009) */
+.occ-intro{font-size:14.5px;line-height:1.5;margin:0 0 14px}
+.occ-pick{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.occ-opt{position:relative}
+.occ-opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.occ-opt span{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border:1px solid var(--line);border-radius:99px;background:#fff;font-size:14px;color:var(--ink);transition:border-color .15s,background-color .15s}
+.occ-opt input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.occ-opt input:focus-visible+span{outline:3px solid var(--ink);outline-offset:2px}
+.occ-del{margin:14px 0 0;text-align:center}
+.occ-del .linkbtn{color:var(--warn)}
+.occ-head{cursor:default}
+fieldset.fld{border:0;padding:0;margin:0 0 14px;min-width:0}
+fieldset.fld legend{padding:0;margin-bottom:2px;font-size:13px;font-weight:600;color:var(--muted)}
+.occ-pick .occ-opt{font-size:14px;font-weight:400}
