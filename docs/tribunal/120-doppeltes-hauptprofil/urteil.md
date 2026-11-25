@@ -3,7 +3,7 @@ topic: 120-doppeltes-hauptprofil
 status: entschieden
 option: auftrag
 datum: 2026-11-25
-umgesetzt: OFFEN
+umgesetzt: 2d40c4830a36051cf1d049d45dd7ef1464aae8b0
 ---
 **Jann im Projekt** meldet die tote Kopie als Grund für die versehentliche Löschung (siehe 119).
 
