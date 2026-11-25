@@ -118,7 +118,7 @@ Stand: 2026-11-25
 | 131 | Instagram-Erklärserie | **Jann im Projekt:** „baue gute reels und Posts und Storys die wir direkt über unser cms raushauen können“. Folienart „App-Ansicht“ mit gezeichnetem Handy, elf fertige Ideen im Instagram-Studio. | ja, `55a7c24` |
 | 132 | Landingpage, nur Wünsche im Fokus | **Jann im Projekt:** „Beim Ankommen soll es nur um Wünsche gehen… alles andere beim Scrollen oder auf Click zu Rubriken“. Einstieg mit einem Knopf und Beispielliste, Rest als Rubriken, Hauptnavigation am Computer. | ja, `d77d966` |
 | 009 | Listen für besondere Anlässe | **Jann im Projekt:** Option A als eigene Funktion, aber im Menü statt im Fokus; Wünsche werden nicht getaggt, die eigene Liste bleibt der Kern. | ja, `5348918` (Migration 0032 eingespielt) |
-| 116 | Wünsche aus anderen Shops | **Jann im Projekt-Thread: Option A bauen und das Menü aufräumen.** Kurzbefehl am iPhone, Lesezeichen-Knopf am Rechner, neues Fenster „Aus jedem Shop speichern“, Menü neu gruppiert. Browser-Erweiterung und Store-App offen. | ja, `cbaabc4` |
+| 116 | Wünsche aus anderen Shops | **Jann im Projekt-Thread: Option A bauen und das Menü aufräumen.** Kurzbefehl am iPhone, Lesezeichen-Knopf am Rechner, neues Fenster „Aus jedem Shop speichern“, Menü neu gruppiert. Nachtrag: Hinweis am Computer und Chrome-Erweiterung (`extension/`), Store-Konto offen. Store-App offen. | ja, `cbaabc4` |
 
 ## Offen (noch kein Urteil)
 Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann entscheidet auf der Entwickler-Seite, ob er dazu Meinungen möchte.

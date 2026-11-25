@@ -29,12 +29,15 @@ function soloParent() {
   if (!z) { const id = m.dbId; S.ui.mgm[id] = { loading: true }; managersOf(id).then(d => { S.ui.mgm[id] = { data: d }; window.dispatchEvent(new Event('wishtale:tips')); }).catch(() => { S.ui.mgm[id] = { data: null }; }); return false; }
   return !!(z.data && z.data.is_owner && !z.data.member);
 }
+/* Lesezeichen-Knopf (Dev 116): nur am Computer mit Maus, nie auf Handy oder Tablet. */
+const bigScreen = () => { try { return matchMedia('(min-width: 900px) and (pointer: fine)').matches && !/iphone|ipad|android/i.test(navigator.userAgent || ''); } catch { return false; } };
 const openCount = () => (S.me?.wishes || []).filter(w => w.status === 'offen' || w.status === 'plan').length;
 
 const RULES = [
   { id: 'kids', where: 'own', when: () => ownAdult() && !hasKids() && (S.me.wishes || []).some(kidLike) },
   { id: 'coparent', where: 'own', when: soloParent },
   { id: 'share', where: 'own', when: () => S.auth.user && !S.ui.preview && !!S.me?.handle && openCount() >= 3 && !sharedOnce() },
+  { id: 'bookmark', where: 'own', when: () => !S.ui.preview && bigScreen() && (S.me?.wishes || []).length >= 2 },
   { id: 'guestown', where: 'guest', when: () => !S.auth.user && (guestPerson()?.wishes || []).some(w => w.res === 'me') },
 ];
 /** Der passende Hinweis für diesen Moment oder null. */

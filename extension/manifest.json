@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Wishtale – Wünsche aus jedem Shop",
+  "short_name": "Wishtale",
+  "version": "1.0.0",
+  "description": "Speichere Produkte aus jedem Onlineshop mit einem Klick auf deiner Wishtale-Wunschliste.",
+  "homepage_url": "https://wishtale.de",
+  "permissions": ["activeTab"],
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_title": "Zu Wishtale",
+    "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" }
+  },
+  "icons": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" }
+}
