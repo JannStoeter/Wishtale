@@ -234,3 +234,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Nachtrag Symbol statt leerer Fläche (Jann, Screenshot): api/_lib/match.js (`modelCode`, `lc`, Cache `match4`), api/_lib/imgsearch.js (Deal-Seiten raus, Bild der Erkennung zuerst), src/lib/imgfill.js (nur bei sicherer Erkennung oder fester Marke, Feld `marke` in der Erkennung), src/lib/wishimg.js (`isBlank`), src/views/card.js (Symbol bei Ladefehler), 18 Tests
 - Nachtrag 2: src/lib/wishimg.js (`isBlank` vergleicht mit der Eckfarbe, weiße Produkte bleiben), src/lib/imgfill.js (`wishtale:img-tried3`), src/views/wishmodal.js (`OttoLine`, Otto neben Amazon), src/styles/main.css (`.also-shop`); geprüft mit Lint, Build, 19 Tests und einem Browser-Test der Leer-Prüfung
 - Nachtrag 3: api/_lib/imgsearch.js (`fits()` verlangt das Produktwort, Marke allein reicht nie, `OTHER` für andere Produkte derselben Marke, Prüfung gegen Wunsch und erkannten Namen), api/inspect.js (`q`, `brand`, Titel im Log), src/lib/imgfill.js (`wishtale:img-tried4`), 21 Tests; falsches Hue-Bild in der Datenbank entfernt
+
+## 2026-11-24 · 115 · Auffindbarkeit bei Google
+- Auftrag: Jann im Projekt-Chat („Werden wir trotzdem gefunden?“)
+- Geändert: vercel.json (`X-Robots-Tag` für giftlyapp.vercel.app, `/app/…`, `/w/…`), index.html (Open Graph vollständig, Teilen-Bild 1200×630, JSON-LD), impressum.html, datenschutz.html, barrierefreiheit.html (canonical, Fußzeilen ohne `.html`), src/views/shared.js und src/views/auth.js (Links ohne `.html`), CLAUDE.md
+- Warum: doppelte Inhalte auf der vercel.app-Adresse, Teilen-Bild im Hochformat, fehlende strukturierte Daten
+- Geprüft: ESLint, Build, Live-Abruf von robots.txt, Sitemap, /w/jonas und giftlyapp.vercel.app über Vercel
+- Datenbank und Dienste: keine
+- Zurücknehmen: Commit reverten
+- Offen: Google Search Console (Jann), Inhaltsseiten als Vorschlag
+- Nachtrag Ratgeber (Jann im Thread: „Baue die Seite so um das es passt! Also die Unterseiten“): ratgeber/index.html und vier Seiten, src/ratgeber.js, src/styles/main.css (`.guide`), vite.config.js (Eingänge), public/sitemap.xml, index.html (Fußzeile `footer.rg0`–`footer.rg4`, `weihnachten.rg`), Rechtsseiten (Link Ratgeber); geprüft mit ESLint, Build und Bildschirmfotos (iPhone 13, 1280 px, keine waagerechte Rolle)

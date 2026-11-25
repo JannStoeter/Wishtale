@@ -27,7 +27,7 @@ export function GuestHeader(){
 }
 
 /* Rechtliche Links, auf jeder Seite der App erreichbar. */
-export const LegalFoot=()=>`<footer class="foot appfoot"><div class="wrap"><nav aria-label="Rechtliches" class="footnav"><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a><a href="../barrierefreiheit.html">Barrierefreiheit</a></nav></div></footer>`;
+export const LegalFoot=()=>`<footer class="foot appfoot"><div class="wrap"><nav aria-label="Rechtliches" class="footnav"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/barrierefreiheit">Barrierefreiheit</a></nav></div></footer>`;
 
 export function LoginHeader(){
   return `<header class="hdr"><div class="wrap"><a class="mark" href="../" aria-label="wishtale, zur Startseite">wishtale<i></i></a></div></header>`;
