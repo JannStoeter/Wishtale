@@ -35,6 +35,139 @@ function productOptions() {
 }
 
 export const IDEAS = [
+  // ---- Erklär-Serie (Reels, Karussells, Storys mit App-Ansichten, damit man versteht, wie Wishtale funktioniert) ----
+  { id: 'r-erklaert', format: 'reel', group: 'Erklären', title: 'Reel: So funktioniert Wishtale', desc: 'Sechs Folien, rund 18 Sekunden: Wünsche sammeln, Link teilen, Gäste reservieren, und die Überraschung bleibt. Der beste Einstieg für neue Leute.', fields: [],
+    build: () => ({
+      title: 'Reel: So funktioniert Wishtale',
+      caption: `So funktioniert Wishtale: Du sammelst deine Wünsche an einem Ort und schickst einen Link an alle, die dir etwas schenken möchten. Wer schenkt, reserviert einen Wunsch, und du siehst nicht, was schon besorgt ist, damit es eine Überraschung bleibt.\n\nKostenlos und ohne App-Store, den Link findest du in der Bio.\n\n${TAGS} #wunschzettel #weihnachtsgeschenke`,
+      slides: [
+        S({ eyebrow: 'Kurz erklärt', title: 'So funktioniert Wishtale', sub: 'Eine Wunschliste, ein Link und Geschenke, die wirklich passen.' }),
+        S({ type: 'screen', scene: 'liste', eyebrow: 'Erstens', title: 'Du sammelst deine Wünsche an einem Ort' }),
+        S({ type: 'screen', scene: 'link', eyebrow: 'Zweitens', title: 'Du schickst einen Link an alle, die dir etwas schenken wollen' }),
+        S({ type: 'screen', scene: 'gast', eyebrow: 'Drittens', title: 'Wer schenken will, reserviert einen Wunsch, auch ohne Konto' }),
+        S({ type: 'screen', scene: 'eigen', eyebrow: 'Und du', title: 'Du siehst nicht, was schon besorgt ist' }),
+        cta('Leg deine Wunschliste an', 'Kostenlos, in wenigen Minuten, direkt im Browser.'),
+      ],
+    }) },
+  { id: 'r-reservieren', format: 'reel', group: 'Erklären', title: 'Reel: Schenken, ohne etwas zu verraten', desc: 'Zeigt das Reservieren aus Sicht der Gäste und warum die beschenkte Person nichts davon sieht.', fields: [['name', 'Name der beschenkten Person', 'Mia'], ['helper', 'Name der schenkenden Person', 'Lena']],
+    build: v => ({
+      title: 'Reel: Schenken, ohne etwas zu verraten',
+      caption: `${v.helper} öffnet ${gen(v.name)} Wunschliste, reserviert einen Wunsch, und alle anderen sehen, dass er vergeben ist. Nur ${v.name} sieht davon nichts, und am Geburtstag ist es trotzdem eine Überraschung.\n\nSo schenkt niemand doppelt und niemand muss heimlich in einer Gruppe nachfragen. Den Link findest du in der Bio.\n\n${TAGS} #geschenkideen #überraschung`,
+      slides: [
+        S({ eyebrow: 'Die Überraschung bleibt', title: 'Von einer Wunschliste schenken, ohne etwas zu verraten' }),
+        S({ type: 'screen', scene: 'gast', eyebrow: 'Der Link', title: `${v.helper} öffnet ${gen(v.name)} Link und sieht, was noch frei ist` }),
+        S({ type: 'screen', scene: 'reserviert', eyebrow: 'Reservieren', title: `${v.helper} reserviert, und für alle anderen ist der Wunsch vergeben` }),
+        S({ type: 'screen', scene: 'eigen', eyebrow: `Bei ${v.name}`, title: `${v.name} sieht davon nichts, und die Überraschung bleibt` }),
+        cta('Nie wieder doppelt schenken', 'Leg deine Wunschliste an und teile den Link.'),
+      ],
+    }) },
+  { id: 'r-kind', format: 'reel', group: 'Kinder', title: 'Reel: Eine Wunschliste für dein Kind', desc: 'Für Eltern bis Weihnachten: Kind-Konto, Wunschzettel abfotografieren, Link in den Familienchat. Zeigt kein echtes Kind.', fields: [['kind', 'Name des Kindes (Beispiel)', 'Emil']],
+    build: v => ({
+      title: 'Reel: Eine Wunschliste für dein Kind',
+      caption: `Der Wunschzettel klebt am Kühlschrank, und Oma fragt zum dritten Mal, was ${v.kind} sich wünscht? Mit Wishtale bekommt dein Kind eine eigene Wunschliste mit eigenem Link. Den gemalten Zettel fotografierst du einfach ab, und die Familie reserviert, ohne dass etwas doppelt kommt.\n\nDen Link findest du in der Bio.\n\n${TAGS} #wunschzettel #weihnachtenmitkindern #geschenkideenkinder #familienleben #mamaleben #papaleben`,
+      slides: [
+        S({ eyebrow: 'Für Eltern', title: 'Eine eigene Wunschliste für dein Kind', sub: 'Damit Oma, Opa und die Patentante nicht mehr raten müssen.' }),
+        S({ type: 'screen', scene: 'kind', eyebrow: 'Kind-Konto', title: 'Jedes Kind bekommt eine eigene Liste mit eigenem Link', sub: 'Du pflegst sie, und das zweite Elternteil kann mitverwalten.' }),
+        S({ type: 'screen', scene: 'zettel', eyebrow: 'Der Wunschzettel', title: 'Den gemalten Zettel fotografierst du einfach ab', sub: 'Wishtale macht daraus einzelne Wünsche, und du prüfst sie vor dem Speichern.' }),
+        S({ type: 'screen', scene: 'linkkind', eyebrow: 'Die Familie', title: 'Dann schickst du den Link in den Familienchat' }),
+        S({ eyebrow: 'Ohne Doppel', title: 'Wer etwas besorgt, reserviert es, und nichts kommt doppelt', sub: `Ihr Eltern seht, was reserviert ist, ${v.kind} nicht.` }),
+        cta('Weihnachten kann kommen', 'Leg die Wunschliste für dein Kind an, den Link findest du in der Bio.'),
+      ],
+    }) },
+  { id: 'r-speichern', format: 'reel', group: 'Erklären', title: 'Reel: Wünsche aus jedem Shop', desc: 'Link einfügen, und Name, Preis und Bild sind da, oder direkt in Wishtale suchen. Für Leute, die schon Wunschlisten in Shops haben.', fields: [],
+    build: () => ({
+      title: 'Reel: Wünsche aus jedem Shop',
+      caption: 'Du hast etwas Schönes entdeckt und willst es nicht vergessen? Kopier den Link in Wishtale, und Name, Preis und Bild sind sofort da. Oder du suchst direkt in Wishtale, und am Ende steht alles auf einer Liste, egal aus welchem Shop.\n\nDen Link findest du in der Bio.\n\n' + TAGS + ' #onlineshopping',
+      slides: [
+        S({ eyebrow: 'Kennst du das', title: 'Du siehst etwas Schönes und willst es nicht vergessen' }),
+        S({ type: 'screen', scene: 'eingeben', eyebrow: 'Mit Link', title: 'Link einfügen, und Name, Preis und Bild sind da' }),
+        S({ type: 'screen', scene: 'suche', eyebrow: 'Ohne Link', title: 'Oder du suchst direkt in Wishtale' }),
+        S({ type: 'screen', scene: 'liste', eyebrow: 'Am Ende', title: 'Alles steht auf einer Liste, egal aus welchem Shop' }),
+        cta('Eine Liste für alle deine Wünsche', 'Leg sie an und teile den Link mit deinen Liebsten.'),
+      ],
+    }) },
+  { id: 'k-schritte', group: 'Erklären', title: 'Karussell: In fünf Schritten zum Wishtale', desc: 'Sieben Folien mit Handy-Ansichten: eintragen, suchen, Geschmack, teilen, reservieren. Gut zum Anpinnen oben im Profil.', fields: [],
+    build: () => ({
+      title: 'In fünf Schritten zum Wishtale',
+      caption: 'So legst du dein Wishtale an: Wünsche eintragen oder suchen, kurz erzählen, was dir gefällt und was du schon hast, und den Link teilen. Wer dir etwas schenkt, reserviert, und du bekommst nichts doppelt.\n\nSpeichere dir den Beitrag, falls du später anfangen möchtest. Den Link findest du in der Bio.\n\n' + TAGS + ' #wunschzettel #anleitung',
+      slides: [
+        S({ eyebrow: 'Anleitung', title: 'In fünf Schritten zum eigenen Wishtale', sub: 'Wisch nach links, es dauert nur ein paar Minuten.' }),
+        S({ type: 'screen', scene: 'eingeben', eyebrow: 'Schritt 1', title: 'Trag deine Wünsche ein, mit Link oder ohne' }),
+        S({ type: 'screen', scene: 'suche', eyebrow: 'Schritt 2', title: 'Oder such sie direkt in Wishtale' }),
+        S({ type: 'screen', scene: 'geschmack', eyebrow: 'Schritt 3', title: 'Erzähl, was dir gefällt und was du schon hast' }),
+        S({ type: 'screen', scene: 'link', eyebrow: 'Schritt 4', title: 'Teile deinen Link, wo du möchtest' }),
+        S({ type: 'screen', scene: 'reserviert', eyebrow: 'Schritt 5', title: 'Deine Liebsten reservieren, und nichts kommt doppelt' }),
+        cta('Fang gleich an', 'Dein Wishtale ist kostenlos und in wenigen Minuten angelegt.'),
+      ],
+    }) },
+  { id: 'k-ideen', group: 'Erklären', title: 'Karussell: Wenn dir nichts einfällt', desc: 'Erklärt die Ideen von Wishtale: passend zum Geschmack, immer als Vorschlag erkennbar, nur was du übernimmst, landet auf der Liste.', fields: [],
+    build: () => ({
+      title: 'Wenn dir nichts einfällt',
+      caption: 'Was wünsche ich mir eigentlich? Wenn dir nichts einfällt, hat Wishtale Ideen, die zu dem passen, was du magst und was du schon hast. Sie stehen immer getrennt von deinen eigenen Wünschen, und auf deine Liste kommt nur, was du selbst übernimmst.\n\nDen Link findest du in der Bio.\n\n' + TAGS + ' #geschenkideen #wunschzettel',
+      slides: [
+        S({ eyebrow: 'Kennst du das', title: 'Was wünsche ich mir eigentlich?', sub: 'Die Frage kommt jedes Jahr, meistens kurz vor Weihnachten.' }),
+        S({ type: 'screen', scene: 'geschmack', eyebrow: 'Zuerst du', title: 'Du erzählst, was dir gefällt und was du schon hast' }),
+        S({ type: 'screen', scene: 'ideen', eyebrow: 'Dann Wishtale', title: 'Wishtale schlägt Ideen vor, die dazu passen', sub: 'Sie stehen getrennt von deinen Wünschen, damit nichts verwechselt wird.' }),
+        S({ type: 'chips', eyebrow: 'Du entscheidest', title: 'Nur was du übernimmst, landet auf deiner Liste', sub: 'Mit jeder Antwort lernt Wishtale deinen Geschmack ein bisschen besser kennen.', chips: ['*Auf meine Wunschliste', 'Habe ich schon', 'Passt nicht'] }),
+        cta('Lass dich inspirieren', 'Leg dein Wishtale an und schau, was zu dir passt.'),
+      ],
+    }) },
+  { id: 'k-gaeste', group: 'Erklären', title: 'Karussell: Du hast einen Wishtale-Link bekommen?', desc: 'Für die schenkende Seite, zum Beispiel Großeltern: Link öffnen, reservieren, kaufen, wo man möchte. Gut zum Weiterleiten.', fields: [],
+    build: () => ({
+      title: 'Du hast einen Wishtale-Link bekommen?',
+      caption: 'Jemand hat dir einen Wishtale-Link geschickt? Öffne ihn einfach, ein Konto brauchst du dafür nicht. Such dir einen Wunsch aus und tippe auf „Reservieren“, dann wissen alle anderen, dass er vergeben ist, und die beschenkte Person erfährt nichts davon.\n\nSchick den Beitrag gern an Oma, Opa und alle, die beim Schenken mitmachen.\n\n' + TAGS + ' #weihnachtsgeschenke #großeltern',
+      slides: [
+        S({ eyebrow: 'Für alle, die schenken', title: 'Du hast einen Wishtale-Link bekommen?', sub: 'So einfach geht es, auch ohne Konto.' }),
+        S({ type: 'screen', scene: 'link', eyebrow: 'Erstens', title: 'Tipp auf den Link, ein Konto brauchst du nicht' }),
+        S({ type: 'screen', scene: 'gast', eyebrow: 'Zweitens', title: 'Such dir einen Wunsch aus und tippe auf Reservieren' }),
+        S({ type: 'screen', scene: 'reserviert', eyebrow: 'Drittens', title: 'Für alle anderen ist der Wunsch jetzt vergeben', sub: 'Wer reserviert hat, sehen sie nicht.' }),
+        S({ eyebrow: 'Viertens', title: 'Kaufen kannst du, wo du möchtest', sub: 'Im Laden um die Ecke oder online, ganz wie es dir passt.' }),
+        cta('Und wenn du selbst Wünsche hast', 'Leg dein eigenes Wishtale an, den Link findest du in der Bio.'),
+      ],
+    }) },
+  { id: 'k-gruender', group: 'Hinter Wishtale', title: 'Karussell: Hinter Wishtale (Gründer)', desc: 'Persönlicher Beitrag, etwa jeder sechste. Die Felder sind Platzhalter, bitte in eigenen Worten füllen. Ein Foto von dir passt gut auf die erste Folie (Art „Foto“).',
+    fields: [['name', 'Dein Vorname', 'Jann'], ['warum', 'Warum es Wishtale gibt (ein, zwei Sätze, deine Worte)', 'Hier erzählst du in ein, zwei Sätzen, warum du Wishtale baust'], ['jetzt', 'Woran du gerade arbeitest', 'Hier steht, woran du gerade arbeitest']],
+    build: v => ({
+      title: 'Hinter Wishtale',
+      caption: `Hallo, ich bin ${v.name} und baue Wishtale. ${v.warum}\n\nSchreib mir gern, was dir fehlt oder was dich stört, ich lese mit.\n\n${TAGS} #gründer #startup #hinterdenkulissen`,
+      slides: [
+        S({ eyebrow: 'Hinter Wishtale', title: `Hallo, ich bin ${v.name} und baue Wishtale` }),
+        S({ eyebrow: 'Warum', title: 'Warum es Wishtale gibt', sub: v.warum }),
+        S({ eyebrow: 'Was mir wichtig ist', title: 'Deine Wünsche bleiben der Kern', sub: 'Vorschläge von Wishtale sind immer als Vorschlag erkennbar, und wer dir etwas schenkt, verrät dir nichts.' }),
+        S({ eyebrow: 'Gerade', title: 'Woran ich gerade arbeite', sub: v.jetzt }),
+        cta('Schreib mir, was dir fehlt', 'Per Nachricht hier auf Instagram oder über wishtale.de.'),
+      ],
+    }) },
+  { id: 's-erklaert', format: 'story', group: 'Erklären', title: 'Story-Folge: Kurz erklärt', desc: 'Fünf Stories hintereinander mit Handy-Ansichten. Einen Link-Sticker zu wishtale.de setzt du danach in der Instagram-App, das geht über die Schnittstelle nicht.', fields: [],
+    build: () => ({
+      title: 'Story: Kurz erklärt', caption: '',
+      slides: [
+        S({ eyebrow: 'Kurz erklärt', title: 'Weißt du schon, was du dir zu Weihnachten wünschst?', sub: 'Tipp weiter, wir zeigen dir, wie Wishtale funktioniert.' }),
+        S({ type: 'screen', scene: 'liste', eyebrow: 'Erstens', title: 'Du sammelst deine Wünsche' }),
+        S({ type: 'screen', scene: 'link', eyebrow: 'Zweitens', title: 'Du teilst einen Link' }),
+        S({ type: 'screen', scene: 'reserviert', eyebrow: 'Drittens', title: 'Deine Liebsten reservieren, und nichts kommt doppelt' }),
+        cta('Probier es aus', 'Den Link findest du in unserer Bio.'),
+      ],
+    }) },
+  { id: 's-kind', format: 'story', group: 'Kinder', title: 'Story-Folge: Wunschzettel fürs Kind', desc: 'Drei Stories für Eltern: Zettel abfotografieren, eigene Kinderliste, Link an die Familie.', fields: [],
+    build: () => ({
+      title: 'Story: Wunschzettel fürs Kind', caption: '',
+      slides: [
+        S({ type: 'screen', scene: 'zettel', eyebrow: 'Für Eltern', title: 'Den Wunschzettel einfach abfotografieren' }),
+        S({ type: 'screen', scene: 'kind', eyebrow: 'Kind-Konto', title: 'Daraus wird eine eigene Liste für dein Kind' }),
+        S({ type: 'screen', scene: 'linkkind', eyebrow: 'Die Familie', title: 'Und Oma und Opa wissen endlich, was passt' }),
+        cta('Weihnachten kann kommen', 'Den Link findest du in unserer Bio.'),
+      ],
+    }) },
+  { id: 's-doppelt', format: 'story', group: 'Erklären', title: 'Story: Schon mal doppelt bekommen?', desc: 'Eine Frage zum Mitmachen, dann die Lösung. Eine Umfrage oder ein Fragen-Sticker lässt sich danach in der Instagram-App ergänzen.', fields: [],
+    build: () => ({
+      title: 'Story: Schon mal doppelt bekommen?', caption: '',
+      slides: [
+        S({ eyebrow: 'Kurze Frage', title: 'Hast du schon einmal etwas doppelt geschenkt bekommen?', sub: 'Erzähl es uns gern per Nachricht.' }),
+        S({ type: 'screen', scene: 'reserviert', eyebrow: 'Mit Wishtale', title: 'Wer etwas besorgt, reserviert es, und alle anderen sehen das' }),
+        cta('So bleibt jedes Geschenk einmalig', 'Den Link findest du in unserer Bio.'),
+      ],
+    }) },
   { id: 'tale', title: 'So lebt dein Tale', desc: 'Die Geschichte von einer Person, ihrem Wishtale und einem Geschenk, das passt. Der Klassiker für den Einstieg.',
     fields: [['name', 'Name der Person', 'Jonas'], ['helper', 'Name der schenkenden Person', 'Lena'], ['interests', 'Interessen (mit Komma)', 'Kaffee brühen, Kochen, Einrichten'], ['brands', 'Marken (mit Komma)', 'Hario, Fellow'], ['wishes', 'Wünsche (mit Komma)', 'Handkaffeemühle, Wasserkocher, Kochkurs'], ['owned', 'Schon vorhanden (mit Komma)', 'Siebträgermaschine, Gusseisenpfanne'], ['pick', 'Das schenkt die Person', 'die Waage und den Kurs'], ['tale', 'Kleine Geschichte (Zitat)', 'liebt guten Kaffee. Für den perfekten Espresso nimmt sich die Person am Sonntag gern etwas mehr Zeit.']],
     build: v => ({
