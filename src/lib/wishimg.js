@@ -107,3 +107,13 @@ export async function findAmazonLink(query) {
   if (!r.ok) return null;
   return (await r.json().catch(() => ({}))).amazon || null;
 }
+
+/** Echter Preis zu einem Wunsch (eigener Shop-Link zuerst, sonst Hersteller- oder Shopseite), oder null. Nur Euro, nie geschätzt. */
+export async function fetchWishPrice(w) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return null;
+  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ priceFor: { t: String(w.t || '').slice(0, 120), q: String(w.q || '').slice(0, 120), brand: String(w.brand || '').slice(0, 40), link: String(w.link || '') } }), signal: AbortSignal.timeout(25000) });
+  if (r.status === 429) throw Object.assign(new Error('limit'), { limit: true });
+  const j = r.ok ? await r.json().catch(() => ({})) : {};
+  return j.price && j.price.price > 0 ? j.price : null;
+}

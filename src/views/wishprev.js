@@ -6,7 +6,8 @@
  *  found   – genau eine Karte „Das haben wir erkannt“ mit „Passt“ und „Nicht das Richtige“
  *  alts    – nach „Nicht das Richtige“: bis zu 4 anklickbare Alternativen
  *  none    – neutraler Hinweis (zum Beispiel Amazon-Link ohne lesbaren Namen)
- * Das Namensfeld wird nur nach einem Klick überschrieben.
+ * Das Namensfeld wird nur nach einem Klick überschrieben. Ausnahme: Was aus dem eigenen Link kommt, landet bei leerem Namensfeld
+ * von selbst darin (autoTake in src/actions.js, Jann 2026-11-25).
  */
 import { S } from '../state.js';
 import { esc, ic, money } from '../lib/util.js';
@@ -31,7 +32,7 @@ export function WishRec() {
   if (r.st === 'loading') return `<div class="wr-card wr-load scan" role="status" aria-live="polite"><span class="wr-thumb"><span class="wr-lens" aria-hidden="true"></span></span><span><b>Wishtale schaut, welches Produkt du meinst</b><span class="wr-steps" aria-hidden="true"><i>Name prüfen</i><i>Im Netz suchen</i><i>Titel, Preis und Bild vergleichen</i></span><small>Du kannst währenddessen weiter ausfüllen oder speichern.</small></span></div>`;
   if (r.st === 'found') {
     const k = r.cand;
-    if (r.accepted) return `<p class="wr-hint ok">${ic('check', 'sm')}Übernommen: ${esc(k.t)}${k.price ? `, ${money(k.price)}` : ''}. Du kannst alles noch ändern.</p>`;
+    if (r.accepted) return `<p class="wr-hint ok">${ic('check', 'sm')}${r.auto && k.src !== 'text' ? 'Aus deinem Link übernommen' : 'Übernommen'}: ${esc(k.t)}${k.price ? `, ${money(k.price)}` : ''}. Du kannst alles noch ändern.</p>`;
     return `<div class="wr-card" aria-live="polite"><span class="wr-thumb">${thumb(k.img, c, k.t)}</span>
      <span class="wr-body"><span class="eyebrow">Das haben wir erkannt${k.host ? ` · gefunden bei ${esc(k.host)}` : ''}</span><b>${esc(k.t)}</b>${k.price ? `<small>${k.est ? 'ca. ' : ''}${money(k.price)}${k.est ? ', üblicher Preis' : ''}</small>` : '<small>Preis noch offen</small>'}</span>
      <span class="wr-acts"><button type="button" class="btn pri sm" data-act="wraccept">Passt</button><button type="button" class="btn ghost sm" data-act="wrreject">Nicht das Richtige</button></span></div>`;

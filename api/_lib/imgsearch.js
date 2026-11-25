@@ -176,3 +176,35 @@ export async function pickWithModel(wish, items) {
     content: `Wunsch: ${JSON.stringify(wish)}\nAngebote:\n${list}` });
   try { const j = JSON.parse(String(r.text).replace(/^[^{]*/, '').replace(/[^}]*$/, '')); return Number.isInteger(j.nr) ? j.nr : null; } catch { return null; }
 }
+
+/* Preise (Jann, 2026-11-25): Nur echte Preise von Produktseiten, nie geschätzt. Lieber kein Preis als ein falscher. */
+const eur = p => (p && p.price && (!p.currency || p.currency === 'EUR') && p.price > 0 && p.price < 20000 ? Math.round(p.price * 100) / 100 : null);
+
+/**
+ * Preis zu einem Wunsch: Hat die Person einen eigenen Shop-Link gesetzt (nicht Amazon, das lesen wir nicht), gilt der Preis dieser Seite.
+ * Sonst die Hersteller- oder Shopseite aus der Websuche (ohne Marktplätze und Preisvergleiche), deren Titel eng zum Produkt passt
+ * (fits und mindestens 70 Prozent der Wörter). Nur Euro. Ohne sicheren Treffer null.
+ */
+export async function priceForWish({ t, q, brand, link } = {}, deps = {}) {
+  const read = deps.read || inspect;
+  if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
+    try { const p = await read(link); const price = eur(p); if (price) return { price, source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
+    if (!deps.searchAfterLink) return null; // der eigene Link hat Vorrang: hat die Seite keinen Preis, raten wir nicht über andere Seiten
+  }
+  const query = clean(q || t);
+  if (!query) return null;
+  const json = await webJson(query, deps);
+  if (!json) return null;
+  // Jede Angabe mit Ziffern (Modell, Größe, Menge) muss im Titel stehen: der Preis eines anderen Modells wäre falsch
+  const codes = ws => toks(ws).filter(w => /\d/.test(w));
+  const sameModel = (ws, title) => { const b = new Set(toks(title)); return codes(ws).every(w => b.has(w)); };
+  const check = title => sameModel(t || q, title) && (fits(t || q, title, '', brand) || (!!q && q !== t && fits(q, title, '', brand))) && Math.max(overlap(query, title), t ? overlap(t, title) : 0) >= 0.7;
+  const cands = pageCandidates(json, query);
+  const pages = await Promise.all(cands.map(c => Promise.race([read(c.url).catch(() => null), new Promise(r => setTimeout(() => r(null), 7000))]).then(p => (p ? { p, host: c.host } : null))));
+  for (const x of pages) {
+    if (!x || !x.p.title || !check(x.p.title)) continue;
+    const price = eur(x.p);
+    if (price) return { price, source: x.host, via: 'seite', title: String(x.p.title).slice(0, 80) };
+  }
+  return null;
+}
