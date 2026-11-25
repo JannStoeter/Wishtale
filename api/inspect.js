@@ -1,6 +1,6 @@
 import { requireUser, send, fail, HttpError } from './_lib/auth.js';
 import { inspect, fetchImage } from './_lib/inspect.js';
-import { findProductImage, amazonDirect, imageForWish, priceForWish, searchProducts } from './_lib/imgsearch.js';
+import { findProductImage, amazonDirect, imageForWish, priceForWish, searchProducts, lookFor } from './_lib/imgsearch.js';
 import { guardSearch } from './_lib/limits.js';
 
 const searchOn = () => !!process.env.BRAVE_SEARCH_API_KEY;
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       console.log('suche-wunsch', JSON.stringify({ treffer: results ? results.length : null }));
       return send(res, 200, { results });
     }
-    if (req.body?.imageQuery) return send(res, 200, { image: await findProductImage(req.body.imageQuery) }); // Bild per Websuche (nur mit Schlüssel), sonst null
+    if (req.body?.imageQuery) { const q = String(req.body.imageQuery).slice(0, 120), look = await lookFor(q); return send(res, 200, { image: look ? await findProductImage(q, { look, images: { look } }).catch(() => null) : null }); } // Bild per Websuche (nur mit Schlüssel), sonst null
     if (req.body?.imageFor) { // Bild zu einem gespeicherten Wunsch: eigener Shop-Link zuerst, dann Herstellerseite, dann Bildersuche
       const f = req.body.imageFor, t = String(f.t || '').slice(0, 120), q = String(f.q || '').slice(0, 120), brand = String(f.brand || '').slice(0, 40), link = String(f.link || '').slice(0, 1000), img = String(f.img || '').slice(0, 800);
       const image = await imageForWish({ t, q, brand, link, img }).catch(() => null);

@@ -314,3 +314,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Tests, Bildschirmfotos im Demo (Anlegen, Liste, Menü, Gastansicht)
 - Datenbank und Dienste: Migration 0032 nach Janns Freigabe eingespielt (2026-11-25)
 - Zurücknehmen: Merge-Commit reverten; die Spalten können bleiben
+
+## 2026-11-25 · 114 · Nachtrag 4: Modell prüft jedes gefundene Bild
+- Auftrag: Jann im Projekt-Thread („noch falsch“, Hue Taster statt Bewegungsmelder)
+- Geändert: api/_lib/imgsearch.js (`seesProduct`, `lookFor`, Blick in `searchImage`, `searchOfficialImage`, `imageForWish`), api/inspect.js (`imageQuery` mit Blick), src/lib/imgfill.js (`img-tried5`), datenschutz.html (Abschnitt 11), tests/imgsearch.test.mjs, CLAUDE.md
+- Warum: Ein passender Seitentitel garantiert nicht das passende Vorschaubild
+- Geprüft: ESLint, Build, 29 Tests
+- Datenbank und Dienste: falsches Bild am Hue-Wunsch entfernt, keine Migration
+- Zurücknehmen: Merge-Commit reverten
