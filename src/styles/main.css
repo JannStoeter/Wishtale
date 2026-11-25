@@ -1739,3 +1739,7 @@ html:has(.scrim),html:has(.scrim) body{overflow:hidden}
 @media(max-width:520px){.lp .lp-body{padding-left:0}.lp .lp-ic{width:44px;height:44px;border-radius:14px}}
 .lp .lp-end{background:#F6E6BF;border-top:0}
 .lp .lp-end h2 em{color:var(--gold)}
+/* 131 Nachtrag (Jann): Seitengrund heller als die Kopfzeile */
+body.lp{background:#FFFDFA}
+.lp .hdr{background:color-mix(in srgb,#F6F1E7 94%,transparent)}
+.lp .lp-visual .lp-note{background:#FFFDFA}
