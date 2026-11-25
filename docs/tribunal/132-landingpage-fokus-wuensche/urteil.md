@@ -3,7 +3,7 @@ topic: 132-landingpage-fokus-wuensche
 status: entschieden
 option: umsetzen
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: d77d966
 ---
 **Jann im Projekt:** Beim Ankommen nur Wünsche, alles andere beim Scrollen oder per Klick in Rubriken.
 
