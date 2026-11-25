@@ -3,7 +3,7 @@ topic: 130-menue-aufraeumen
 status: entschieden
 option: umsetzen
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: 871f5a3
 ---
 **Jann im Projekt:** Die Profile kommen im Menü nach oben, der Rest wird geclustert.
 
