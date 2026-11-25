@@ -278,3 +278,12 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Tests, Bildschirmfotos iPhone 13 (Konten-Fenster, Lösch-Fenster mit falscher Adresse)
 - Datenbank und Dienste: keine
 - Zurücknehmen: Commit reverten
+
+## 2026-11-25 · 120 · Doppeltes Hauptprofil
+- Auftrag: Jann im Projekt (Alex sah zwei Konten, löschte das vermeintlich leere und traf das eigene Konto)
+- Befund: zwei Konten mit je einer leeren zweiten Hauptprofil-Kopie, angelegt rund 100 ms nach dem ersten
+- Geändert: src/lib/remote.js (`firstProfile`, `createFirst`, `syncAccount` nimmt vorhandenes Hauptprofil), supabase/migrations/0032_one_main_profile.sql
+- Geprüft: ESLint, Build, Tests
+- Datenbank und Dienste: Migration 0032 (löscht nur leere Doppel, eindeutiger Index), Einspielen nach Janns Okay
+- Zurücknehmen: Commit reverten, `drop index profiles_one_main_per_owner`
+- Außerdem: Alex' Konto aus der Nachtsicherung (Hilfsprojekt) zurückgeholt, ohne Wunschbild und ohne den Wunsch von 06:14 Uhr
