@@ -3,7 +3,7 @@ topic: 127-suche-bei-amazon-und-otto
 status: entschieden
 option: umsetzen
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: f7a92999436594acbb6557da6e6ed4a2a6944f14
 ---
 **Jann im Projekt:** „Bei „Wunsch hinzufügen“ bitte default auf „Eingeben“ starten […] Amazon oder Otto als Auswahl oder so“.
 

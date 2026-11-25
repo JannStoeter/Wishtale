@@ -111,7 +111,7 @@ Stand: 2026-11-25
 | 124 | Wunschdialog schlank, mit Ideen, Suchen und Eingeben | **Jann im Projekt:** Reiter „Ideen / Wunsch suchen / Wunsch eingeben“ für die eigene Liste, Ideen behalten „Habe ich schon“, „Erfülle ich mir selbst“, „Passt nicht“. Quelle der Suche: Websuche jetzt, Amazon und Otto später (Option D). | ja, `76765ff` |
 | 125 | Ratgeber Geburtstag und Kindergeburtstag | **Jann im Projekt:** „Die Landingpage bekommt aus Vorschlag A Seiten mit Tipps.“ | ja, `f40c682` |
 | 126 | Anmelden mit Google | **Jann im Projekt:** Google aktivieren, Apple später. Knopf erscheint, sobald Google in Supabase eingeschaltet ist. | ja, `fa2b519` (Einrichtung bei Google und Supabase offen) |
-| 127 | Suche bei Amazon oder Otto, Start bei „Eingeben“ | **Jann im Projekt:** „Bei „Wunsch hinzufügen“ bitte default auf „Eingeben“ starten […] Amazon oder Otto als Auswahl oder so“. Amazon ohne Bild und Preis (Partnerregeln), Otto mit beidem. | offen |
+| 127 | Suche bei Amazon oder Otto, Start bei „Eingeben“ | **Jann im Projekt:** „Bei „Wunsch hinzufügen“ bitte default auf „Eingeben“ starten […] Amazon oder Otto als Auswahl oder so“. Amazon ohne Bild und Preis (Partnerregeln), Otto mit beidem. | ja, `f7a9299` |
 | 009 | Listen für besondere Anlässe | **Jann im Projekt:** Option A als eigene Funktion, aber im Menü statt im Fokus; Wünsche werden nicht getaggt, die eigene Liste bleibt der Kern. | ja, `5348918` (Migration 0032 eingespielt) |
 | 116 | Wünsche aus anderen Shops | **Jann im Projekt-Thread: Option A bauen und das Menü aufräumen.** Kurzbefehl am iPhone, Lesezeichen-Knopf am Rechner, neues Fenster „Aus jedem Shop speichern“, Menü neu gruppiert. Browser-Erweiterung und Store-App offen. | ja, `cbaabc4` |
 
