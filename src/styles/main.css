@@ -1468,3 +1468,15 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .guide-card:hover{border-color:var(--ink)}.guide-card h2{margin:0 0 6px;font-size:24px;color:var(--ink)}.guide-card p{margin:0;font-size:15.5px}
 @media (min-width:900px){.guide-shot{float:right;margin:0 0 18px 32px}}
 .umzug{margin:22px 0 0;max-width:700px;font-size:15.5px}
+
+/* 116: Aus jedem Shop speichern. */
+.shopsave .ss-sec{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.shopsave .ss-sec h3{margin:0 0 6px;font-size:18px}
+.shopsave .ss-sec p{margin:0 0 10px}
+.shopsave .ss-small{font-size:13.5px}
+.shopsave .ss-code{font-size:12.5px;word-break:break-all;background:color-mix(in srgb,var(--ink) 6%,transparent);padding:1px 5px;border-radius:5px}
+.shopsave .ss-more{margin-top:14px}
+.shopsave .ss-more summary{cursor:pointer;font-weight:600;padding:6px 0}
+.ss-bm{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1.5px dashed var(--accent);color:var(--ink);background:var(--surface);font-weight:600;text-decoration:none;cursor:grab}
+.ss-bm:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.fw-alt.ss-alt{margin-top:-4px}
