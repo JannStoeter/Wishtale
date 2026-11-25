@@ -358,3 +358,9 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, alle neuen Ideen in Beitrag, Story und Reel mit Playwright gerendert und angesehen
 - Datenbank und Dienste: keine, nichts veröffentlicht
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 131 · Nachtrag: Kaufen im Shop für Gäste
+- Auftrag: Jann im Projekt-Chat („Bei Vorschau Gäste müssen wir eine slide haben dass es direkt im Shop gekauft werden kann“)
+- Geändert: src/admin/scenes.js (Szene `kaufen`: reservierter Wunsch mit „Bei Amazon ansehen“, „Bei Otto“, „Anzeige“), src/admin/ideas.js (`k-gaeste` und `r-reservieren` zeigen sie)
+- Geprüft: ESLint, Build, Folien gerendert und angesehen
+- Datenbank und Dienste: keine
