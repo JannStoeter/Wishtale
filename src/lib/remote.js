@@ -59,21 +59,32 @@ const rand = () => { const a = new Uint8Array(6); (globalThis.crypto || window.c
 const makeHandle = name => `${slug(name).padEnd(3, 'x')}-${rand()}`;
 
 /* ---------- Laden ---------- */
+// Erstes Profil nur einmal anlegen, auch wenn loadMine() kurz nacheinander zweimal läuft
+// (Anmeldung und Sitzungsereignis). Sonst entstand eine leere zweite „Hauptkonto“-Kopie (Dev 120).
+const creating = new Map();
+function firstProfile(user) {
+  if (!creating.has(user.id)) creating.set(user.id, createFirst(user).finally(() => creating.delete(user.id)));
+  return creating.get(user.id);
+}
+async function createFirst(user) {
+  const name = user.user_metadata?.full_name || (user.email || 'Ich').split('@')[0];
+  for (let i = 0; i < 4; i++) {
+    const { data, error: e } = await sb.from('profiles')
+      .insert({ owner_id: user.id, handle: makeHandle(name), name: name.slice(0, 60) }).select().single();
+    if (!e) return data;
+    if (e.code !== '23505') throw e;
+    // Doppelt: entweder das Kürzel ist vergeben oder ein anderer Aufruf hat das Hauptprofil schon angelegt (0032)
+    const { data: got } = await sb.from('profiles').select('*').eq('owner_id', user.id).eq('managed', false).order('created_at').limit(1);
+    if (got && got[0]) return got[0];
+  }
+  throw new Error('Profil konnte nicht angelegt werden.');
+}
+
 export async function loadMine(user) {
   const { data: profs, error } = await sb.from('profiles').select('*').eq('owner_id', user.id).order('created_at');
   if (error) throw error;
   let list = profs;
-  if (!list.length) {
-    const name = user.user_metadata?.full_name || (user.email || 'Ich').split('@')[0];
-    let created = null;
-    for (let i = 0; i < 4 && !created; i++) {
-      const { data, error: e } = await sb.from('profiles')
-        .insert({ owner_id: user.id, handle: makeHandle(name), name: name.slice(0, 60) }).select().single();
-      if (!e) created = data; else if (e.code !== '23505') throw e;
-    }
-    if (!created) throw new Error('Profil konnte nicht angelegt werden.');
-    list = [created];
-  }
+  if (!list.length) list = [await firstProfile(user)];
   // Kind-Konten, die jemand anderes angelegt hat und die dieses Konto als zweites Elternteil mitverwaltet (Dev 046)
   let sharedIds = new Set();
   try {
@@ -155,6 +166,10 @@ async function syncAccount(key, a) {
         owner_id: S.auth.user.id, handle: makeHandle(a.name), managed: !!a.managed, ...profileToRow(a),
       }).select().single();
       if (!error) { a.dbId = data.id; a.handle = data.handle; } else if (error.code !== '23505') throw error;
+      else if (!a.managed) { // Hauptprofil gibt es schon (0032): dorthin speichern statt eine Kopie anzulegen
+        const { data: got } = await sb.from('profiles').select('id,handle').eq('owner_id', S.auth.user.id).eq('managed', false).order('created_at').limit(1);
+        if (got && got[0]) { a.dbId = got[0].id; a.handle = got[0].handle; }
+      }
     }
     if (!a.dbId) throw new Error('Konto konnte nicht angelegt werden.');
     snaps[key] = { profile: j(profileToRow(a)), wishes: {}, gifts: {} };

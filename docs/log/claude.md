@@ -270,3 +270,20 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine Migration, Brave-Suchen zählen gegen `guardSearch`
 - Zurücknehmen: Merge-Commit reverten
 
+
+## 2026-11-25 · 119 · Konto löschen absichern
+- Auftrag: Jann im Projekt (Passwort-Mail für ein Konto kam nicht an, „Daran müssen wir arbeiten“)
+- Befund: Konto war eine Minute vorher über den Löschknopf neben „Passwort ändern“ gelöscht worden, Supabase verschickt für unbekannte Adressen nichts
+- Geändert: src/views/modals.js (`DelAcctModal`, eigener Bereich `.delzone`), src/actions.js (`delacct` öffnet Fenster, Formular `delacct` prüft die Adresse), src/styles/main.css
+- Geprüft: ESLint, Build, Tests, Bildschirmfotos iPhone 13 (Konten-Fenster, Lösch-Fenster mit falscher Adresse)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Commit reverten
+
+## 2026-11-25 · 120 · Doppeltes Hauptprofil
+- Auftrag: Jann im Projekt (Alex sah zwei Konten, löschte das vermeintlich leere und traf das eigene Konto)
+- Befund: zwei Konten mit je einer leeren zweiten Hauptprofil-Kopie, angelegt rund 100 ms nach dem ersten
+- Geändert: src/lib/remote.js (`firstProfile`, `createFirst`, `syncAccount` nimmt vorhandenes Hauptprofil), supabase/migrations/0032_one_main_profile.sql
+- Geprüft: ESLint, Build, Tests
+- Datenbank und Dienste: Migration 0032 (löscht nur leere Doppel, eindeutiger Index), Einspielen nach Janns Okay
+- Zurücknehmen: Commit reverten, `drop index profiles_one_main_per_owner`
+- Außerdem: Alex' Konto aus der Nachtsicherung (Hilfsprojekt) zurückgeholt, ohne Wunschbild und ohne den Wunsch von 06:14 Uhr
