@@ -3,7 +3,7 @@ topic: 117-gast-einladung-und-umzug
 status: entschieden
 option: Vorschläge 1 bis 4 umsetzen
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: 8edab0ca218dd01533e2a715f5c315bdeb590b5b
 ---
 **Jann im Thread:** „1-5 kannst du direkt bauen und mergen! … 1-4 schnell umsetzen“.
 
