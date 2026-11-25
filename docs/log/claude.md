@@ -364,3 +364,9 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geändert: src/admin/scenes.js (Szene `kaufen`: reservierter Wunsch mit „Bei Amazon ansehen“, „Bei Otto“, „Anzeige“), src/admin/ideas.js (`k-gaeste` und `r-reservieren` zeigen sie)
 - Geprüft: ESLint, Build, Folien gerendert und angesehen
 - Datenbank und Dienste: keine
+
+## 2026-11-25 · 131 · Nachtrag: CMS lädt nach Deploy neu
+- Auftrag: Jann (Bildschirmfoto „Importing a module script failed“ im Instagram-Studio nach dem Deploy)
+- Geändert: src/admin/main.js (fehlt ein Programmteil nach neuem Deploy, lädt das CMS einmal selbst neu, sonst Hinweis „Bitte lade die Seite neu“)
+- Geprüft: ESLint, Build
+- Datenbank und Dienste: keine
