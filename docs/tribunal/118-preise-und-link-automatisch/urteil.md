@@ -3,7 +3,7 @@ topic: 118-preise-und-link-automatisch
 status: entschieden
 option: auftrag
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: ee737d67c7c7fbe7690b554ac390f27c418aea88
 ---
 **Jann im Projekt:** „Man muss erst link einlesen dann speichern. Das muss automatisch gehen“ und Preise sollen direkt online kommen.
 
