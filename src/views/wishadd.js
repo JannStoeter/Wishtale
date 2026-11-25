@@ -64,7 +64,7 @@ export function SearchResults() {
     return `<ul class="ws-list">${list.map((x, i) => `<li class="ws-item"><span class="ws-thumb">${thumb(x.t, x.img && x.img.preview)}</span>
       <span class="ws-body"><a class="ws-t" href="${esc(partnerLink(x.url, 'suche'))}" target="_blank" rel="noopener noreferrer sponsored nofollow">${esc(x.t)}</a><small>${x.price ? `<span class="ws-price">${money(x.price)}</span> · ` : x.host === 'amazon.de' ? 'Preis bei Amazon · ' : ''}${esc(x.host)}</small></span>
       <button type="button" class="ws-add" data-act="wsadd" data-i="${i}" aria-label="${esc(x.t)} auf meine Wunschliste" ${z.adding === i ? 'disabled' : ''}>${z.adding === i ? '…' : ic('plus', 'sm')}</button></li>`).join('')}</ul>
-     <p class="ws-fine">${shop === 'amazon' ? 'Treffer von Amazon über die Websuche, das Bild sucht Wishtale nach dem Speichern.' : 'Treffer aus der Websuche, Preise laut Shop.'}</p>${own}${amz}`;
+     <p class="ws-fine">${shop === 'amazon' ? 'Treffer von Amazon über die Websuche. Die Bilder kommen von Hersteller- und Shopseiten, den aktuellen Preis siehst du bei Amazon.' : 'Treffer aus der Websuche, Preise laut Shop von heute, sie können sich ändern.'}</p>${own}${amz}`;
   }
   return `<p class="ws-note">Gib ein Produkt ein, zum Beispiel „Tonies Schlummerbande“, und such dir aus den Treffern das Richtige aus.</p>`;
 }

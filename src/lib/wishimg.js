@@ -130,7 +130,7 @@ export async function searchProducts(q, shop = '') {
   const out = await Promise.all(j.results.map(async x => {
     const base = { t: x.t, price: x.price, url: x.url, host: x.host, img: null };
     if (!x.image) return shop ? base : null; // Amazon liefert bewusst kein Bild (Partnerbedingungen), Otto manchmal nicht
-    try { const d = await downscale(`data:${x.image.type};base64,${x.image.data}`); if (d.blank) return shop ? base : null; return { ...base, img: { blob: d.blob, preview: d.preview, src: x.host } }; } catch { return shop ? base : null; }
+    try { const d = await downscale(`data:${x.image.type};base64,${x.image.data}`); if (d.blank) return shop ? base : null; return { ...base, img: { blob: d.blob, preview: d.preview, src: x.image.source || x.host } }; } catch { return shop ? base : null; }
   }));
   return out.filter(Boolean);
 }

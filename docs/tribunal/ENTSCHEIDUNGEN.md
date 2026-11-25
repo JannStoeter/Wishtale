@@ -112,6 +112,7 @@ Stand: 2026-11-25
 | 125 | Ratgeber Geburtstag und Kindergeburtstag | **Jann im Projekt:** „Die Landingpage bekommt aus Vorschlag A Seiten mit Tipps.“ | ja, `f40c682` |
 | 126 | Anmelden mit Google | **Jann im Projekt:** Google aktivieren, Apple später. Knopf erscheint, sobald Google in Supabase eingeschaltet ist. | ja, `fa2b519` (Einrichtung bei Google und Supabase offen) |
 | 127 | Suche bei Amazon oder Otto, Start bei „Eingeben“ | **Jann im Projekt:** „Bei „Wunsch hinzufügen“ bitte default auf „Eingeben“ starten […] Amazon oder Otto als Auswahl oder so“. Amazon ohne Bild und Preis (Partnerregeln), Otto mit beidem. | ja, `f7a9299` |
+| 128 | Bilder sofort, ehrliche Preise, Bilder und ganze Namen in der Suche | **Jann im Projekt:** „Bilder … erst zeitversetzt“, „der Preis … ist nicht gleich zu Amazon“, „in der Suche sind keine Bilder“, „Text … zu kurz“. Amazon-Bilder und -Preise erst mit der Creators API (10 Verkäufe in 30 Tagen). | offen |
 | 009 | Listen für besondere Anlässe | **Jann im Projekt:** Option A als eigene Funktion, aber im Menü statt im Fokus; Wünsche werden nicht getaggt, die eigene Liste bleibt der Kern. | ja, `5348918` (Migration 0032 eingespielt) |
 | 116 | Wünsche aus anderen Shops | **Jann im Projekt-Thread: Option A bauen und das Menü aufräumen.** Kurzbefehl am iPhone, Lesezeichen-Knopf am Rechner, neues Fenster „Aus jedem Shop speichern“, Menü neu gruppiert. Browser-Erweiterung und Store-App offen. | ja, `cbaabc4` |
 
