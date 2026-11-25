@@ -24,8 +24,9 @@ export default async function handler(req, res) {
     if (req.body?.searchQuery) { // Produktsuche im Wunschdialog (124): Treffer mit Name, Preis und Bild, nur zum Anzeigen
       const q = String(req.body.searchQuery).trim().slice(0, 120);
       if (q.length < 2) throw new HttpError(400, 'Bitte gib einen Suchbegriff ein.');
-      const results = await searchProducts(q).catch(() => []);
-      console.log('suche-wunsch', JSON.stringify({ treffer: results ? results.length : null }));
+      const shop = ['amazon', 'otto'].includes(req.body.shop) ? req.body.shop : '';
+      const results = await searchProducts(q, { shop }).catch(() => []);
+      console.log('suche-wunsch', JSON.stringify({ shop: shop || 'alle', treffer: results ? results.length : null }));
       return send(res, 200, { results });
     }
     if (req.body?.imageQuery) { const q = String(req.body.imageQuery).slice(0, 120), look = await lookFor(q); return send(res, 200, { image: look ? await findProductImage(q, { look, images: { look } }).catch(() => null) : null }); } // Bild per Websuche (nur mit Schlüssel), sonst null
