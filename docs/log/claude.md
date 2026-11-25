@@ -270,3 +270,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine Migration, Brave-Suchen zählen gegen `guardSearch`
 - Zurücknehmen: Merge-Commit reverten
 
+
+## 2026-11-25 · 119 · Fragen und Antworten nach Wishbob-Analyse
+- Auftrag: Jann im Projekt („zieh dir mal aus dem chat Wishbob Seitenanalyse alle infos und lass uns an den Verbesserungen arbeiten“)
+- Geändert: index.html (Abschnitt `#fragen` mit Schlüsseln `faq.*`, Kopfzeile `nav.nav3`, `nav.nav4`, `FAQPage` im JSON-LD), ratgeber/wunschzettel-kinder.html und ratgeber/wunschzettel-weihnachten.html (Häufige Fragen mit `FAQPage`), src/styles/main.css (`.faq-*`), CLAUDE.md
+- Warum: Wishbob hat auf jeder Anlass-Seite Fragen und Antworten, Wishtale hatte keine; hilft Suchmaschinen und Menschen, die vor der Anmeldung zögern
+- Geprüft: ESLint, Build, Tests, Bildschirmfotos (Desktop, iPhone)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
