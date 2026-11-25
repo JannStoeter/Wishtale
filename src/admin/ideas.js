@@ -35,6 +35,126 @@ function productOptions() {
 }
 
 export const IDEAS = [
+  // ---- Kinder bis Weihnachten (Plan „Wishtale für Kinder“, Säulen: So geht’s, Familien-Alltag, Ideen nach Alter, Hinter Wishtale; keine echten Kinder zeigen) ----
+  { id: 'r-kind-anlegen', format: 'reel', group: 'Kinder', title: 'Reel: Wunschliste fürs Kind in wenigen Minuten', desc: 'Säule „So geht’s“: Kind-Konto anlegen, Wünsche eintragen, Link an die Familie, Oma reserviert. Highlight „So geht’s“.', fields: [['kind', 'Name des Kindes (Beispiel)', 'Emil']],
+    build: v => ({
+      title: 'Reel: Wunschliste fürs Kind anlegen',
+      caption: `So legst du die Wunschliste für dein Kind an: ein Kind-Konto mit Geburtsdatum, ein paar Wünsche und ein Link für die ganze Familie. Oma, Opa und die Paten reservieren ohne eigenes Konto, und ${v.kind} bekommt von allem nichts mit.\n\nKostenlos, den Link findest du in der Bio.\n\n${TAGS} #wunschzettel #weihnachtenmitkindern #geschenkideenkinder #familienleben #mamaleben`,
+      slides: [
+        S({ eyebrow: 'So geht’s', title: 'So legst du die Wunschliste für dein Kind an', sub: 'Es dauert nur ein paar Minuten.' }),
+        S({ type: 'screen', scene: 'kind', eyebrow: 'Erstens', title: 'Ein Kind-Konto mit eigener Liste und eigenem Link' }),
+        S({ type: 'screen', scene: 'zettel', eyebrow: 'Zweitens', title: 'Wünsche eintragen oder den Wunschzettel abfotografieren' }),
+        S({ type: 'screen', scene: 'linkkind', eyebrow: 'Drittens', title: 'Den Link in den Familienchat schicken' }),
+        S({ type: 'screen', scene: 'kreserviert', eyebrow: 'Fertig', title: 'Die Familie reserviert, und nichts kommt doppelt' }),
+        cta('Weihnachten kann kommen', 'Leg die Wunschliste für dein Kind an, den Link findest du in der Bio.'),
+      ],
+    }) },
+  { id: 'k-oma', group: 'Kinder', title: 'Karussell: Was Oma sieht, wenn du ihr den Link schickst', desc: 'Säule „So geht’s“ für die schenkende Familie: Link öffnen, über das Kind lesen, reservieren, im Shop kaufen. Auch als Story-Folge für das Highlight „Für Großeltern“.', fields: [['kind', 'Name des Kindes (Beispiel)', 'Emil']],
+    build: v => ({
+      title: 'Was Oma sieht, wenn du ihr den Link schickst',
+      caption: `So sieht die Wunschliste für Oma und Opa aus: Sie tippen auf den Link, lesen, was ${v.kind} gerade mag und schon hat, und reservieren einen Wunsch ohne eigenes Konto. Gekauft wird danach direkt im Shop oder im Laden um die Ecke, und für alle anderen ist der Wunsch dann vergeben.\n\nSchick den Beitrag gern an alle, die deinem Kind etwas schenken.\n\n${TAGS} #großeltern #weihnachtsgeschenke #geschenkideenkinder #wunschzettel`,
+      slides: [
+        S({ eyebrow: 'Für Großeltern', title: 'Was Oma sieht, wenn du ihr den Link schickst' }),
+        S({ type: 'screen', scene: 'kgast', eyebrow: 'Der Link', title: `Oma tippt auf den Link und sieht ${gen(v.kind)} Wünsche`, sub: 'Ein Konto braucht sie dafür nicht.' }),
+        S({ type: 'screen', scene: 'kinfo', eyebrow: `Über ${v.kind}`, title: `Dazu steht, was ${v.kind} mag, schon hat und lieber nicht bekommt` }),
+        S({ type: 'screen', scene: 'kreserviert', eyebrow: 'Reservieren', title: 'Ein Tipp auf Reservieren, und niemand schenkt dasselbe' }),
+        S({ type: 'screen', scene: 'kkaufen', eyebrow: 'Kaufen', title: 'Gekauft wird direkt im Shop oder im Laden um die Ecke' }),
+        cta('Ein Link für die ganze Familie', 'Leg die Wunschliste für dein Kind an, den Link findest du in der Bio.'),
+      ],
+    }) },
+  { id: 'r-puzzles', format: 'reel', group: 'Kinder', title: 'Reel: Drei Puzzles zum dritten Geburtstag', desc: 'Säule „Familien-Alltag“: eine kleine Geschichte zum Wiedererkennen, die Lösung in einem Satz. Gut zum Teilen.', fields: [],
+    build: () => ({
+      title: 'Reel: Drei Puzzles zum dritten Geburtstag',
+      caption: 'Zum dritten Geburtstag lagen drei Puzzles auf dem Tisch, und alle drei waren dasselbe. Mit einer Wunschliste, auf der man reserviert, wäre das nicht passiert, weil alle sehen, was schon vergeben ist.\n\nKennst du das? Erzähl es uns gern in den Kommentaren, und den Link zu Wishtale findest du in der Bio.\n\n' + TAGS + ' #kindergeburtstag #familienleben #mamaleben #papaleben',
+      slides: [
+        S({ eyebrow: 'Kennst du das', title: 'Drei Puzzles zum dritten Geburtstag, und alle drei waren dasselbe' }),
+        S({ eyebrow: 'Das Problem', title: 'Jeder fragt einzeln, und keiner weiß, was die anderen besorgen' }),
+        S({ type: 'screen', scene: 'kreserviert', eyebrow: 'Die Lösung', title: 'Mit Wishtale reserviert man, und alle sehen, was vergeben ist' }),
+        cta('Nie wieder doppelt schenken', 'Leg die Wunschliste für dein Kind an, den Link findest du in der Bio.'),
+      ],
+    }) },
+  { id: 'k-tante', group: 'Kinder', title: 'Karussell: Wenn die Tante fragt, was sich dein Kind wünscht', desc: 'Säule „Familien-Alltag“: Info-Welt mit Interessen, Größe, „Hat schon“ und „Lieber nicht“, damit auch Geschenke ohne Wunsch passen.', fields: [['kind', 'Name des Kindes (Beispiel)', 'Emil']],
+    build: v => ({
+      title: 'Wenn die Tante fragt, was sich dein Kind wünscht',
+      caption: `Die Tante fragt, was sich ${v.kind} wünscht, und du weißt es gerade selbst nicht so genau? In Wishtale steht neben den Wünschen auch, was ${v.kind} gerade mag, welche Größe ${v.kind} trägt, was schon da ist und was lieber nicht kommen soll. So passt auch ein Geschenk, das auf keiner Liste stand.\n\nDen Link findest du in der Bio.\n\n${TAGS} #geschenkideenkinder #familienleben #weihnachtenmitkindern`,
+      slides: [
+        S({ eyebrow: 'Familien-Alltag', title: 'Wenn die Tante fragt, was sich dein Kind wünscht, und du es selbst nicht weißt' }),
+        S({ type: 'screen', scene: 'kinfo', eyebrow: `Über ${v.kind}`, title: `Im Wishtale steht, was ${v.kind} gerade mag` }),
+        S({ type: 'chips', eyebrow: 'Dazu gehört', title: 'Auch was schon da ist und was lieber nicht kommen soll', sub: 'Viele Familien schreiben hier zum Beispiel Süßigkeiten oder viel Plastik hinein.', chips: ['*Interessen', 'Aktuelle Größe', 'Hat schon', 'Lieber nicht'] }),
+        S({ eyebrow: 'Das Ergebnis', title: 'So passt auch ein Geschenk, das auf keiner Liste stand' }),
+        cta('Ein Link, und alle wissen Bescheid', 'Leg die Wunschliste für dein Kind an, den Link findest du in der Bio.'),
+      ],
+    }) },
+  { id: 'r-zweit', format: 'reel', group: 'Kinder', title: 'Reel: Zu zweit eine Liste pflegen', desc: 'Säule „So geht’s“: das zweite Elternteil verwaltet mit, beide sehen, was reserviert ist. Highlight „Kind-Konto“.', fields: [['kind', 'Name des Kindes (Beispiel)', 'Emil']],
+    build: v => ({
+      title: 'Reel: Zu zweit eine Liste pflegen',
+      caption: `Ihr pflegt die Wunschliste für ${v.kind} zu zweit, und keiner kauft doppelt. Das zweite Elternteil bekommt einen Einladungslink, danach könnt ihr beide Wünsche eintragen und seht, was schon reserviert ist. ${v.kind} sieht davon nichts.\n\nDen Link findest du in der Bio.\n\n${TAGS} #elternsein #familienleben #weihnachtenmitkindern`,
+      slides: [
+        S({ eyebrow: 'Für Eltern', title: 'Ihr pflegt die Liste zu zweit, und keiner kauft doppelt' }),
+        S({ type: 'screen', scene: 'kind', eyebrow: 'Mitverwalten', title: 'Das zweite Elternteil verwaltet mit', sub: 'Die Einladung ist ein Link, den du selbst verschickst.' }),
+        S({ type: 'screen', scene: 'kreserviert', eyebrow: 'Ihr beide', title: 'Ihr seht beide, was reserviert ist', sub: `${v.kind} sieht es nicht.` }),
+        cta('Eine Liste für euch beide', 'Leg die Wunschliste für dein Kind an, den Link findest du in der Bio.'),
+      ],
+    }) },
+  { id: 'k-alter12', group: 'Kinder', title: 'Karussell: Ideen für 1- bis 2-Jährige', desc: 'Säule „Ideen nach Alter“, zum Speichern. Nur Arten von Spielzeug, keine Produkte und keine Links, darum ohne „Anzeige“. Ideen vor dem Posten selbst prüfen.', fields: [],
+    build: () => ({
+      title: 'Ideen für 1- bis 2-Jährige',
+      caption: 'Geschenke für Kinder zwischen einem und zwei Jahren, die nicht nach zwei Tagen in der Ecke liegen: Dinge zum Stapeln und Sortieren, feste Pappbilderbücher, etwas zum Schieben und Laufen, einfache Instrumente und Spielzeug für die Badewanne.\n\nSpeichere dir den Beitrag, und trag deine Favoriten in die Wunschliste deines Kindes ein. Den Link findest du in der Bio.\n\n' + TAGS + ' #geschenkideenkinder #kleinkind #spielideen #weihnachtenmitkindern',
+      slides: [
+        S({ eyebrow: 'Ideen nach Alter', title: 'Geschenke für 1- bis 2-Jährige, die nicht in der Ecke liegen', sub: 'Zum Speichern für die nächste Frage aus der Familie.' }),
+        S({ type: 'chips', eyebrow: 'Stapeln und Sortieren', title: 'Dinge, die man stapeln, stecken und wieder ausräumen kann', chips: ['*Stapelbecher', 'Steckwürfel', 'Holzpuzzle mit Knöpfen'] }),
+        S({ type: 'chips', eyebrow: 'Anschauen', title: 'Bilderbücher aus fester Pappe, die man auch anknabbern darf', chips: ['*Pappbilderbuch', 'Fühlbuch', 'Klappenbuch'] }),
+        S({ type: 'chips', eyebrow: 'Bewegen', title: 'Etwas zum Schieben, Ziehen und Laufen', chips: ['*Lauflernwagen', 'Nachziehtier', 'Rutschfahrzeug'] }),
+        S({ type: 'chips', eyebrow: 'Hören und Planschen', title: 'Einfache Instrumente und Spielzeug für die Badewanne', chips: ['*Rassel und Trommel', 'Xylophon', 'Badebecher'] }),
+        cta('Trag deine Favoriten ein', 'In der Wunschliste deines Kindes sieht die ganze Familie, was gewünscht ist.'),
+      ],
+    }) },
+  { id: 'k-alter4', group: 'Kinder', title: 'Karussell: Was Kinder mit vier wirklich bespielen', desc: 'Säule „Ideen nach Alter“: nach Spielart statt nach Marke, ohne Produkte und ohne Links. Ideen vor dem Posten selbst prüfen.', fields: [],
+    build: () => ({
+      title: 'Was Kinder mit vier wirklich bespielen',
+      caption: 'Mit vier wird gespielt, als wäre alles echt: Kaufladen, Verkleiden und Puppenküche, dazu Bauen, Malen und Basteln, die ersten einfachen Brettspiele und alles, was sich bewegt. Wer nach der Spielart schaut statt nach der Marke, findet leichter etwas, das lange bleibt.\n\nSpeichere dir den Beitrag, und trag deine Favoriten in die Wunschliste deines Kindes ein. Den Link findest du in der Bio.\n\n' + TAGS + ' #geschenkideenkinder #kindergartenkind #spielideen #weihnachtenmitkindern',
+      slides: [
+        S({ eyebrow: 'Ideen nach Alter', title: 'Was Kinder mit vier wirklich bespielen', sub: 'Nach Spielart sortiert, nicht nach Marke.' }),
+        S({ type: 'chips', eyebrow: 'So tun als ob', title: 'Rollenspiele, bei denen alles echt ist', chips: ['*Kaufladen', 'Verkleidungskiste', 'Kinderküche'] }),
+        S({ type: 'chips', eyebrow: 'Bauen', title: 'Etwas, das man immer wieder neu bauen kann', chips: ['*Bausteine', 'Murmelbahn', 'Holzeisenbahn'] }),
+        S({ type: 'chips', eyebrow: 'Malen und Basteln', title: 'Material für eigene kleine Werke', chips: ['*Malblock und Kreiden', 'Knete', 'Bastelset mit Perlen'] }),
+        S({ type: 'chips', eyebrow: 'Zusammen spielen', title: 'Die ersten Spiele für die ganze Familie', chips: ['*Erstes Brettspiel', 'Memo-Spiel', 'Laufrad oder Roller'] }),
+        cta('Trag deine Favoriten ein', 'In der Wunschliste deines Kindes sieht die ganze Familie, was gewünscht ist.'),
+      ],
+    }) },
+  { id: 'k-gebaut', group: 'Hinter Wishtale', title: 'Karussell: Ihr habt gefragt, ich habe es gebaut', desc: 'Säule „Hinter Wishtale“ (etwa jeder sechste Beitrag): eine neue Funktion und wer sie sich gewünscht hat. Felder in eigenen Worten füllen, nur echte Wünsche nennen.',
+    fields: [['name', 'Dein Vorname', 'Jann'], ['wunsch', 'Was sich jemand gewünscht hat (deine Worte)', 'Hier steht, was sich jemand gewünscht hat'], ['funktion', 'Was jetzt neu ist', 'Hier steht in einem Satz, was Wishtale jetzt kann'], ['scene', 'Handy-Ansicht (liste, kind, zettel, kgast, kkaufen, suche, ideen)', 'kkaufen']],
+    build: v => ({
+      title: 'Ihr habt gefragt, ich habe es gebaut',
+      caption: `Ihr habt gefragt, ich habe es gebaut. ${v.wunsch} ${v.funktion}\n\nWas fehlt dir noch? Schreib es mir gern per Nachricht, ich lese mit. ${v.name}\n\n${TAGS} #hinterdenkulissen #gründer #startup`,
+      slides: [
+        S({ eyebrow: 'Hinter Wishtale', title: 'Ihr habt gefragt, ich habe es gebaut', sub: `${v.name} erzählt, was neu ist.` }),
+        S({ eyebrow: 'Der Wunsch', title: v.wunsch }),
+        S({ type: 'screen', scene: v.scene || 'liste', eyebrow: 'Jetzt neu', title: v.funktion }),
+        cta('Was fehlt dir noch?', 'Schreib es mir gern per Nachricht.'),
+      ],
+    }) },
+  { id: 's-oma', format: 'story', group: 'Kinder', title: 'Story-Folge: Für Großeltern (Highlight)', desc: 'Vier Stories für das Highlight „Für Großeltern“, damit Eltern den Link mit genau dieser Erklärung weitergeben können.', fields: [],
+    build: () => ({
+      title: 'Story: Für Großeltern', caption: '',
+      slides: [
+        S({ type: 'screen', scene: 'kgast', eyebrow: 'Für Großeltern', title: 'Tipp auf den Link, ein Konto brauchst du nicht' }),
+        S({ type: 'screen', scene: 'kreserviert', eyebrow: 'Reservieren', title: 'Such dir einen Wunsch aus und reserviere ihn' }),
+        S({ type: 'screen', scene: 'kkaufen', eyebrow: 'Kaufen', title: 'Kaufen kannst du direkt im Shop oder im Laden' }),
+        cta('Das Kind erfährt davon nichts', 'Und alle anderen sehen, dass der Wunsch vergeben ist.'),
+      ],
+    }) },
+  { id: 's-fragen', format: 'story', group: 'Kinder', title: 'Story-Folge: Fragen (Highlight)', desc: 'Häufige Fragen für das Highlight „Fragen“, nur mit Funktionen, die es wirklich gibt.', fields: [],
+    build: () => ({
+      title: 'Story: Fragen', caption: '',
+      slides: [
+        S({ eyebrow: 'Fragen', title: 'Brauchen Oma und Opa ein Konto?', sub: 'Nein, sie öffnen den Link und reservieren ohne Konto.' }),
+        S({ eyebrow: 'Fragen', title: 'Sieht mein Kind, was reserviert ist?', sub: 'Nein. Ihr Eltern seht es, damit nichts doppelt kommt, das Kind nicht.' }),
+        S({ eyebrow: 'Fragen', title: 'Wer sieht die Liste meines Kindes?', sub: 'Nur wer den Link von dir bekommt. Einzelne Wünsche kannst du auch privat stellen.' }),
+        S({ eyebrow: 'Fragen', title: 'Kostet Wishtale etwas?', sub: 'Wunschliste, Link, Reservieren und Kind-Konten sind kostenlos.' }),
+        cta('Noch eine Frage?', 'Schreib uns gern per Nachricht.'),
+      ],
+    }) },
   // ---- Erklär-Serie (Reels, Karussells, Storys mit App-Ansichten, damit man versteht, wie Wishtale funktioniert) ----
   { id: 'r-erklaert', format: 'reel', group: 'Erklären', title: 'Reel: So funktioniert Wishtale', desc: 'Sechs Folien, rund 18 Sekunden: Wünsche sammeln, Link teilen, Gäste reservieren, und die Überraschung bleibt. Der beste Einstieg für neue Leute.', fields: [],
     build: () => ({

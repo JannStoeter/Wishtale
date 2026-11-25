@@ -49,6 +49,33 @@ export const SCENES = {
     r('Ein gutes Kochbuch', 'Bücher', 'book', 2, { btn: 'Reservieren' }),
     { k: 'toast', t: 'Mia sieht nicht, was reserviert ist' },
   ] },
+  kgast: { label: 'Kinderliste: was Oma sieht', avatar: 'U', blocks: [
+    { k: 'bar', guest: true }, { k: 'h', t: 'Emils Wunschliste', s: 'Emil wird 4 · Was frei ist, kannst du reservieren' },
+    r('Laufrad', 'ca. 70 €', 'bike', 1, { btn: 'Reservieren', hl: true }),
+    r('Dino-Bilderbuch', 'ca. 15 €', 'book', 2, { btn: 'Reservieren' }),
+    r('Holzeisenbahn', 'Reserviert von jemandem', 'blocks', 4, { badge: ['Reserviert', 'res'], dim: true }),
+    r('Kuscheltier Fuchs', 'ca. 20 €', 'teddy', 0, { btn: 'Reservieren' }),
+  ] },
+  kreserviert: { label: 'Kinderliste: Oma hat reserviert', avatar: 'U', blocks: [
+    { k: 'bar', guest: true }, { k: 'h', t: 'Emils Wunschliste', s: 'Du hast einen Wunsch reserviert' },
+    r('Laufrad', 'ca. 70 €', 'bike', 1, { badge: ['Von dir reserviert', 'mine'], hl: true }),
+    r('Dino-Bilderbuch', 'ca. 15 €', 'book', 2, { btn: 'Reservieren' }),
+    r('Holzeisenbahn', 'Reserviert von jemandem', 'blocks', 4, { badge: ['Reserviert', 'res'], dim: true }),
+    r('Kuscheltier Fuchs', 'ca. 20 €', 'teddy', 0, { btn: 'Reservieren' }),
+    { k: 'toast', t: 'Jetzt schenkt niemand dasselbe noch einmal' },
+  ] },
+  kkaufen: { label: 'Kinderliste: Oma kauft im Shop', avatar: 'U', blocks: [
+    { k: 'bar', guest: true }, { k: 'hero', g: 'bike', tone: 1 }, { k: 'h', t: 'Laufrad', s: 'Aus Emils Wunschliste · ca. 70 €' },
+    { k: 'banner', t: 'Du hast diesen Wunsch reserviert. Emil erfährt davon nichts.' },
+    { k: 'shopbtn', t: 'Bei Amazon ansehen', alt: 'Bei Otto' },
+    { k: 'small', t: 'Anzeige · oder in einem Laden deiner Wahl' },
+  ] },
+  kinfo: { label: 'Kinderliste: Über Emil', avatar: 'U', blocks: [
+    { k: 'bar', guest: true }, { k: 'h', t: 'Über Emil', s: 'Emil wird 4 und trägt zurzeit Größe 104' },
+    { k: 'label', t: 'Emil mag' }, { k: 'chips', items: ['*Dinos', 'Bauen', 'Malen', 'Fahrzeuge'] },
+    { k: 'label', t: 'Hat schon' }, { k: 'chips', items: ['Kinderfahrrad', 'Duplo-Kiste'] },
+    { k: 'label', t: 'Lieber nicht' }, { k: 'chips', items: ['Süßigkeiten', 'Viel Plastik'] },
+  ] },
   kaufen: { label: 'Gast kauft direkt im Shop', avatar: 'L', blocks: [
     { k: 'bar', guest: true }, { k: 'hero', g: 'mug', tone: 4 }, { k: 'h', t: 'Handkaffeemühle', s: 'Aus Mias Wunschliste · ca. 45 €' },
     { k: 'banner', t: 'Du hast diesen Wunsch reserviert. Mia erfährt davon nichts.' },
