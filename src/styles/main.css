@@ -999,18 +999,27 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 @keyframes drawerin{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
 @media(prefers-reduced-motion:reduce){.drawer{animation:none}}
 .drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
-.drawer-head .who{display:flex;gap:10px;align-items:center;min-width:0}
-.drawer-head .who>div{display:flex;flex-direction:column;min-width:0}
-.drawer-head .who span.muted{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mgrp{margin-top:16px}
-.mgrp h3{font:600 12px/1 var(--sans,inherit);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px 4px}
-.mgrp ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-.mi{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:8px 10px;border-radius:12px;text-align:left;font-size:16px;font-weight:500;color:var(--ink)}
-.mi:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
-.mi.on{background:color-mix(in srgb,var(--accent) 14%,transparent);font-weight:600}
-.mi .ico{width:22px;height:22px;flex:none}
-.mi small{display:block;font-weight:400;font-size:13px;color:var(--muted)}
-.mi .av{width:28px;height:28px;font-size:12px;flex:none}
+.drawer-head .mhead{display:flex;flex-direction:column;min-width:0;padding-left:4px}
+.drawer-head .mhead strong{font-family:var(--disp);font-size:20px;font-weight:500}
+.drawer-head .mhead span.muted{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mgrp{margin-top:14px}
+.mgrp h3{font:600 11px/1 var(--sans,inherit);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px 6px}
+.mgrp ul{list-style:none;margin:0;padding:4px;display:grid;gap:0;background:#fff;border:1px solid var(--line);border-radius:14px}
+.mi{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:7px 10px;border-radius:10px;text-align:left;font-size:15px;font-weight:500;color:var(--ink)}
+.mi>span:not(.av):not(.mcheck){flex:1;min-width:0}
+.mi:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.mi.on{background:color-mix(in srgb,var(--accent) 11%,transparent);font-weight:600}
+.mi .ico{width:20px;height:20px;flex:none;color:var(--muted)}
+.mi.on .ico{color:var(--ink)}
+.mi small{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
+.mi .av{width:30px;height:30px;font-size:13px;flex:none}
+.mi .av.occ{background:color-mix(in srgb,var(--gold) 16%,#fff);color:var(--gold)}
+.mi .av.occ .ico{width:15px;height:15px;color:inherit}
+.mi .mcheck{display:grid;color:var(--accent)}.mi .mcheck .ico{color:var(--accent)}
+.madd{display:flex;flex-wrap:wrap;gap:6px;margin:8px 2px 0}
+.madd-b{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;border:1px dashed var(--line);font-size:13px;color:var(--muted);background:transparent}
+.madd-b:hover{color:var(--ink);border-color:var(--muted)}
+.madd-b .ico{width:14px;height:14px}
 .tour-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:14px}
 .tour-list li{display:flex;gap:12px}
 .tour-list h3{font-size:19px;margin:0 0 2px}
