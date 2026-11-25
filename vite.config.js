@@ -39,6 +39,8 @@ export default defineConfig({
         landing: resolve(__dirname, 'index.html'), app: resolve(__dirname, 'app/index.html'), dev: resolve(__dirname, 'dev/index.html'),
         impressum: resolve(__dirname, 'impressum.html'), datenschutz: resolve(__dirname, 'datenschutz.html'), barrierefreiheit: resolve(__dirname, 'barrierefreiheit.html'),
         cms: resolve(__dirname, 'cms/index.html'),
+        ratgeber: resolve(__dirname, 'ratgeber/index.html'),
+        ...Object.fromEntries(['wunschliste-erstellen', 'wunschzettel-weihnachten', 'wunschzettel-kinder', 'geschenke-nicht-doppelt'].map(s => ['rg-' + s, resolve(__dirname, `ratgeber/${s}.html`)])),
       },
     },
   },

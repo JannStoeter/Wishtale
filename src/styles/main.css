@@ -1452,3 +1452,18 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .gown .row{margin-top:6px;flex-wrap:wrap}
 .gown-s{font-size:14px}
 @media(max-width:560px){.gown{padding:22px 16px}.gown .btn{width:100%;justify-content:center}}
+/* Ratgeberseiten (Dev 115) */
+.guide .lead{font-size:19px;line-height:1.55;color:var(--ink);margin:0 0 22px}
+.guide .crumbs{font-size:13px;color:var(--muted);margin:0 0 14px}.guide .crumbs a{color:var(--muted)}
+.guide h2{font-family:var(--disp);font-weight:400}
+.guide ol{padding-left:22px;margin:0 0 12px}.guide ol li{margin-bottom:10px}.guide ol b{display:block;margin-bottom:2px}
+.guide-shot{margin:8px auto 26px;max-width:240px;text-align:center}
+.guide-shot img{width:100%;height:auto;border-radius:22px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(31,27,22,.10);background:#fff}
+.guide-shot figcaption{font-size:12.5px;color:var(--muted);margin-top:8px}
+.guide-cta{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin:34px 0 22px}
+.guide-cta h2{margin-top:0}.guide-cta .row{margin-top:14px}
+.guide .guide-cta a.btn{text-decoration:none}
+.guide-list{margin-top:24px}
+.guide-card{display:block;text-decoration:none;color:inherit;transition:border-color .15s}
+.guide-card:hover{border-color:var(--ink)}.guide-card h2{margin:0 0 6px;font-size:24px;color:var(--ink)}.guide-card p{margin:0;font-size:15.5px}
+@media (min-width:900px){.guide-shot{float:right;margin:0 0 18px 32px}}
