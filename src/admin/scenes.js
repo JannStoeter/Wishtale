@@ -49,6 +49,12 @@ export const SCENES = {
     r('Ein gutes Kochbuch', 'Bücher', 'book', 2, { btn: 'Reservieren' }),
     { k: 'toast', t: 'Mia sieht nicht, was reserviert ist' },
   ] },
+  kaufen: { label: 'Gast kauft direkt im Shop', avatar: 'L', blocks: [
+    { k: 'bar', guest: true }, { k: 'hero', g: 'mug', tone: 4 }, { k: 'h', t: 'Handkaffeemühle', s: 'Aus Mias Wunschliste · ca. 45 €' },
+    { k: 'banner', t: 'Du hast diesen Wunsch reserviert. Mia erfährt davon nichts.' },
+    { k: 'shopbtn', t: 'Bei Amazon ansehen', alt: 'Bei Otto' },
+    { k: 'small', t: 'Anzeige · oder in einem Laden deiner Wahl' },
+  ] },
   eigen: { label: 'So sieht Mia die Liste danach', avatar: 'M', blocks: [
     { k: 'bar' }, { k: 'h', t: 'Mias Wunschliste', s: '5 offene Wünsche' },
     r('Handkaffeemühle', 'Küche', 'mug', 4, { right: 'ca. 45 €', hl: true }),
@@ -293,6 +299,28 @@ function drawBlock(ctx, b, x, y, w, sc) {
       font(ctx, `600 15px ${BODY}`); ctx.fillStyle = C.onGreen; ctx.textAlign = 'center'; ctx.fillText(b.t, x + w / 2, y + 33); ctx.textAlign = 'left';
       return H_OF.button;
     }
+    case 'hero': {
+      const [tb, tf] = TONE[(b.tone || 0) % TONE.length];
+      rr(ctx, x, y, w, 150, 18); ctx.fillStyle = tb; ctx.fill();
+      glyph(ctx, b.g, x + w / 2 - 36, y + 39, 72, tf);
+      return 166;
+    }
+    case 'banner': {
+      font(ctx, `500 13.5px ${BODY}`); const lines = wrapLines(ctx, b.t, w - 54), h = lines.length * 19 + 22;
+      rr(ctx, x, y, w, h, 14); ctx.fillStyle = BADGE.res[0]; ctx.fill();
+      ctx.strokeStyle = BADGE.res[1]; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(x + 14, y + h / 2); ctx.lineTo(x + 19, y + h / 2 + 5); ctx.lineTo(x + 28, y + h / 2 - 5); ctx.stroke();
+      ctx.fillStyle = BADGE.res[1]; lines.forEach((l, i) => ctx.fillText(l, x + 40, y + 25 + i * 19));
+      return h + 12;
+    }
+    case 'shopbtn': {
+      const aw = b.alt ? 104 : 0, mw = w - (aw ? aw + 8 : 0);
+      rr(ctx, x, y, mw, 44, 22); ctx.fillStyle = C.green; ctx.fill();
+      font(ctx, `600 15px ${BODY}`); ctx.fillStyle = C.onGreen; ctx.textAlign = 'center'; ctx.fillText(b.t, x + mw / 2, y + 27);
+      if (aw) { rr(ctx, x + mw + 8, y, aw, 44, 22); ctx.fillStyle = C.card; ctx.fill(); ctx.strokeStyle = C.green; ctx.lineWidth = 1.4; ctx.stroke(); ctx.fillStyle = C.green; ctx.fillText(b.alt, x + mw + 8 + aw / 2, y + 27); }
+      ctx.textAlign = 'left';
+      return 54;
+    }
+    case 'small': { font(ctx, `400 12px ${BODY}`); ctx.fillStyle = C.muted; ctx.textAlign = 'center'; ctx.fillText(b.t, x + w / 2, y + 14); ctx.textAlign = 'left'; return 26; }
     case 'gap': return b.h || 12;
     default: return 0;
   }

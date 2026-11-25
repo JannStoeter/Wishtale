@@ -52,11 +52,12 @@ export const IDEAS = [
   { id: 'r-reservieren', format: 'reel', group: 'Erklären', title: 'Reel: Schenken, ohne etwas zu verraten', desc: 'Zeigt das Reservieren aus Sicht der Gäste und warum die beschenkte Person nichts davon sieht.', fields: [['name', 'Name der beschenkten Person', 'Mia'], ['helper', 'Name der schenkenden Person', 'Lena']],
     build: v => ({
       title: 'Reel: Schenken, ohne etwas zu verraten',
-      caption: `${v.helper} öffnet ${gen(v.name)} Wunschliste, reserviert einen Wunsch, und alle anderen sehen, dass er vergeben ist. Nur ${v.name} sieht davon nichts, und am Geburtstag ist es trotzdem eine Überraschung.\n\nSo schenkt niemand doppelt und niemand muss heimlich in einer Gruppe nachfragen. Den Link findest du in der Bio.\n\n${TAGS} #geschenkideen #überraschung`,
+      caption: `${v.helper} öffnet ${gen(v.name)} Wunschliste, reserviert einen Wunsch, und alle anderen sehen, dass er vergeben ist. Gekauft ist er danach mit einem Tipp direkt im Shop, und nur ${v.name} sieht davon nichts, und am Geburtstag ist es trotzdem eine Überraschung.\n\nSo schenkt niemand doppelt und niemand muss heimlich in einer Gruppe nachfragen. Den Link findest du in der Bio.\n\n${TAGS} #geschenkideen #überraschung`,
       slides: [
         S({ eyebrow: 'Die Überraschung bleibt', title: 'Von einer Wunschliste schenken, ohne etwas zu verraten' }),
         S({ type: 'screen', scene: 'gast', eyebrow: 'Der Link', title: `${v.helper} öffnet ${gen(v.name)} Link und sieht, was noch frei ist` }),
         S({ type: 'screen', scene: 'reserviert', eyebrow: 'Reservieren', title: `${v.helper} reserviert, und für alle anderen ist der Wunsch vergeben` }),
+        S({ type: 'screen', scene: 'kaufen', eyebrow: 'Besorgen', title: `Danach kauft ${v.helper} direkt im Shop, mit einem Tipp` }),
         S({ type: 'screen', scene: 'eigen', eyebrow: `Bei ${v.name}`, title: `${v.name} sieht davon nichts, und die Überraschung bleibt` }),
         cta('Nie wieder doppelt schenken', 'Leg deine Wunschliste an und teile den Link.'),
       ],
@@ -115,13 +116,13 @@ export const IDEAS = [
   { id: 'k-gaeste', group: 'Erklären', title: 'Karussell: Du hast einen Wishtale-Link bekommen?', desc: 'Für die schenkende Seite, zum Beispiel Großeltern: Link öffnen, reservieren, kaufen, wo man möchte. Gut zum Weiterleiten.', fields: [],
     build: () => ({
       title: 'Du hast einen Wishtale-Link bekommen?',
-      caption: 'Jemand hat dir einen Wishtale-Link geschickt? Öffne ihn einfach, ein Konto brauchst du dafür nicht. Such dir einen Wunsch aus und tippe auf „Reservieren“, dann wissen alle anderen, dass er vergeben ist, und die beschenkte Person erfährt nichts davon.\n\nSchick den Beitrag gern an Oma, Opa und alle, die beim Schenken mitmachen.\n\n' + TAGS + ' #weihnachtsgeschenke #großeltern',
+      caption: 'Jemand hat dir einen Wishtale-Link geschickt? Öffne ihn einfach, ein Konto brauchst du dafür nicht. Such dir einen Wunsch aus und tippe auf „Reservieren“, dann wissen alle anderen, dass er vergeben ist, und die beschenkte Person erfährt nichts davon. Kaufen kannst du danach direkt im Shop oder im Laden um die Ecke.\n\nSchick den Beitrag gern an Oma, Opa und alle, die beim Schenken mitmachen.\n\n' + TAGS + ' #weihnachtsgeschenke #großeltern',
       slides: [
         S({ eyebrow: 'Für alle, die schenken', title: 'Du hast einen Wishtale-Link bekommen?', sub: 'So einfach geht es, auch ohne Konto.' }),
         S({ type: 'screen', scene: 'link', eyebrow: 'Erstens', title: 'Tipp auf den Link, ein Konto brauchst du nicht' }),
         S({ type: 'screen', scene: 'gast', eyebrow: 'Zweitens', title: 'Such dir einen Wunsch aus und tippe auf Reservieren' }),
         S({ type: 'screen', scene: 'reserviert', eyebrow: 'Drittens', title: 'Für alle anderen ist der Wunsch jetzt vergeben', sub: 'Wer reserviert hat, sehen sie nicht.' }),
-        S({ eyebrow: 'Viertens', title: 'Kaufen kannst du, wo du möchtest', sub: 'Im Laden um die Ecke oder online, ganz wie es dir passt.' }),
+        S({ type: 'screen', scene: 'kaufen', eyebrow: 'Viertens', title: 'Kaufen kannst du direkt im Shop', sub: 'Mit einem Tipp bei Amazon oder Otto, oder im Laden um die Ecke.' }),
         cta('Und wenn du selbst Wünsche hast', 'Leg dein eigenes Wishtale an, den Link findest du in der Bio.'),
       ],
     }) },
