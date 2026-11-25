@@ -1717,3 +1717,25 @@ html:has(.scrim),html:has(.scrim) body{overflow:hidden}
 /* Hauptnavigation der Landingpage (die App hat seit 075 keine, darum eigene Klasse) */
 .lp-nav{display:none}
 @media(min-width:960px){.lp-nav{display:flex;gap:2px;margin-left:28px}.lp-nav + .right{margin-left:auto}}
+/* 131 Nachtrag (Jann: „mehr akzentuieren“): tiefes Grün und Gold als Akzente, Rubriken mit Farbsymbol */
+.lp .lp-hero{background:radial-gradient(60% 70% at 85% 30%,#E3ECDD 0,transparent 70%),radial-gradient(40% 50% at 0% 100%,#F6E6BF 0,transparent 70%)}
+.lp .lp-hero h1 em{color:var(--gold)}
+.lp .lp-visual::before{background:#2E3B2F;inset:10% -10% -8% 14%;opacity:1}
+.lp .lp-note{color:var(--muted)}
+.lp .lp-visual .lp-note{background:var(--bg);display:inline-block;padding:2px 8px;border-radius:99px;margin-left:auto;margin-right:auto}
+.lp .lp-visual{text-align:center}.lp .lp-list{text-align:left}
+.lp .lp-dark{background:var(--accent);color:var(--accent-ink);border-top:0}
+.lp .lp-dark .eyebrow{color:#E8C27A}
+.lp .lp-dark .lp-steps li{border-top-color:rgba(246,240,228,.16)}
+.lp .lp-dark .lp-n{color:#E8C27A}
+.lp .lp-dark .lp-steps p{color:#C9D3BD}
+.lp .lp-topic summary{justify-content:flex-start}
+.lp .lp-topic summary::after{margin-left:auto}
+.lp .lp-ic{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--bg2);color:var(--p1)}
+.lp .lp-ic.t0{--bg2:#F4DCCB;--p1:#8A3E22}.lp .lp-ic.t1{--bg2:#D7E6DA;--p1:#2D5A3B}.lp .lp-ic.t2{--bg2:#DCE6F3;--p1:#2E557A}.lp .lp-ic.t4{--bg2:#F6E6BF;--p1:#80580F}
+.lp .lp-ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.lp .lp-topic[open] summary::after{background-color:var(--accent);border-color:var(--accent);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F6F0E4' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E")}
+.lp .lp-body{padding-left:66px}
+@media(max-width:520px){.lp .lp-body{padding-left:0}.lp .lp-ic{width:44px;height:44px;border-radius:14px}}
+.lp .lp-end{background:#F6E6BF;border-top:0}
+.lp .lp-end h2 em{color:var(--gold)}
