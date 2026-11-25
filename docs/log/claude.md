@@ -312,5 +312,5 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Auftrag: Jann im Projekt-Chat („Wir bauen eine Listenfunktion für besondere Anlässe, legen Sie aber in der Sidebar ab damit sie nicht im Fokus steht“)
 - Geändert: supabase/migrations/0032_occasion_lists.sql (neu, `occasion`, `occasion_date`, `public_profile`), src/views/occasion.js (neu), src/lib/remote.js (Abbildung, `deleteProfile`), src/views/menu.js (Gruppe „Besondere Anlässe“), src/views/modals.js, src/views/wishes.js, src/views/giver.js, src/views/wishadd.js (kein Reiter „Ideen“), src/render.js (keine Ideen laden), src/actions.js (`occnew`, `occedit`, `occdel`, Formular `occlist`), api/_lib/share.js (Vorschau mit Listennamen), src/styles/main.css, datenschutz.html (Abschnitt 3)
 - Geprüft: ESLint, Build, Tests, Bildschirmfotos im Demo (Anlegen, Liste, Menü, Gastansicht)
-- Datenbank und Dienste: Migration 0032 noch nicht eingespielt, vor dem Merge nötig
+- Datenbank und Dienste: Migration 0032 nach Janns Freigabe eingespielt (2026-11-25)
 - Zurücknehmen: Merge-Commit reverten; die Spalten können bleiben
