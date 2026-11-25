@@ -13,6 +13,7 @@ import { IdeaCard } from './inspiration.js';
 import { PastGifts } from './given.js';
 import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
+import { occLine } from './occasion.js';
 
 /* Gast-Ansicht: ein Freund öffnet den Link und sieht nur dieses eine Profil. */
 export function Gast(){
@@ -32,9 +33,9 @@ export function GuestPage(p,{preview=false}={}){
     <div class="pheadslot">${ProfileHead(p,{preview})}</div>
     <div class="pmain">
      ${preview?'':PastGifts(p)}
-     ${none||preview?'':`<p class="jumpideas"><button class="jumpbtn" data-act="jump" data-to="mehr">${ic('spark','sm')}Ideen von Wishtale für ${esc(p.name)} ansehen</button></p>`}
+     ${none||preview||p.occasion?'':`<p class="jumpideas"><button class="jumpbtn" data-act="jump" data-to="mehr">${ic('spark','sm')}Ideen von Wishtale für ${esc(p.name)} ansehen</button></p>`}
      ${none?'':wl.html}
-     ${More(p,{preview,none,open:wl.open})}
+     ${p.occasion?(none?'<p class="muted">Auf dieser Liste stehen noch keine Wünsche.</p>':''):More(p,{preview,none,open:wl.open})}
      ${preview||S.auth?.user?'':GuestOwn(p)}
      <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis im Shop.</p>
     </div>
@@ -69,11 +70,12 @@ function More(p,{preview=false,none=false,open=0}={}){
 
 /* Kopfbereich: Über mich, Interessen, Marken und No-Gos auf einen Blick, daneben der Anlass. */
 export function ProfileHead(p,{preview=false}={}){
+  if(p.occasion)return `<section class="phead compact" aria-label="${esc(p.name)}"><div class="top phbtn occ-head"><span class="av t${p.tone}">${ic('gift')}</span><span class="phtxt"><span class="eyebrow">${occLine(p)}</span><h1>${esc(p.name)}</h1></span></div></section>`; // Anlass-Liste: kein Profil dahinter
   const hide=k=>preview&&p.vis&&p.vis[k]==='privat';
   const likes=(hide('interests')?[]:p.interests).slice(0,3);
   const list=likes.length>1?likes.slice(0,-1).join(', ')+' und '+likes[likes.length-1]:likes[0]||'';
   return `<section class="phead compact" aria-label="Profil von ${esc(p.name)}">
-    <button class="top phbtn" data-act="about" data-ctx="${preview?'own':'guest'}" aria-haspopup="dialog"><span class="av t${p.tone}">${initials(p.name)}</span><span class="phtxt"><span class="eyebrow">${p.managed?`Kind-Konto${p.age!=null?', '+ageText(p.age):''}`:'Wishtale'}</span><h1>${esc(p.name)}</h1>${list?`<span class="taste">${esc(p.name)} liebt ${esc(list)}.</span>`:''}</span><span class="phmore">Mehr über ${esc(p.name)} <i aria-hidden="true">›</i></span></button>
+    <button class="top phbtn" data-act="about" data-ctx="${preview?'own':'guest'}" aria-haspopup="dialog"><span class="av t${p.tone}">${initials(p.name)}</span><span class="phtxt"><span class="eyebrow">${p.occasion?occLine(p):p.managed?`Kind-Konto${p.age!=null?', '+ageText(p.age):''}`:'Wishtale'}</span><h1>${esc(p.name)}</h1>${list?`<span class="taste">${esc(p.name)} liebt ${esc(list)}.</span>`:''}</span><span class="phmore">Mehr über ${esc(p.name)} <i aria-hidden="true">›</i></span></button>
   </section>`;
 }
 
@@ -101,9 +103,9 @@ export function WishList(p,{preview=false}={}){
   };
   const free=vw.filter(w=>w.res!=='other').length;
   const html=`<section id="wunschliste" aria-label="Wunschliste von ${esc(p.name)}">
-   <div class="row" style="justify-content:space-between;margin-bottom:8px"><div><p class="eyebrow">Wunschliste · ${only?`${shown.length} offen`:`${all.length} ${all.length===1?'Wunsch':'Wünsche'}`}</p><h2 style="font-size:clamp(30px,4vw,44px)">Was ${esc(p.name)} sich wünscht</h2></div>
+   <div class="row" style="justify-content:space-between;margin-bottom:8px"><div><p class="eyebrow">Wunschliste · ${only?`${shown.length} offen`:`${all.length} ${all.length===1?'Wunsch':'Wünsche'}`}</p><h2 style="font-size:clamp(30px,4vw,44px)">${p.occasion?'Die Wünsche':`Was ${esc(p.name)} sich wünscht`}</h2></div>
     <div class="row" style="gap:8px">${preview?'':`<div class="seg" role="group" aria-label="Filter"><button class="${!only?'on':''}" data-act="onlyopen" data-v="0">Alle</button><button class="${only?'on':''}" data-act="onlyopen" data-v="1">Nur offene${free!==all.length?` (${free})`:''}</button></div>`}${sortSeg()}<span class="desk-only">${densSeg(all.length)}</span></div></div>
-   <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} sieht, was reserviert ist, ${esc(p.name)} nicht.`:`Tippe bei einem Wunsch auf „Reservieren“, dann schenkt niemand doppelt. Deine Reservierung bleibt anonym, und ${esc(p.name)} erfährt nie davon.`}</p>
+   <p class="muted" style="font-size:14px;margin-bottom:14px">${ic('lock','sm')} ${p.managed?`${esc(p.parent||'Die Eltern')} sieht, was reserviert ist, ${esc(p.name)} nicht.`:`Tippe bei einem Wunsch auf „Reservieren“, dann schenkt niemand doppelt. Deine Reservierung bleibt anonym, ${p.occasion?'niemand erfährt, von wem das Geschenk kommt':`und ${esc(p.name)} erfährt nie davon`}.`}</p>
    ${preview?'':Tip('guest')}
    ${PrioKey()}<div class="${useList(all.length)?'wlist':'wgrid'}">${shown.map(cardOf).join('')||`<p class="muted">Alle Wünsche sind schon vergeben. Schau dir unten die Ideen an.</p>`}</div></section>`;
   return {html,open:free,count:all.length};

@@ -7,6 +7,7 @@ import { InviteModal } from './invite.js';
 import { AboutModal } from './about.js';
 import { TourModal } from './tour.js';
 import { WishRec } from './wishprev.js';
+import { WishTabs, wishTab, SearchPane, IdeasPane } from './wishadd.js';
 import { imgBoxHtml } from '../lib/wishimg.js';
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
@@ -17,9 +18,10 @@ import { WorldModal } from './world.js';
 import { PinsModal } from './pins.js';
 import { IdeaModal } from './inspiration.js';
 import { AMAZON_DISCLOSURE, searchUrl } from '../lib/shops.js';
+import { OccModal, isOcc } from './occasion.js';
 
 export function AcctModal(){
-  const rows=Object.entries(S.accounts).map(([id,a])=>`<div class="altrow" style="grid-template-columns:44px 1fr auto"><span class="av t${a.tone}" style="width:44px;height:44px">${initials(a.name)}</span><div><strong>${esc(a.name)}${a.age?`, ${a.age}`:''}</strong><br><span class="muted" style="font-size:13.5px">${a.shared?'Kind-Konto, gemeinsam mitverwaltet':a.managed?`Kind-Konto, verwaltet von ${esc(S.accounts.me.name)}`:'Hauptkonto'}</span></div>${S.ui.acct===id?'<span class="chip ok">Aktiv</span>':`<button class="btn sec sm" data-act="acct" data-id="${id}">Wechseln</button>`}</div>`).join('');
+  const rows=Object.entries(S.accounts).filter(([,a])=>!isOcc(a)).map(([id,a])=>`<div class="altrow" style="grid-template-columns:44px 1fr auto"><span class="av t${a.tone}" style="width:44px;height:44px">${initials(a.name)}</span><div><strong>${esc(a.name)}${a.age?`, ${a.age}`:''}</strong><br><span class="muted" style="font-size:13.5px">${a.shared?'Kind-Konto, gemeinsam mitverwaltet':a.managed?`Kind-Konto, verwaltet von ${esc(S.accounts.me.name)}`:'Hauptkonto'}</span></div>${S.ui.acct===id?'<span class="chip ok">Aktiv</span>':`<button class="btn sec sm" data-act="acct" data-id="${id}">Wechseln</button>`}</div>`).join('');
   return `<div class="scrim" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <h2 id="mt">Konten</h2>${S.auth.user?`<p class="muted" style="font-size:14px;margin-bottom:10px">Angemeldet als <b>${esc(S.auth.user.email||'')}</b></p>`:`<div class="banner" style="margin-bottom:12px"><span>Du bist im Demo-Modus. Deine Eingaben bleiben nur in diesem Browser. <button class="chip" data-act="tologin">Eigenes Wishtale anlegen</button></span></div>`}${rows}
    <h3 style="font-size:24px;margin:20px 0 6px">Kind-Konto anlegen</h3>
@@ -79,21 +81,22 @@ export function Modal(){
   if(m==='pins')return PinsModal();
   if(m==='idea')return IdeaModal();
   if(m==='accounts')return AcctModal();
+  if(m==='occlist')return OccModal();
   if(m==='wish'){}
   const d=(m==='wish'&&S.ui.editWish&&S.me.wishes.find(w=>w.id===S.ui.editWish))||{};
-  if(m==='wish'){const ed=!!S.ui.editWish,more=ed&&(d.note||d.img||d.vis==='privat'||d.noSuggest||d.status==='plan'||(d.prio&&d.prio!==2));return `<div class="scrim" data-act="closebg"><div class="sheet wishsheet" role="dialog" aria-modal="true" aria-labelledby="mt">
+  if(m==='wish'){const ed=!!S.ui.editWish,tab=wishTab(),more=ed&&(d.note||d.img||d.vis==='privat'||d.noSuggest||d.status==='plan'||(d.prio&&d.prio!==2));return `<div class="scrim" data-act="closebg"><div class="sheet wishsheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <div class="sheet-head"><h2 id="mt">${ed?'Wunsch bearbeiten':'Neuer Wunsch'}</h2><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
+   ${ed?'':`${WishTabs()}${S.me.occasion?'':`<div id="wpane-ideen" class="wpane" role="tabpanel" aria-labelledby="wtab-ideen" ${tab!=='ideen'?'hidden':''}>${IdeasPane()}</div>`}<div id="wpane-suchen" class="wpane" role="tabpanel" aria-labelledby="wtab-suchen" ${tab!=='suchen'?'hidden':''}>${SearchPane()}</div>`}
+   <div id="wpane-eingeben" class="wpane" ${ed?'':'role="tabpanel" aria-labelledby="wtab-eingeben"'} ${!ed&&tab!=='eingeben'?'hidden':''}>
    <form data-form="wish">
-    <div class="fld"><label for="wt" class="lf-t">Was wünschst du dir?</label><input id="wt" name="t" class="inp big" placeholder="Produkt, Erlebnis oder Idee, auch ein kopierter Titel oder Link" autocomplete="off" value="${esc(d.t||S.ui.prefill||'')}"></div>
+    <div class="fld wq"><label for="wt" class="vh">Was wünschst du dir?</label><span class="wq-ic" aria-hidden="true">${ic('search')}</span><input id="wt" name="t" class="inp big wq-inp" placeholder="${ed?'Was wünschst du dir?':'Wunsch oder Link einfügen'}" autocomplete="off" enterkeyhint="done" value="${esc(d.t||S.ui.prefill||'')}"></div>
     <div id="wprev" aria-live="polite">${ed?'':WishRec()}</div>
-    ${ed?'':'<p class="fw-alt wl-alt">Schon eine Liste auf Papier oder bei Amazon? <button type="button" class="linkbtn" data-act="modal" data-v="zettel">Ganze Liste einlesen</button></p>'}
-    <div class="fld linkfirst"><label for="wl">Link zum Produkt <span class="muted" style="font-weight:400">(optional)</span></label>
-     <input id="wl" name="link" class="inp" inputmode="url" placeholder="Shop-Link einfügen" autocomplete="off" value="${esc(d.link||'')}">
-     <p id="wlstat" class="hint" role="status" aria-live="polite">Mit Link finden deine Freunde genau das Richtige. Wishtale liest Name, Preis und Bild von selbst, du musst nur noch speichern.${ed?'':` <button type="button" class="linkbtn" data-act="azopen">Bei Amazon suchen</button>`}</p>${ed?'':'<p class="fw-alt ss-alt">Schneller geht es direkt aus dem Shop. <button type="button" class="linkbtn" data-act="modal" data-v="shopsave">So speicherst du mit einem Tipp</button></p>'}</div>
-    <div class="fld"><span class="lb">Art</span><div class="radios">${[['produkt','Produkt'],['kategorie','Nur Kategorie'],['erlebnis','Erlebnis'],['frei','Freier Wunsch']].map(([v,l])=>`<label><input type="radio" name="kind" value="${v}" ${(d.kind||'produkt')===v?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
-    <div class="fld f-budget"><label for="wb">Budget bis (Euro)</label><input id="wb" name="budget" type="number" min="1" inputmode="numeric" class="inp" placeholder="z. B. 100" value="${d.budget||''}"></div>
-    <div class="fld f-price"><label for="wp">Preis (Euro, optional)</label><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="z. B. 69,90" value="${d.price?String(d.price).replace('.',','):''}"></div>
-    <details class="wmore" ${more?'open':''}><summary>Mehr Angaben <span class="muted">Notiz, Kategorie, Wichtigkeit, Bild, Sichtbarkeit</span></summary>
+    <div class="fld wl-row" ${ed||d.link?'':'hidden'}><label for="wl" class="vh">Link zum Produkt</label><span class="wl-ic" aria-hidden="true">${ic('link','sm')}</span><input id="wl" name="link" class="inp wl-inp" inputmode="url" placeholder="Shop-Link (optional)" autocomplete="off" value="${esc(d.link||'')}"><p id="wlstat" class="hint wl-stat" role="status" aria-live="polite"></p></div>
+    ${ed?'':`<div class="wq-chips" role="group" aria-label="Weitere Wege"><button type="button" class="wq-chip" data-act="modal" data-v="zettel">${ic('camera','sm')}Liste einlesen</button><button type="button" class="wq-chip" data-act="modal" data-v="shopsave">${ic('store','sm')}Aus dem Shop</button></div>`}
+    <div class="fld f-budget"><label for="wb">Budget bis</label><div class="eur"><input id="wb" name="budget" type="number" min="1" inputmode="numeric" class="inp" placeholder="100" value="${d.budget||''}"><span aria-hidden="true">€</span></div></div>
+    <div class="fld f-price"><label for="wp">Preis <span class="muted">(optional)</span></label><div class="eur"><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="69,90" value="${d.price?String(d.price).replace('.',','):''}"><span aria-hidden="true">€</span></div></div>
+    <details class="wmore" ${more||(d.kind&&d.kind!=='produkt')?'open':''}><summary>Mehr Angaben</summary>
+     <div class="fld"><span class="lb">Art</span><div class="radios">${[['produkt','Produkt'],['kategorie','Nur Kategorie'],['erlebnis','Erlebnis'],['frei','Freier Wunsch']].map(([v,l])=>`<label><input type="radio" name="kind" value="${v}" ${(d.kind||'produkt')===v?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
      <div class="fld"><label for="wn">Notiz</label><textarea id="wn" name="note" class="ta" placeholder="Farbe, Größe, Stimmung">${esc(d.note||'')}</textarea></div>
      <div class="fld"><label for="wc2">Kategorie</label><select id="wc2" name="c" class="sel">${CATS.filter(c=>!S.me.managed||KID_CATS.includes(c.id)).map(c=>`<option value="${c.id}" ${(d.c||'sonstiges')===c.id?'selected':''}>${c.n}</option>`).join('')}</select></div>
      <div class="fld"><span class="lb">Wie wichtig ist es dir?</span><div class="radios">${[1,2,3].map(n=>`<label><input type="radio" name="prio" value="${n}" ${n===(d.prio||2)?'checked':''}><span>${PRIO[n]}</span></label>`).join('')}</div></div>
@@ -105,7 +108,7 @@ export function Modal(){
     </details>
     <p id="wdup" class="hint attn" role="alert" hidden></p>
     <div class="sheet-foot"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" type="submit">${ed?'Änderungen speichern':'Wunsch speichern'}</button></div>
-   </form></div></div>`;}
+   </form></div></div></div>`;}
   return `<div class="scrim" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <h2 id="mt">Geschenk eintragen</h2>
    <form data-form="gift">

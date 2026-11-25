@@ -208,3 +208,33 @@ export async function priceForWish({ t, q, brand, link } = {}, deps = {}) {
   }
   return null;
 }
+
+/*
+ * Produktsuche im Wunschdialog (124, Jann: „Wunsch suchen“ ohne die Seite zu verlassen). Websuche über Brave mit dem Suchbegriff,
+ * je Shop höchstens ein Treffer, ohne Marktplätze, Preisvergleiche, Ratgeber und Amazon (Amazon lesen wir nicht). Jede Seite wird
+ * wie bei „Link lesen“ gelesen; bleiben nur Seiten mit Produktname und Bild, deren Name zum Suchbegriff passt. Das Bild lädt unser
+ * Server (SSRF-Schutz), damit das Gerät keine Fremdserver abruft. Ohne Schlüssel null. Treffer werden nur angezeigt, nie gespeichert.
+ */
+const SEARCH_SKIP = /(^|\.)(mydealz\.|monsterdealz\.|dealdoktor\.|schnaeppchenfuchs\.|preisjaeger\.|amazon\.|amzn\.|ebay\.|idealo\.|geizhals\.|billiger\.de|guenstiger\.de|check24\.|preis\.de|youtube\.|facebook\.|instagram\.|pinterest\.|reddit\.|wikipedia\.|chip\.de|computerbild\.|stiftung-warentest\.|test\.de|gutefrage\.|tiktok\.)/i;
+const NOT_PRODUCT = /\/(support|hilfe|help|blog|magazin|ratgeber|forum|wiki|anleitung|test|vergleich|news|kategorie|category|c\/|search|suche)(\/|$|-|\?)/i;
+
+export async function searchProducts(query, { fetchJson, read = inspect, load = fetchImage, max = 6 } = {}) {
+  const key = process.env.BRAVE_SEARCH_API_KEY, q = clean(query);
+  if (!q || (!key && !fetchJson)) return null;
+  const json = fetchJson ? await fetchJson(q) : await fetch('https://api.search.brave.com/res/v1/web/search?count=15&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q + ' kaufen'), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+  if (!json) return null;
+  const hosts = new Set();
+  const cands = (json?.web?.results || [])
+    .map(r => { try { return { url: r.url, host: new URL(r.url).hostname.replace(/^www\./, '') }; } catch { return null; } })
+    .filter(c => c && /^https:\/\//i.test(c.url) && !SEARCH_SKIP.test(c.host) && !NOT_PRODUCT.test(c.url) && !hosts.has(c.host) && hosts.add(c.host))
+    .slice(0, 9);
+  const within = (p, ms) => Promise.race([p.catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]);
+  const pages = await Promise.all(cands.map(c => within(read(c.url), 6500).then(p => (p ? { p, c } : null))));
+  const ok = pages.filter(x => x && x.p.title && x.p.imageUrl && (fits(q, x.p.title, x.c.host) || overlap(q, x.p.title) >= 0.5)).slice(0, max);
+  const out = await Promise.all(ok.map(async ({ p, c }) => {
+    const image = await within(load(p.imageUrl), 5000);
+    if (!image || image.data.length > 600000) return null; // sehr große Bilder lassen wir weg, die Antwort soll klein bleiben
+    return { t: String(p.title).slice(0, 160), price: eur(p), url: String(p.url || c.url).slice(0, 1000), host: c.host, image };
+  }));
+  return out.filter(Boolean);
+}

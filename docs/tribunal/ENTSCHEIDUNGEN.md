@@ -2,14 +2,14 @@
 
 Diese Datei spiegelt Janns Urteile aus der Entwickler-Seite ins Repository, damit auch ChatGPT sie kennt. Sie gelten als Produktentscheidungen: Wer ihnen widerspricht, braucht ein neues, begründetes Tribunal. Claude aktualisiert sie beim Abgleich (Quelle ist die Tabelle `tribunal_verdicts`).
 
-Stand: 2026-11-09
+Stand: 2026-11-25
 
 ## Grundsätze des Produkts
 - **Kern bleibt frei:** Profil, Wunschliste, Gast-Link, anonymes Reservieren und Kind-Konten ohne Zahlenlimit. Darüber ziehen wir die Grenze nach Kosten: Der Katalog ist das kostenlose Niveau, KI-Funktionen gehören zu Plus.
 - **Gäste zahlen nie.** Wer beschenkt wird, trägt die Kosten, nicht die Schenkenden.
 - **Die Überraschung bleibt.** Beschenkte sehen nie, wer reserviert hat, und nie, was jemand geschenkt hat.
 - **Vorschläge sind immer erkennbar** als Vorschlag von Wishtale und nie wie die Wahl der Person gestaltet.
-- **Keine Anlass-Auswahl** vorerst (Geschenke passen zu jedem Anlass). Anlass-Listen stehen im Backlog.
+- **Keine Anlass-Auswahl an Wünschen** (Geschenke passen zu jedem Anlass, Wünsche werden nicht getaggt). Für besondere Anlässe wie Hochzeit oder Taufe gibt es eigene Listen im Menü (009).
 - **Planung (Janns Aktionen, Stand 2026-11-09):** Jetzt: 015, 019 (016 und 017 erledigt). Als Nächstes: 005, 006, 011, 012 („Wichtig!“), 013, 018, 022. Später: 001, 004 (Beta soll voll laufen), 008 (Mailanbindung nötig), 010. Backlog: 002, 007, 009, 014, 021. Ziel: Das Produkt mit den heutigen Funktionen auf den Markt bringen.
 - **Chat mit Claude ist die zentrale Stelle.** Auf der Entwickler-Seite wird gesammelt, gebaut wird erst nach Freigabe und „Abgleich“.
 
@@ -108,6 +108,10 @@ Stand: 2026-11-09
 | 115 | Wird Wishtale gefunden? (SEO-Grundlagen) | **Jann im Projekt-Chat: prüfen, ob Wishtale gefunden wird.** Fixes (noindex für giftlyapp.vercel.app, App und Gast-Links, Teilen-Bild im Querformat, strukturierte Daten, canonical der Rechtsseiten) und, auf Janns Wunsch im Thread, Ratgeber mit vier Seiten unter `/ratgeber`; Search Console richtet Jann ein. | ja, `1597bc6` |
 | 117 | Vorschläge 1 bis 4 aus dem Wettbewerbsvergleich | **Jann im Thread: „1-4 schnell umsetzen“, bauen und mergen.** Einladung am Ende der Gastansicht mit UTM-Messung (`guestcta`), Umzug von Amazon per Screenshot oder Text sichtbar gemacht, Ratgeberseite „Amazon-Wunschliste mitnehmen“, Pressemappe als Dokument. Punkt 5 in Dev 116. | ja, `8edab0c` |
 | 118 | Preise von selbst und Link ohne Extra-Schritt | **Jann im Projekt: „Das muss automatisch gehen“.** Link wird beim Einfügen gelesen und von selbst übernommen, Speichern wartet kurz darauf, Knopf „Einlesen“ entfällt. Wünsche ohne Preis bekommen den echten Preis der eigenen Shopseite oder der Hersteller- oder Shopseite (nur Euro, nur bei eng passendem Titel, nie geschätzt). | ja, `ee737d6` |
+| 124 | Wunschdialog schlank, mit Ideen, Suchen und Eingeben | **Jann im Projekt:** Reiter „Ideen / Wunsch suchen / Wunsch eingeben“ für die eigene Liste, Ideen behalten „Habe ich schon“, „Erfülle ich mir selbst“, „Passt nicht“. Quelle der Suche: Websuche jetzt, Amazon und Otto später (Option D). | ja, `76765ff` |
+| 125 | Ratgeber Geburtstag und Kindergeburtstag | **Jann im Projekt:** „Die Landingpage bekommt aus Vorschlag A Seiten mit Tipps.“ | ja, `f40c682` |
+| 126 | Anmelden mit Google | **Jann im Projekt:** Google aktivieren, Apple später. Knopf erscheint, sobald Google in Supabase eingeschaltet ist. | ja, `fa2b519` (Einrichtung bei Google und Supabase offen) |
+| 009 | Listen für besondere Anlässe | **Jann im Projekt:** Option A als eigene Funktion, aber im Menü statt im Fokus; Wünsche werden nicht getaggt, die eigene Liste bleibt der Kern. | ja, `5348918` (Migration 0032 eingespielt) |
 | 116 | Wünsche aus anderen Shops | **Jann im Projekt-Thread: Option A bauen und das Menü aufräumen.** Kurzbefehl am iPhone, Lesezeichen-Knopf am Rechner, neues Fenster „Aus jedem Shop speichern“, Menü neu gruppiert. Browser-Erweiterung und Store-App offen. | ja, `cbaabc4` |
 
 ## Offen (noch kein Urteil)
@@ -119,7 +123,6 @@ Alle offenen Punkte des Projekts liegen als Ordner in `docs/tribunal/`. Jann ent
 - 006 Profileinstellungen: Umfang der neuen Seite (Entscheidung)
 - 007 Guthaben (Credits) abbuchen: überhaupt anbieten? (Aufgabe)
 - 008 Erinnerungen („Letztes Jahr hast du … geschenkt“, Geburtstage) (Entscheidung)
-- 009 Anlass-Listen (zum Beispiel Hochzeit) als eigene Funktion (Entscheidung)
 - 010 Eltern-Grenze bei Kind-Konten (zum Beispiel 150 €) mit diskretem Hinweis (Entscheidung)
 - 011 Wunschzettel-Aktion für Eltern bewerben (Kind-Konten) (Entscheidung)
 - 012 Rechtstexte und Pflichten vor dem ersten Verkauf (Aufgabe)
