@@ -40,7 +40,7 @@ export default defineConfig({
         impressum: resolve(__dirname, 'impressum.html'), datenschutz: resolve(__dirname, 'datenschutz.html'), barrierefreiheit: resolve(__dirname, 'barrierefreiheit.html'),
         cms: resolve(__dirname, 'cms/index.html'),
         ratgeber: resolve(__dirname, 'ratgeber/index.html'),
-        ...Object.fromEntries(['wunschliste-erstellen', 'wunschzettel-weihnachten', 'wunschzettel-kinder', 'geschenke-nicht-doppelt', 'amazon-wunschliste-umziehen'].map(s => ['rg-' + s, resolve(__dirname, `ratgeber/${s}.html`)])),
+        ...Object.fromEntries(['wunschliste-erstellen', 'wunschzettel-weihnachten', 'wunschzettel-kinder', 'geschenke-nicht-doppelt', 'amazon-wunschliste-umziehen', 'wunschliste-geburtstag', 'kindergeburtstag-wunschliste'].map(s => ['rg-' + s, resolve(__dirname, `ratgeber/${s}.html`)])),
       },
     },
   },

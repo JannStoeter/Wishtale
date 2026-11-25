@@ -293,3 +293,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, `npm test` (26 Tests), Bildschirmfotos Handy und Computer im Demo mit nachgestellten Treffern (die echte Suche braucht Konto und BRAVE_SEARCH_API_KEY)
 - Datenbank und Dienste: keine neue Tabelle, Brave wie bisher
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 121 · Ratgeber Geburtstag und Kindergeburtstag
+- Auftrag: Jann im Projekt-Chat („Die Landingpage bekommt Aus Vorschlag A Seiten mit Tipps“)
+- Geändert: ratgeber/wunschliste-geburtstag.html, ratgeber/kindergeburtstag-wunschliste.html (neu, Article, Breadcrumb und FAQPage im JSON-LD), ratgeber/index.html (Karten), Fußzeilen aller Ratgeber-Seiten, index.html (Fußzeile mit neuen Schlüsseln `footer.rg6`, `footer.rg7`), public/sitemap.xml, vite.config.js
+- Geprüft: Build, Bildschirmfotos am Handy
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
