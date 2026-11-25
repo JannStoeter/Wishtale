@@ -584,14 +584,7 @@ readlink(el,auto){
  async appinstall(){dismissAppHint();S.ui.menu=false;const r=await promptInstall();if(r==='manual'){S.ui.modal='appinstall';render();demoStart();return}S.ui.modal=null;render();if(r==='accepted')toast('Schön, Wishtale liegt jetzt auf deinem Home-Bildschirm.')},
  promohide(el){hidePromo(el.dataset.id);render()},
  pinrevoke(){revokePinConsent();location.reload()},
- delacct(){
-  if(!confirm('Möchtest du dein Konto mit allen Wünschen und Einträgen wirklich löschen? Das lässt sich nicht rückgängig machen.'))return;
-  sb.auth.getSession().then(({data:{session}})=>fetch('/api/account?op=delete',{method:'POST',headers:{authorization:'Bearer '+(session?session.access_token:'')}})).then(r=>({data:r.ok,error:r.ok?null:true})).catch(()=>({data:false,error:true})).then(({data,error})=>{
-   if(error||!data){toast('Das hat leider nicht geklappt. Bitte versuche es noch einmal oder schreib uns.');return}
-   try{Object.keys(localStorage).filter(k=>k.startsWith('wishtale:')||k.startsWith('sb-')).forEach(k=>localStorage.removeItem(k))}catch{/* ignorieren */}
-   sb.auth.signOut().catch(()=>{}).finally(()=>{location.hash='#anmelden';location.reload()});
-  });
- },
+ delacct(){S.ui.delMsg=null;S.ui.delBusy=false;S.ui.modal='delacct';render();setTimeout(()=>document.getElementById('dm')?.focus({preventScroll:true}),30)},
  aside(){S.ui.asideOpen=!S.ui.asideOpen;render()},
  focusabout(el,e){e?.preventDefault();const t=document.getElementById('about');if(t){t.scrollIntoView({block:'center',behavior:'smooth'});t.focus({preventScroll:true})}},
  about(el){S.ui.aboutCtx=el.dataset.ctx||'guest';S.ui.modal='about';render();setTimeout(()=>document.querySelector('.ab-x')?.focus({preventScroll:true}),30)},
@@ -671,6 +664,18 @@ document.addEventListener('submit',e=>{
   if(kind==='forgot'){
     const email=(fd.get('email')||'').trim();S.ui.authBusy=true;S.ui.authEmail=email;render();
     resetPassword(email).then(({error})=>{S.ui.authBusy=false;if(error){S.ui.authMsg={type:'error',text:friendly(error)}}else S.ui.authSent={kind:'reset',email};render()}).catch(e=>{S.ui.authBusy=false;S.ui.authMsg={type:'error',text:friendly(e)};render()});
+    return;
+  }
+  if(kind==='delacct'){
+    const typed=(fd.get('email')||'').trim().toLowerCase(),mail=(S.auth.user?.email||'').trim().toLowerCase();
+    if(!mail||typed!==mail){S.ui.delMsg='Die Adresse stimmt nicht mit deinem Konto überein. Dein Konto bleibt bestehen.';render();return}
+    S.ui.delBusy=true;S.ui.delMsg=null;render();
+    sb.auth.getSession().then(({data:{session}})=>fetch('/api/account?op=delete',{method:'POST',headers:{authorization:'Bearer '+(session?session.access_token:'')}})).then(r=>r.ok).catch(()=>false).then(ok=>{
+     S.ui.delBusy=false;
+     if(!ok){S.ui.delMsg='Das hat leider nicht geklappt. Bitte versuche es noch einmal oder schreib uns.';render();return}
+     try{Object.keys(localStorage).filter(k=>k.startsWith('wishtale:')||k.startsWith('sb-')).forEach(k=>localStorage.removeItem(k))}catch{/* ignorieren */}
+     sb.auth.signOut().catch(()=>{}).finally(()=>{location.hash='#anmelden';location.reload()});
+    });
     return;
   }
   if(kind==='newpw'){

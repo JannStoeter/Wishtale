@@ -32,7 +32,7 @@ export function AcctModal(){
     <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-act="close">Schließen</button><button class="btn pri" type="submit">Anlegen und einrichten</button></div>
    </form>
    <div class="row" style="margin-top:14px"><button class="btn sec sm" data-act="stepsshow">${ic('check','sm')}Erste Schritte anzeigen</button></div>
-   ${S.auth.user?`<div class="row" style="justify-content:space-between;margin-top:18px"><span class="disc" style="margin:0">Deine Daten liegen in deinem Wishtale-Konto.</span><button class="btn sec sm" data-act="logout">Abmelden</button></div><div class="row" style="margin-top:10px"><a class="btn ghost sm" href="#plan" style="padding-left:0">Mein Plan</a><button class="btn ghost sm" data-act="newpw" style="padding-left:0">Passwort ändern</button><button class="btn ghost sm" data-act="delacct" style="padding-left:0;color:var(--warn)">Konto und alle Daten löschen</button></div>`:`<p class="disc" style="margin-top:18px">Alle Daten liegen nur in deinem Browser. <button class="chip" data-act="reset">Demodaten zurücksetzen</button></p>`}</div></div>`;
+   ${S.auth.user?`<div class="row" style="justify-content:space-between;margin-top:18px"><span class="disc" style="margin:0">Deine Daten liegen in deinem Wishtale-Konto.</span><button class="btn sec sm" data-act="logout">Abmelden</button></div><div class="row" style="margin-top:10px"><a class="btn ghost sm" href="#plan" style="padding-left:0">Mein Plan</a><button class="btn ghost sm" data-act="newpw" style="padding-left:0">Passwort ändern</button></div><div class="delzone"><h3>Konto löschen</h3><p class="muted">Damit verschwinden dein Profil, alle Wünsche, Bilder und Kind-Konten für immer. Wenn du nur ein neues Passwort brauchst, nimm lieber „Passwort ändern“ oben.</p><button class="btn ghost sm" data-act="delacct" style="padding-left:0;color:var(--warn)">Konto löschen …</button></div>`:`<p class="disc" style="margin-top:18px">Alle Daten liegen nur in deinem Browser. <button class="chip" data-act="reset">Demodaten zurücksetzen</button></p>`}</div></div>`;
 }
 export function AmazonModal(){
   const z=S.ui.az,r=z.res,ok=r&&!r.error;
@@ -68,6 +68,7 @@ export function Modal(){
   if(m==='shopsave')return ShopSaveModal();
   if(m==='mailme')return MailMeModal();
   if(m==='fulfilled')return FulfilledModal();
+  if(m==='delacct')return DelAcctModal();
   if(m==='about')return AboutModal();
   if(m==='tour')return TourModal();
   if(m==='amazon')return AmazonModal();
@@ -129,5 +130,22 @@ function FulfilledModal(){
    <h2 id="mt">${S.me.managed?`Schön, dieser Wunsch von ${esc(S.me.name)} ist erfüllt`:'Glückwunsch, du hast dir diesen Wunsch selbst erfüllt'}</h2>
    <p class="muted">„${esc(w.t)}“ findest du jetzt ${own} unter „Das habe ich schon“. Wishtale schlägt dafür nichts mehr vor, damit niemand etwas doppelt schenkt.</p>
    <div class="ff-a"><button type="button" class="qa" data-act="selbst" data-from="undo" data-id="${w.id}">Rückgängig</button><span style="flex:1"></span><button type="button" class="btn sec sm" data-act="ffsee">Ansehen</button><button type="button" class="btn pri sm" data-act="close">Fertig</button></div>
+  </div></div>`;
+}
+
+// Konto löschen nur nach Eintippen der eigenen Adresse, damit niemand es aus Versehen neben „Passwort ändern“ auslöst.
+function DelAcctModal(){
+  const mail=S.auth.user?.email||'';
+  if(!mail){S.ui.modal=null;return ''}
+  const busy=S.ui.delBusy;
+  return `<div class="scrim" data-act="closebg"><div class="sheet narrow" role="dialog" aria-modal="true" aria-labelledby="mt">
+   <h2 id="mt">Möchtest du dein Konto wirklich löschen?</h2>
+   <p class="muted">Dabei verschwinden dein Profil, alle Wünsche und Bilder, deine Kind-Konten und alles, was du verschenkt hast. Das lässt sich nicht rückgängig machen, auch nicht von uns.</p>
+   <p class="muted">Wenn du nur dein Passwort vergessen hast oder ein neues möchtest, brauchst du das nicht. <button type="button" class="linkbtn" data-act="newpw">Passwort ändern</button></p>
+   <form data-form="delacct" style="margin-top:14px">
+    <div class="fld"><label for="dm">Tipp zur Bestätigung deine E-Mail-Adresse ein</label><input id="dm" name="email" class="inp" type="email" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(mail)}" required></div>
+    ${S.ui.delMsg?`<p class="banner" role="alert" style="margin-bottom:10px">${esc(S.ui.delMsg)}</p>`:''}
+    <div class="row" style="justify-content:flex-end"><button type="button" class="btn pri" data-act="close">Konto behalten</button><button class="btn ghost" type="submit" style="color:var(--warn)" ${busy?'disabled':''}>${busy?'Wird gelöscht …':'Endgültig löschen'}</button></div>
+   </form>
   </div></div>`;
 }

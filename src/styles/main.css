@@ -1480,3 +1480,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .ss-bm{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1.5px dashed var(--accent);color:var(--ink);background:var(--surface);font-weight:600;text-decoration:none;cursor:grab}
 .ss-bm:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .fw-alt.ss-alt{margin-top:-4px}
+/* Konto löschen: eigener, abgesetzter Bereich statt Knopf neben „Passwort ändern“ */
+.delzone{margin-top:26px;padding-top:14px;border-top:1px solid var(--line)}
+.delzone h3{font-size:16px;margin:0 0 4px}
+.delzone p{font-size:13.5px;margin:0 0 6px}
