@@ -154,6 +154,19 @@ const ASIN = /\/(?:dp|gp\/product)\/([A-Z0-9]{10})(?:[/?]|$)/;
 const AMAZON_TAG = 'jannst-21'; // Partner-Kennung, muss mit src/lib/shops.js übereinstimmen
 
 /** Amazon-Produktseiten (mit ASIN) aus einer Antwort der Websuche, ohne doppelte Produkte. */
+/* Die Suchmaschine kürzt lange Amazon-Titel („tonies Hörfigur …“), dann sieht man nicht, welcher Tonie es ist (Jann, 2026-11-25).
+   Die Adresse trägt den Namen fast immer ganz („/tonies-Weihnachtslieder-Rolf-Zuckowski-Hörfigur/dp/…“), daraus wird dann der Titel. */
+export function fullTitle(title, path = '') {
+  const t = String(title || '').replace(/\s+/g, ' ').trim();
+  let slug = '';
+  try { slug = decodeURIComponent((String(path).match(/^\/([^/]+)\/(?:dp|gp\/product)\//) || [])[1] || ''); } catch { slug = ''; }
+  slug = slug.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const cut = /(\.\.\.|…)$/.test(t), base = t.replace(/\s*(\.\.\.|…)$/, '');
+  if (!slug || slug.length < 8) return base;
+  if (!t) return slug;
+  return cut && toks(slug).length > toks(base).length ? slug : base;
+}
+
 function amazonItems(json, q) {
   console.log('amazon-direkt', JSON.stringify({ q, treffer: (json?.web?.results || []).slice(0, 8).map(r => { try { const u = new URL(r.url); return u.hostname + u.pathname.slice(0, 40) + ' | ' + String(r.title).slice(0, 60); } catch { return ''; } }) }));
   const items = [];
@@ -162,7 +175,7 @@ function amazonItems(json, q) {
     if (!/(^|\.)amazon\.de$/i.test(u.hostname)) continue;
     const asin = (u.pathname + '/').match(ASIN)?.[1];
     if (!asin || items.some(x => x.asin === asin)) continue;
-    items.push({ asin, title: String(r.title || '').replace(/^Amazon\.de\s*:\s*/i, '').replace(/:\s*Amazon\.de.*$/i, '').slice(0, 120) });
+    items.push({ asin, title: fullTitle(String(r.title || '').replace(/^Amazon\.de\s*:\s*/i, '').replace(/:\s*Amazon\.de.*$/i, ''), u.pathname).slice(0, 160) });
   }
   return items;
 }
@@ -246,7 +259,7 @@ const NOT_PRODUCT = /\/(support|hilfe|help|blog|magazin|ratgeber|forum|wiki|anle
 export async function searchProducts(query, { fetchJson, read = inspect, load = fetchImage, max = 6, shop = '' } = {}) {
   const key = process.env.BRAVE_SEARCH_API_KEY, q = clean(query);
   if (!q || (!key && !fetchJson)) return null;
-  if (shop === 'amazon') return searchAmazon(q, { fetchJson, max: 8 });
+  if (shop === 'amazon') return searchAmazon(q, { fetchJson, load, max: 8 });
   if (shop === 'otto') return searchOtto(q, { fetchJson, read, load, max });
   const json = fetchJson ? await fetchJson(q) : await fetch('https://api.search.brave.com/res/v1/web/search?count=15&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q + ' kaufen'), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
   if (!json) return null;
@@ -275,11 +288,46 @@ const relevant = (q, title) => overlap(q, title) >= 0.5 || fits(q, title);
  * mit Produktnummer (ASIN) und Titel, daraus werden Treffer ohne Bild und ohne Preis. Der Link bekommt beim Anzeigen die Partner-Kennung,
  * das Bild sucht Wishtale nach dem Speichern wie bei jedem Wunsch auf der Hersteller- oder Shopseite.
  */
-export async function searchAmazon(q, { fetchJson, max = 8 } = {}) {
+export async function searchAmazon(q, { fetchJson, images = fetchJson ? async () => null : braveImages, load = fetchImage, max = 8 } = {}) {
   const json = await braveWeb('site:amazon.de ' + q, 20, fetchJson);
   if (!json) return null;
-  return amazonItems(json, q).filter(x => x.title && relevant(q, x.title)).slice(0, max)
+  const items = amazonItems(json, q).filter(x => x.title && relevant(q, x.title)).slice(0, max)
     .map(x => ({ t: x.title.slice(0, 160), price: null, url: `https://www.amazon.de/dp/${x.asin}`, host: 'amazon.de', image: null }));
+  await Promise.race([pictures(items, q, { images, load }).catch(() => {}), new Promise(r => setTimeout(r, 9000))]); // die Funktion darf höchstens 20 Sekunden laufen, Bilder, die bis dahin fehlen, bleiben weg
+  return items;
+}
+
+/* Bilder zu Amazon-Treffern, ohne Amazon (Jann, 2026-11-25: „in der Suche sind keine Bilder“): Eine Bildersuche mit dem Suchbegriff,
+   Amazon, Marktplätze und Bildagenturen raus, jedes Bild nur zu dem Treffer, dessen Name eng zum Bildtitel passt. Für die ersten
+   Treffer ohne Bild sucht Wishtale noch einmal mit ihrem eigenen Namen. Geladen wird über unseren Server, angezeigt wird nur. */
+const braveImages = (q, count) => fetch(`https://api.search.brave.com/res/v1/images/search?count=${count}&safesearch=strict&country=de&search_lang=de&q=` + encodeURIComponent(clean(q)), { headers: { 'x-subscription-token': process.env.BRAVE_SEARCH_API_KEY, accept: 'application/json' }, signal: AbortSignal.timeout(5000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+const short = t => String(t || '').split(/\s+/).slice(0, 9).join(' ');
+function imageCands(json) {
+  return (json?.results || []).map(r => ({ img: r?.properties?.url || '', thumb: r?.thumbnail?.src || '', page: r?.meta_url?.hostname || host(r?.url) || r?.source || '', title: String(r?.title || '') }))
+    .filter(c => /^https:\/\//i.test(c.img) && c.img.length <= 800 && !STOCK.test(host(c.img)) && !STOCK.test(c.page) && c.title)
+    .map(c => ({ ...c, page: c.page.replace(/^www\./, '') }));
+}
+const sameThing = (item, title, page) => overlap(short(item), title) >= 0.6 && fits(item, title, page);
+export async function pictures(items, q, { images = braveImages, load = fetchImage } = {}) {
+  if (!items.length) return items;
+  const within = (p, ms) => Promise.race([Promise.resolve(p).catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]);
+  const pool = imageCands(await within(images(q, 40), 5500));
+  const used = new Set(), pick = new Map();
+  for (const [i, x] of items.entries()) {
+    const c = pool.filter(c => !used.has(c.img) && sameThing(x.t, c.title, c.page)).sort((a, b) => overlap(short(x.t), b.title) - overlap(short(x.t), a.title))[0];
+    if (c) { used.add(c.img); pick.set(i, c); }
+  }
+  const rest = items.map((x, i) => i).filter(i => !pick.has(i)).slice(0, 3);
+  await Promise.all(rest.map(async i => {
+    const c = imageCands(await within(images(short(items[i].t), 10), 5000)).find(c => !used.has(c.img) && sameThing(items[i].t, c.title, c.page));
+    if (c) { used.add(c.img); pick.set(i, c); }
+  }));
+  await Promise.all([...pick].map(async ([i, c]) => {
+    let im = await within(load(c.img), 4500);
+    if ((!im || im.data.length > 600000) && c.thumb) im = await within(load(c.thumb), 3500);
+    if (im && im.data.length <= 600000) items[i].image = { ...im, source: c.page || im.source };
+  }));
+  return items;
 }
 
 /**

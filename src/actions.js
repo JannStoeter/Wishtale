@@ -36,10 +36,10 @@ import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage, storeI
 import { amzFill, wantsAmazon } from './lib/amzfill.js';
 import { priceFill, wantsPrice } from './lib/pricefill.js';
 import { nameFromLink } from './lib/linkname.js';
-import { imgFill, wantsImage, skipImage } from './lib/imgfill.js';
+import { imgFill, wantsImage, skipImage, prefetchImage } from './lib/imgfill.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishRec, draftKey, concrete, altPrice } from './views/wishprev.js';
-import { wishTab, SearchResults, IdeasPane, wsShop, SHOPS } from './views/wishadd.js';
+import { wishTab, SearchResults, IdeasPane } from './views/wishadd.js';
 import { ZmRow } from './views/zettel.js';
 import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
@@ -128,9 +128,8 @@ let wsSeq=0;
 function runSearch(q){
   q=String(q||'').trim().slice(0,120);if(q.length<2)return;
   if(/^https?:\/\//i.test(q)){A.wdtab({dataset:{v:'eingeben'}});const f=wform();if(f){f.elements.link.value=q;A.readlink(null,true)}return} // ein Link gehört ins Formular
-  const seq=++wsSeq;S.ui.ws={q,shop:wsShop(),st:'loading',items:[]};drawSearch();track('choice',{label:'wunsch_suche_'+wsShop(),path:'/app/'});
-  const shop=wsShop(),src=shop==='alle'?'':shop;
-  searchProducts(q,src).then(items=>{if(seq!==wsSeq)return;S.ui.ws={q,shop,st:items?'done':'error',items:items||[],err:items?'':'Die Suche ist gerade nicht eingeschaltet. Trag deinen Wunsch einfach selbst ein.'};drawSearch()})
+  const seq=++wsSeq;S.ui.ws={q,st:'loading',items:[]};drawSearch();track('choice',{label:'wunsch_suche',path:'/app/'});
+  searchProducts(q,'otto').then(items=>{if(seq!==wsSeq)return;S.ui.ws={q,st:items?'done':'error',items:items||[],err:items?'':'Die Suche ist gerade nicht eingeschaltet. Trag deinen Wunsch einfach selbst ein.'};drawSearch()})
    .catch(e=>{if(seq!==wsSeq)return;S.ui.ws={q,st:'error',items:[],err:e.message};drawSearch()});
 }
 function setRec(o){S.ui.wr=o;drawRec()}
@@ -196,6 +195,7 @@ function previewWish(title){
     if(m&&m.c&&sel&&!sel.dataset.touched)sel.value=m.c;
     if(!m||!m.ok){setRec({st:'unsure',t,seq});return}
     const web=m.src==='web',cand={t:m.t,q:m.q,price:m.price,est:!web,src:web?'web':'match',host:m.host||''};showCand(cand,t);S.ui.wr.seq=seq;candImage(cand,m.img||undefined);
+    prefetchImage({t,link:(f.elements.link?.value||'').trim(),kind:'produkt',status:'offen'}); // Bild schon jetzt suchen, beim Speichern ist es dann meist da
   }).catch(()=>{if(S.ui.wr?.seq===seq)setRec({st:'unsure',t,seq,err:true})});
 }
 /** Wunschzettel: Wünsche im Hintergrund abgleichen (höchstens 12, drei gleichzeitig), das Ergebnis erscheint unter der jeweiligen Zeile. */
@@ -575,11 +575,6 @@ readlink(el,auto){
   const q=(S.ui.ws?.q||'').trim();A.wdtab({dataset:{v:'eingeben'}});
   const f=wform();if(f&&q&&!f.elements.t.value.trim()){f.elements.t.value=q;f.elements.t.dispatchEvent(new Event('input',{bubbles:true}))}
  },
- wsshop(el){ // Shop der Suche wählen (Amazon, Otto, andere Shops), bleibt im Browser gemerkt
-  const v=el.dataset.v;if(!SHOPS.some(([k])=>k===v))return;try{localStorage.setItem('wishtale:wshop',v)}catch{/* nur für diese Sitzung */}S.ui.wshop=v;
-  document.querySelectorAll('.ws-shop').forEach(b=>{const on=b.dataset.v===v;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
-  const q=document.getElementById('wsq')?.value||S.ui.ws?.q||'';if(q.trim().length>=2)runSearch(q);else drawSearch();
- },
  wsadd(el){ // Treffer aus der Suche speichern: Formular füllen und wie gewohnt speichern (Bild, Kategorie, Doppelte, Partnerlink)
   const z=S.ui.ws,i=+el.dataset.i,x=z&&z.items&&z.items[i],f=wform();if(!x||!f||z.adding!=null)return;
   z.adding=i;drawSearch();
@@ -884,13 +879,13 @@ document.addEventListener('submit',e=>{
       if(S.ui.editWish){
         const w=S.me.wishes.find(x=>x.id===S.ui.editWish);
         if(w){const keep=w.c===c&&w.kind===k;if(w.img&&(removed||(img&&img!==w.img)))dropImage(w.img);Object.assign(w,{noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:removed?null:(img||w.img||null),imgSrc:removed?'':(img?(imgSrc||''):(w.imgSrc||'')),...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
-        if(w&&removed)skipImage(w);else if(w&&wantsImage(w))setTimeout(()=>imgFill([w],()=>{if(!S.ui.modal)render()}),600); // neuer Name oder Link ohne Bild: echtes Produktbild suchen
+        if(w&&removed)skipImage(w);else if(w&&wantsImage(w))setTimeout(()=>imgFill([w],()=>{if(!S.ui.modal)render()}),50); // neuer Name oder Link ohne Bild: echtes Produktbild suchen
         if(w&&wantsPrice(w))setTimeout(()=>priceFill([w],()=>{if(!S.ui.modal)render()}),1200); // ohne Preis: echten Preis der Produktseite holen
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
       if(!f.elements.c?.dataset.touched){const nw=S.me.wishes[0];setTimeout(()=>smartCats([nw],()=>{if(!S.ui.modal)render()}),300)} // nur wenn niemand die Kategorie selbst gewählt hat (100)
-      {const nw=S.me.wishes[0];if(removed)skipImage(nw);else if(wantsImage(nw))setTimeout(()=>imgFill([nw],()=>{if(!S.ui.modal)render()}),700)} // echtes Produktbild im Hintergrund, eigenes Foto bleibt immer
+      {const nw=S.me.wishes[0];if(removed)skipImage(nw);else if(wantsImage(nw))setTimeout(()=>imgFill([nw],()=>{if(!S.ui.modal)render()}),50)} // echtes Produktbild im Hintergrund, eigenes Foto bleibt immer
       {const nw=S.me.wishes[0];if(wantsPrice(nw))setTimeout(()=>priceFill([nw],()=>{if(!S.ui.modal)render()}),1100)} // ohne Preis: echten Preis der Produktseite holen, nie schätzen
       {const nw=S.me.wishes[0];if(wantsAmazon(nw))setTimeout(()=>amzFill([nw],(w,r)=>{if(!S.ui.modal)render();toast('Wishtale hat genau dieses Produkt bei Amazon gefunden und verlinkt: '+r.title,{label:'Rückgängig',run:()=>{w.link='';render()}})}),900)} // direkte Produktseite statt Suche (111)
       S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';const ideas=!link&&k!=='erlebnis'&&!noSuggest&&!plan;S.ui.wr=null;toast(ideas?'Der Wunsch ist gespeichert, und deine Freunde sehen dazu passende Ideen von Wishtale.':'Der Wunsch ist gespeichert.',ideas?{label:'So sehen es Freunde',run:()=>{S.ui.preview=true;markStep('preview');render();scrollTo({top:0,behavior:'smooth'})}}:null);render();

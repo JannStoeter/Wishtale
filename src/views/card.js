@@ -40,12 +40,15 @@ function wishLine(w,p){
   return {pr,line};
 }
 
-const cardPrice=w=>w.price?money(w.price):w.kind==='kategorie'&&w.budget?'bis '+money(w.budget):'';
+/* Ohne eigenen Shop-Link (oder mit Amazon-Link) ist der Preis ungefähr: Amazon-Preise lesen wir nicht, er stammt aus dem Eintrag oder von einer anderen Seite (Jann, 2026-11-25). */
+const approx=w=>!w.link||/amazon\.|amzn\./i.test(w.link);
+const wPrice=w=>w.price?(approx(w)?'ca. ':'')+money(w.price):w.kind==='kategorie'&&w.budget?'bis '+money(w.budget):'';
+const cardPrice=wPrice;
 
 /** Listenzeile für viele Wünsche: kleines Bild, Titel, Zeile, Preis, Status und Priorität in einer Reihe. */
 export function WishRow(w,p,o={}){
   const {pr,line}=wishLine(w,p);
-  const price=w.price?money(w.price):w.kind==='kategorie'&&w.budget?'bis '+money(w.budget):'';
+  const price=wPrice(w);
   const res=o.reserve?`<button class="wres" data-act="${o.reserve==='preview'?'previewres':'reserve'}" data-id="${w.id}" aria-label="${esc(w.t)} reservieren">Reservieren</button>`:'';
   const row=`<div class="wrow ${o.taken?'taken':''} ${o.dim?'dim':''} ${w.status==='selbst'?'done':''} ${res?'has-res':''}" role="button" tabindex="0" data-act="wopen" data-id="${w.id}" data-ctx="${o.ctx||'guest'}">
    <span class="wrow-img">${WishArt(w,pr)}</span>

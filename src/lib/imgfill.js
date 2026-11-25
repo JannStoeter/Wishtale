@@ -38,6 +38,19 @@ export const wantsImage = w => !!w && !w.img && w.kind !== 'erlebnis' && w.kind 
 /** Die Person hat das Bild selbst entfernt: für diesen Wunsch nicht mehr automatisch suchen. */
 export function skipImage(w) { if (!w) return; const tried = read(TRIED, []); if (!tried.includes(key(w))) { tried.push(key(w)); write(TRIED, tried.slice(-400)); } }
 
+/* Bild schon vorher holen (Jann, 2026-11-25: „erst zeitversetzt … einmal holen und dann hinterlegen“): Sobald der Wunsch-Dialog ein Produkt
+   sicher erkennt, sucht Wishtale das Bild im Hintergrund. Beim Speichern liegt es dann meist schon bereit und kommt sofort an den Wunsch,
+   statt erst danach gesucht zu werden. Es ist dasselbe Bild, das sonst nach dem Speichern gekommen wäre, gespeichert wird es erst mit dem Wunsch. */
+const early = new Map();
+export function prefetchImage(w) {
+  if (!S.auth.user || !S.me?.dbId || !wantsImage(w)) return;
+  const k = key(w);
+  if (early.has(k) || read(TRIED, []).includes(k)) return;
+  early.set(k, target(w).then(g => (g ? fetchWishImage(g) : null)).catch(() => null));
+  if (early.size > 12) early.delete(early.keys().next().value);
+}
+const imageOf = async w => { const k = key(w), pre = early.get(k); early.delete(k); if (pre) { const im = await pre; if (im) return im; } const goal = await target(w); return goal ? fetchWishImage(goal) : null; };
+
 /** Holt für höchstens `max` Wünsche nacheinander ein Bild und trägt es ein, wenn der Wunsch inzwischen kein Bild bekommen hat und gleich heißt. */
 export async function imgFill(list, onChange, { max = 4 } = {}) {
   if (!S.auth.user || !S.me?.dbId) return 0;
@@ -48,9 +61,7 @@ export async function imgFill(list, onChange, { max = 4 } = {}) {
     const t = w.t, k = key(w);
     tried.push(k); write(TRIED, tried.slice(-400));
     try {
-      const goal = await target(w);
-      if (!goal) continue;
-      const im = await fetchWishImage(goal);
+      const im = await imageOf(w);
       if (!im || w.img || w.t !== t) continue;
       const url = await storeImage(im.blob);
       if (w.img || w.t !== t) continue;

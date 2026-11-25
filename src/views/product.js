@@ -11,7 +11,10 @@ const SOURCE = {
 };
 
 export function priceLine(pr){
-  if(pr.price)return `<div class="price"><b>${money(pr.price)}</b><span>${pr.priceBy==='user'?'Preis laut Eintrag':'Stand '+PRICE_DATE+', kann abweichen'}</span></div>`;
+  // Amazon-Preise lesen wir nicht (Partnerbedingungen), ein Preis an einem Amazon-Wunsch stammt aus dem Eintrag oder von einer anderen Seite. Darum „ca.“ und der Hinweis auf Amazon (Jann, 2026-11-25).
+  const amz=/(^|\.)amazon\./.test(pr.host||'');
+  if(pr.price&&pr.priceBy==='user')return `<div class="price"><b>${amz?'ca. ':''}${money(pr.price)}</b><span>${amz?'Den aktuellen Preis siehst du bei Amazon.':'Preis laut Eintrag, im Shop kann er sich ändern.'}</span></div>`;
+  if(pr.price)return `<div class="price"><b>${money(pr.price)}</b><span>Stand ${PRICE_DATE}, kann abweichen</span></div>`;
   return `<div class="price"><b>Preis bei Amazon</b><span>${pr.range?'Wir schätzen ca. '+money(pr.range)+'. Den genauen Preis siehst du dort.':'Dort siehst du den aktuellen Preis.'}</span></div>`;
 }
 

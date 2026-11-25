@@ -33,3 +33,27 @@ test('Otto: Produktseiten lesen, Preis und Bild übernehmen, sonst Titel und Vor
   assert.equal(r[1].image.source, 'https://imgs.search.brave.com/b.jpg');
   assert.equal(r[1].url, 'https://www.otto.de/p/tonies-weihnachtslieder-2-S0B/');
 });
+
+test('Amazon: gekürzter Titel kommt aus der Adresse', async () => {
+  const r = await searchAmazon('Tonies Weihnachten', { fetchJson: web([
+    { url: 'https://www.amazon.de/tonies-Weihnachtslieder-Rolf-Zuckowski-H%C3%B6rfigur-Toniebox/dp/B08ABCDEF1', title: 'Amazon.de: tonies Weihnachten Hörfigur …' },
+  ]) });
+  assert.equal(r[0].t, 'tonies Weihnachtslieder Rolf Zuckowski Hörfigur Toniebox');
+});
+
+test('Amazon: Bilder aus der Bildersuche, ohne Amazon, nur zum passenden Treffer', async () => {
+  const asked = [];
+  const images = async q => { asked.push(q); return q === 'Tonies Weihnachten' ? { results: [
+    { title: 'Weihnachtslieder Rolf Zuckowski Tonie Hörfigur', url: 'https://www.amazon.de/x', properties: { url: 'https://m.media-amazon.com/a.jpg' }, meta_url: { hostname: 'www.amazon.de' } },
+    { title: 'tonies Weihnachtslieder Rolf Zuckowski Hörfigur', url: 'https://tonies.com/de-de/tonies/rolf', properties: { url: 'https://tonies.com/r.jpg' }, meta_url: { hostname: 'tonies.com' } },
+    { title: 'Kaffeemaschine', url: 'https://shop.de/k', properties: { url: 'https://shop.de/k.jpg' }, meta_url: { hostname: 'shop.de' } },
+  ] } : { results: [] }; };
+  const load = async u => ({ type: 'image/jpeg', data: 'x'.repeat(10), source: u });
+  const r = await searchAmazon('Tonies Weihnachten', { images, load, fetchJson: web([
+    { url: 'https://www.amazon.de/tonies-Weihnachtslieder-Rolf-Zuckowski-H%C3%B6rfigur/dp/B08ABCDEF1', title: 'tonies Weihnachtslieder Rolf Zuckowski Hörfigur' },
+    { url: 'https://www.amazon.de/tonies-Weihnachten-Bibi-Tina/dp/B08ABCDEF2', title: 'tonies Weihnachten mit Bibi und Tina' },
+  ]) });
+  assert.equal(r[0].image.source, 'tonies.com');
+  assert.equal(r[1].image, null);
+  assert.ok(asked.includes('tonies Weihnachten mit Bibi und Tina'));
+});
