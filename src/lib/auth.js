@@ -1,4 +1,5 @@
-import { sb } from './supabase.js';
+import { sb, SUPABASE_URL } from './supabase.js';
+import { SUPABASE_KEY } from './config.js';
 import { S, draftHasData, ensureDraft, clearDraft } from '../state.js';
 import { loadMine } from './remote.js';
 import { utmFromUrl } from './track.js';
@@ -39,11 +40,35 @@ export const resetPassword = email => sb.auth.resetPasswordForEmail(email, { red
 export const setPassword = password => sb.auth.updateUser({ password });
 export const signOut = () => sb.auth.signOut();
 
+/** Anmelden mit Google (Supabase OAuth). Entwurf, Einladung und UTM-Kürzel bleiben im Browser und werden nach der Rückkehr übernommen. */
+export const signInGoogle = () => {
+  const u = utmFromUrl();
+  try { if (Object.keys(u).length) sessionStorage.setItem('wishtale:utm', JSON.stringify(u)); } catch { /* ohne Speicher ohne Kürzel */ }
+  return sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl(), queryParams: { prompt: 'select_account' } } });
+};
+/** Ist Google in Supabase eingeschaltet? Erst dann zeigt die Anmeldung den Knopf. */
+export async function googleOn() {
+  try {
+    const r = await fetch(SUPABASE_URL + '/auth/v1/settings', { headers: { apikey: SUPABASE_KEY } });
+    if (!r.ok) return false;
+    const j = await r.json();
+    return !!(j && j.external && j.external.google);
+  } catch { return false; }
+}
+/** Über Google angemeldet (nicht per E-Mail und Passwort)? */
+export const viaOAuth = user => { const p = user && user.app_metadata && user.app_metadata.provider; return !!p && p !== 'email'; };
+
 /** Nach dem Login: eigene Daten laden. */
 export async function enter(user) {
   S.auth.user = user;
   S.ui.authSent = null; S.ui.authResent = null;
   S.auth.error = '';
+  if (viaOAuth(user) && !(user.user_metadata && user.user_metadata.utm)) {
+    // Kürzel aus der Adresse vor dem Sprung zu Google beim Konto ablegen, wie es signUp für E-Mail-Konten tut
+    let u = null;
+    try { u = JSON.parse(sessionStorage.getItem('wishtale:utm') || 'null'); sessionStorage.removeItem('wishtale:utm'); } catch { /* nichts */ }
+    if (u) sb.auth.updateUser({ data: { utm: u } }).catch(() => {});
+  }
   try { await loadMine(user); }
   catch (e) { S.auth.error = friendly(e); console.error(e); }
 }

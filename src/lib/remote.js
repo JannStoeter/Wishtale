@@ -64,7 +64,10 @@ export async function loadMine(user) {
   if (error) throw error;
   let list = profs;
   if (!list.length) {
-    const name = user.user_metadata?.full_name || (user.email || 'Ich').split('@')[0];
+    const full = (user.user_metadata?.full_name || user.user_metadata?.name || '').trim();
+    // Bei Google steht der ganze Name im Konto, Wishtale nimmt wie bei der Registrierung nur den Vornamen
+    const prov = user.app_metadata?.provider;
+    const name = (prov && prov !== 'email' ? full.split(/\s+/)[0] : full) || (user.email || 'Ich').split('@')[0];
     let created = null;
     for (let i = 0; i < 4 && !created; i++) {
       const { data, error: e } = await sb.from('profiles')

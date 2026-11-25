@@ -1572,3 +1572,9 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 @keyframes wsskel{from{background-position:100% 0}to{background-position:-100% 0}}
 @media (prefers-reduced-motion:reduce){.ws-skel div{animation:none}}
 @media (max-width:420px){.ws-go{padding:0 14px}.ws-thumb{width:48px;height:48px}}
+
+/* Anmelden mit Google (Jann 2026-11-25): heller Knopf nach den Vorgaben von Google, darunter die E-Mail-Variante */
+.btn.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1F1F1F;border:1px solid #D6D0C4;font-weight:500}
+.btn.gbtn:hover{background:#F8F6F1;border-color:#BDB5A6}
+.auth-or{display:flex;align-items:center;gap:12px;margin:14px 0;font-size:13px;color:var(--muted)}
+.auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--line)}

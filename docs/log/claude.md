@@ -300,3 +300,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: Build, Bildschirmfotos am Handy
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 122 · Anmelden mit Google
+- Auftrag: Jann im Projekt-Chat („Wir aktivieren Anmelden über Google.. Apple lassen wir noch zurück“)
+- Geändert: src/lib/auth.js (`signInGoogle`, `googleOn`, `viaOAuth`, UTM-Kürzel über `wishtale:utm`), src/lib/remote.js (bei Google nur der Vorname fürs Profil), src/views/auth.js (Knopf und Trenner), src/actions.js (`google`), src/main.js (Knopf erst, wenn Google in Supabase an ist; passende Begrüßung), src/styles/main.css (`.gbtn`, `.auth-or`), datenschutz.html (Abschnitt 3 und 7)
+- Geprüft: ESLint, Build, Tests, Bildschirmfoto der Registrierung am Handy; der echte Ablauf braucht die Einrichtung bei Google und Supabase
+- Datenbank und Dienste: Google als Anmeldeanbieter in Supabase (Einrichtung durch Jann)
+- Zurücknehmen: Anbieter in Supabase ausschalten, dann verschwindet der Knopf

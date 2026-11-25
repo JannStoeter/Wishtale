@@ -43,7 +43,7 @@ import { ZmRow } from './views/zettel.js';
 import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
 import { guestRpc, guestToken } from './lib/remote.js';
-import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword } from './lib/auth.js';
+import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword, signInGoogle } from './lib/auth.js';
 
 export const MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 export 
@@ -390,6 +390,7 @@ const A={
  newpw(){S.ui.modal=null;location.hash='#neues-passwort'},
  authback(){S.ui.authSent=null;S.ui.authResent=null;S.ui.authMsg=null;render()},
  authtab(el){S.ui.authSent=null;S.ui.authMsg=null;location.hash=el.dataset.v==='up'?'#registrieren':'#anmelden'},
+ google(){S.ui.authBusy=true;render();signInGoogle().then(({error})=>{if(error){S.ui.authBusy=false;S.ui.authMsg={type:'err',text:friendly(error)};render()}})},
  demo(){S.ui.authMsg=null;track('demo',{once:true,path:'/app/'});location.hash='#demo'},
  tologin(){S.ui.modal=null;S.ui.authMsg=null;location.hash='#start'},
  // Gast ohne Konto will ein eigenes Wishtale: UTM-Kürzel in die Adresse, damit signUp sie beim Konto speichert (Datenschutz Abschnitt 8)
