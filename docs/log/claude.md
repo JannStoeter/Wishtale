@@ -382,3 +382,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geändert: src/admin/scenes.js (Kinder-Szenen kgast, kreserviert, kkaufen, kinfo), src/admin/ideas.js (zehn Ideen nach den vier Säulen des Plans, Highlight-Storys „Für Großeltern“ und „Fragen“)
 - Geprüft: ESLint, Build, alle neuen Ideen gerendert und angesehen
 - Datenbank und Dienste: keine
+
+## 2026-11-25 · Dev 116 · Hinweis am Computer und Chrome-Erweiterung
+- Was: Einmaliger Hinweis zum Lesezeichen-Knopf über der Wunschliste (nur Computer), Chrome-Erweiterung `extension/` (activeTab, kleines Fenster mit dem Wunschdialog), `npm run ext:zip`, Store-Texte, Datenschutz Abschnitt 11
+- Warum: Jann möchte Wishtale oben im Browser, ohne dass es nervt; Entscheidungskarte „Erweiterung bauen, Hinweis jetzt“
+- Geprüft: ESLint, Build, 33 Tests, Bildschirmfoto Desktop, Erweiterung in Chromium geladen und Klick nachgestellt (öffnet `wishtale.de/app/?share_url=…&share_title=…`)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten

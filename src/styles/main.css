@@ -1743,3 +1743,4 @@ html:has(.scrim),html:has(.scrim) body{overflow:hidden}
 body.lp{background:#FFFDFA}
 .lp .hdr{background:color-mix(in srgb,#F6F1E7 94%,transparent)}
 .lp .lp-visual .lp-note{background:#FFFDFA}
+.ss-bm.sm{padding:6px 12px;font-size:14px}
