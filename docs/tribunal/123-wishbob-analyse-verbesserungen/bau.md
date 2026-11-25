@@ -1,5 +1,5 @@
 ---
-topic: 119-wishbob-analyse-verbesserungen
+topic: 123-wishbob-analyse-verbesserungen
 von: claude
 status: in-arbeit
 datum: 2026-11-25

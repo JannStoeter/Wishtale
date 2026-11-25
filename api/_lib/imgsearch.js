@@ -210,7 +210,7 @@ export async function priceForWish({ t, q, brand, link } = {}, deps = {}) {
 }
 
 /*
- * Produktsuche im Wunschdialog (120, Jann: „Wunsch suchen“ ohne die Seite zu verlassen). Websuche über Brave mit dem Suchbegriff,
+ * Produktsuche im Wunschdialog (124, Jann: „Wunsch suchen“ ohne die Seite zu verlassen). Websuche über Brave mit dem Suchbegriff,
  * je Shop höchstens ein Treffer, ohne Marktplätze, Preisvergleiche, Ratgeber und Amazon (Amazon lesen wir nicht). Jede Seite wird
  * wie bei „Link lesen“ gelesen; bleiben nur Seiten mit Produktname und Bild, deren Name zum Suchbegriff passt. Das Bild lädt unser
  * Server (SSRF-Schutz), damit das Gerät keine Fremdserver abruft. Ohne Schlüssel null. Treffer werden nur angezeigt, nie gespeichert.

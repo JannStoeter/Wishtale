@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     }
     // Alles, was Brave fragt, zählt gegen die Tagesgrenzen (nur mit Schlüssel, sonst gibt es ohnehin null)
     if ((req.body?.imageQuery || req.body?.amazonQuery || req.body?.imageFor || req.body?.priceFor || req.body?.searchQuery) && searchOn()) await guardSearch(id);
-    if (req.body?.searchQuery) { // Produktsuche im Wunschdialog (120): Treffer mit Name, Preis und Bild, nur zum Anzeigen
+    if (req.body?.searchQuery) { // Produktsuche im Wunschdialog (124): Treffer mit Name, Preis und Bild, nur zum Anzeigen
       const q = String(req.body.searchQuery).trim().slice(0, 120);
       if (q.length < 2) throw new HttpError(400, 'Bitte gib einen Suchbegriff ein.');
       const results = await searchProducts(q).catch(() => []);

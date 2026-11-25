@@ -1,5 +1,5 @@
 ---
-topic: 120-wunschdialog-schlank-und-suche
+topic: 124-wunschdialog-schlank-und-suche
 status: entschieden
 option: D
 datum: 2026-11-25

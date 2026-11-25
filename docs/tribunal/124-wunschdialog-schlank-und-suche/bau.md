@@ -1,5 +1,5 @@
 ---
-topic: 120-wunschdialog-schlank-und-suche
+topic: 124-wunschdialog-schlank-und-suche
 von: claude
 status: fertig
 datum: 2026-11-25

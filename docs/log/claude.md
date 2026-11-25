@@ -271,7 +271,7 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Zurücknehmen: Merge-Commit reverten
 
 
-## 2026-11-25 · 119 · Fragen und Antworten nach Wishbob-Analyse
+## 2026-11-25 · 123 · Fragen und Antworten nach Wishbob-Analyse
 - Auftrag: Jann im Projekt („zieh dir mal aus dem chat Wishbob Seitenanalyse alle infos und lass uns an den Verbesserungen arbeiten“)
 - Geändert: index.html (Abschnitt `#fragen` mit Schlüsseln `faq.*`, Kopfzeile `nav.nav3`, `nav.nav4`, `FAQPage` im JSON-LD), ratgeber/wunschzettel-kinder.html und ratgeber/wunschzettel-weihnachten.html (Häufige Fragen mit `FAQPage`), src/styles/main.css (`.faq-*`), CLAUDE.md
 - Warum: Wishbob hat auf jeder Anlass-Seite Fragen und Antworten, Wishtale hatte keine; hilft Suchmaschinen und Menschen, die vor der Anmeldung zögern
@@ -279,14 +279,14 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 
-## 2026-11-25 · 120 · Wunschdialog schlank
+## 2026-11-25 · 124 · Wunschdialog schlank
 - Auftrag: Jann im Projekt-Chat („in allem minimalistischer werden und weniger Text und das Wünsche hinzufügen verbessern“, Wishbob-Suche ohne Seitenwechsel)
-- Geändert: src/views/modals.js (ein Feld für Name oder Link mit Lupe, Link-Zeile erst mit Link, Knöpfe Liste einlesen, Amazon-Suche, Aus dem Shop, Art unter Mehr Angaben, Euro-Zeichen), src/actions.js (Link-Zeile einblenden), src/lib/util.js (Symbole camera, store), src/lib/guide.js, src/styles/main.css (`.wq`, `.wl-row`, `.wq-chip`, `.eur`), Dev 120, Dev 009 (claude-2.md)
+- Geändert: src/views/modals.js (ein Feld für Name oder Link mit Lupe, Link-Zeile erst mit Link, Knöpfe Liste einlesen, Amazon-Suche, Aus dem Shop, Art unter Mehr Angaben, Euro-Zeichen), src/actions.js (Link-Zeile einblenden), src/lib/util.js (Symbole camera, store), src/lib/guide.js, src/styles/main.css (`.wq`, `.wl-row`, `.wq-chip`, `.eur`), Dev 124, Dev 009 (claude-2.md)
 - Geprüft: ESLint, Build, Tests, Bildschirmfotos Handy und Computer im Demo
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 
-## 2026-11-25 · 120 · Wunschdialog mit Ideen, Suchen und Eingeben
+## 2026-11-25 · 124 · Wunschdialog mit Ideen, Suchen und Eingeben
 - Auftrag: Jann im Projekt-Chat („also erstmal würde ich das interface Ideen / Wunsch suchen / Wunsch eingeben übernehmen“), Quelle „Websuche jetzt, Amazon später“
 - Geändert: src/views/wishadd.js (neu: Reiter, Suchfeld und Treffer, eigene Ideen mit „Habe ich schon“, „Erfülle ich mir selbst“, „Passt nicht“), src/views/modals.js, src/actions.js (`wdtab`, `wsown`, `wsadd`, `aiplan`, Suche `runSearch`, Pfeiltasten), src/main.js (geteilte Links und erster Wunsch starten bei „Eingeben“), src/lib/wishimg.js (`searchProducts`), api/inspect.js (op `searchQuery`, Tagesgrenze `guardSearch`), api/_lib/imgsearch.js (`searchProducts`), src/styles/main.css, datenschutz.html (Abschnitt 11, Produktsuche)
 - Warum: Wünsche finden, ohne die Seite zu verlassen; Bilder laufen über den eigenen Server, Treffer werden nicht gespeichert
@@ -294,14 +294,14 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine neue Tabelle, Brave wie bisher
 - Zurücknehmen: Merge-Commit reverten
 
-## 2026-11-25 · 121 · Ratgeber Geburtstag und Kindergeburtstag
+## 2026-11-25 · 125 · Ratgeber Geburtstag und Kindergeburtstag
 - Auftrag: Jann im Projekt-Chat („Die Landingpage bekommt Aus Vorschlag A Seiten mit Tipps“)
 - Geändert: ratgeber/wunschliste-geburtstag.html, ratgeber/kindergeburtstag-wunschliste.html (neu, Article, Breadcrumb und FAQPage im JSON-LD), ratgeber/index.html (Karten), Fußzeilen aller Ratgeber-Seiten, index.html (Fußzeile mit neuen Schlüsseln `footer.rg6`, `footer.rg7`), public/sitemap.xml, vite.config.js
 - Geprüft: Build, Bildschirmfotos am Handy
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 
-## 2026-11-25 · 122 · Anmelden mit Google
+## 2026-11-25 · 126 · Anmelden mit Google
 - Auftrag: Jann im Projekt-Chat („Wir aktivieren Anmelden über Google.. Apple lassen wir noch zurück“)
 - Geändert: src/lib/auth.js (`signInGoogle`, `googleOn`, `viaOAuth`, UTM-Kürzel über `wishtale:utm`), src/lib/remote.js (bei Google nur der Vorname fürs Profil), src/views/auth.js (Knopf und Trenner), src/actions.js (`google`), src/main.js (Knopf erst, wenn Google in Supabase an ist; passende Begrüßung), src/styles/main.css (`.gbtn`, `.auth-or`), datenschutz.html (Abschnitt 3 und 7)
 - Geprüft: ESLint, Build, Tests, Bildschirmfoto der Registrierung am Handy; der echte Ablauf braucht die Einrichtung bei Google und Supabase

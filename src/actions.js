@@ -120,7 +120,7 @@ function wishVariants(id,ctx){
    damit eingetippte Werte stehen bleiben. Das Namensfeld wird nur nach „Passt“ oder einem Klick auf eine Alternative überschrieben. */
 const wform=()=>document.querySelector('form[data-form=wish]');
 function drawRec(){const b=document.getElementById('wprev');if(b)b.innerHTML=WishRec()}
-/* Wunschdialog mit Reitern (120): Suche und Ideen zeichnen nur ihren eigenen Kasten neu. */
+/* Wunschdialog mit Reitern (124): Suche und Ideen zeichnen nur ihren eigenen Kasten neu. */
 function drawSearch(){const b=document.getElementById('wsres');if(b)b.innerHTML=SearchResults()}
 function drawIdeas(){const b=document.getElementById('wpane-ideen');if(b)b.innerHTML=IdeasPane()}
 function loadSelfIdeas(){const h=S.me.handle;if(S.auth.user&&h)loadIdeas(skey(h),{h,mode:'self',n:signalCount()},()=>{if(S.ui.modal==='wish')drawIdeas()})}
@@ -475,7 +475,7 @@ render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
 readlink(el,auto){
   const f=wform();if(!f)return Promise.resolve();
   const raw0=f.elements.link.value.trim();
-  if(raw0)f.querySelector('.wl-row')?.removeAttribute('hidden'); // die Link-Zeile erscheint erst, wenn es einen Link gibt (119)
+  if(raw0)f.querySelector('.wl-row')?.removeAttribute('hidden'); // die Link-Zeile erscheint erst, wenn es einen Link gibt (123)
   // Einfügen, Tippen und Verlassen des Feldes lösen alle aus: denselben Link nur einmal lesen.
   const seen=(f.dataset.read||'').split('\n');if(auto&&raw0&&seen.includes(raw0))return f._reading||Promise.resolve();
   f.dataset.read=raw0;

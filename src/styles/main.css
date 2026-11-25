@@ -1500,7 +1500,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 @media (min-width:900px){.faq-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:start}.faq-intro{position:sticky;top:92px}}
 @media (prefers-reduced-motion:reduce){.faq-item summary::after{transition:none}}
 
-/* Wunschdialog schlank (119): ein Suchfeld für Name oder Link, Link-Zeile erst bei Bedarf, Zusatzwege als kleine Knöpfe, Preis mit Euro-Zeichen. */
+/* Wunschdialog schlank (123): ein Suchfeld für Name oder Link, Link-Zeile erst bei Bedarf, Zusatzwege als kleine Knöpfe, Preis mit Euro-Zeichen. */
 .wishsheet form{display:grid;gap:0}
 .wq{position:relative;margin-bottom:12px}
 .wq-ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;display:flex}
@@ -1530,7 +1530,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .wishsheet #wprev .wr-hint{margin:-4px 2px 12px}
 @media (max-width:420px){.wq-chips{flex-wrap:nowrap}.wq-chip{padding:0 11px;font-size:13px}.wq-chip .ico{display:none}}
 
-/* Wunschdialog mit drei Reitern (120): helle, ruhige Fläche, Reiter als Segmentleiste */
+/* Wunschdialog mit drei Reitern (124): helle, ruhige Fläche, Reiter als Segmentleiste */
 .wtabs{display:flex;gap:4px;padding:4px;margin:2px 0 16px;background:#F1ECE2;border-radius:99px}
 .wtab{flex:1;min-height:40px;border:0;border-radius:99px;background:none;font:inherit;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;transition:background-color .15s,color .15s,box-shadow .15s}
 .wtab:hover{color:var(--ink)}

@@ -11,7 +11,7 @@ Wortlaut von Jann im Projekt-Chat (25.11.2026), zu zwei Bildschirmfotos der Wish
 
 > Die Wunscheingabe ist weniger überladen obgleich ich sie altbacken designed finde. Wunschsuche ist super, dann muss man die Seite nicht verlassen. Das wäre Top. Wishbob ist etwas klarer strukturiert in seiner Aufteilung das finde ich gut. […] Wir müssen aber in allem minimalistischer werden und weniger Text und das Wünsche hinzufügen verbessern
 
-Umgesetzt im ersten Schritt (Claude, gleicher Pull Request wie Dev 119): Ein Feld für Name oder Link mit Lupe, die Link-Zeile erscheint erst, wenn es einen Link gibt, Wunschzettel, Amazon-Suche und „Aus dem Shop“ als kleine Knöpfe, Art unter „Mehr Angaben“, Preis mit Euro-Zeichen, erklärende Absätze entfernt.
+Umgesetzt im ersten Schritt (Claude, gleicher Pull Request wie Dev 123): Ein Feld für Name oder Link mit Lupe, die Link-Zeile erscheint erst, wenn es einen Link gibt, Wunschzettel, Amazon-Suche und „Aus dem Shop“ als kleine Knöpfe, Art unter „Mehr Angaben“, Preis mit Euro-Zeichen, erklärende Absätze entfernt.
 
 Heute zeigt der Dialog zu genauen Wünschen eine erkannte Karte und nach „Nicht das Richtige“ bis zu vier Alternativen ohne Bild. Wishbob zeigt eine Trefferliste mit Bild und Preis aus Amazon.
 

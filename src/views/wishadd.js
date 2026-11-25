@@ -1,5 +1,5 @@
 /*
- * Neuer Wunsch mit drei Reitern (120, Jann 2026-11-25): „Ideen“ (eigene Vorschläge von Wishtale), „Suchen“ (Treffer mit Bild und Preis
+ * Neuer Wunsch mit drei Reitern (124, Jann 2026-11-25): „Ideen“ (eigene Vorschläge von Wishtale), „Suchen“ (Treffer mit Bild und Preis
  * aus vielen Shops, ohne die Seite zu verlassen) und „Eingeben“ (das schlanke Formular). Der Reiter steht in S.ui.wtab, gewechselt wird
  * ohne neues Zeichnen, damit Eingaben im Formular stehen bleiben. Die Suche zeichnet nur den Kasten #wsres neu.
  */

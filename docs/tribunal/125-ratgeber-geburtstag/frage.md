@@ -6,7 +6,7 @@ erstellt: 2026-11-25
 von: jann
 ---
 ## Kontext
-Aus der Wishbob-Analyse (Dev 119, Vorschlag A: Seiten mit Tipps zu Anlässen). Wortlaut von Jann im Projekt-Chat (25.11.2026):
+Aus der Wishbob-Analyse (Dev 123, Vorschlag A: Seiten mit Tipps zu Anlässen). Wortlaut von Jann im Projekt-Chat (25.11.2026):
 
 > Die Landingpage bekommt Aus Vorschlag A Seiten mit Tipps
 

@@ -118,7 +118,7 @@ export async function fetchWishPrice(w) {
   return j.price && j.price.price > 0 ? j.price : null;
 }
 
-/** Produktsuche im Wunschdialog (120). Liefert Treffer { t, price, url, host, img: { blob, preview, src } } oder null ohne Suchdienst. */
+/** Produktsuche im Wunschdialog (124). Liefert Treffer { t, price, url, host, img: { blob, preview, src } } oder null ohne Suchdienst. */
 export async function searchProducts(q) {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) throw new Error('Melde dich an, dann sucht Wishtale für dich in vielen Shops.');

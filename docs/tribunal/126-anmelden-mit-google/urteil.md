@@ -1,5 +1,5 @@
 ---
-topic: 122-anmelden-mit-google
+topic: 126-anmelden-mit-google
 status: entschieden
 option: auftrag
 datum: 2026-11-25
