@@ -337,3 +337,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, 33 Tests, Bildschirmfotos am Handy; echte Treffer erst nach dem Deploy
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 129 · Wunschfenster am Handy
+- Auftrag: Jann im Projekt-Chat („der popup beim Handy [hängt] unten und man [kann] die Wünsche dahinter scrollen“)
+- Geändert: src/styles/main.css (Sperre bei `.scrim`, Wunschdialog fast in voller Höhe), src/actions.js (`touchmove`-Wächter), CLAUDE.md
+- Geprüft: ESLint, Build, Playwright mit iPhone-13-Profil (Wischen bei offenem Fenster ändert die Seitenposition nicht), Bildschirmfoto
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten

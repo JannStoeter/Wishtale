@@ -3,7 +3,7 @@ topic: 128-bilder-preise-suche
 status: entschieden
 option: umsetzen
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: 35d99a512668f44e4d0a6004e55b746dcb29299f
 ---
 **Jann im Projekt:** vier Korrekturen (Bilder zeitversetzt, Preis weicht von Amazon ab, keine Bilder in der Suche, Namen zu kurz).
 
