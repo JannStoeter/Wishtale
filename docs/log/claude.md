@@ -344,3 +344,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Playwright mit iPhone-13-Profil (Wischen bei offenem Fenster ändert die Seitenposition nicht), Bildschirmfoto
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 130 · Menü aufräumen
+- Auftrag: Jann im Projekt-Chat („Die Profile müssen hoch. Und der Rest geclustert werden“)
+- Geändert: src/views/menu.js (Profile oben, vier Gruppen, kaum Unterzeilen), src/styles/main.css (Gruppen als weiße Karten), src/lib/util.js (Symbole `mail`, `phone`), CLAUDE.md
+- Geprüft: ESLint, Build, Tests, Bildschirmfotos Handy und Computer
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
