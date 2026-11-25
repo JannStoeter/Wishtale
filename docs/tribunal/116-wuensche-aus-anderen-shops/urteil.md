@@ -3,7 +3,7 @@ topic: 116-wuensche-aus-anderen-shops
 status: entschieden
 option: A
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: cbaabc4c8634f6ac3f0cd2ae8dc8099d8fe74904
 ---
 **Jann im Projekt-Thread:** „Ja Bau es ein. Dann müssen wir aber die rechte Sidebar wie wir die Einstellung ja finden werden aufräumen damit der Nutzer des auch findet“ (Antwort auf die Beschreibung von Option A).
 
