@@ -20,17 +20,18 @@ export function Menu() {
   const mine = [
     ...accts.map(([id, a]) => `<li><button class="mi${S.ui.acct === id ? ' on' : ''}" ${dd('acct', `data-id="${id}"`)}${S.ui.acct === id ? ' aria-current="true"' : ''}><span class="av t${a.tone}">${initials(a.name)}</span><span>${esc(a.name)}${a.shared ? '<small>Kind-Konto, mitverwaltet</small>' : a.managed ? '<small>Kind-Konto</small>' : '<small>Mein Profil</small>'}</span></button></li>`),
     item('plus', 'Kind-Konto hinzufügen', dd('modal', 'data-v="accounts"'), false),
-    u ? item('gift', 'Jemanden einladen', dd('inviteopen'), false, 'mit vorbereitetem Entwurf') : '',
   ].join('');
   const g = (t, body) => body.trim() ? `<section class="mgrp"><h3>${t}</h3><ul>${body}</ul></section>` : '';
   return `<div class="scrim menu-scrim" data-act="menuclosebg"><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="menu-t">
    <div class="drawer-head"><div class="who"><span class="av t${m.tone}">${initials(m.name)}</span><div><strong id="menu-t">${esc(m.name)}</strong><span class="muted">${u ? esc(u.email || '') : 'Demo, nur in diesem Browser'}</span></div></div>
     <button class="sheet-x mclose" data-act="menuclose" aria-label="Menü schließen">×</button></div>
    <nav aria-label="Menü">
-    ${g('Mein Wishtale', item('star', 'Meine Wünsche', go('wuensche'), v === 'wuensche') + (u ? item('plus', 'Wunschzettel hochladen', dd('modal', 'data-v="zettel"'), false, 'Foto oder Text, Wishtale macht daraus Wünsche') : '') + item('user', 'Profil und Persönlichkeit', go('profil'), v === 'profil') + item('globe', 'Social Media', go('profil', 'social'), false, 'Pinterest und Instagram') + item('clock', 'Historie und Meine Geschenke', go('historie'), v === 'historie'))}
+    ${g('Mein Wishtale', item('star', 'Meine Wünsche', go('wuensche'), v === 'wuensche') + item('user', 'Profil und Persönlichkeit', go('profil'), v === 'profil') + item('globe', 'Social Media', go('profil', 'social'), false, 'Pinterest und Instagram') + item('clock', 'Historie und Meine Geschenke', go('historie'), v === 'historie'))}
+    ${g('Wünsche hinzufügen', item('bag', 'Aus jedem Shop speichern', dd('shopsave'), false, 'mit einem Tipp auf „Teilen“ im Shop') + (u ? item('plus', 'Wunschzettel hochladen', dd('modal', 'data-v="zettel"'), false, 'Foto oder Text, Wishtale macht daraus Wünsche') : '') + (offerInstall() ? item('plus', 'Wishtale als App', dd('appinstall'), false, 'mit eigenem Symbol auf dem Handy') : ''))}
     ${g('Für dich', (u ? item('eye', homeIdeasVisible() ? 'Vorschläge auf der Wunschliste ausblenden' : 'Vorschläge auf der Wunschliste einblenden', dd('homeideastoggle'), false) : '') + item('spark', 'Geschmack schärfen', go('geschmack'), v === 'geschmack', 'Karten, die Wishtale dich besser kennenlernen lassen') + (inspirationOn() ? item('gift', 'Inspiration', go('entdecken'), v === 'entdecken', 'Ideen von Wishtale für dich') : ''))}
+    ${g('Teilen', item('link', 'Link teilen', dd('share'), false) + item('eye', 'Wer sieht was', go('profil', 'vis'), false, 'Sichtbarkeit im Profil') + (u ? item('gift', 'Jemanden einladen', dd('inviteopen'), false, 'mit vorbereitetem Entwurf') : ''))}
     ${g('Meine Profile', mine)}
-    ${g('Organisation', item('help', 'Hilfe und FAQ', dd('modal', 'data-v="tour" data-help="faq"'), false) + (offerInstall() ? item('plus', 'Wishtale als App', dd('appinstall'), false, 'mit eigenem Symbol auf dem Handy') : '') + item('link', 'Link teilen', dd('share'), false) + item('eye', 'Wer sieht was', go('profil', 'vis'), false, 'Sichtbarkeit im Profil') + (u ? item('bag', 'Mein Plan', go('plan'), v === 'plan') + item('lock', 'Einstellungen und Konto', dd('modal', 'data-v="accounts"'), false, 'Passwort, Konto löschen') + item('back', 'Abmelden', dd('logout'), false) : item('arrow', 'Eigenes Wishtale anlegen', dd('exitdemo'), false)))}
+    ${g('Konto und Hilfe', (u ? item('bag', 'Mein Plan', go('plan'), v === 'plan') + item('lock', 'Einstellungen und Konto', dd('modal', 'data-v="accounts"'), false, 'Passwort, Konto löschen') : '') + item('help', 'Hilfe und FAQ', dd('modal', 'data-v="tour" data-help="faq"'), false) + (u ? item('back', 'Abmelden', dd('logout'), false) : item('arrow', 'Eigenes Wishtale anlegen', dd('exitdemo'), false)))}
    </nav></aside></div>`;
 }
 

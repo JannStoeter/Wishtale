@@ -36,9 +36,19 @@ export function initPwa() {
 }
 
 const SKEY = 'wishtale:shared';
-/** Geteilte Links (Android „Teilen an Wishtale“) kommen als ?share_url=… an. Merken und die Adresse aufräumen. */
+/** Geteilte Links (Android „Teilen an Wishtale“, Lesezeichen-Knopf) kommen als ?share_url=… an, der iPhone-Kurzbefehl als #zu-wishtale=…. Merken und die Adresse aufräumen. */
 export function takeShare() {
   try {
+    // Kurzbefehl am iPhone (Dev 116): /app/#zu-wishtale=<Shop-Link, roh oder codiert>
+    const h = location.hash.match(/^#zu-wishtale=(.+)$/s);
+    if (h) {
+      let raw = h[1];
+      try { if (/^https?%3A/i.test(raw)) raw = decodeURIComponent(raw); } catch { /* roh lassen */ }
+      const u = (raw.match(/https?:\/\/[^\s<>"']+/i) || [''])[0];
+      if (u) sessionStorage.setItem(SKEY, JSON.stringify({ url: u.slice(0, 2000), title: '' }));
+      history.replaceState(null, '', location.pathname + location.search + '#wuensche');
+      return;
+    }
     const q = new URLSearchParams(location.search);
     if (!q.has('share_url') && !q.has('share_text') && !q.has('share_title')) return;
     const all = [q.get('share_url'), q.get('share_text'), q.get('share_title')].filter(Boolean).join(' ');

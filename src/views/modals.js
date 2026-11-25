@@ -1,6 +1,7 @@
 import { ZettelModal } from './zettel.js';
 import { MailMeModal } from './given.js';
 import { AppInstallModal } from './appinstall.js';
+import { ShopSaveModal } from './shopsave.js';
 import { WelcomeModal } from './welcome.js';
 import { InviteModal } from './invite.js';
 import { AboutModal } from './about.js';
@@ -64,6 +65,7 @@ export function Modal(){
   if(m==='welcome')return WelcomeModal();
   if(m==='invite')return InviteModal();
   if(m==='appinstall')return AppInstallModal();
+  if(m==='shopsave')return ShopSaveModal();
   if(m==='mailme')return MailMeModal();
   if(m==='fulfilled')return FulfilledModal();
   if(m==='about')return AboutModal();
@@ -87,7 +89,7 @@ export function Modal(){
     ${ed?'':'<p class="fw-alt wl-alt">Schon eine Liste auf Papier oder bei Amazon? <button type="button" class="linkbtn" data-act="modal" data-v="zettel">Ganze Liste einlesen</button></p>'}
     <div class="fld linkfirst"><label for="wl">Link zum Produkt <span class="muted" style="font-weight:400">(optional)</span></label>
      <div class="lf-row"><input id="wl" name="link" class="inp" placeholder="Shop-Link einfügen" autocomplete="off" value="${esc(d.link||'')}"><button type="button" class="btn sec" data-act="readlink">Einlesen</button></div>
-     <p id="wlstat" class="hint" role="status" aria-live="polite">Mit Link finden deine Freunde genau das Richtige. Shop-Links lesen wir direkt, Amazon-Links werden gespeichert.${ed?'':` <button type="button" class="linkbtn" data-act="azopen">Bei Amazon suchen</button>`}</p></div>
+     <p id="wlstat" class="hint" role="status" aria-live="polite">Mit Link finden deine Freunde genau das Richtige. Shop-Links lesen wir direkt, Amazon-Links werden gespeichert.${ed?'':` <button type="button" class="linkbtn" data-act="azopen">Bei Amazon suchen</button>`}</p>${ed?'':'<p class="fw-alt ss-alt">Schneller geht es direkt aus dem Shop. <button type="button" class="linkbtn" data-act="modal" data-v="shopsave">So speicherst du mit einem Tipp</button></p>'}</div>
     <div class="fld"><span class="lb">Art</span><div class="radios">${[['produkt','Produkt'],['kategorie','Nur Kategorie'],['erlebnis','Erlebnis'],['frei','Freier Wunsch']].map(([v,l])=>`<label><input type="radio" name="kind" value="${v}" ${(d.kind||'produkt')===v?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
     <div class="fld f-budget"><label for="wb">Budget bis (Euro)</label><input id="wb" name="budget" type="number" min="1" inputmode="numeric" class="inp" placeholder="z. B. 100" value="${d.budget||''}"></div>
     <div class="fld f-price"><label for="wp">Preis (Euro, optional)</label><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="z. B. 69,90" value="${d.price?String(d.price).replace('.',','):''}"></div>

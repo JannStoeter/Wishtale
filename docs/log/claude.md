@@ -254,3 +254,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 
+
+## 2026-11-25 · Dev 116 · Aus jedem Shop speichern
+- Was: Fenster „Aus jedem Shop speichern“ mit iPhone-Kurzbefehl (`#zu-wishtale=`), Lesezeichen-Knopf und Android-Hinweis; Menü hinter dem Avatar neu gruppiert; Hinweis im Wunschdialog; FAQ
+- Warum: Jann will beim Hinzufügen aus Shops zu Wishbob aufschließen, Option A freigegeben
+- Geprüft: ESLint, Build, 21 Tests, Bildschirmfotos (iPhone 13, Desktop), Kurzbefehl-Adresse landet im Wunschdialog-Speicher, Lesezeichen-Knopf öffnet die richtige Adresse
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
