@@ -677,6 +677,8 @@ document.addEventListener('change',async e=>{
 });
 document.addEventListener('change',e=>{if(e.target.name==='t'&&e.target.closest?.('form[data-form=wish]')&&!S.ui.editWish&&!e.target.dataset.skip){const v=e.target.value.trim().slice(0,120);if(S.ui.wr&&S.ui.wr.t===v&&S.ui.wr.st)return;previewWish(e.target.value)}}); // beim Verlassen des Feldes (zum Beispiel Klick auf „Passt“) nicht noch einmal suchen
 // Die Erkennung startet schon beim Tippen und Einfügen (nach kurzer Pause), nicht erst beim Verlassen des Feldes.
+// Bei offenem Fenster scrollt am Handy nur das Fenster selbst, nie die Wunschliste dahinter (iOS ignoriert overflow allein manchmal)
+document.addEventListener('touchmove',e=>{if(!document.querySelector('.scrim'))return;if(!e.target.closest?.('.sheet,.drawer,.tour'))e.preventDefault()},{passive:false});
 document.addEventListener('toggle',e=>{if(e.target.classList?.contains('fsteps'))S.ui.stepsOpen=e.target.open},true);
 let recT;
 // Ein Link im Namensfeld wandert von selbst ins Link-Feld und wird gelesen, ein Feld reicht für alles.

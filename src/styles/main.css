@@ -1607,3 +1607,14 @@ fieldset.fld legend{padding:0;margin-bottom:2px;font-size:13px;font-weight:600;c
 .ws-shoplinks .shop-pill{min-height:30px;padding:3px 10px;font-size:12.5px}
 .ws-shoplinks{column-gap:6px;row-gap:4px}
 .ws-shoplinks .ad-note{display:inline;margin:0;font-size:12px;color:var(--muted);white-space:nowrap}
+/* Offenes Fenster am Handy (Jann, 2026-11-25: „der Popup hängt unten und man kann die Wünsche dahinter scrollen“):
+   Seite dahinter steht still, das Fenster scrollt nur in sich, und der Wunschdialog nimmt fast die ganze Höhe ein. */
+html:has(.scrim),html:has(.scrim) body{overflow:hidden}
+.scrim,.sheet,.drawer{overscroll-behavior:contain}
+@media(max-width:719px){
+  .scrim .sheet.wishsheet{height:calc(100dvh - 24px - env(safe-area-inset-top));max-height:none}
+  .scrim .sheet.wishsheet{display:flex;flex-direction:column}
+  .wishsheet #wpane-eingeben:not([hidden]){flex:1 0 auto;display:flex;flex-direction:column}
+  .wishsheet #wpane-eingeben form{flex:1 0 auto;display:flex;flex-direction:column}
+  .wishsheet #wpane-eingeben .sheet-foot{margin-top:auto}
+}
