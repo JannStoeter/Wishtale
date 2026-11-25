@@ -115,6 +115,7 @@ Stand: 2026-11-25
 | 128 | Bilder sofort, ehrliche Preise, Bilder und ganze Namen in der Suche | **Jann im Projekt:** „Bilder … erst zeitversetzt“, „der Preis … ist nicht gleich zu Amazon“, „in der Suche sind keine Bilder“, „Text … zu kurz“. Amazon-Bilder und -Preise erst mit der Creators API (10 Verkäufe in 30 Tagen). | ja, `35d99a5` |
 | 129 | Wunschfenster am Handy | **Jann im Projekt:** „der popup … hängt unten und man [kann] die Wünsche dahinter scrollen“. Hintergrund gesperrt, Wunschdialog fast in voller Höhe. | ja, `096a259` |
 | 130 | Menü aufräumen | **Jann im Projekt:** „Die Profile müssen hoch. Und der Rest geclustert werden“. Profile oben, vier ruhige Gruppen. | offen |
+| 131 | Instagram-Erklärserie | **Jann im Projekt:** „baue gute reels und Posts und Storys die wir direkt über unser cms raushauen können“. Folienart „App-Ansicht“ mit gezeichnetem Handy, elf fertige Ideen im Instagram-Studio. | offen |
 | 009 | Listen für besondere Anlässe | **Jann im Projekt:** Option A als eigene Funktion, aber im Menü statt im Fokus; Wünsche werden nicht getaggt, die eigene Liste bleibt der Kern. | ja, `5348918` (Migration 0032 eingespielt) |
 | 116 | Wünsche aus anderen Shops | **Jann im Projekt-Thread: Option A bauen und das Menü aufräumen.** Kurzbefehl am iPhone, Lesezeichen-Knopf am Rechner, neues Fenster „Aus jedem Shop speichern“, Menü neu gruppiert. Browser-Erweiterung und Store-App offen. | ja, `cbaabc4` |
 
