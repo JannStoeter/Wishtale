@@ -47,7 +47,7 @@ function EmptyWishes(m){
     <input id="fw-t" name="t" class="inp big" placeholder="${kid?'z. B. SIKU Traktor':'z. B. Hochwertige Pfanne'}" autocomplete="off" maxlength="120">
     <button class="btn pri" type="submit">Weiter ${ic('arrow','sm')}</button>
    </form>
-   <p class="fw-alt">Schon eine Liste? <button type="button" class="linkbtn" data-act="modal" data-v="zettel">Liste einlesen</button></p>
+   <p class="fw-alt">Schon eine Liste auf Papier oder bei Amazon? <button type="button" class="linkbtn" data-act="modal" data-v="zettel">Liste einlesen</button></p>
   </section>`;
 }
 /* Das Band „Jetzt neu“ bleibt nur, bis man es benutzt oder wegklickt (103). Hochladen gibt es danach weiter im Wunschdialog und im Menü. */

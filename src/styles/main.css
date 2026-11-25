@@ -1444,3 +1444,11 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 /* Otto neben Amazon in der Wunschansicht (114) */
 .also-shop{margin:-4px 2px 10px;font-size:14px;color:var(--muted)}
 .also-shop .ad-note{font-size:11.5px;margin-left:4px}
+
+/* Gastansicht: Einladung zum eigenen Wishtale am Ende (Wettbewerbsvergleich, Vorschlag 1) */
+.gown{background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px 22px;margin:32px 0 8px;display:grid;gap:10px;max-width:720px}
+.gown h2{font-size:clamp(26px,3.4vw,34px);margin:0}
+.gown p:not(.eyebrow){color:var(--muted);font-size:15.5px;margin:0;max-width:60ch}
+.gown .row{margin-top:6px;flex-wrap:wrap}
+.gown-s{font-size:14px}
+@media(max-width:560px){.gown{padding:22px 16px}.gown .btn{width:100%;justify-content:center}}
