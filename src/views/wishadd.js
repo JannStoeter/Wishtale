@@ -13,17 +13,19 @@ import { cat } from '../data/content.js';
 import { searchUrl } from '../lib/shops.js';
 
 export const TABS = [['ideen', 'Ideen'], ['suchen', 'Suchen'], ['eingeben', 'Eingeben']];
+/** Anlass-Listen haben kein Profil, darum gibt es dort keine eigenen Ideen. */
+const tabs = () => (S.me.occasion ? TABS.filter(([k]) => k !== 'ideen') : TABS);
 /** Ohne Konto gibt es weder Suche noch eigene Ideen, dann startet der Dialog beim Formular. */
 export const canSearch = () => !!(S.auth.user && S.me.handle && !S.me.managed);
 export const wishTab = () => {
   const t = S.ui.wtab;
-  if (t && TABS.some(([k]) => k === t)) return t;
+  if (t && tabs().some(([k]) => k === t)) return t;
   return canSearch() ? 'suchen' : 'eingeben';
 };
 
 export function WishTabs() {
   const cur = wishTab();
-  return `<div class="wtabs" role="tablist" aria-label="Wie möchtest du deinen Wunsch hinzufügen?">${TABS.map(([k, l]) => `<button type="button" role="tab" id="wtab-${k}" class="wtab${k === cur ? ' on' : ''}" aria-selected="${k === cur}" aria-controls="wpane-${k}" tabindex="${k === cur ? 0 : -1}" data-act="wdtab" data-v="${k}">${l}</button>`).join('')}</div>`;
+  return `<div class="wtabs" role="tablist" aria-label="Wie möchtest du deinen Wunsch hinzufügen?">${tabs().map(([k, l]) => `<button type="button" role="tab" id="wtab-${k}" class="wtab${k === cur ? ' on' : ''}" aria-selected="${k === cur}" aria-controls="wpane-${k}" tabindex="${k === cur ? 0 : -1}" data-act="wdtab" data-v="${k}">${l}</button>`).join('')}</div>`;
 }
 
 const thumb = (t, preview) => {

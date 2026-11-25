@@ -60,7 +60,7 @@ export function render(top){
   if(S.auth.user&&v==='wuensche'&&!S.ui.preview)amzBackfillOnce(()=>{if(!S.ui.modal)render()}); // genaue Wünsche ohne Link einmal direkt mit Amazon verlinken (111)
   if(S.auth.user&&v==='wuensche'&&!S.ui.preview)imgBackfill(()=>{if(!S.ui.modal)render()}); // ältere Wünsche ohne Bild nach und nach mit echtem Produktbild (höchstens 8 je Tag)
   if(S.auth.user&&v==='wuensche'&&!S.ui.preview)priceBackfill(()=>{if(!S.ui.modal)render()}); // ältere Wünsche ohne Preis nach und nach mit echtem Preis einer Produktseite (höchstens 8 je Tag)
-  if(S.auth.user&&S.me.handle&&v!=='gast'){if(v!=='entdecken'&&inspirationOn()&&(v!=='wuensche'||(!S.ui.preview&&homeIdeasVisible())))loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if((S.ui.view==='entdecken'||(S.ui.view==='wuensche'&&!S.ui.preview&&homeIdeasVisible()))&&!S.ui.modal)render()})}
+  if(S.auth.user&&S.me.handle&&v!=='gast'&&!S.me.occasion){if(v!=='entdecken'&&inspirationOn()&&(v!=='wuensche'||(!S.ui.preview&&homeIdeasVisible())))loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if((S.ui.view==='entdecken'||(S.ui.view==='wuensche'&&!S.ui.preview&&homeIdeasVisible()))&&!S.ui.modal)render()})}
   if((v==='geschmack'||v==='wuensche')&&S.auth.user&&S.me.dbId&&!S.me.managed)loadAnswers().then(fresh=>{if(fresh&&S.ui.view===v&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()}).catch(()=>{});
   if(v==='geschmack'&&!S.auth.user)loadAnswers().then(fresh=>{if(fresh&&S.ui.view==='geschmack')render()}).catch(()=>{});
   if(v==='profil'&&S.auth.user&&S.me.managed&&S.me.dbId){S.ui.mgm=S.ui.mgm||{};if(!S.ui.mgm[S.me.dbId]){const id=S.me.dbId;S.ui.mgm[id]={loading:true};managersOf(id).then(d=>{S.ui.mgm[id]={data:d};if(S.ui.view==='profil'&&!S.ui.modal)render()}).catch(()=>{S.ui.mgm[id]={data:null};})}}
@@ -163,7 +163,7 @@ function startGuest(handle){
   if(S.guest&&S.guest.handle===handle&&S.guest.status!=='error'){return}
   S.guest={handle,status:'loading',person:null};
   fetchPublic(handle)
-    .then(p=>{if(S.guest?.handle!==handle)return;S.guest={handle,status:'ready',person:p};if(S.ui.view==='gast')render(true);loadIdeas(gkey(handle),{h:handle},()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()})})
+    .then(p=>{if(S.guest?.handle!==handle)return;S.guest={handle,status:'ready',person:p};if(S.ui.view==='gast')render(true);if(!p.occasion)loadIdeas(gkey(handle),{h:handle},()=>{if(S.ui.view==='gast'&&!S.ui.modal)render()})})
     .catch(e=>{console.error(e);if(S.guest?.handle!==handle)return;S.guest={handle,status:S.people[handle]?'ready':'error',person:null};if(S.ui.view==='gast')render(true)});
 }
 export function refreshGuest(){

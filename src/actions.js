@@ -26,7 +26,8 @@ import { ageOf } from './lib/age.js';
 import { markStep, hideSteps } from './lib/steps.js';
 import { createCoInvite, revokeCoInvites, removeMember, acceptCoInvite, coLink, saveCode, sharedKey } from './lib/coparent.js';
 import { managersOf } from './lib/coparent.js';
-import { loadMine } from './lib/remote.js';
+import { loadMine, deleteProfile } from './lib/remote.js';
+import { OCCASIONS } from './views/occasion.js';
 import { buildRound, saveAnswer, removeAnswer, resetAnswers } from './lib/cards.js';
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
@@ -648,6 +649,13 @@ readlink(el,auto){
  save(el){const id=el.dataset.id;S.ui.saved[id]=!S.ui.saved[id];render()},
  kind(el){S.ui.kind=el.dataset.v;render()},
  acct(el){switchTo(el.dataset.id);render(true)},
+ occnew(){S.ui.occEdit=null;S.ui.modal='occlist';render();setTimeout(()=>document.getElementById('on')?.focus({preventScroll:true}),30)},
+ occedit(){if(!S.me.occasion)return;S.ui.occEdit=S.ui.acct;S.ui.modal='occlist';render()},
+ occdel(el){ // Anlass-Liste mit allen Wünschen löschen, die eigene Wunschliste bleibt
+  const id=el.dataset.id,a=S.accounts[id];if(!a||!a.occasion)return;
+  if(!confirm(`Die Liste „${a.name}“ mit ${a.wishes.length===1?'einem Wunsch':a.wishes.length+' Wünschen'} löschen? Der Link funktioniert danach nicht mehr.`))return;
+  a.wishes.forEach(w=>{if(w.img)dropImage(w.img)});
+  deleteProfile(id).then(()=>{S.ui.modal=null;S.ui.occEdit=null;switchTo('me');location.hash='#wuensche';toast('Die Liste ist gelöscht. Deine eigene Wunschliste ist unverändert.');render(true)}).catch(()=>toast('Das Löschen hat gerade nicht geklappt. Bitte versuch es gleich noch einmal.'))},
  invite(){const m=S.me,n=['Onkel Tom','Patentante Sarah','Opa Heinz'].find(x=>!m.invited.includes(x));if(n){m.invited.push(n);toast('Simuliert: Einladung an '+n+' erstellt. Nur Eingeladene sehen das Profil.')}else toast('Alle Beispiel-Einladungen sind vergeben.');render()},
  pb(el){
   S.ui.pb=+el.dataset.v||0;
@@ -797,6 +805,17 @@ document.addEventListener('submit',e=>{
     const c=fd.get('c');
     S.me.wishes.unshift(W({t,c,kind:'produkt',prio:2,link:z.res.url,price:parsePrice(fd.get('price')),a:cat(c).a,tone:cat(c).t,kw:kwOf(t)}));
     S.ui.modal=null;S.ui.az=null;S.ui.wf='offen';S.ui.wc='alle';toast('Schön, der Wunsch steht auf deiner Liste. Den Link zu Amazon haben wir direkt dazu gespeichert.');render();return;
+  }
+  if(kind==='occlist'){ // Liste für einen Anlass anlegen oder ändern (Dev 009)
+    const name=String(fd.get('name')||'').trim().slice(0,60);if(!name)return;
+    const occ=OCCASIONS.some(([k])=>k===fd.get('occ'))?fd.get('occ'):'sonstiges';
+    const date=/^\d{4}-\d{2}-\d{2}$/.test(String(fd.get('date')||''))?String(fd.get('date')):'';
+    const ed=S.ui.occEdit&&S.accounts[S.ui.occEdit];
+    if(ed){ed.name=name;ed.occasion=occ;ed.odate=date;S.ui.modal=null;S.ui.occEdit=null;toast('Gespeichert.');render(true);return}
+    const id=nid('o');
+    S.accounts[id]={id,name,occasion:occ,odate:date,managed:false,tone:Object.keys(S.accounts).length%6,invited:[],interests:[],cats:[],brands:[],tries:[],nogos:[],alts:[],vis:{},wishes:[],history:[],inbox:[]};
+    S.ui.modal=null;switchTo(id);location.hash='#wuensche';
+    toast(`Die Liste „${name}“ ist angelegt. Trag die ersten Wünsche ein und teile dann den Link.`);render(true);return;
   }
   if(kind==='child'){
     const name=(fd.get('name')||'').trim();if(!name)return;

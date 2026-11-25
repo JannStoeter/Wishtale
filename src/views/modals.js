@@ -18,9 +18,10 @@ import { WorldModal } from './world.js';
 import { PinsModal } from './pins.js';
 import { IdeaModal } from './inspiration.js';
 import { AMAZON_DISCLOSURE, searchUrl } from '../lib/shops.js';
+import { OccModal, isOcc } from './occasion.js';
 
 export function AcctModal(){
-  const rows=Object.entries(S.accounts).map(([id,a])=>`<div class="altrow" style="grid-template-columns:44px 1fr auto"><span class="av t${a.tone}" style="width:44px;height:44px">${initials(a.name)}</span><div><strong>${esc(a.name)}${a.age?`, ${a.age}`:''}</strong><br><span class="muted" style="font-size:13.5px">${a.shared?'Kind-Konto, gemeinsam mitverwaltet':a.managed?`Kind-Konto, verwaltet von ${esc(S.accounts.me.name)}`:'Hauptkonto'}</span></div>${S.ui.acct===id?'<span class="chip ok">Aktiv</span>':`<button class="btn sec sm" data-act="acct" data-id="${id}">Wechseln</button>`}</div>`).join('');
+  const rows=Object.entries(S.accounts).filter(([,a])=>!isOcc(a)).map(([id,a])=>`<div class="altrow" style="grid-template-columns:44px 1fr auto"><span class="av t${a.tone}" style="width:44px;height:44px">${initials(a.name)}</span><div><strong>${esc(a.name)}${a.age?`, ${a.age}`:''}</strong><br><span class="muted" style="font-size:13.5px">${a.shared?'Kind-Konto, gemeinsam mitverwaltet':a.managed?`Kind-Konto, verwaltet von ${esc(S.accounts.me.name)}`:'Hauptkonto'}</span></div>${S.ui.acct===id?'<span class="chip ok">Aktiv</span>':`<button class="btn sec sm" data-act="acct" data-id="${id}">Wechseln</button>`}</div>`).join('');
   return `<div class="scrim" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <h2 id="mt">Konten</h2>${S.auth.user?`<p class="muted" style="font-size:14px;margin-bottom:10px">Angemeldet als <b>${esc(S.auth.user.email||'')}</b></p>`:`<div class="banner" style="margin-bottom:12px"><span>Du bist im Demo-Modus. Deine Eingaben bleiben nur in diesem Browser. <button class="chip" data-act="tologin">Eigenes Wishtale anlegen</button></span></div>`}${rows}
    <h3 style="font-size:24px;margin:20px 0 6px">Kind-Konto anlegen</h3>
@@ -80,11 +81,12 @@ export function Modal(){
   if(m==='pins')return PinsModal();
   if(m==='idea')return IdeaModal();
   if(m==='accounts')return AcctModal();
+  if(m==='occlist')return OccModal();
   if(m==='wish'){}
   const d=(m==='wish'&&S.ui.editWish&&S.me.wishes.find(w=>w.id===S.ui.editWish))||{};
   if(m==='wish'){const ed=!!S.ui.editWish,tab=wishTab(),more=ed&&(d.note||d.img||d.vis==='privat'||d.noSuggest||d.status==='plan'||(d.prio&&d.prio!==2));return `<div class="scrim" data-act="closebg"><div class="sheet wishsheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <div class="sheet-head"><h2 id="mt">${ed?'Wunsch bearbeiten':'Neuer Wunsch'}</h2><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
-   ${ed?'':`${WishTabs()}<div id="wpane-ideen" class="wpane" role="tabpanel" aria-labelledby="wtab-ideen" ${tab!=='ideen'?'hidden':''}>${IdeasPane()}</div><div id="wpane-suchen" class="wpane" role="tabpanel" aria-labelledby="wtab-suchen" ${tab!=='suchen'?'hidden':''}>${SearchPane()}</div>`}
+   ${ed?'':`${WishTabs()}${S.me.occasion?'':`<div id="wpane-ideen" class="wpane" role="tabpanel" aria-labelledby="wtab-ideen" ${tab!=='ideen'?'hidden':''}>${IdeasPane()}</div>`}<div id="wpane-suchen" class="wpane" role="tabpanel" aria-labelledby="wtab-suchen" ${tab!=='suchen'?'hidden':''}>${SearchPane()}</div>`}
    <div id="wpane-eingeben" class="wpane" ${ed?'':'role="tabpanel" aria-labelledby="wtab-eingeben"'} ${!ed&&tab!=='eingeben'?'hidden':''}>
    <form data-form="wish">
     <div class="fld wq"><label for="wt" class="vh">Was wünschst du dir?</label><span class="wq-ic" aria-hidden="true">${ic('search')}</span><input id="wt" name="t" class="inp big wq-inp" placeholder="${ed?'Was wünschst du dir?':'Wunsch oder Link einfügen'}" autocomplete="off" enterkeyhint="done" value="${esc(d.t||S.ui.prefill||'')}"></div>

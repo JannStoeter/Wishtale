@@ -1578,3 +1578,18 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .btn.gbtn:hover{background:#F8F6F1;border-color:#BDB5A6}
 .auth-or{display:flex;align-items:center;gap:12px;margin:14px 0;font-size:13px;color:var(--muted)}
 .auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* Listen für besondere Anlässe (Dev 009) */
+.occ-intro{font-size:14.5px;line-height:1.5;margin:0 0 14px}
+.occ-pick{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.occ-opt{position:relative}
+.occ-opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.occ-opt span{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border:1px solid var(--line);border-radius:99px;background:#fff;font-size:14px;color:var(--ink);transition:border-color .15s,background-color .15s}
+.occ-opt input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.occ-opt input:focus-visible+span{outline:3px solid var(--ink);outline-offset:2px}
+.occ-del{margin:14px 0 0;text-align:center}
+.occ-del .linkbtn{color:var(--warn)}
+.occ-head{cursor:default}
+fieldset.fld{border:0;padding:0;margin:0 0 14px;min-width:0}
+fieldset.fld legend{padding:0;margin-bottom:2px;font-size:13px;font-weight:600;color:var(--muted)}
+.occ-pick .occ-opt{font-size:14px;font-weight:400}

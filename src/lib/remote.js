@@ -41,9 +41,11 @@ const profileToRow = a => ({
   ...(a.birthdate || a.birthdateWas ? { birthdate: a.birthdate || null } : {}), ...(a.size || a.sizeWas ? { clothing_size: (a.size || '').slice(0, 20) || null } : {}),
   interests: a.interests || [], cats: a.cats || [], brands: a.brands || [], tries: a.tries || [],
   nogos: a.nogos || [], alts: a.alts || [], style: a.style || [], vis: { ...VIS_DEFAULT, ...(a.vis || {}) },
+  ...(a.occasion ? { occasion: a.occasion, occasion_date: a.odate || null } : {}), // nur Anlass-Listen (0032)
 });
 const accountFromRow = (p, wishes, gifts) => ({
-  dbId: p.id, handle: p.handle, name: p.name, age: (p.birthdate ? ageOf(p.birthdate) : p.age), birthdate: p.birthdate || '', birthdateWas: !!p.birthdate, size: p.clothing_size || '', sizeWas: !!p.clothing_size, managed: p.managed, tone: p.tone, about: p.about,
+  dbId: p.id, handle: p.handle, name: p.name, age: (p.birthdate ? ageOf(p.birthdate) : p.age), birthdate: p.birthdate || '', birthdateWas: !!p.birthdate, size: p.clothing_size || '', sizeWas: !!p.clothing_size, managed: p.managed && !p.occasion, tone: p.tone, about: p.about,
+  occasion: p.occasion || '', odate: p.occasion_date || '', // Anlass-Liste: in der Datenbank managed, in der App kein Kind-Konto
   interests: p.interests, cats: p.cats, brands: p.brands, tries: p.tries, nogos: p.nogos, alts: p.alts,
   style: p.style || [], vis: { ...VIS_DEFAULT, ...(p.vis || {}) },
   social: safeSocial(p.social), socialWas: !!(p.social && Object.keys(p.social).length),
@@ -155,7 +157,7 @@ async function syncAccount(key, a) {
   if (!a.dbId) { // neues Kind-Konto
     for (let i = 0; i < 4 && !a.dbId; i++) {
       const { data, error } = await sb.from('profiles').insert({
-        owner_id: S.auth.user.id, handle: makeHandle(a.name), managed: !!a.managed, ...profileToRow(a),
+        owner_id: S.auth.user.id, handle: makeHandle(a.name), managed: !!a.managed || !!a.occasion, ...profileToRow(a),
       }).select().single();
       if (!error) { a.dbId = data.id; a.handle = data.handle; } else if (error.code !== '23505') throw error;
     }
@@ -203,7 +205,7 @@ export async function fetchPublic(handle) {
   if (error) throw error;
   if (!data) return null;
   return {
-    remote: true, id: data.handle, dbId: data.id, handle: data.handle, name: data.name, age: data.age, size: data.size || '', managed: data.managed,
+    remote: true, id: data.handle, dbId: data.id, handle: data.handle, name: data.name, age: data.age, size: data.size || '', managed: data.managed && !data.occasion, occasion: data.occasion || '', odate: data.occasion_date || '',
     parent: data.parent_name, tone: data.tone, about: data.about,
     interests: data.interests, cats: data.cats, brands: data.brands, tries: data.tries, nogos: data.nogos, alts: data.alts,
     style: data.style || [],
@@ -228,4 +230,16 @@ export async function guestRpc(fn, wishId) {
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(j.error || 'Das hat nicht geklappt.');
   return j;
+}
+
+/** Anlass-Liste löschen: Wünsche, Reservierungen und Geschenke hängen per Fremdschlüssel daran und gehen mit (Dev 009). */
+export async function deleteProfile(key) {
+  const a = S.accounts[key];
+  if (!a || key === 'me' || !a.occasion) return;
+  if (a.dbId && S.auth.user) {
+    const { error } = await sb.from('profiles').delete().eq('id', a.dbId).eq('owner_id', S.auth.user.id);
+    if (error) throw error;
+  }
+  delete snaps[key];
+  delete S.accounts[key];
 }
