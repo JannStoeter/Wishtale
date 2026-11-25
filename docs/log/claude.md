@@ -278,3 +278,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Tests, Bildschirmfotos (Desktop, iPhone)
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 120 · Wunschdialog schlank
+- Auftrag: Jann im Projekt-Chat („in allem minimalistischer werden und weniger Text und das Wünsche hinzufügen verbessern“, Wishbob-Suche ohne Seitenwechsel)
+- Geändert: src/views/modals.js (ein Feld für Name oder Link mit Lupe, Link-Zeile erst mit Link, Knöpfe Liste einlesen, Amazon-Suche, Aus dem Shop, Art unter Mehr Angaben, Euro-Zeichen), src/actions.js (Link-Zeile einblenden), src/lib/util.js (Symbole camera, store), src/lib/guide.js, src/styles/main.css (`.wq`, `.wl-row`, `.wq-chip`, `.eur`), Dev 120, Dev 009 (claude-2.md)
+- Geprüft: ESLint, Build, Tests, Bildschirmfotos Handy und Computer im Demo
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten

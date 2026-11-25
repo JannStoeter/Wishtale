@@ -215,7 +215,7 @@ async function attachAmazon(cand){
   const st=document.getElementById('wlstat');
   try{const r=await findAmazonLink(cand.t);
     const ff=wform();if(!r||!ff||ff.elements.link.value.trim())return;
-    ff.elements.link.value=r.url;
+    ff.elements.link.value=r.url;ff.querySelector('.wl-row')?.removeAttribute('hidden');
     if(st){st.textContent='Direkter Amazon-Link gefunden und angehängt: '+r.title+'. Du kannst ihn im Feld ändern oder löschen.';st.className='hint ok'}
   }catch{/* ohne Link bleibt die Amazon-Suche */}
 }
@@ -460,6 +460,7 @@ render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
 readlink(el,auto){
   const f=wform();if(!f)return Promise.resolve();
   const raw0=f.elements.link.value.trim();
+  if(raw0)f.querySelector('.wl-row')?.removeAttribute('hidden'); // die Link-Zeile erscheint erst, wenn es einen Link gibt (119)
   // Einfügen, Tippen und Verlassen des Feldes lösen alle aus: denselben Link nur einmal lesen.
   const seen=(f.dataset.read||'').split('\n');if(auto&&raw0&&seen.includes(raw0))return f._reading||Promise.resolve();
   f.dataset.read=raw0;

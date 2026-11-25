@@ -6,10 +6,10 @@ const step = (target, text, action = '', value = '', last = false) => ({ target,
 export const GUIDES = {
   wish: { icon: 'plus', title: 'Wunschliste erstellen', steps: [
     step('.fab [data-v="wish"], .fw-form button', 'Tippe auf „Wunsch hinzufügen“. Bei einer leeren Liste schreibst du deinen ersten Wunsch und wählst „Weiter“.', 'modal', 'wish'),
-    step('#wt', 'Hier schreibst du deinen Wunsch, ein Produkt oder ein Erlebnis. Einen Shop-Link kannst du darunter ergänzen. Prüfe die Angaben und speichere erst, wenn alles passt.', '', '', true),
+    step('#wt', 'Hier schreibst du deinen Wunsch, ein Produkt oder ein Erlebnis, oder du fügst einen Shop-Link ein. Prüfe die Angaben und speichere erst, wenn alles passt.', '', '', true),
   ] },
   upload: { icon: 'gift', title: 'Eine Liste hochladen', steps: [
-    step('.newbar, .fw-alt button', 'Öffne hier den Import für ein Foto oder den Text deiner Wunschliste.', 'modal', 'zettel'),
+    step('.newbar, .wq-chip[data-v="zettel"], .fw-alt button', 'Öffne hier den Import für ein Foto oder den Text deiner Wunschliste.', 'modal', 'zettel'),
     step('#zt-f', 'Wähle ein Foto deiner Liste oder füge darunter den Text ein. Nach „Wünsche herauslesen“ prüfst du jeden Wunsch, bevor du ihn übernimmst.', '', '', true),
   ] },
   profile: { icon: 'user', title: 'Profil ergänzen', steps: [

@@ -1499,3 +1499,33 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .guide .faq-item p{margin-top:0}
 @media (min-width:900px){.faq-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:start}.faq-intro{position:sticky;top:92px}}
 @media (prefers-reduced-motion:reduce){.faq-item summary::after{transition:none}}
+
+/* Wunschdialog schlank (119): ein Suchfeld für Name oder Link, Link-Zeile erst bei Bedarf, Zusatzwege als kleine Knöpfe, Preis mit Euro-Zeichen. */
+.wishsheet form{display:grid;gap:0}
+.wq{position:relative;margin-bottom:12px}
+.wq-ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;display:flex}
+.wq-ic .ico{width:20px;height:20px}
+.inp.wq-inp{padding:16px 16px 16px 46px;font-size:17px;border-radius:16px;background:var(--surface);border-width:1.5px}
+.inp.wq-inp:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--ink) 8%,transparent)}
+.wl-row{position:relative;margin:-2px 0 12px}
+.wl-ic{position:absolute;left:14px;top:21px;transform:translateY(-50%);color:var(--muted);display:flex;pointer-events:none}
+.inp.wl-inp{padding:10px 12px 10px 38px;font-size:14.5px;border-radius:12px;background:transparent;color:var(--muted)}
+.wl-row[hidden]{display:none}
+.wishsheet #wlstat{font-size:13px;line-height:1.45;margin:6px 2px 0;color:var(--muted)}
+.wishsheet #wlstat:empty{display:none}
+.wq-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.wq-chip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 13px;border:1px solid var(--line);border-radius:99px;background:var(--surface);font-size:13.5px;font-weight:500;color:var(--ink);white-space:nowrap;transition:border-color .15s,background-color .15s}
+.wq-chip .ico{color:var(--muted)}
+.wq-chip:hover{border-color:var(--ink)}
+.wq-chip:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wishsheet .f-price,.wishsheet .f-budget{max-width:220px;margin-bottom:6px}
+.wishsheet .f-price label,.wishsheet .f-budget label{font-size:13.5px;font-weight:600}
+.wishsheet .f-price .muted{font-weight:400}
+.eur{position:relative}
+.eur .inp{padding-right:34px}
+.eur span{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.wishsheet .wmore summary{font-weight:500;color:var(--muted);font-size:14.5px}
+.wishsheet .wmore summary:hover{color:var(--ink)}
+.wishsheet #wprev .wr-card,.wishsheet #wprev .wr-alts{margin-top:0}
+.wishsheet #wprev .wr-hint{margin:-4px 2px 12px}
+@media (max-width:420px){.wq-chips{flex-wrap:nowrap}.wq-chip{padding:0 11px;font-size:13px}.wq-chip .ico{display:none}}
