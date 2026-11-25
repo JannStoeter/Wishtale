@@ -58,7 +58,7 @@ test('modelCode: Modellangaben ja, Mengen und Maße nein', async () => {
 
 test('imageForWish: Bild der erkannten Seite zuerst, Deal-Seiten nie', async () => {
   const load = async u => ({ type: 'image/jpeg', data: 'x', source: new URL(u).hostname });
-  const a = await imageForWish({ t: HUE, img: 'https://www.philips-hue.com/sensor.jpg' }, { load });
+  const a = await imageForWish({ t: HUE, img: 'https://www.philips-hue.com/sensor.jpg' }, { load, look: async () => true });
   assert.equal(a.via, 'erkannt');
   const r = (hostname) => ({ title: 'Hue Bewegungsmelder', url: 'https://' + hostname + '/p', meta_url: { hostname }, properties: { url: 'https://' + hostname + '/a.jpg', width: 800, height: 800 } });
   assert.deepEqual(candidates({ results: [r('www.monsterdealz.de'), r('www.mydealz.de')] }, HUE), []);
@@ -87,6 +87,32 @@ test('imageForWish: deutscher Wunsch oder erkannter englischer Name, aber nie ei
   const titles = { 'hue-tap-dial': 'Hue Tap Dial Schalter', 'hue-motion-sensor': 'Hue Motion Sensor' };
   const read = async url => ({ title: titles[url.split('/').pop()], imageUrl: url + '.jpg' });
   const load = async u => ({ type: 'image/jpeg', data: 'x', source: new URL(u).hostname });
-  const im = await imageForWish({ t: HUE, q: 'Philips Hue Motion Sensor', brand: 'Philips Hue' }, { fetchJson: async () => web, read, load });
+  const im = await imageForWish({ t: HUE, q: 'Philips Hue Motion Sensor', brand: 'Philips Hue' }, { fetchJson: async () => web, read, load, look: async () => true });
   assert.equal(im.title, 'Hue Motion Sensor');
+});
+
+test('imageForWish: Titel passt, Bild zeigt aber etwas anderes (Blick des Modells sagt nein) → nächster Treffer oder Symbol', async () => {
+  const web = { web: { results: [{ url: 'https://www.philips-hue.com/de-de/p/hue-bewegungsmelder' }, { url: 'https://www.hue-shop.de/bewegungsmelder' }] } };
+  const read = async url => ({ title: 'Hue Bewegungsmelder', imageUrl: url + '.jpg' });
+  const load = async u => ({ type: 'image/jpeg', data: u.includes('philips') ? 'taster' : 'sensor', source: new URL(u).hostname });
+  const look = async im => im.data === 'sensor';
+  const im = await imageForWish({ t: HUE, img: 'https://www.philips-hue.com/taster.jpg', brand: 'Philips Hue' }, { fetchJson: async () => web, read, load, look, images: { fetchJson: async () => ({ results: [] }) } });
+  assert.equal(im.data, 'sensor');
+  assert.equal(im.source, 'hue-shop.de');
+  const none = await imageForWish({ t: HUE, brand: 'Philips Hue' }, { fetchJson: async () => web, read, load, look: async () => false, images: { fetchJson: async () => ({ results: [] }) } });
+  assert.equal(none, null);
+});
+
+test('imageForWish: ohne Blick des Modells keine Suchtreffer, nur der eigene Link', async () => {
+  const load = async u => ({ type: 'image/jpeg', data: 'x', source: new URL(u).hostname });
+  assert.equal(await imageForWish({ t: HUE, img: 'https://www.philips-hue.com/sensor.jpg' }, { load }), null);
+});
+
+test('seesProduct: nur ein klares Ja zählt', async () => {
+  const { seesProduct } = await import('../api/_lib/imgsearch.js');
+  const im = { type: 'image/jpeg', data: 'abc' };
+  assert.equal(await seesProduct(im, HUE, async () => ({ text: '{"passt": true}' })), true);
+  assert.equal(await seesProduct(im, HUE, async () => ({ text: '{"passt": false}' })), false);
+  assert.equal(await seesProduct(im, HUE, async () => { throw new Error('x'); }), false);
+  assert.equal(await seesProduct({ type: 'image/svg+xml', data: 'abc' }, HUE, async () => ({ text: '{"passt": true}' })), false);
 });

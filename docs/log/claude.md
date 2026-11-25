@@ -270,3 +270,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine Migration, Brave-Suchen zählen gegen `guardSearch`
 - Zurücknehmen: Merge-Commit reverten
 
+
+## 2026-11-25 · 114 · Nachtrag 4: Modell prüft jedes gefundene Bild
+- Auftrag: Jann im Projekt-Thread („noch falsch“, Hue Taster statt Bewegungsmelder)
+- Geändert: api/_lib/imgsearch.js (`seesProduct`, `lookFor`, Blick in `searchImage`, `searchOfficialImage`, `imageForWish`), api/inspect.js (`imageQuery` mit Blick), src/lib/imgfill.js (`img-tried5`), datenschutz.html (Abschnitt 11), tests/imgsearch.test.mjs, CLAUDE.md
+- Warum: Ein passender Seitentitel garantiert nicht das passende Vorschaubild
+- Geprüft: ESLint, Build, 29 Tests
+- Datenbank und Dienste: falsches Bild am Hue-Wunsch entfernt, keine Migration
+- Zurücknehmen: Merge-Commit reverten
