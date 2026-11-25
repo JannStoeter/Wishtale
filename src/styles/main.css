@@ -1467,3 +1467,4 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .guide-card{display:block;text-decoration:none;color:inherit;transition:border-color .15s}
 .guide-card:hover{border-color:var(--ink)}.guide-card h2{margin:0 0 6px;font-size:24px;color:var(--ink)}.guide-card p{margin:0;font-size:15.5px}
 @media (min-width:900px){.guide-shot{float:right;margin:0 0 18px 32px}}
+.umzug{margin:22px 0 0;max-width:700px;font-size:15.5px}

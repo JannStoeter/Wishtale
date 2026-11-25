@@ -245,3 +245,12 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Offen: Google Search Console (Jann), Inhaltsseiten als Vorschlag
 - Nachtrag Ratgeber (Jann im Thread: „Baue die Seite so um das es passt! Also die Unterseiten“): ratgeber/index.html und vier Seiten, src/ratgeber.js, src/styles/main.css (`.guide`), vite.config.js (Eingänge), public/sitemap.xml, index.html (Fußzeile `footer.rg0`–`footer.rg4`, `weihnachten.rg`), Rechtsseiten (Link Ratgeber); geprüft mit ESLint, Build und Bildschirmfotos (iPhone 13, 1280 px, keine waagerechte Rolle)
 - Merge 1597bc6 (Pull Request #28) nach Janns Freigabe im Wettbewerbs-Thread („1-5 kannst du direkt bauen und mergen“, Punkt 4 Suchseiten)
+
+## 2026-11-25 · 117 · Gast-Einladung, Umzug von Amazon, fünfte Ratgeberseite
+- Auftrag: Jann im Thread („1-5 kannst du direkt bauen und mergen! … 1-4 schnell umsetzen“)
+- Geändert: src/views/giver.js (`GuestOwn`), src/actions.js (`guestcta`, Hinweis `guestown`), src/views/given.js (Knöpfe mit Stelle), src/views/modals.js, src/views/wishes.js, src/views/zettel.js (Umzug von Amazon), src/styles/main.css (`.gown`, `.umzug`), index.html (`schritte.umzug`, `footer.rg5`), ratgeber/amazon-wunschliste-umziehen.html plus Links in allen Ratgeberseiten, vite.config.js, public/sitemap.xml, CLAUDE.md
+- Warum: Wettbewerbsvergleich vom 24.11.2026 (Wishbob, WishDeck, bitte.kaufen, Amazon), geteilte Listen sind der günstigste Weg zu neuen Konten
+- Geprüft: ESLint, Build, 21 Tests, Bildschirmfotos (iPhone 13) von Gastansicht, Startseite und Ratgeberseite, Klick auf den Knopf setzt die UTM-Kürzel
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+
