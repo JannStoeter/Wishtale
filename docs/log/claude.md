@@ -244,3 +244,4 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Zurücknehmen: Commit reverten
 - Offen: Google Search Console (Jann), Inhaltsseiten als Vorschlag
 - Nachtrag Ratgeber (Jann im Thread: „Baue die Seite so um das es passt! Also die Unterseiten“): ratgeber/index.html und vier Seiten, src/ratgeber.js, src/styles/main.css (`.guide`), vite.config.js (Eingänge), public/sitemap.xml, index.html (Fußzeile `footer.rg0`–`footer.rg4`, `weihnachten.rg`), Rechtsseiten (Link Ratgeber); geprüft mit ESLint, Build und Bildschirmfotos (iPhone 13, 1280 px, keine waagerechte Rolle)
+- Merge 1597bc6 (Pull Request #28) nach Janns Freigabe im Wettbewerbs-Thread („1-5 kannst du direkt bauen und mergen“, Punkt 4 Suchseiten)

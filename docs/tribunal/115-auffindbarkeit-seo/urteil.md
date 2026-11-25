@@ -3,7 +3,7 @@ topic: 115-auffindbarkeit-seo
 status: entschieden
 option: SEO-Grundlagen und Ratgeberseiten
 datum: 2026-11-24
-umgesetzt: offen
+umgesetzt: 1597bc68dd5953cad8d5da6287fbe6daa1651059
 ---
 **Jann im Projekt-Chat:** prüfen, ob Wishtale gefunden wird.
 
