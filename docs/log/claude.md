@@ -322,3 +322,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, 29 Tests
 - Datenbank und Dienste: falsches Bild am Hue-Wunsch entfernt, keine Migration
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 127 · Suche bei Amazon oder Otto, Start bei „Eingeben“
+- Auftrag: Jann im Projekt-Chat („Bei „Wunsch hinzufügen“ bitte default auf „Eingeben“ starten […] Amazon oder Otto als Auswahl oder so“)
+- Geändert: src/views/wishadd.js (Start „Eingeben“, Shop-Auswahl, `wsShop`, `SHOPS`), src/actions.js (`wsshop`, Suche mit Shop), src/lib/wishimg.js, api/inspect.js (`shop` bei `searchQuery`), api/_lib/imgsearch.js (`searchAmazon`, `searchOtto`), src/styles/main.css, datenschutz.html (Abschnitt 11), tests/shopsearch.test.mjs (neu), CLAUDE.md
+- Geprüft: ESLint, Build, 31 Tests, Bildschirmfotos am Handy; echte Brave-Treffer für `site:amazon.de`/`site:otto.de` erst nach dem Deploy
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten

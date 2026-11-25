@@ -243,9 +243,11 @@ export async function priceForWish({ t, q, brand, link } = {}, deps = {}) {
 const SEARCH_SKIP = /(^|\.)(mydealz\.|monsterdealz\.|dealdoktor\.|schnaeppchenfuchs\.|preisjaeger\.|amazon\.|amzn\.|ebay\.|idealo\.|geizhals\.|billiger\.de|guenstiger\.de|check24\.|preis\.de|youtube\.|facebook\.|instagram\.|pinterest\.|reddit\.|wikipedia\.|chip\.de|computerbild\.|stiftung-warentest\.|test\.de|gutefrage\.|tiktok\.)/i;
 const NOT_PRODUCT = /\/(support|hilfe|help|blog|magazin|ratgeber|forum|wiki|anleitung|test|vergleich|news|kategorie|category|c\/|search|suche)(\/|$|-|\?)/i;
 
-export async function searchProducts(query, { fetchJson, read = inspect, load = fetchImage, max = 6 } = {}) {
+export async function searchProducts(query, { fetchJson, read = inspect, load = fetchImage, max = 6, shop = '' } = {}) {
   const key = process.env.BRAVE_SEARCH_API_KEY, q = clean(query);
   if (!q || (!key && !fetchJson)) return null;
+  if (shop === 'amazon') return searchAmazon(q, { fetchJson, max: 8 });
+  if (shop === 'otto') return searchOtto(q, { fetchJson, read, load, max });
   const json = fetchJson ? await fetchJson(q) : await fetch('https://api.search.brave.com/res/v1/web/search?count=15&safesearch=strict&country=de&search_lang=de&q=' + encodeURIComponent(q + ' kaufen'), { headers: { 'x-subscription-token': key, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null);
   if (!json) return null;
   const hosts = new Set();
@@ -262,4 +264,45 @@ export async function searchProducts(query, { fetchJson, read = inspect, load = 
     return { t: String(p.title).slice(0, 160), price: eur(p), url: String(p.url || c.url).slice(0, 1000), host: c.host, image };
   }));
   return out.filter(Boolean);
+}
+
+/* Suche in einem Shop (Jann, 2026-11-25: „bei Wishbob sucht man quasi bei Amazon … Amazon oder Otto als Auswahl“). */
+const braveWeb = (q, count, fetchJson) => (fetchJson ? fetchJson(q) : fetch(`https://api.search.brave.com/res/v1/web/search?count=${count}&safesearch=strict&country=de&search_lang=de&q=` + encodeURIComponent(q), { headers: { 'x-subscription-token': process.env.BRAVE_SEARCH_API_KEY, accept: 'application/json' }, signal: AbortSignal.timeout(6000) }).then(r => (r.ok ? r.json() : null)).catch(() => null));
+const relevant = (q, title) => overlap(q, title) >= 0.5 || fits(q, title);
+
+/**
+ * Amazon: Wir lesen Amazon nicht und übernehmen keine Amazon-Bilder (Partnerbedingungen, Dev 024). Die Websuche liefert Produktseiten
+ * mit Produktnummer (ASIN) und Titel, daraus werden Treffer ohne Bild und ohne Preis. Der Link bekommt beim Anzeigen die Partner-Kennung,
+ * das Bild sucht Wishtale nach dem Speichern wie bei jedem Wunsch auf der Hersteller- oder Shopseite.
+ */
+export async function searchAmazon(q, { fetchJson, max = 8 } = {}) {
+  const json = await braveWeb('site:amazon.de ' + q, 20, fetchJson);
+  if (!json) return null;
+  return amazonItems(json, q).filter(x => x.title && relevant(q, x.title)).slice(0, max)
+    .map(x => ({ t: x.title.slice(0, 160), price: null, url: `https://www.amazon.de/dp/${x.asin}`, host: 'amazon.de', image: null }));
+}
+
+/**
+ * Otto: Produktseiten aus der Websuche, gelesen wie bei „Link lesen“ (Name, Preis, Bild der Seite). Klappt das Lesen nicht, bleibt der
+ * Treffer mit Titel und dem Vorschaubild der Suchmaschine. Bilder lädt unser Server, der Link wird beim Anzeigen zum Awin-Partnerlink.
+ */
+export async function searchOtto(q, { fetchJson, read = inspect, load = fetchImage, max = 6 } = {}) {
+  const json = await braveWeb('site:otto.de ' + q, 20, fetchJson);
+  if (!json) return null;
+  const seen = new Set();
+  const cands = (json?.web?.results || []).map(r => {
+    let u; try { u = new URL(r.url); } catch { return null; }
+    if (!/(^|\.)otto\.de$/i.test(u.hostname) || !/^\/p\//.test(u.pathname)) return null;
+    const id = u.pathname.replace(/\/$/, '');
+    if (seen.has(id)) return null; seen.add(id);
+    return { url: 'https://www.otto.de' + u.pathname, title: String(r.title || '').replace(/\s*[|–-]\s*OTTO\s*$/i, '').trim(), thumb: r?.thumbnail?.src || r?.thumbnail?.original || '' };
+  }).filter(c => c && c.title && relevant(q, c.title)).slice(0, max);
+  const within = (p, ms) => Promise.race([p.catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]);
+  const out = await Promise.all(cands.map(async c => {
+    const p = await within(read(c.url), 6500);
+    const img = (p && p.imageUrl) || c.thumb;
+    const image = img ? await within(load(img), 5000) : null;
+    return { t: String((p && p.title) || c.title).slice(0, 160), price: p ? eur(p) : null, url: c.url, host: 'otto.de', image: image && image.data.length <= 600000 ? image : null };
+  }));
+  return out;
 }

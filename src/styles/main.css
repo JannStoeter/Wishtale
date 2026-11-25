@@ -1593,3 +1593,13 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 fieldset.fld{border:0;padding:0;margin:0 0 14px;min-width:0}
 fieldset.fld legend{padding:0;margin-bottom:2px;font-size:13px;font-weight:600;color:var(--muted)}
 .occ-pick .occ-opt{font-size:14px;font-weight:400}
+
+/* Suche: Wahl des Shops (Jann, 2026-11-25: „Amazon oder Otto als Auswahl“) */
+.ws-shops{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
+.ws-shop{min-height:34px;padding:0 13px;border:1px solid var(--line);border-radius:99px;background:#fff;font:inherit;font-size:13.5px;font-weight:500;color:var(--ink);cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}
+.ws-shop:hover{border-color:var(--ink)}
+.ws-shop.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.ws-shop:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.ws-shops .ad-note{margin-left:2px;font-size:12px;color:var(--muted)}
+.ws-body .ws-t{font-weight:500;font-size:14.5px;line-height:1.3;color:var(--ink);text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ws-body .ws-t:hover{text-decoration:underline}

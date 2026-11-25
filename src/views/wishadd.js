@@ -10,7 +10,7 @@ import { ideaPrice } from './inspiration.js';
 import { wishGlyph } from '../lib/wishicon.js';
 import { guessCategory } from '../lib/category.js';
 import { cat } from '../data/content.js';
-import { searchUrl } from '../lib/shops.js';
+import { searchUrl, partnerLink } from '../lib/shops.js';
 
 export const TABS = [['ideen', 'Ideen'], ['suchen', 'Suchen'], ['eingeben', 'Eingeben']];
 /** Anlass-Listen haben kein Profil, darum gibt es dort keine eigenen Ideen. */
@@ -20,7 +20,15 @@ export const canSearch = () => !!(S.auth.user && S.me.handle && !S.me.managed);
 export const wishTab = () => {
   const t = S.ui.wtab;
   if (t && tabs().some(([k]) => k === t)) return t;
-  return canSearch() ? 'suchen' : 'eingeben';
+  return 'eingeben'; // „Wunsch hinzufügen“ startet bei „Eingeben“ (Jann, 2026-11-25)
+};
+
+/* Wo gesucht wird: Amazon zuerst wie bei Wishbob, dann Otto, sonst die Websuche über viele Shops. Die Wahl bleibt im Browser. */
+export const SHOPS = [['amazon', 'Amazon'], ['otto', 'Otto'], ['alle', 'Andere Shops']];
+export const wsShop = () => {
+  if (S.ui.wshop) return S.ui.wshop;
+  let v = ''; try { v = localStorage.getItem('wishtale:wshop') || ''; } catch { /* ohne Speicher */ }
+  return SHOPS.some(([k]) => k === v) ? v : 'amazon';
 };
 
 export function WishTabs() {
@@ -30,6 +38,7 @@ export function WishTabs() {
 
 const thumb = (t, preview) => {
   if (preview) return `<img src="${preview}" alt="">`;
+  // ohne Bild (Amazon-Treffer, manche Otto-Seiten): das Symbol der Kategorie wie auf der Wunschliste
   const c = guessCategory(t);
   return `<span class="art mono t${(cat(c).t ?? 0) % 6}" aria-hidden="true">${wishGlyph(t, c)}</span>`;
 };
@@ -38,22 +47,24 @@ export function SearchPane() {
   const z = S.ui.ws || {};
   return `<form data-form="wsearch" class="ws-form" role="search"><label for="wsq" class="vh">Wonach suchst du?</label><span class="wq-ic" aria-hidden="true">${ic('search')}</span>
     <input id="wsq" name="q" class="inp big wq-inp" placeholder="Wonach suchst du?" autocomplete="off" enterkeyhint="search" value="${esc(z.q || '')}"><button class="btn pri ws-go" type="submit">Suchen</button></form>
+   <div class="ws-shops" role="group" aria-label="Wo soll Wishtale suchen?">${SHOPS.map(([k, l]) => `<button type="button" class="ws-shop${k === wsShop() ? ' on' : ''}" aria-pressed="${k === wsShop()}" data-act="wsshop" data-v="${k}">${l}</button>`).join('')}<span class="ad-note">Anzeige</span></div>
    <div id="wsres" aria-live="polite">${SearchResults()}</div>`;
 }
 
 export function SearchResults() {
   const z = S.ui.ws || {}, q = esc(z.q || '');
   const own = z.q ? `<button type="button" class="ws-own" data-act="wsown">${ic('plus', 'sm')}<span>„${q}“ selbst eintragen</span></button>` : '';
-  const amz = z.q ? `<p class="ws-amz"><a href="${searchUrl.amazon(z.q)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Auch bei Amazon suchen</a> <span class="ad-note">Anzeige</span></p>` : '';
-  if (z.st === 'loading') return `<div class="ws-load" role="status"><span class="aiload-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Wishtale schaut in verschiedenen Shops nach „${q}“</span></div><div class="ws-skel" aria-hidden="true"><div></div><div></div><div></div></div>`;
+  const shop = z.shop || wsShop();
+  const amz = z.q ? `<p class="ws-amz"><a href="${shop === 'otto' ? searchUrl.otto(z.q, 'suche') : searchUrl.amazon(z.q)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Alle Treffer bei ${shop === 'otto' ? 'Otto' : 'Amazon'} ansehen</a> <span class="ad-note">Anzeige</span></p>` : '';
+  if (z.st === 'loading') return `<div class="ws-load" role="status"><span class="aiload-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Wishtale sucht ${shop === 'amazon' ? 'bei Amazon' : shop === 'otto' ? 'bei Otto' : 'in verschiedenen Shops'} nach „${q}“</span></div><div class="ws-skel" aria-hidden="true"><div></div><div></div><div></div></div>`;
   if (z.st === 'error') return `<p class="ws-note">${esc(z.err || 'Die Suche hat gerade nicht geklappt.')}</p>${own}`;
   if (z.st === 'done') {
     const list = z.items || [];
-    if (!list.length) return `<p class="ws-note">Dazu haben wir in den Shops nichts Passendes gefunden. Trag deinen Wunsch einfach selbst ein, Wishtale zeigt deinen Freunden dann Ideen dazu.</p>${own}${amz}`;
+    if (!list.length) return `<p class="ws-note">Dazu haben wir ${shop === 'amazon' ? 'bei Amazon' : shop === 'otto' ? 'bei Otto' : 'in den Shops'} nichts Passendes gefunden. Trag deinen Wunsch einfach selbst ein, Wishtale zeigt deinen Freunden dann Ideen dazu.</p>${own}${amz}`;
     return `<ul class="ws-list">${list.map((x, i) => `<li class="ws-item"><span class="ws-thumb">${thumb(x.t, x.img && x.img.preview)}</span>
-      <span class="ws-body"><b>${esc(x.t)}</b><small>${x.price ? `<span class="ws-price">${money(x.price)}</span> · ` : ''}${esc(x.host)}</small></span>
+      <span class="ws-body"><a class="ws-t" href="${esc(partnerLink(x.url, 'suche'))}" target="_blank" rel="noopener noreferrer sponsored nofollow">${esc(x.t)}</a><small>${x.price ? `<span class="ws-price">${money(x.price)}</span> · ` : x.host === 'amazon.de' ? 'Preis bei Amazon · ' : ''}${esc(x.host)}</small></span>
       <button type="button" class="ws-add" data-act="wsadd" data-i="${i}" aria-label="${esc(x.t)} auf meine Wunschliste" ${z.adding === i ? 'disabled' : ''}>${z.adding === i ? '…' : ic('plus', 'sm')}</button></li>`).join('')}</ul>
-     <p class="ws-fine">Treffer aus der Websuche, Preise laut Shop.</p>${own}${amz}`;
+     <p class="ws-fine">${shop === 'amazon' ? 'Treffer von Amazon über die Websuche, das Bild sucht Wishtale nach dem Speichern.' : 'Treffer aus der Websuche, Preise laut Shop.'}</p>${own}${amz}`;
   }
   return `<p class="ws-note">Gib ein Produkt ein, zum Beispiel „Tonies Schlummerbande“, und such dir aus den Treffern das Richtige aus.</p>`;
 }
