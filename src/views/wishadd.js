@@ -23,14 +23,9 @@ export const wishTab = () => {
   return 'eingeben'; // „Wunsch hinzufügen“ startet bei „Eingeben“ (Jann, 2026-11-25)
 };
 
-/* Wo gesucht wird: Amazon zuerst wie bei Wishbob, dann Otto, sonst die Websuche über viele Shops. Die Wahl bleibt im Browser. */
-export const SHOPS = [['amazon', 'Amazon'], ['otto', 'Otto'], ['alle', 'Andere Shops']];
-export const wsShop = () => {
-  if (S.ui.wshop) return S.ui.wshop;
-  let v = ''; try { v = localStorage.getItem('wishtale:wshop') || ''; } catch { /* ohne Speicher */ }
-  return SHOPS.some(([k]) => k === v) ? v : 'amazon';
-};
-
+/* Gesucht wird bei Otto (Jann, 2026-11-25: „zieh doch die Suche immer von Otto und lege beide Links (Amazon und Otto) unter die Anzeige“):
+   Otto liefert Bild und Preis, jeder Treffer hat darunter „Bei Amazon“ und „Bei Otto“ mit einem gemeinsamen „Anzeige“.
+   Findet Otto nichts, sucht der Server in anderen Shops. */
 export function WishTabs() {
   const cur = wishTab();
   return `<div class="wtabs" role="tablist" aria-label="Wie möchtest du deinen Wunsch hinzufügen?">${tabs().map(([k, l]) => `<button type="button" role="tab" id="wtab-${k}" class="wtab${k === cur ? ' on' : ''}" aria-selected="${k === cur}" aria-controls="wpane-${k}" tabindex="${k === cur ? 0 : -1}" data-act="wdtab" data-v="${k}">${l}</button>`).join('')}</div>`;
@@ -47,24 +42,30 @@ export function SearchPane() {
   const z = S.ui.ws || {};
   return `<form data-form="wsearch" class="ws-form" role="search"><label for="wsq" class="vh">Wonach suchst du?</label><span class="wq-ic" aria-hidden="true">${ic('search')}</span>
     <input id="wsq" name="q" class="inp big wq-inp" placeholder="Wonach suchst du?" autocomplete="off" enterkeyhint="search" value="${esc(z.q || '')}"><button class="btn pri ws-go" type="submit">Suchen</button></form>
-   <div class="ws-shops" role="group" aria-label="Wo soll Wishtale suchen?">${SHOPS.map(([k, l]) => `<button type="button" class="ws-shop${k === wsShop() ? ' on' : ''}" aria-pressed="${k === wsShop()}" data-act="wsshop" data-v="${k}">${l}</button>`).join('')}<span class="ad-note">Anzeige</span></div>
    <div id="wsres" aria-live="polite">${SearchResults()}</div>`;
 }
+
+const REL = 'noopener noreferrer sponsored nofollow';
+/** Zwei Wege je Treffer: Amazon (Suche mit dem Namen, Partner-Kennung) und Otto (der Treffer selbst oder die Otto-Suche, über Awin). */
+const shopLinks = x => {
+  const otto = /(^|\.)otto\.de$/i.test(x.host || '') ? partnerLink(x.url, 'suche') : searchUrl.otto(x.t, 'suche');
+  const other = x.host && !/(^|\.)otto\.de$/i.test(x.host) ? `<a class="shop-pill" href="${esc(partnerLink(x.url, 'suche'))}" target="_blank" rel="${REL}">${esc(x.host)}</a>` : '';
+  return `<span class="ws-shoplinks">${other}<a class="shop-pill" href="${esc(searchUrl.amazon(x.t))}" target="_blank" rel="${REL}">Bei Amazon</a><a class="shop-pill" href="${esc(otto)}" target="_blank" rel="${REL}">Bei Otto</a><span class="ad-note">Anzeige</span></span>`;
+};
 
 export function SearchResults() {
   const z = S.ui.ws || {}, q = esc(z.q || '');
   const own = z.q ? `<button type="button" class="ws-own" data-act="wsown">${ic('plus', 'sm')}<span>„${q}“ selbst eintragen</span></button>` : '';
-  const shop = z.shop || wsShop();
-  const amz = z.q ? `<p class="ws-amz"><a href="${shop === 'otto' ? searchUrl.otto(z.q, 'suche') : searchUrl.amazon(z.q)}" target="_blank" rel="noopener noreferrer sponsored nofollow">Alle Treffer bei ${shop === 'otto' ? 'Otto' : 'Amazon'} ansehen</a> <span class="ad-note">Anzeige</span></p>` : '';
-  if (z.st === 'loading') return `<div class="ws-load" role="status"><span class="aiload-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Wishtale sucht ${shop === 'amazon' ? 'bei Amazon' : shop === 'otto' ? 'bei Otto' : 'in verschiedenen Shops'} nach „${q}“</span></div><div class="ws-skel" aria-hidden="true"><div></div><div></div><div></div></div>`;
+  const more = z.q ? `<p class="ws-amz">Alle Treffer <a href="${searchUrl.amazon(z.q)}" target="_blank" rel="${REL}">bei Amazon</a> oder <a href="${searchUrl.otto(z.q, 'suche')}" target="_blank" rel="${REL}">bei Otto</a> ansehen <span class="ad-note">Anzeige</span></p>` : '';
+  if (z.st === 'loading') return `<div class="ws-load" role="status"><span class="aiload-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Wishtale sucht nach „${q}“</span></div><div class="ws-skel" aria-hidden="true"><div></div><div></div><div></div></div>`;
   if (z.st === 'error') return `<p class="ws-note">${esc(z.err || 'Die Suche hat gerade nicht geklappt.')}</p>${own}`;
   if (z.st === 'done') {
     const list = z.items || [];
-    if (!list.length) return `<p class="ws-note">Dazu haben wir ${shop === 'amazon' ? 'bei Amazon' : shop === 'otto' ? 'bei Otto' : 'in den Shops'} nichts Passendes gefunden. Trag deinen Wunsch einfach selbst ein, Wishtale zeigt deinen Freunden dann Ideen dazu.</p>${own}${amz}`;
+    if (!list.length) return `<p class="ws-note">Dazu haben wir nichts Passendes gefunden. Trag deinen Wunsch einfach selbst ein, Wishtale zeigt deinen Freunden dann Ideen dazu.</p>${own}${more}`;
     return `<ul class="ws-list">${list.map((x, i) => `<li class="ws-item"><span class="ws-thumb">${thumb(x.t, x.img && x.img.preview)}</span>
-      <span class="ws-body"><a class="ws-t" href="${esc(partnerLink(x.url, 'suche'))}" target="_blank" rel="noopener noreferrer sponsored nofollow">${esc(x.t)}</a><small>${x.price ? `<span class="ws-price">${money(x.price)}</span> · ` : x.host === 'amazon.de' ? 'Preis bei Amazon · ' : ''}${esc(x.host)}</small></span>
+      <span class="ws-body"><b class="ws-t">${esc(x.t)}</b>${x.price ? `<small><span class="ws-price">ca. ${money(x.price)}</span></small>` : ''}${shopLinks(x)}</span>
       <button type="button" class="ws-add" data-act="wsadd" data-i="${i}" aria-label="${esc(x.t)} auf meine Wunschliste" ${z.adding === i ? 'disabled' : ''}>${z.adding === i ? '…' : ic('plus', 'sm')}</button></li>`).join('')}</ul>
-     <p class="ws-fine">${shop === 'amazon' ? 'Treffer von Amazon über die Websuche. Die Bilder kommen von Hersteller- und Shopseiten, den aktuellen Preis siehst du bei Amazon.' : 'Treffer aus der Websuche, Preise laut Shop von heute, sie können sich ändern.'}</p>${own}${amz}`;
+     <p class="ws-fine">Bild und Preis vom Shop, der Preis kann sich ändern.</p>${own}${more}`;
   }
   return `<p class="ws-note">Gib ein Produkt ein, zum Beispiel „Tonies Schlummerbande“, und such dir aus den Treffern das Richtige aus.</p>`;
 }

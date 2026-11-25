@@ -333,6 +333,7 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 ## 2026-11-25 · 128 · Bilder sofort, ehrliche Preise, Bilder und ganze Namen in der Suche
 - Auftrag: Jann im Projekt-Chat (Bilder zeitversetzt, Preis weicht von Amazon ab, keine Bilder in der Suche, Namen zu kurz)
 - Geändert: api/_lib/imgsearch.js (`fullTitle`, `pictures`, `searchAmazon` mit Bildern), src/lib/imgfill.js (`prefetchImage`), src/actions.js (Vorabsuche beim Erkennen, kürzere Wartezeit nach dem Speichern), src/lib/wishimg.js (Bildquelle), src/views/wishadd.js (Hinweistext), src/views/card.js und src/views/product.js („ca.“), src/styles/main.css (Titel bis vier Zeilen), datenschutz.html (Abschnitt 11), tests/shopsearch.test.mjs, CLAUDE.md
-- Geprüft: ESLint, Build, 33 Tests, Bildschirmfoto der Amazon-Suche am Handy; echte Bildtreffer erst nach dem Deploy
+- Nachtrag: Suche immer über Otto (sonst andere Shops), „Bei Amazon“ und „Bei Otto“ je Treffer (src/views/wishadd.js, src/actions.js, api/inspect.js)
+- Geprüft: ESLint, Build, 33 Tests, Bildschirmfotos am Handy; echte Treffer erst nach dem Deploy
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten

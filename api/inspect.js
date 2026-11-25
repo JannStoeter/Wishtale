@@ -25,7 +25,8 @@ export default async function handler(req, res) {
       const q = String(req.body.searchQuery).trim().slice(0, 120);
       if (q.length < 2) throw new HttpError(400, 'Bitte gib einen Suchbegriff ein.');
       const shop = ['amazon', 'otto'].includes(req.body.shop) ? req.body.shop : '';
-      const results = await searchProducts(q, { shop }).catch(() => []);
+      let results = await searchProducts(q, { shop }).catch(() => []);
+      if (shop === 'otto' && results && !results.length) results = await searchProducts(q, {}).catch(() => []); // Otto findet nichts: andere Shops
       console.log('suche-wunsch', JSON.stringify({ shop: shop || 'alle', treffer: results ? results.length : null }));
       return send(res, 200, { results });
     }
