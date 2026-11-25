@@ -31,13 +31,14 @@ import { buildRound, saveAnswer, removeAnswer, resetAnswers } from './lib/cards.
 import { hideIdea, ideasOf, loadIdeas, skey, gkey, loadMatch } from './lib/ideas.js';
 import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
-import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage, storeImage, findAmazonLink } from './lib/wishimg.js';
+import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage, storeImage, findAmazonLink, searchProducts } from './lib/wishimg.js';
 import { amzFill, wantsAmazon } from './lib/amzfill.js';
 import { priceFill, wantsPrice } from './lib/pricefill.js';
 import { nameFromLink } from './lib/linkname.js';
 import { imgFill, wantsImage, skipImage } from './lib/imgfill.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishRec, draftKey, concrete, altPrice } from './views/wishprev.js';
+import { wishTab, SearchResults, IdeasPane } from './views/wishadd.js';
 import { ZmRow } from './views/zettel.js';
 import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
@@ -118,6 +119,18 @@ function wishVariants(id,ctx){
    damit eingetippte Werte stehen bleiben. Das Namensfeld wird nur nach „Passt“ oder einem Klick auf eine Alternative überschrieben. */
 const wform=()=>document.querySelector('form[data-form=wish]');
 function drawRec(){const b=document.getElementById('wprev');if(b)b.innerHTML=WishRec()}
+/* Wunschdialog mit Reitern (120): Suche und Ideen zeichnen nur ihren eigenen Kasten neu. */
+function drawSearch(){const b=document.getElementById('wsres');if(b)b.innerHTML=SearchResults()}
+function drawIdeas(){const b=document.getElementById('wpane-ideen');if(b)b.innerHTML=IdeasPane()}
+function loadSelfIdeas(){const h=S.me.handle;if(S.auth.user&&h)loadIdeas(skey(h),{h,mode:'self',n:signalCount()},()=>{if(S.ui.modal==='wish')drawIdeas()})}
+let wsSeq=0;
+function runSearch(q){
+  q=String(q||'').trim().slice(0,120);if(q.length<2)return;
+  if(/^https?:\/\//i.test(q)){A.wdtab({dataset:{v:'eingeben'}});const f=wform();if(f){f.elements.link.value=q;A.readlink(null,true)}return} // ein Link gehört ins Formular
+  const seq=++wsSeq;S.ui.ws={q,st:'loading',items:[]};drawSearch();track('choice',{label:'wunsch_suche',path:'/app/'});
+  searchProducts(q).then(items=>{if(seq!==wsSeq)return;S.ui.ws={q,st:items?'done':'error',items:items||[],err:items?'':'Die Suche ist gerade nicht eingeschaltet. Trag deinen Wunsch einfach selbst ein.'};drawSearch()})
+   .catch(e=>{if(seq!==wsSeq)return;S.ui.ws={q,st:'error',items:[],err:e.message};drawSearch()});
+}
 function setRec(o){S.ui.wr=o;drawRec()}
 const canAi=()=>S.auth.user&&S.me.handle&&/^[a-z0-9-]{3,31}$/.test(S.me.handle);
 /** Bild zum Kandidaten im Hintergrund holen; die Karte bekommt es, sobald es da ist. */
@@ -309,7 +322,7 @@ const A={
  guidefocus(){focusGuideTarget()},
  profilenext(el){
   const k=el.dataset.k;
-  if(k==='wishes'){endGuide();S.ui.preview=false;S.ui.focusTarget='#wt';S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.modal='wish';render();return}
+  if(k==='wishes'){endGuide();S.ui.preview=false;S.ui.focusTarget='#wt';S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.wtab='eingeben';S.ui.ws=null;S.ui.modal='wish';render();return}
   if(k==='history'){S.ui.focusTarget='#gw';S.ui.modal='gift';render();return}
   if(k==='about')S.ui.focusTarget='#about';
   else if(k==='owned')S.ui.focusTarget='#ownedt';
@@ -337,7 +350,7 @@ const A={
   // Direkt zur Wunschliste. Ohne Konto wird zuerst eines angelegt, danach geht es mit dem ersten Wunsch weiter.
   track('choice',{label:'quick',once:true,path:'/app/'});
   if(!S.auth.user){S.me.quick=true;S.me.name=(S.me.name||'').trim();saveState();S.ui.step=0;location.hash='#registrieren';return}
-  S.ui.step=0;location.hash='#wuensche';setTimeout(()=>{S.ui.modal='wish';S.ui.editWish=null;render()},50);
+  S.ui.step=0;location.hash='#wuensche';setTimeout(()=>{S.ui.modal='wish';S.ui.editWish=null;S.ui.wtab='eingeben';render()},50);
  },
  nudgehide(){try{localStorage.setItem('wishtale:nudge-hidden',String(Date.now()))}catch{/* nur für diese Sitzung */}S.ui.nudgeOff=true;render()},
  preview(el){S.ui.preview=el.dataset.v==='1';if(S.ui.preview)markStep('preview');render()},
@@ -351,7 +364,7 @@ const A={
   toast(w.status==='selbst'?'Dann ist dieser Wunsch erledigt. Du findest ihn im Profil unter „Das habe ich schon“.':'Der Wunsch ist wieder auf deiner Liste.');render()},
  prio(el){const w=S.me.wishes.find(x=>x.id===el.dataset.id);w.prio=w.prio%3+1;toast('Priorität: '+PRIO[w.prio]);render()},
  delw(el){S.ui.modal=null;const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
- modal(el){if(el.dataset.v==='tour'){endGuide();S.ui.helpTab=el.dataset.help||'guides'}if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null}if(el.dataset.v==='zettel')S.ui.zt=null;if(el.dataset.v==='mailme')S.ui.mm=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ modal(el){if(el.dataset.v==='tour'){endGuide();S.ui.helpTab=el.dataset.help||'guides'}if(el.dataset.v==='wish'){S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.wtab=el.dataset.tab||null;S.ui.ws=null;if(wishTab()==='ideen')loadSelfIdeas()}if(el.dataset.v==='zettel')S.ui.zt=null;if(el.dataset.v==='mailme')S.ui.mm=null;S.ui.modal=el.dataset.v;render();setTimeout(()=>(document.querySelector('.sheet .wpane:not([hidden]) input')||document.querySelector('.sheet input,.sheet select'))?.focus({preventScroll:true}),30)},
  close(){if(S.ui.guide)endGuide();if(S.ui.modal==='welcome'){markWelcomed();stopWelcome()}S.ui.modal=null;S.ui.editWish=null;render()},
  wtab(el){showScene(+el.dataset.i,true)},
  inviteopen(){S.ui.invm={list:[],link:'',error:'',busy:false};S.ui.modal='invite';render();listInvites().then(l=>{if(S.ui.invm)S.ui.invm.list=l;if(S.ui.modal==='invite')render()}).catch(()=>{})},
@@ -366,7 +379,7 @@ const A={
  inviterevoke(el){revokeInvite(el.dataset.id).then(()=>{if(S.ui.invm)S.ui.invm.list=S.ui.invm.list.filter(i=>i.id!==el.dataset.id);toast('Die Einladung ist zurückgezogen.');render()}).catch(()=>toast('Das hat nicht geklappt.'))},
  invitelogin(){const v=S.ui.inv;if(v&&v.data)saveLocal({code:v.code,name:'',keep:(v.data.tips||[]).map(()=>true)})},
  welcomeskip(el,e){if(el.dataset.bg&&e&&e.target!==el)return;A.close()},
- welcomego(){markWelcomed();stopWelcome();S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.modal='wish';render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
+ welcomego(){markWelcomed();stopWelcome();S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.wtab='eingeben';S.ui.modal='wish';render();setTimeout(()=>document.querySelector('.sheet input,.sheet select')?.focus({preventScroll:true}),30)},
  welcomeimport(){markWelcomed();stopWelcome();S.ui.zt=null;S.ui.modal='zettel';render()},
  wedit(el){S.ui.editWish=el.dataset.id;S.ui.wishImg=null;S.ui.modal='wish';render();setTimeout(()=>document.getElementById('wt')?.focus({preventScroll:true}),30)},
  resend(){
@@ -548,6 +561,34 @@ readlink(el,auto){
   if(!S.me.wishes.some(w=>w.status==='selbst'&&w.t.toLowerCase()===i.t.toLowerCase()))S.me.wishes.unshift(W({t:i.t,c,kind:'produkt',prio:1,status:'selbst',vis:'alle',a:cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
   saveSignal('have',i.t);hideIdea(i.t);toast('Notiert, das hast du schon. Solche Ideen zeigen wir dir nicht mehr.');render();
  },
+ wdtab(el){ // Reiter im Wunschdialog wechseln, ohne neu zu zeichnen (Eingaben bleiben stehen)
+  const v=el.dataset.v;S.ui.wtab=v;
+  document.querySelectorAll('.wtab').forEach(b=>{const on=b.dataset.v===v;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+  document.querySelectorAll('.wpane').forEach(p=>{p.hidden=p.id!=='wpane-'+v});
+  if(v==='ideen'){loadSelfIdeas();drawIdeas()}
+  if(!el.dataset.kb)setTimeout(()=>document.querySelector(`#wpane-${v} input`)?.focus({preventScroll:true}),20);
+ },
+ wsown(){ // Suchbegriff als eigenen Wunsch übernehmen
+  const q=(S.ui.ws?.q||'').trim();A.wdtab({dataset:{v:'eingeben'}});
+  const f=wform();if(f&&q&&!f.elements.t.value.trim()){f.elements.t.value=q;f.elements.t.dispatchEvent(new Event('input',{bubbles:true}))}
+ },
+ wsadd(el){ // Treffer aus der Suche speichern: Formular füllen und wie gewohnt speichern (Bild, Kategorie, Doppelte, Partnerlink)
+  const z=S.ui.ws,i=+el.dataset.i,x=z&&z.items&&z.items[i],f=wform();if(!x||!f||z.adding!=null)return;
+  z.adding=i;drawSearch();
+  f.elements.t.value=x.t.slice(0,160);f.elements.link.value=x.url;f.dataset.read=x.url;f.querySelector('.wl-row')?.removeAttribute('hidden');
+  if(f.elements.price)f.elements.price.value=x.price?String(x.price).replace('.',','):'';
+  const sel=f.elements.c;if(sel&&!sel.dataset.touched)sel.value=guessCategory(x.t,sel.value);
+  if(x.img)showWishImg({...x.img});
+  S.ui.wr=null;f.requestSubmit();
+  setTimeout(()=>{if(S.ui.modal==='wish'&&S.ui.ws){S.ui.ws.adding=null;const d=document.getElementById('wdup');if(d&&!d.hidden)A.wdtab({dataset:{v:'eingeben'}});drawSearch()}},1500); // doppelter Wunsch: Hinweis im Formular zeigen
+ },
+ aiplan(el){ // Idee: „Erfülle ich mir selbst“, privat und nur für den Geschmack (status plan)
+  if(S.ui.modal==='idea')S.ui.modal=null;
+  const i=ideasOf(skey(S.me.handle||'')).find(x=>x.t===el.dataset.t);if(!i)return;
+  const c=guessCategory(i.t);
+  S.me.wishes.unshift(W({t:i.t,c,kind:i.exp?'erlebnis':'produkt',prio:2,price:i.to||null,status:'plan',vis:'privat',a:i.exp?'ticket':cat(c).a,tone:cat(c).t,kw:kwOf(i.t)}));
+  saveSignal('yes',i.t);hideIdea(i.t);toast('Notiert, das erfüllst du dir selbst. Niemand sieht es, und Wishtale schlägt es deinen Freunden nicht vor.');render();
+ },
  aiadd(el){
   if(S.ui.modal==='idea')S.ui.modal=null;
   const i=[...ideasOf(skey(S.me.handle||'')),...ideasOf(gkey(S.me.handle||''))].find(x=>x.t===el.dataset.t);if(!i)return;
@@ -667,6 +708,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(S.ui.guide){A.gu
 document.addEventListener('submit',e=>{
   const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();
   if(f.dataset.form==='wish'&&!f.dataset.ready){const p=prepWish(f);if(p){if(f.dataset.busy)return;f.dataset.busy='1';p.then(ok=>{delete f.dataset.busy;if(ok&&f.isConnected){f.dataset.ready='1';f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));delete f.dataset.ready}});return}}
+  if(f.dataset.form==='wsearch'){runSearch(new FormData(f).get('q'));return}
   guideSubmit(f);
   const fd=new FormData(f),kind=f.dataset.form;
   if(kind==='forgot'){
@@ -806,7 +848,7 @@ document.addEventListener('submit',e=>{
     S.me.history.unshift({id:nid('h'),what,from:fd.get('from').trim(),when:`${MONTHS[+mo-1]} ${y}`,liked:fd.get('liked'),have:fd.get('have')==='1',again:fd.get('again')==='1',a:'gift',tone:S.me.history.length%6,kw:kwOf(what)});
     S.ui.modal=null;toast('Das Geschenk ist eingetragen.');render();
   }
-  if(kind==='firstwish'){const t=String(fd.get('t')||'').trim().slice(0,120);S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.prefill=t;S.ui.modal='wish';render();setTimeout(()=>{S.ui.prefill=''},300);setTimeout(()=>{const f=wform();if(f&&t){f.elements.t.value=t;previewWish(t)}document.getElementById(t?'wl':'wt')?.focus({preventScroll:true})},60);return}
+  if(kind==='firstwish'){const t=String(fd.get('t')||'').trim().slice(0,120);S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.wtab='eingeben';S.ui.ws=null;S.ui.prefill=t;S.ui.modal='wish';render();setTimeout(()=>{S.ui.prefill=''},300);setTimeout(()=>{const f=wform();if(f&&t){f.elements.t.value=t;previewWish(t)}document.getElementById(t?'wl':'wt')?.focus({preventScroll:true})},60);return}
   if(kind==='wish'){
     // Doppelt? Einmal freundlich hinweisen, beim zweiten Klick trotzdem speichern.
     const dup=findDupe(S.me.wishes,{t:(fd.get('t')||'').trim(),link:(fd.get('link')||'').trim()},S.ui.editWish);
@@ -839,4 +881,11 @@ document.addEventListener('keydown',e=>{
  const first=list[0],last=list.at(-1);if(!first)return;
  if(e.shiftKey&&(document.activeElement===first||!document.activeElement?.closest('.tour'))){e.preventDefault();last.focus()}
  else if(!e.shiftKey&&(document.activeElement===last||!document.activeElement?.closest('.tour'))){e.preventDefault();first.focus()}
+});
+/* Reiter im Wunschdialog: Pfeiltasten, Pos1 und Ende wechseln wie bei Reitern üblich */
+document.addEventListener('keydown',e=>{
+ const t=e.target;if(!t.matches?.('.wtab'))return;
+ const all=[...document.querySelectorAll('.wtab')],i=all.indexOf(t);
+ const j={ArrowRight:i+1,ArrowLeft:i-1,Home:0,End:all.length-1}[e.key];if(j===undefined)return;
+ e.preventDefault();const n=all[(j+all.length)%all.length];A.wdtab({dataset:{v:n.dataset.v,kb:1}});n.focus();
 });

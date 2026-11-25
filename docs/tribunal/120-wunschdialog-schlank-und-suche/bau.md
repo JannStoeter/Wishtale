@@ -1,7 +1,7 @@
 ---
 topic: 120-wunschdialog-schlank-und-suche
 von: claude
-status: in-arbeit
+status: fertig
 datum: 2026-11-25
 ---
-Claude baut den schlanken Dialog (erster Schritt). Die Suche wartet auf Janns Wahl der Quelle.
+Claude hat den schlanken Dialog und die drei Reiter „Ideen“, „Suchen“ und „Eingeben“ gebaut. Die Suche nutzt vorerst die Websuche von Brave, Amazon und Otto kommen dazu, sobald deren Schnittstellen frei sind.

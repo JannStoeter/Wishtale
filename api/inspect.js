@@ -1,6 +1,6 @@
 import { requireUser, send, fail, HttpError } from './_lib/auth.js';
 import { inspect, fetchImage } from './_lib/inspect.js';
-import { findProductImage, amazonDirect, imageForWish, priceForWish } from './_lib/imgsearch.js';
+import { findProductImage, amazonDirect, imageForWish, priceForWish, searchProducts } from './_lib/imgsearch.js';
 import { guardSearch } from './_lib/limits.js';
 
 const searchOn = () => !!process.env.BRAVE_SEARCH_API_KEY;
@@ -20,7 +20,14 @@ export default async function handler(req, res) {
       return send(res, 200, { image: await fetchImage(iu) });
     }
     // Alles, was Brave fragt, zählt gegen die Tagesgrenzen (nur mit Schlüssel, sonst gibt es ohnehin null)
-    if ((req.body?.imageQuery || req.body?.amazonQuery || req.body?.imageFor || req.body?.priceFor) && searchOn()) await guardSearch(id);
+    if ((req.body?.imageQuery || req.body?.amazonQuery || req.body?.imageFor || req.body?.priceFor || req.body?.searchQuery) && searchOn()) await guardSearch(id);
+    if (req.body?.searchQuery) { // Produktsuche im Wunschdialog (120): Treffer mit Name, Preis und Bild, nur zum Anzeigen
+      const q = String(req.body.searchQuery).trim().slice(0, 120);
+      if (q.length < 2) throw new HttpError(400, 'Bitte gib einen Suchbegriff ein.');
+      const results = await searchProducts(q).catch(() => []);
+      console.log('suche-wunsch', JSON.stringify({ treffer: results ? results.length : null }));
+      return send(res, 200, { results });
+    }
     if (req.body?.imageQuery) return send(res, 200, { image: await findProductImage(req.body.imageQuery) }); // Bild per Websuche (nur mit Schlüssel), sonst null
     if (req.body?.imageFor) { // Bild zu einem gespeicherten Wunsch: eigener Shop-Link zuerst, dann Herstellerseite, dann Bildersuche
       const f = req.body.imageFor, t = String(f.t || '').slice(0, 120), q = String(f.q || '').slice(0, 120), brand = String(f.brand || '').slice(0, 40), link = String(f.link || '').slice(0, 1000), img = String(f.img || '').slice(0, 800);

@@ -20,7 +20,7 @@ initPwa();
 /** Ein an Wishtale geteilter Link (Android) öffnet nach der Anmeldung den Wunschdialog und wird dort eingelesen. */
 function openShared(){
   const sh=pendingShare();if(!sh)return;
-  S.ui.modal='wish';S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.prefill=sh.title||'';render();
+  S.ui.modal='wish';S.ui.editWish=null;S.ui.wishImg=null;S.ui.wr=null;S.ui.wtab='eingeben';S.ui.prefill=sh.title||'';render();
   setTimeout(()=>{const l=document.getElementById('wl');if(l&&sh.url){l.value=sh.url;l.dispatchEvent(new Event('change',{bubbles:true}))}S.ui.prefill='';},80);
 }
 /** Admins zählen nicht mit (bleibt im Browser gemerkt), alle anderen melden einmal „App geöffnet“, im Browser oder vom Home-Bildschirm. */
@@ -58,7 +58,7 @@ async function boot(){
       setTimeout(()=>toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`),500);
     }else if(adopted){
       history.replaceState(null,'',location.pathname+'#wuensche');
-      if(adopted==='quick')setTimeout(()=>{toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()},500);
+      if(adopted==='quick')setTimeout(()=>{toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;S.ui.wtab='eingeben';render()},500);
       else setTimeout(()=>toast(fromLink?'Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.':'Dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.'),400);
     }else if(fromLink||!location.hash||['#login','#anmelden','#registrieren','#demo'].includes(location.hash)){
       history.replaceState(null,'',location.pathname+'#wuensche');
@@ -91,7 +91,7 @@ async function boot(){
         route();
         openShared();countOpen();
         if(cod)toast(`Du verwaltest jetzt gemeinsam mit ${cod.from} das Wishtale von ${cod.kid}.`);
-        else if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;render()}
+        else if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;S.ui.wtab='eingeben';render()}
         else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);
         else if(adopted)toast('Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
         else if(waiting)toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.');

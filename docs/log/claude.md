@@ -285,3 +285,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Tests, Bildschirmfotos Handy und Computer im Demo
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 120 · Wunschdialog mit Ideen, Suchen und Eingeben
+- Auftrag: Jann im Projekt-Chat („also erstmal würde ich das interface Ideen / Wunsch suchen / Wunsch eingeben übernehmen“), Quelle „Websuche jetzt, Amazon später“
+- Geändert: src/views/wishadd.js (neu: Reiter, Suchfeld und Treffer, eigene Ideen mit „Habe ich schon“, „Erfülle ich mir selbst“, „Passt nicht“), src/views/modals.js, src/actions.js (`wdtab`, `wsown`, `wsadd`, `aiplan`, Suche `runSearch`, Pfeiltasten), src/main.js (geteilte Links und erster Wunsch starten bei „Eingeben“), src/lib/wishimg.js (`searchProducts`), api/inspect.js (op `searchQuery`, Tagesgrenze `guardSearch`), api/_lib/imgsearch.js (`searchProducts`), src/styles/main.css, datenschutz.html (Abschnitt 11, Produktsuche)
+- Warum: Wünsche finden, ohne die Seite zu verlassen; Bilder laufen über den eigenen Server, Treffer werden nicht gespeichert
+- Geprüft: ESLint, Build, `npm test` (26 Tests), Bildschirmfotos Handy und Computer im Demo mit nachgestellten Treffern (die echte Suche braucht Konto und BRAVE_SEARCH_API_KEY)
+- Datenbank und Dienste: keine neue Tabelle, Brave wie bisher
+- Zurücknehmen: Merge-Commit reverten

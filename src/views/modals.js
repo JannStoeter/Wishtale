@@ -7,6 +7,7 @@ import { InviteModal } from './invite.js';
 import { AboutModal } from './about.js';
 import { TourModal } from './tour.js';
 import { WishRec } from './wishprev.js';
+import { WishTabs, wishTab, SearchPane, IdeasPane } from './wishadd.js';
 import { imgBoxHtml } from '../lib/wishimg.js';
 import { S, initials } from '../state.js';
 import { esc, ic } from '../lib/util.js';
@@ -81,13 +82,15 @@ export function Modal(){
   if(m==='accounts')return AcctModal();
   if(m==='wish'){}
   const d=(m==='wish'&&S.ui.editWish&&S.me.wishes.find(w=>w.id===S.ui.editWish))||{};
-  if(m==='wish'){const ed=!!S.ui.editWish,more=ed&&(d.note||d.img||d.vis==='privat'||d.noSuggest||d.status==='plan'||(d.prio&&d.prio!==2));return `<div class="scrim" data-act="closebg"><div class="sheet wishsheet" role="dialog" aria-modal="true" aria-labelledby="mt">
+  if(m==='wish'){const ed=!!S.ui.editWish,tab=wishTab(),more=ed&&(d.note||d.img||d.vis==='privat'||d.noSuggest||d.status==='plan'||(d.prio&&d.prio!==2));return `<div class="scrim" data-act="closebg"><div class="sheet wishsheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <div class="sheet-head"><h2 id="mt">${ed?'Wunsch bearbeiten':'Neuer Wunsch'}</h2><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
+   ${ed?'':`${WishTabs()}<div id="wpane-ideen" class="wpane" role="tabpanel" aria-labelledby="wtab-ideen" ${tab!=='ideen'?'hidden':''}>${IdeasPane()}</div><div id="wpane-suchen" class="wpane" role="tabpanel" aria-labelledby="wtab-suchen" ${tab!=='suchen'?'hidden':''}>${SearchPane()}</div>`}
+   <div id="wpane-eingeben" class="wpane" ${ed?'':'role="tabpanel" aria-labelledby="wtab-eingeben"'} ${!ed&&tab!=='eingeben'?'hidden':''}>
    <form data-form="wish">
     <div class="fld wq"><label for="wt" class="vh">Was wünschst du dir?</label><span class="wq-ic" aria-hidden="true">${ic('search')}</span><input id="wt" name="t" class="inp big wq-inp" placeholder="${ed?'Was wünschst du dir?':'Wunsch oder Link einfügen'}" autocomplete="off" enterkeyhint="done" value="${esc(d.t||S.ui.prefill||'')}"></div>
     <div id="wprev" aria-live="polite">${ed?'':WishRec()}</div>
     <div class="fld wl-row" ${ed||d.link?'':'hidden'}><label for="wl" class="vh">Link zum Produkt</label><span class="wl-ic" aria-hidden="true">${ic('link','sm')}</span><input id="wl" name="link" class="inp wl-inp" inputmode="url" placeholder="Shop-Link (optional)" autocomplete="off" value="${esc(d.link||'')}"><p id="wlstat" class="hint wl-stat" role="status" aria-live="polite"></p></div>
-    ${ed?'':`<div class="wq-chips" role="group" aria-label="Weitere Wege"><button type="button" class="wq-chip" data-act="modal" data-v="zettel">${ic('camera','sm')}Liste einlesen</button><button type="button" class="wq-chip" data-act="azopen">${ic('search','sm')}Amazon-Suche</button><button type="button" class="wq-chip" data-act="modal" data-v="shopsave">${ic('store','sm')}Aus dem Shop</button></div>`}
+    ${ed?'':`<div class="wq-chips" role="group" aria-label="Weitere Wege"><button type="button" class="wq-chip" data-act="modal" data-v="zettel">${ic('camera','sm')}Liste einlesen</button><button type="button" class="wq-chip" data-act="modal" data-v="shopsave">${ic('store','sm')}Aus dem Shop</button></div>`}
     <div class="fld f-budget"><label for="wb">Budget bis</label><div class="eur"><input id="wb" name="budget" type="number" min="1" inputmode="numeric" class="inp" placeholder="100" value="${d.budget||''}"><span aria-hidden="true">€</span></div></div>
     <div class="fld f-price"><label for="wp">Preis <span class="muted">(optional)</span></label><div class="eur"><input id="wp" name="price" class="inp" inputmode="decimal" placeholder="69,90" value="${d.price?String(d.price).replace('.',','):''}"><span aria-hidden="true">€</span></div></div>
     <details class="wmore" ${more||(d.kind&&d.kind!=='produkt')?'open':''}><summary>Mehr Angaben</summary>
@@ -103,7 +106,7 @@ export function Modal(){
     </details>
     <p id="wdup" class="hint attn" role="alert" hidden></p>
     <div class="sheet-foot"><button type="button" class="btn ghost" data-act="close">Abbrechen</button><button class="btn pri" type="submit">${ed?'Änderungen speichern':'Wunsch speichern'}</button></div>
-   </form></div></div>`;}
+   </form></div></div></div>`;}
   return `<div class="scrim" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <h2 id="mt">Geschenk eintragen</h2>
    <form data-form="gift">

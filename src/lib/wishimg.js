@@ -117,3 +117,18 @@ export async function fetchWishPrice(w) {
   const j = r.ok ? await r.json().catch(() => ({})) : {};
   return j.price && j.price.price > 0 ? j.price : null;
 }
+
+/** Produktsuche im Wunschdialog (120). Liefert Treffer { t, price, url, host, img: { blob, preview, src } } oder null ohne Suchdienst. */
+export async function searchProducts(q) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) throw new Error('Melde dich an, dann sucht Wishtale für dich in vielen Shops.');
+  const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ searchQuery: String(q || '').slice(0, 120) }) });
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 429) throw new Error('Für heute hat Wishtale schon sehr oft gesucht. Trag deinen Wunsch gern direkt ein.');
+  if (!r.ok) throw new Error(j.error || 'Die Suche hat gerade nicht geklappt.');
+  if (!j.results) return null;
+  const out = await Promise.all(j.results.map(async x => {
+    try { const d = await downscale(`data:${x.image.type};base64,${x.image.data}`); if (d.blank) return null; return { t: x.t, price: x.price, url: x.url, host: x.host, img: { blob: d.blob, preview: d.preview, src: x.host } }; } catch { return null; }
+  }));
+  return out.filter(Boolean);
+}
