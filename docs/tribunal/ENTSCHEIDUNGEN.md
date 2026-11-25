@@ -116,6 +116,7 @@ Stand: 2026-11-25
 | 129 | Wunschfenster am Handy | **Jann im Projekt:** „der popup … hängt unten und man [kann] die Wünsche dahinter scrollen“. Hintergrund gesperrt, Wunschdialog fast in voller Höhe. | ja, `096a259` |
 | 130 | Menü aufräumen | **Jann im Projekt:** „Die Profile müssen hoch. Und der Rest geclustert werden“. Profile oben, vier ruhige Gruppen. | offen |
 | 131 | Instagram-Erklärserie | **Jann im Projekt:** „baue gute reels und Posts und Storys die wir direkt über unser cms raushauen können“. Folienart „App-Ansicht“ mit gezeichnetem Handy, elf fertige Ideen im Instagram-Studio. | ja, `55a7c24` |
+| 132 | Landingpage, nur Wünsche im Fokus | **Jann im Projekt:** „Beim Ankommen soll es nur um Wünsche gehen… alles andere beim Scrollen oder auf Click zu Rubriken“. Einstieg mit einem Knopf und Beispielliste, Rest als Rubriken, Hauptnavigation am Computer. | offen |
 | 009 | Listen für besondere Anlässe | **Jann im Projekt:** Option A als eigene Funktion, aber im Menü statt im Fokus; Wünsche werden nicht getaggt, die eigene Liste bleibt der Kern. | ja, `5348918` (Migration 0032 eingespielt) |
 | 116 | Wünsche aus anderen Shops | **Jann im Projekt-Thread: Option A bauen und das Menü aufräumen.** Kurzbefehl am iPhone, Lesezeichen-Knopf am Rechner, neues Fenster „Aus jedem Shop speichern“, Menü neu gruppiert. Browser-Erweiterung und Store-App offen. | ja, `cbaabc4` |
 
