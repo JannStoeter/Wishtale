@@ -261,3 +261,12 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, 21 Tests, Bildschirmfotos (iPhone 13, Desktop), Kurzbefehl-Adresse landet im Wunschdialog-Speicher, Lesezeichen-Knopf öffnet die richtige Adresse
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 118 · Preise von selbst, Link ohne Extra-Schritt
+- Auftrag: Jann im Projekt („Man muss erst link einlesen dann speichern. Das muss automatisch gehen“, Preise sollen direkt online kommen)
+- Geändert: src/actions.js (`autoTake`, `takeImg`, `prepWish`, `readLinkNow`, Tipp-Pause im Link-Feld, Preis nach dem Speichern), src/views/modals.js (Knopf „Einlesen“ entfernt, Namensfeld nicht mehr Pflicht), src/views/wishprev.js, src/lib/linkname.js (neu), src/lib/pricefill.js (neu), src/lib/wishimg.js (`fetchWishPrice`), src/render.js (`priceBackfill`), api/inspect.js (`priceFor`), api/_lib/imgsearch.js (`priceForWish`), datenschutz.html (Abschnitt 11), Tests `tests/price.test.mjs`, `tests/linkname.test.mjs`, CLAUDE.md
+- Warum: Nutzer stolpern über „erst einlesen, dann speichern“, viele Wünsche stehen ohne Preis da
+- Geprüft: ESLint, Build, alle Tests, Wunschdialog im Browser (Link ohne Namen speichern, Name aus der Adresse, leerer Dialog zeigt Hinweis)
+- Datenbank und Dienste: keine Migration, Brave-Suchen zählen gegen `guardSearch`
+- Zurücknehmen: Merge-Commit reverten
+

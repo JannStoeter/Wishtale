@@ -33,6 +33,8 @@ import { saveSignal, signalCount } from './lib/signals.js';
 import { startCheckout, openPortal } from './lib/plan.js';
 import { downscale, fetchProductImage, finalImage, imgBoxHtml, dropImage, storeImage, findAmazonLink } from './lib/wishimg.js';
 import { amzFill, wantsAmazon } from './lib/amzfill.js';
+import { priceFill, wantsPrice } from './lib/pricefill.js';
+import { nameFromLink } from './lib/linkname.js';
 import { imgFill, wantsImage, skipImage } from './lib/imgfill.js';
 import { render, route, refreshGuest } from './render.js';
 import { WishRec, draftKey, concrete, altPrice } from './views/wishprev.js';
@@ -122,7 +124,47 @@ const canAi=()=>S.auth.user&&S.me.handle&&/^[a-z0-9-]{3,31}$/.test(S.me.handle);
 function candImage(cand,imageUrl){
   if(!S.auth.user)return;
   const seq=S.ui.wr?.seq;
-  fetchProductImage(imageUrl||null,imageUrl?undefined:cand.q||cand.t).then(im=>{if(S.ui.wr?.seq!==seq)return;cand.img={blob:im.blob,preview:im.preview,src:im.src};drawRec()}).catch(()=>{});
+  fetchProductImage(imageUrl||null,imageUrl?undefined:cand.q||cand.t).then(im=>{if(S.ui.wr?.seq!==seq)return;cand.img={blob:im.blob,preview:im.preview,src:im.src};if(S.ui.wr.auto)takeImg(cand.img);drawRec()}).catch(()=>{});
+}
+/** Bild aus dem eigenen Link übernehmen, aber nie ein eigenes Foto, ein entferntes oder das Bild eines bestehenden Wunsches ersetzen. */
+function takeImg(img){
+  const wi=S.ui.wishImg,old=S.ui.editWish&&S.me.wishes.find(w=>w.id===S.ui.editWish);
+  if(!img||wi&&(wi.manual||wi.remove)||old&&old.img)return;
+  showWishImg({...img});
+}
+/** Ergebnis aus dem eigenen Link oder kopierten Titel von selbst übernehmen (Jann, 2026-11-25: erst einlesen, dann speichern war ein Stolperstein).
+    Ist das Namensfeld leer, kommen Name, Preis und Bild hinein. Steht schon ein eigener Name da, bleibt er, nur Preis und Bild kommen dazu,
+    und die Karte bietet „Passt“ für den Namen an. Ein eingetragener Preis wird nie überschrieben. Vorschläge von Wishtale (Erkennung,
+    Alternativen) laufen weiter nur über einen Klick. */
+function autoTake(cand){
+  const f=wform(),r=S.ui.wr;if(!f||!r||r.cand!==cand)return false;
+  const tEl=f.elements.t,empty=!tEl.value.trim();
+  if(empty){tEl.value=cand.t.slice(0,160);tEl.classList.remove('attn');r.accepted=true;r.t=tEl.value.trim().slice(0,120);const sel=f.elements.c;if(sel&&!sel.dataset.touched)sel.value=guessCategory(tEl.value,sel.value)}
+  if(cand.price&&f.elements.price&&!f.elements.price.value.trim())f.elements.price.value=String(cand.price).replace('.',',');
+  r.auto=true;if(cand.img)takeImg(cand.img);drawRec();
+  return empty;
+}
+/** Vor dem Speichern: Steht ein neuer Link im Feld, wartet das Speichern kurz auf das Ergebnis. Ohne Namen nimmt es den gelesenen Namen
+    oder einen Namen aus der Adresse. Liefert null (sofort speichern) oder ein Promise mit true (jetzt speichern) oder false (abbrechen). */
+function prepWish(f){
+  const tEl=f.elements.t,lk=(f.elements.link?.value||'').trim();
+  const orig=S.ui.editWish?(S.me.wishes.find(w=>w.id===S.ui.editWish)?.link||''):'';
+  const fresh=lk&&lk!==orig&&!(f.dataset.read||'').split('\n').includes(lk);
+  const wait=f._reading||(fresh?A.readlink(null,true):null);
+  if(!wait&&tEl.value.trim())return null;
+  const btn=f.querySelector('button[type=submit]'),label=btn?.textContent;
+  return (async()=>{
+    if(wait){if(btn){btn.disabled=true;btn.textContent='Link wird gelesen …'}
+      await Promise.race([Promise.resolve(wait).catch(()=>{}),new Promise(r=>setTimeout(r,9000))]);
+      if(btn){btn.disabled=false;btn.textContent=label}}
+    if(wform()!==f)return false;
+    if(!tEl.value.trim()){
+      const r=S.ui.wr,name=(r&&r.cand&&r.cand.t)||nameFromLink((f.elements.link?.value||'').trim());
+      if(!name){tEl.classList.add('attn');tEl.focus();const st=f.querySelector('#wdup');if(st){st.hidden=false;st.textContent='Schreib kurz, was du dir wünschst, oder füge einen Link ein.'}return false}
+      tEl.value=name.slice(0,160);
+    }
+    return true;
+  })();
 }
 function showCand(cand,t){const seq=(S.ui.wr?.seq||0)+1;S.ui.wr={st:'found',t:t||cand.t,c:wform()?.elements.c?.value,cand,seq};drawRec();return seq}
 function previewWish(title){
@@ -194,6 +236,41 @@ function toggleOwned(t){
   const w=S.me.wishes.find(x=>x.status==='selbst'&&x.t.toLowerCase()===String(t).toLowerCase());
   if(w){if(w.img)dropImage(w.img);S.me.wishes=S.me.wishes.filter(x=>x!==w)}else addOwned(t);
 }
+
+/** Liest den Link oder kopierten Titel im Link-Feld. Was aus dem eigenen Link kommt, übernimmt Wishtale von selbst (Jann, 2026-11-25). */
+async function readLinkNow(f,raw0){
+  const raw=raw0,st=document.getElementById('wlstat'),say=t=>{if(st){st.textContent=t;st.className='hint'}};
+  const typed=f.elements.t.value.trim();
+  if(!raw){say('Füge zuerst einen Link oder einen kopierten Titel ein.');return}
+  if(!/https?:\/\//i.test(raw)&&/\s/.test(raw)){ // kein Link, sondern Text (zum Beispiel der kopierte Amazon-Titel)
+    say('Wir lesen den Titel …');setRec({st:'loading',t:typed,seq:(S.ui.wr?.seq||0)+1});
+    try{
+      const r=await readZettelRemote({text:raw}),w=(r.wishes||[])[0];
+      if(!w){setRec({st:'none',msg:'Aus dem Text konnten wir kein Produkt herauslesen. Dein Wunsch bleibt so, wie du ihn eingetragen hast.'});say('Füge den Titel einer Produktseite ein, zum Beispiel von Amazon.');return}
+      f.elements.link.value='';
+      const cand={t:w.t,q:w.t,price:w.price?Math.round(w.price*100)/100:null,est:false,src:'text'};showCand(cand,typed);candImage(cand);const took=autoTake(cand);
+      say((r.wishes||[]).length>1?'Der Text enthält mehrere Produkte, für ganze Listen nutze „Liste einlesen“.':took?'Titel gelesen und übernommen. Du kannst ihn oben noch ändern.':'Titel gelesen. Wenn der Name oben besser passen soll, tippe auf „Passt“.');
+    }catch(e){setRec({st:'none',msg:''});say(e.message||'Das hat nicht geklappt.')}
+    return;
+  }
+  if(isAmazon(raw)){
+    say('Wir übernehmen den Amazon-Link …');
+    const r=await amazonRead(raw);
+    if(r.error){say(r.error);return}
+    f.elements.link.value=r.url;f.dataset.read=raw+'\n'+r.url;
+    if(r.title){const cand={t:r.title,q:r.title,price:null,src:'amazon'};showCand(cand,typed);candImage(cand);autoTake(cand);say('Der Amazon-Link ist übernommen, den Namen haben wir aus der Adresse gelesen. Amazon gibt keinen Preis heraus, darum sucht Wishtale ihn nach dem Speichern auf der Seite des Herstellers.')}
+    else{setRec({st:'none',msg:''});say(typed?'Der Amazon-Link ist gespeichert und gehört zu deinem Wunsch.':'Der Amazon-Link ist gespeichert. Trag oben noch kurz ein, was es ist, mehr ist nicht nötig.')}
+    return;
+  }
+  say('Wir lesen den Link …');setRec({st:'loading',t:typed,seq:(S.ui.wr?.seq||0)+1});
+  try{
+    const p=await inspectLink(raw);
+    const pf=priceField(p),cand={t:p.title.slice(0,160),q:p.title,price:pf?+pf.replace(',','.'):null,est:false,src:'link',size:p.size};
+    showCand(cand,typed);if(p.imageUrl)candImage(cand,p.imageUrl);autoTake(cand);
+    if(p.size&&f.elements.note&&!/gr(ö|oe)ße:/i.test(f.elements.note.value))f.elements.note.value=(f.elements.note.value.trim()?f.elements.note.value.trim()+'\n':'')+`Größe: ${p.size}`;
+    say(`Link gelesen und übernommen: ${summary(p)}. Du kannst alles noch ändern, und der Preis im Shop kann sich ändern.${p.price&&p.currency&&p.currency!=='EUR'?' Der Preis steht nicht in Euro, bitte passe ihn an.':''}`);
+  }catch(e){setRec({st:'none',msg:''});say(e.message||'Diese Seite konnten wir nicht lesen. Dein Wunsch und der Link bleiben trotzdem gespeichert.')}
+ }
 
 const A={
  scroll(el){document.getElementById(el.dataset.t)?.scrollIntoView({behavior:'smooth',block:'start'})},
@@ -380,43 +457,15 @@ render();setTimeout(()=>$('#azq')?.focus({preventScroll:true}),30)},
  ownedel(el){const old=S.me.wishes.find(x=>x.id===el.dataset.id);if(old&&old.img)dropImage(old.img);S.me.wishes=S.me.wishes.filter(x=>x.id!==el.dataset.id);render()},
  pins(el){S.ui.pinsCtx=el.dataset.ctx||'guest';S.ui.modal='pins';render()},
  pinconsent(){givePinConsent();render()},
-async readlink(el,auto){
-  const f=wform();if(!f)return;
+readlink(el,auto){
+  const f=wform();if(!f)return Promise.resolve();
   const raw0=f.elements.link.value.trim();
-  // Einfügen und Verlassen des Feldes (zum Beispiel der Klick auf „Passt“) lösen beide aus: denselben Link nur einmal lesen.
-  const seen=(f.dataset.read||'').split('\n');if(auto&&raw0&&seen.includes(raw0))return;
+  // Einfügen, Tippen und Verlassen des Feldes lösen alle aus: denselben Link nur einmal lesen.
+  const seen=(f.dataset.read||'').split('\n');if(auto&&raw0&&seen.includes(raw0))return f._reading||Promise.resolve();
   f.dataset.read=raw0;
-  const raw=raw0,st=document.getElementById('wlstat'),say=t=>{if(st){st.textContent=t;st.className='hint'}};
-  const typed=f.elements.t.value.trim();
-  if(!raw){say('Füge zuerst einen Link oder einen kopierten Titel ein.');return}
-  if(!/https?:\/\//i.test(raw)&&/\s/.test(raw)){ // kein Link, sondern Text (zum Beispiel der kopierte Amazon-Titel)
-    say('Wir lesen den Titel …');setRec({st:'loading',t:typed,seq:(S.ui.wr?.seq||0)+1});
-    try{
-      const r=await readZettelRemote({text:raw}),w=(r.wishes||[])[0];
-      if(!w){setRec({st:'none',msg:'Aus dem Text konnten wir kein Produkt herauslesen. Dein Wunsch bleibt so, wie du ihn eingetragen hast.'});say('Füge den Titel einer Produktseite ein, zum Beispiel von Amazon.');return}
-      f.elements.link.value='';
-      const cand={t:w.t,q:w.t,price:w.price?Math.round(w.price*100)/100:null,est:false,src:'text'};showCand(cand,typed);candImage(cand);
-      say((r.wishes||[]).length>1?'Der Text enthält mehrere Produkte, für ganze Listen nutze „Liste einlesen“.':'Titel gelesen. Prüfe die Karte oben und tippe auf „Passt“, wenn es stimmt.');
-    }catch(e){setRec({st:'none',msg:''});say(e.message||'Das hat nicht geklappt.')}
-    return;
-  }
-  if(isAmazon(raw)){
-    say('Wir übernehmen den Amazon-Link …');
-    const r=await amazonRead(raw);
-    if(r.error){say(r.error);return}
-    f.elements.link.value=r.url;f.dataset.read=raw+'\n'+r.url;
-    if(r.title){const cand={t:r.title,q:r.title,price:null,src:'amazon'};showCand(cand,typed);candImage(cand);say('Der Link ist gespeichert. Den Namen haben wir aus der Adresse gelesen, einen Preis gibt Amazon nicht heraus.')}
-    else{setRec({st:'none',msg:''});say(typed?'Der Amazon-Link ist gespeichert und gehört zu deinem Wunsch.':'Der Amazon-Link ist gespeichert. Trag oben noch kurz ein, was es ist, mehr ist nicht nötig.')}
-    return;
-  }
-  say('Wir lesen den Link …');setRec({st:'loading',t:typed,seq:(S.ui.wr?.seq||0)+1});
-  try{
-    const p=await inspectLink(raw);
-    const pf=priceField(p),cand={t:p.title.slice(0,160),q:p.title,price:pf?+pf.replace(',','.'):null,est:false,src:'link',size:p.size};
-    showCand(cand,typed);if(p.imageUrl)candImage(cand,p.imageUrl);
-    if(p.size&&f.elements.note&&!/gr(ö|oe)ße:/i.test(f.elements.note.value))f.elements.note.value=(f.elements.note.value.trim()?f.elements.note.value.trim()+'\n':'')+`Größe: ${p.size}`;
-    say(`Link gelesen: ${summary(p)}. Der Preis kann sich ändern.${p.price&&p.currency&&p.currency!=='EUR'?' Der Preis steht nicht in Euro, bitte passe ihn an.':''}`);
-  }catch(e){setRec({st:'none',msg:''});say(e.message||'Diese Seite konnten wir nicht lesen. Dein Wunsch und der Link bleiben trotzdem gespeichert.')}
+  // Speichern wartet auf dieses Ergebnis (prepWish), ein eigener Knopf zum Einlesen ist nicht mehr nötig.
+  const job=readLinkNow(f,raw0);f._reading=job;job.finally(()=>{if(f._reading===job)f._reading=null});
+  return job;
  },
  wraccept(){const r=S.ui.wr;if(!r||!r.cand)return;applyCand(r.cand);r.accepted=true;drawRec();if(r.cand.src!=='link')attachAmazon(r.cand)},
  wrreject(){
@@ -599,6 +648,7 @@ document.addEventListener('change',e=>{
   if(e.target.id==='wc2')e.target.dataset.touched='1';
   if(e.target.id==='wl'&&e.target.value.trim())A.readlink(null,true);
 });
+let wlT;document.addEventListener('input',e=>{if(e.target.id!=='wl')return;clearTimeout(wlT);const v=e.target.value.trim();if(/^https?:\/\/\S+\.\S+/i.test(v))wlT=setTimeout(()=>{if(e.target.value.trim()===v)A.readlink(null,true)},700)}); // getippter Link wird nach kurzer Pause gelesen
 document.addEventListener('paste',e=>{if(e.target.id==='wl'){setTimeout(()=>A.readlink(null,true),0);return}if(e.target.dataset?.az==='text'){const el=e.target;setTimeout(()=>{if(el.value.trim())azParse(el.value)},0)}});
 document.addEventListener('paste',e=>{
   if(e.target.id!=='azurl')return;
@@ -615,6 +665,7 @@ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.tar
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(S.ui.guide){A.guideend();return}if(S.ui.menu)A.menuclose();else if(S.ui.modal)A.close()}});
 document.addEventListener('submit',e=>{
   const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();
+  if(f.dataset.form==='wish'&&!f.dataset.ready){const p=prepWish(f);if(p){if(f.dataset.busy)return;f.dataset.busy='1';p.then(ok=>{delete f.dataset.busy;if(ok&&f.isConnected){f.dataset.ready='1';f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));delete f.dataset.ready}});return}}
   guideSubmit(f);
   const fd=new FormData(f),kind=f.dataset.form;
   if(kind==='forgot'){
@@ -739,6 +790,7 @@ document.addEventListener('submit',e=>{
     if(n)setTimeout(()=>smartCats(S.me.wishes.slice(0,n),()=>{if(!S.ui.modal)render()}),400); // Unklare Wünsche ordnet die KI nach (100)
     if(n)setTimeout(()=>amzFill(S.me.wishes.slice(0,n).filter(w=>!imgs.some(x=>x.w===w)),()=>{if(!S.ui.modal)render()}),1500); // genaue Wünsche ohne Treffer direkt mit Amazon verlinken (111)
     if(n)setTimeout(()=>imgFill(S.me.wishes.slice(0,n).filter(w=>!imgs.some(x=>x.w===w)),()=>{if(!S.ui.modal)render()},{max:6}),2500); // echte Produktbilder für genaue Wünsche ohne Treffer
+    if(n)setTimeout(()=>priceFill(S.me.wishes.slice(0,n),()=>{if(!S.ui.modal)render()},{max:6}),4000); // echte Preise von Produktseiten, nie geschätzt
     S.ui.zt=null;S.ui.modal=null;
     if(n)toast(`${n===1?'Ein Wunsch steht':n+' Wünsche stehen'} jetzt auf der Wunschliste. Bei jedem Wunsch kannst du den Link ergänzen.`);
     location.hash='#wuensche';render();return;
@@ -764,11 +816,13 @@ document.addEventListener('submit',e=>{
         const w=S.me.wishes.find(x=>x.id===S.ui.editWish);
         if(w){const keep=w.c===c&&w.kind===k;if(w.img&&(removed||(img&&img!==w.img)))dropImage(w.img);Object.assign(w,{noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':(w.status==='plan'?'offen':w.status),kw:kwOf(t),img:removed?null:(img||w.img||null),imgSrc:removed?'':(img?(imgSrc||''):(w.imgSrc||'')),...(keep?{}:{a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t})})}
         if(w&&removed)skipImage(w);else if(w&&wantsImage(w))setTimeout(()=>imgFill([w],()=>{if(!S.ui.modal)render()}),600); // neuer Name oder Link ohne Bild: echtes Produktbild suchen
+        if(w&&wantsPrice(w))setTimeout(()=>priceFill([w],()=>{if(!S.ui.modal)render()}),1200); // ohne Preis: echten Preis der Produktseite holen
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
       if(!f.elements.c?.dataset.touched){const nw=S.me.wishes[0];setTimeout(()=>smartCats([nw],()=>{if(!S.ui.modal)render()}),300)} // nur wenn niemand die Kategorie selbst gewählt hat (100)
       {const nw=S.me.wishes[0];if(removed)skipImage(nw);else if(wantsImage(nw))setTimeout(()=>imgFill([nw],()=>{if(!S.ui.modal)render()}),700)} // echtes Produktbild im Hintergrund, eigenes Foto bleibt immer
+      {const nw=S.me.wishes[0];if(wantsPrice(nw))setTimeout(()=>priceFill([nw],()=>{if(!S.ui.modal)render()}),1100)} // ohne Preis: echten Preis der Produktseite holen, nie schätzen
       {const nw=S.me.wishes[0];if(wantsAmazon(nw))setTimeout(()=>amzFill([nw],(w,r)=>{if(!S.ui.modal)render();toast('Wishtale hat genau dieses Produkt bei Amazon gefunden und verlinkt: '+r.title,{label:'Rückgängig',run:()=>{w.link='';render()}})}),900)} // direkte Produktseite statt Suche (111)
       S.ui.modal=null;S.ui.wf='offen';S.ui.wc='alle';const ideas=!link&&k!=='erlebnis'&&!noSuggest&&!plan;S.ui.wr=null;toast(ideas?'Der Wunsch ist gespeichert, und deine Freunde sehen dazu passende Ideen von Wishtale.':'Der Wunsch ist gespeichert.',ideas?{label:'So sehen es Freunde',run:()=>{S.ui.preview=true;markStep('preview');render();scrollTo({top:0,behavior:'smooth'})}}:null);render();
     };
