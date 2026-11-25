@@ -37,7 +37,7 @@ export function PastGifts(p) {
 /** Nach dem Reservieren: Hinweis, was mit dem Geschenk passiert, und bei Gästen der Weg zum eigenen Wishtale. */
 export function RememberNote() {
   if (S.auth.user) return `<span class="muted" style="display:block;margin-top:4px">Wir merken uns das Geschenk für dich. Du findest es im Verlauf unter „Was ich verschenkt habe“.</span>`;
-  return `<span class="muted" style="display:block;margin-top:4px">Wir merken uns das Geschenk auf diesem Gerät. Mit einem eigenen Wishtale bleibt es dauerhaft gespeichert, und du bekommst deinen eigenen Wunschzettel dazu.</span><span class="row" style="gap:8px;margin-top:8px"><button class="btn pri sm" data-act="tologin">Mein Wishtale anlegen</button><button class="btn ghost sm" data-act="modal" data-v="mailme">Link per Mail sichern</button></span>`;
+  return `<span class="muted" style="display:block;margin-top:4px">Wir merken uns das Geschenk auf diesem Gerät. Mit einem eigenen Wishtale bleibt es dauerhaft gespeichert, und du bekommst deinen eigenen Wunschzettel dazu.</span><span class="row" style="gap:8px;margin-top:8px"><button class="btn pri sm" data-act="guestcta" data-c="reserviert">Mein Wishtale anlegen</button><button class="btn ghost sm" data-act="modal" data-v="mailme">Link per Mail sichern</button></span>`;
 }
 
 export function GivenModal() {
@@ -46,7 +46,7 @@ export function GivenModal() {
    <h2 id="mt">Meine Geschenke</h2>
    <p class="muted" style="font-size:14.5px;margin-bottom:12px">Das sind die Geschenke, die du hier reserviert oder gekauft hast. Sie liegen nur auf diesem Gerät, und niemand sonst sieht sie.</p>
    ${list.length ? `<div class="glist">${list.map(Item).join('')}</div>` : '<p class="muted">Noch nichts gemerkt.</p>'}
-   <div class="panel" style="margin-top:16px;display:grid;gap:8px"><b>Behalte deine Geschenke für immer</b><span class="muted" style="font-size:14.5px">Mit einem eigenen Wishtale (kostenlos) bleiben sie gespeichert, auch auf anderen Geräten. Du erinnerst dich im nächsten Jahr, was du wem geschenkt hast, und deine Freunde finden deine eigenen Wünsche.</span><div><button class="btn pri" data-act="tologin">Mein Wishtale anlegen</button></div></div>
+   <div class="panel" style="margin-top:16px;display:grid;gap:8px"><b>Behalte deine Geschenke für immer</b><span class="muted" style="font-size:14.5px">Mit einem eigenen Wishtale (kostenlos) bleiben sie gespeichert, auch auf anderen Geräten. Du erinnerst dich im nächsten Jahr, was du wem geschenkt hast, und deine Freunde finden deine eigenen Wünsche.</span><div><button class="btn pri" data-act="guestcta" data-c="verlauf">Mein Wishtale anlegen</button></div></div>
    <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn ghost" data-act="close">Schließen</button></div></div></div>`;
 }
 

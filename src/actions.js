@@ -302,6 +302,10 @@ const A={
  authtab(el){S.ui.authSent=null;S.ui.authMsg=null;location.hash=el.dataset.v==='up'?'#registrieren':'#anmelden'},
  demo(){S.ui.authMsg=null;track('demo',{once:true,path:'/app/'});location.hash='#demo'},
  tologin(){S.ui.modal=null;S.ui.authMsg=null;location.hash='#start'},
+ // Gast ohne Konto will ein eigenes Wishtale: UTM-Kürzel in die Adresse, damit signUp sie beim Konto speichert (Datenschutz Abschnitt 8)
+ guestcta(el){const c=String(el?.dataset?.c||'liste').replace(/[^a-z-]/g,'')||'liste';
+  try{history.replaceState(history.state,'',`/app/?utm_source=wishtale&utm_medium=gast&utm_campaign=${c}${location.hash}`)}catch{/* Adresse bleibt */}
+  track('cta',{label:'gast-'+c,path:'/app/'});A.tologin()},
  exitdemo(){S.ui.modal=null;S.ui.authMsg=null;location.hash='#start'},
  logout(){signOut().finally(()=>{location.hash='';location.reload()})},
  guestretry(){S.guest=null;route()},
@@ -517,7 +521,7 @@ async readlink(el,auto){
  tipgo(el){const id=el.dataset.id;markDone(id);
   if(id==='kids'){S.ui.modal='accounts';render();setTimeout(()=>document.querySelector('form[data-form=child] input')?.focus(),60);return}
   if(id==='share'){A.share();render();return}
-  if(id==='guestown'){A.tologin();return}
+  if(id==='guestown'){A.guestcta({dataset:{c:'tipp'}});return}
   if(id==='coparent'){S.ui.scrollTo='managers';location.hash='#profil';return}
   render()},
  tipno(el){markDone(el.dataset.id);render();toast('Alles klar, dann zeigen wir das nicht mehr.')},

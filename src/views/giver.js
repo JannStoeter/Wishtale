@@ -35,10 +35,22 @@ export function GuestPage(p,{preview=false}={}){
      ${none||preview?'':`<p class="jumpideas"><button class="jumpbtn" data-act="jump" data-to="mehr">${ic('spark','sm')}Ideen von Wishtale für ${esc(p.name)} ansehen</button></p>`}
      ${none?'':wl.html}
      ${More(p,{preview,none,open:wl.open})}
+     ${preview||S.auth?.user?'':GuestOwn(p)}
      <p class="disc">Die Links zu Shops sind Partnerlinks (Anzeige). ${AMAZON_DISCLOSURE} Preise können abweichen, maßgeblich ist immer der Preis im Shop.</p>
     </div>
    </div>
   </div>`;
+}
+
+/* Am Ende der Gastansicht: ruhige Einladung zum eigenen Wishtale (Wettbewerbsvergleich, Vorschlag 1). Nur für Gäste ohne Konto.
+   Der Knopf hängt UTM-Kürzel an die Adresse (guestcta in actions.js), so zeigt die Auswertung, wie viele Konten aus geteilten Listen entstehen. */
+export function GuestOwn(p){
+  return `<section class="gown" aria-labelledby="gown-h">
+   <p class="eyebrow">Und du?</p>
+   <h2 id="gown-h">Was wünschst du dir eigentlich</h2>
+   <p>Mit Wishtale schreibst du deine Wünsche in wenigen Minuten auf oder fotografierst einfach deinen Wunschzettel ab. Dann wissen auch die Menschen, die dir etwas schenken möchten, was dich wirklich freut, so wie du es gerade bei ${esc(p.name)} siehst.</p>
+   <div class="row" style="gap:12px;align-items:center"><button class="btn pri" data-act="guestcta" data-c="ende">Meine Wunschliste anlegen</button><span class="muted gown-s">Kostenlos, und es reicht der Browser.</span></div>
+  </section>`;
 }
 
 /* Zweiter Teil: erst wenn auf der Liste nichts passt (oder es keine Wünsche gibt). Hier gilt der Preisrahmen. „Bitte nicht“ und „Hat schon“ stehen in der Seitenleiste. */

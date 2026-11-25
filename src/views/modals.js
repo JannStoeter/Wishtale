@@ -84,7 +84,7 @@ export function Modal(){
    <form data-form="wish">
     <div class="fld"><label for="wt" class="lf-t">Was wünschst du dir?</label><input id="wt" name="t" class="inp big" required placeholder="Produkt, Erlebnis oder Idee, auch ein kopierter Titel oder Link" autocomplete="off" value="${esc(d.t||S.ui.prefill||'')}"></div>
     <div id="wprev" aria-live="polite">${ed?'':WishRec()}</div>
-    ${ed?'':'<p class="fw-alt wl-alt">Schon eine ganze Liste? <button type="button" class="linkbtn" data-act="modal" data-v="zettel">Wunschzettel einlesen</button></p>'}
+    ${ed?'':'<p class="fw-alt wl-alt">Schon eine Liste auf Papier oder bei Amazon? <button type="button" class="linkbtn" data-act="modal" data-v="zettel">Ganze Liste einlesen</button></p>'}
     <div class="fld linkfirst"><label for="wl">Link zum Produkt <span class="muted" style="font-weight:400">(optional)</span></label>
      <div class="lf-row"><input id="wl" name="link" class="inp" placeholder="Shop-Link einfügen" autocomplete="off" value="${esc(d.link||'')}"><button type="button" class="btn sec" data-act="readlink">Einlesen</button></div>
      <p id="wlstat" class="hint" role="status" aria-live="polite">Mit Link finden deine Freunde genau das Richtige. Shop-Links lesen wir direkt, Amazon-Links werden gespeichert.${ed?'':` <button type="button" class="linkbtn" data-act="azopen">Bei Amazon suchen</button>`}</p></div>
