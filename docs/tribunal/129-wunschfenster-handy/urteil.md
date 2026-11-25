@@ -3,7 +3,7 @@ topic: 129-wunschfenster-handy
 status: entschieden
 option: umsetzen
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: 096a259
 ---
 **Jann im Projekt:** Popup hängt am Handy unten, die Wünsche dahinter lassen sich scrollen.
 
