@@ -3,7 +3,7 @@ topic: 131-instagram-erklaer-serie
 status: entschieden
 option: umsetzen
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: 55a7c24
 ---
 **Jann im Projekt:** Fertige Reels, Karussells und Storys im Instagram-Studio des CMS, die erklären, wie Wishtale funktioniert.
 
