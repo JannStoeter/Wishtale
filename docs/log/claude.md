@@ -442,3 +442,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine (Eintrag in `tribunal_verdicts` steht noch aus)
 - Zurücknehmen: git revert f69d1bc
 - Offen: Ob die Show die Klicks auf „Kostenlos Wunschliste anlegen“ erhöht, zeigt die Auswertung (Ereignis `cta`).
+
+## 2026-11-26 · 134 · Nachtrag 3: echter Name für ungenaue Amazon-Wünsche
+- Auftrag: eigene Nachprüfung nach Nachtrag 2 (Jann: Bildquote verbessern)
+- Geändert: api/_lib/imgsearch.js (`realName()` in `imageForWish()`/`priceForWish()`), src/lib/imgfill.js (`img-tried8`), src/lib/pricefill.js (`price-tried3`), tests/linktitle.test.mjs
+- Geprüft: ESLint, Build, npm test (44 bestanden)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+
