@@ -3,7 +3,7 @@ topic: 136-auswertung-heute-und-funnel
 status: entschieden
 option: umsetzen
 datum: 2026-11-26
-umgesetzt: offen
+umgesetzt: 128fe7f
 ---
 **Jann im Projekt:** Auswertung für „Heute“ im CMS und besser sehen, wo Besucher vor dem Konto abspringen.
 
