@@ -86,7 +86,7 @@ export function Modal(){
   const d=(m==='wish'&&S.ui.editWish&&S.me.wishes.find(w=>w.id===S.ui.editWish))||{};
   if(m==='wish'){const ed=!!S.ui.editWish,tab=wishTab(),more=ed&&(d.note||d.img||d.vis==='privat'||d.noSuggest||d.status==='plan'||(d.prio&&d.prio!==2));return `<div class="scrim" data-act="closebg"><div class="sheet wishsheet" role="dialog" aria-modal="true" aria-labelledby="mt">
    <div class="sheet-head"><h2 id="mt">${ed?'Wunsch bearbeiten':'Neuer Wunsch'}</h2><button type="button" class="sheet-x" data-act="close" aria-label="Schließen">×</button></div>
-   ${ed?'':`${WishTabs()}${S.me.occasion?'':`<div id="wpane-ideen" class="wpane" role="tabpanel" aria-labelledby="wtab-ideen" ${tab!=='ideen'?'hidden':''}>${IdeasPane()}</div>`}<div id="wpane-suchen" class="wpane" role="tabpanel" aria-labelledby="wtab-suchen" ${tab!=='suchen'?'hidden':''}>${SearchPane()}</div>`}
+   ${ed||!S.auth.user?'':`${WishTabs()}${S.me.occasion?'':`<div id="wpane-ideen" class="wpane" role="tabpanel" aria-labelledby="wtab-ideen" ${tab!=='ideen'?'hidden':''}>${IdeasPane()}</div>`}<div id="wpane-suchen" class="wpane" role="tabpanel" aria-labelledby="wtab-suchen" ${tab!=='suchen'?'hidden':''}>${SearchPane()}</div>`}
    <div id="wpane-eingeben" class="wpane" ${ed?'':'role="tabpanel" aria-labelledby="wtab-eingeben"'} ${!ed&&tab!=='eingeben'?'hidden':''}>
    <form data-form="wish">
     <div class="fld wq"><label for="wt" class="vh">Was wünschst du dir?</label><span class="wq-ic" aria-hidden="true">${ic('search')}</span><input id="wt" name="t" class="inp big wq-inp" placeholder="${ed?'Was wünschst du dir?':'Wunsch oder Link einfügen'}" autocomplete="off" enterkeyhint="done" value="${esc(d.t||S.ui.prefill||'')}"></div>

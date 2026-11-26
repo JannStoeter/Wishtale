@@ -48,13 +48,14 @@ export function Login(){
   const msg=m?`<div class="banner ${m.type==='ok'?'green':''}" role="status" style="margin-bottom:14px"><span>${esc(m.text)}</span></div>`:'';
   const err=S.auth.error?`<div class="banner" style="margin-bottom:14px"><span>${esc(S.auth.error)}</span></div>`:'';
   const dr=tab==='up'&&draftHasData()&&!S.accounts.draft.quick?S.accounts.draft:null; // beim schnellen Einstieg kein Zusatztext (136)
+  const nw=S.accounts.draft&&S.accounts.draft.quick?(S.accounts.draft.wishes||[]).filter(w=>w.status==='offen'||w.status==='plan').length:0; // Wünsche ohne Konto kommen mit (136)
   const note=dr?`<div class="banner green" role="status" style="margin-bottom:14px"><span>${dr.name?`Dein Wishtale ist fast fertig, ${esc(dr.name)}. `:'Dein Wishtale ist fast fertig. '}Lege jetzt ein Konto an, damit nichts verloren geht.</span></div>`:'';
   return `<div class="wrap"><div class="authcard">
    <p class="eyebrow">Wishtale</p>
    <h1>${tab==='up'?'Schön, dass du da bist':'Schön, dich wiederzusehen'}</h1>
    <p class="muted" style="margin:6px 0 18px">${tab==='up'?'Leg dein Konto an, und deine Wunschliste ist sofort startklar. Alles Weitere kannst du später ergänzen, wenn du magst.':'Melde dich an, dann geht es genau dort weiter, wo du aufgehört hast.'}</p>
    <div class="seg" role="tablist" style="margin-bottom:16px"><button role="tab" aria-selected="${tab==='in'}" class="${tab==='in'?'on':''}" data-act="authtab" data-v="in">Anmelden</button><button role="tab" aria-selected="${tab==='up'}" class="${tab==='up'?'on':''}" data-act="authtab" data-v="up">Registrieren</button></div>
-   ${note}${err}${msg}
+   ${note}${nw&&!m?`<div class="banner green" role="status" style="margin-bottom:14px"><span>${nw===1?'Dein Wunsch kommt':`Deine ${nw} Wünsche kommen`} mit ins Konto. <a href="#wuensche">Zurück zur Wunschliste</a></span></div>`:''}${err}${msg}
    ${S.ui.google?`<button type="button" class="btn gbtn" data-act="google" ${busy?'disabled':''}><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg><span>Mit Google ${tab==='up'?'registrieren':'anmelden'}</span></button>
    <div class="auth-or" aria-hidden="true"><span>oder mit E-Mail</span></div>`:''}
    ${tab==='up'?`<form data-form="signup" class="authform">

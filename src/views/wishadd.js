@@ -19,6 +19,7 @@ const tabs = () => (S.me.occasion ? TABS.filter(([k]) => k !== 'ideen') : TABS);
 export const canSearch = () => !!(S.auth.user && S.me.handle && !S.me.managed);
 export const wishTab = () => {
   const t = S.ui.wtab;
+  if (!S.auth.user) return 'eingeben'; // ohne Konto nur das Formular (136)
   if (t && tabs().some(([k]) => k === t)) return t;
   return 'eingeben'; // „Wunsch hinzufügen“ startet bei „Eingeben“ (Jann, 2026-11-25)
 };

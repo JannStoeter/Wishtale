@@ -127,10 +127,12 @@ export function route(){
   }
   else if(!anon&&h==='neues-passwort'){S.ui.view='recovery'}
   else if(anon&&h==='demo'){setDemo(true);history.replaceState(null,'',location.pathname+'#wuensche');S.ui.view='wuensche'}
-  else if(anon&&h==='start'){
-    // Einstieg ohne Abfrage (136): „Wunschliste anlegen“ führt direkt zum Konto, danach geht es in die leere Wunschliste. Das Profil ist freiwillig und kommt später.
-    setDemo(false);const d=ensureDraft();d.quick=true;saveState();
-    S.ui.authTab='up';S.ui.view='login';
+  else if(anon&&(h==='start'||(!S.auth.demo&&(h===''||h==='wuensche')&&ensureDraft().quick))){
+    // Einstieg ohne Abfrage (136): „Wunschliste anlegen“ führt direkt in die eigene, noch leere Wunschliste. Die Wünsche liegen zuerst im Browser (Entwurf),
+    // ein Konto braucht es erst zum Sichern und Teilen, danach wandern sie mit (adoptDraft). Das Profil ist freiwillig und kommt später.
+    setDemo(false);const d=ensureDraft();d.quick=true;S.ui.acct='draft';saveState();
+    if(h!=='wuensche')history.replaceState(null,'',location.pathname+location.search+'#wuensche');
+    S.ui.view='wuensche';
   }
   else if(anon&&(h==='registrieren'||h==='anmelden'||h==='passwort-vergessen'||!S.auth.demo)){
     // Anmelden und Registrieren sind eigene Seiten und beenden die Demo

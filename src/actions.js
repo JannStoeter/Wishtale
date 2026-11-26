@@ -6,7 +6,7 @@ import { smartCats } from './lib/smartcats.js';
 import { promptInstall } from './lib/pwa.js';
 import { dismissAppHint } from './views/appinstall.js';
 import { demoStart, demoStop, demoGo, demoStep, demoPlay } from './views/iosdemo.js';
-import { S, W, switchTo, resetState, guestPerson, saveState } from './state.js';
+import { S, W, switchTo, resetState, guestPerson, saveState, guestDraft } from './state.js';
 import { $, toast, kwOf, nid, money, overlap } from './lib/util.js';
 import { CATALOG, PRIO, cat } from './data/content.js';
 import { check } from './logic.js';
@@ -409,6 +409,7 @@ const A={
  logout(){signOut().finally(()=>{location.hash='';location.reload()})},
  guestretry(){S.guest=null;route()},
 share(){
+  if(guestDraft()){S.ui.authMsg={type:'ok',text:'Leg schnell ein Konto an, dann bekommst du deinen Link zum Teilen. Deine Wünsche kommen mit.'};location.hash='#registrieren';return} // ohne Konto gibt es noch keinen Link (136)
   markStep('share');markShared();
   // Echte Konten teilen den kurzen Link /w/<kürzel>: Er zeigt in WhatsApp und Co. eine Vorschau mit Namen und leitet zur Gastansicht (102)
   const url=S.auth.user&&S.me.handle&&!/^(localhost|127\.)/.test(location.hostname)?`${location.origin}/w/${S.me.handle}`:`${location.origin}${location.pathname}#p/${S.me.handle||S.ui.acct}`;

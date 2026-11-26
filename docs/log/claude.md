@@ -450,3 +450,4 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Ansicht 390 und 1280 px mit simuliertem Google-Konto (Registrierung, leere Liste, erster Wunsch, Erste Schritte, Einrichtung)
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+- Nachtrag: Wünsche ohne Konto im Browser (`guestDraft()`, `SaveHint()`, `adoptDraft()` übernimmt Wünsche, `draftPayload` mit Wünschen), Wunschdialog ohne Konto nur Formular, datenschutz.html Abschnitt 7. Geprüft mit simuliertem Ablauf: Wunsch ohne Konto, Neuladen, Teilen, Rückkehr von Google, Wunsch wird ins Konto geschrieben.

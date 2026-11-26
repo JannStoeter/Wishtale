@@ -11,3 +11,5 @@ Umsetzung (Pull Request, Vorschau vor dem Merge):
 - `#start` ohne Konto führt sofort zur Registrierung (Google oder E-Mail), Name, Startwahl und Profilfragen entfallen davor. Der Entwurf trägt `quick`, nach der Anmeldung steht die leere Wunschliste mit ihrem einen Feld da, ohne Fenster darüber.
 - Das Profil ist freiwillig: „Erste Schritte“ nennen als zweiten Schritt „Ein wenig über dich erzählen, damit die Ideen passen“ (auch zugeklappt als „Als Nächstes“), der Hinweis bei dünnem Profil in den Ideen führt in die geführte Einrichtung. Die Einrichtung mit Konto beginnt direkt bei den Interessen und hat „Später“.
 - Keine Datenbankänderung.
+
+Nachtrag Jann (26.11.2026, Entscheidungskarte): „Ja, Wünsche erst im Browser“. `#start` öffnet die leere Wunschliste ohne Konto, die Wünsche liegen im Browser, ein Hinweis bittet ums Sichern mit Google oder E-Mail, nach der Anmeldung wandern sie ins Konto.
