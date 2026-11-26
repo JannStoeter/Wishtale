@@ -389,3 +389,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, 33 Tests, Bildschirmfoto Desktop, Erweiterung in Chromium geladen und Klick nachgestellt (öffnet `wishtale.de/app/?share_url=…&share_title=…`)
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-26 · Dev 133 · Instagram „API access blocked“
+- Auftrag: Jann im Projekt-Chat („Instagram api Access Blocked“)
+- Befund: Beitrag vom 26.11. scheitert mit Meta-Code 200 „API access blocked“, am 6.11. gingen drei Beiträge mit denselben Schlüsseln durch. Sperre liegt bei Meta, nicht im Code.
+- Geändert: api/_lib/instagram.js (`igMessage()`, Log mit Code und fbtrace_id), tests/instagram.test.mjs
+- Geprüft: ESLint, Build, Tests
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
