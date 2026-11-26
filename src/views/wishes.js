@@ -56,7 +56,7 @@ const GLOGO='<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
 /** Wunschliste ohne Konto (136): ein ruhiger Hinweis über der Liste, sichern geht mit Google in einem Klick oder per E-Mail. */
 function SaveHint(n){
   return `<section class="savehint" aria-labelledby="sh-h"><div class="sh-txt"><h2 id="sh-h">${n===1?'Dein erster Wunsch steht':'Deine Wunschliste wächst'}</h2>
-   <p>Bisher liegt deine Wunschliste nur in diesem Browser. Damit deine Wünsche sicher sind und du sie teilen kannst, leg schnell ein Konto an.</p></div>
+   <p>Bisher liegt deine Wunschliste nur in diesem Browser. Mit einem Konto ist sie sicher, du kannst sie teilen, und Wishtale findet Bild, Preis und passende Ideen zu deinen Wünschen.</p></div>
    <div class="sh-acts">${S.ui.google?`<button type="button" class="btn gbtn" data-act="google">${GLOGO}<span>Mit Google sichern</span></button><a class="btn sec" href="#registrieren">Mit E-Mail</a>`:`<a class="btn pri" href="#registrieren">Konto anlegen</a>`}</div></section>`;
 }
 /* Das Band „Jetzt neu“ bleibt nur, bis man es benutzt oder wegklickt (103). Hochladen gibt es danach weiter im Wunschdialog und im Menü. */

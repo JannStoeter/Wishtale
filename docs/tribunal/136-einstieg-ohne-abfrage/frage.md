@@ -13,3 +13,5 @@ Umsetzung (Pull Request, Vorschau vor dem Merge):
 - Keine Datenbankänderung.
 
 Nachtrag Jann (26.11.2026, Entscheidungskarte): „Ja, Wünsche erst im Browser“. `#start` öffnet die leere Wunschliste ohne Konto, die Wünsche liegen im Browser, ein Hinweis bittet ums Sichern mit Google oder E-Mail, nach der Anmeldung wandern sie ins Konto.
+
+Nachtrag Jann (26.11.2026, 13:17): „Wir sollten darauf hinweisen, dass die KI Hinweise nur bei einem registrierten Konto kommen. Und wir sollten auch trotzdem die Möglichkeit geben sich direkt zu registrieren. … Dann lieber ohne den Wunsch und registrieren über Google“. Umgesetzt: `#start` führt wieder zuerst zur Registrierung (Google oben), der Weg ohne Konto liegt leise darunter (`#ohne-konto`), Wunschdialog und Hinweis ohne Konto nennen, was ein Konto bringt (Produkt, Bild, Preis, Ideen).

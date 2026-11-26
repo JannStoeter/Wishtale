@@ -451,3 +451,4 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 - Nachtrag: Wünsche ohne Konto im Browser (`guestDraft()`, `SaveHint()`, `adoptDraft()` übernimmt Wünsche, `draftPayload` mit Wünschen), Wunschdialog ohne Konto nur Formular, datenschutz.html Abschnitt 7. Geprüft mit simuliertem Ablauf: Wunsch ohne Konto, Neuladen, Teilen, Rückkehr von Google, Wunsch wird ins Konto geschrieben.
+- Nachtrag 2: `#start` wieder Registrierung zuerst, „Erst einmal ohne Konto anfangen“ (`#ohne-konto`), Hinweise auf die KI mit Konto im Wunschdialog, in `SaveHint()` und auf der Registrierungsseite.

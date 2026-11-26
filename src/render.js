@@ -127,9 +127,13 @@ export function route(){
   }
   else if(!anon&&h==='neues-passwort'){S.ui.view='recovery'}
   else if(anon&&h==='demo'){setDemo(true);history.replaceState(null,'',location.pathname+'#wuensche');S.ui.view='wuensche'}
-  else if(anon&&(h==='start'||(!S.auth.demo&&(h===''||h==='wuensche')&&ensureDraft().quick))){
-    // Einstieg ohne Abfrage (136): „Wunschliste anlegen“ führt direkt in die eigene, noch leere Wunschliste. Die Wünsche liegen zuerst im Browser (Entwurf),
-    // ein Konto braucht es erst zum Sichern und Teilen, danach wandern sie mit (adoptDraft). Das Profil ist freiwillig und kommt später.
+  else if(anon&&h==='start'){
+    // Einstieg ohne Abfrage (136): „Wunschliste anlegen“ führt zur Registrierung, Google zuerst. Danach geht es in die leere Wunschliste mit Suche, Erkennung und Ideen.
+    setDemo(false);const d=ensureDraft();d.quick=true;saveState();
+    S.ui.authTab='up';S.ui.view='login';
+  }
+  else if(anon&&(h==='ohne-konto'||(!S.auth.demo&&(h===''||h==='wuensche')&&(ensureDraft().wishes||[]).length&&S.accounts.draft.quick))){
+    // Wer lieber erst ohne Konto anfängt: Wünsche liegen im Browser (Entwurf) und wandern bei der Registrierung mit (adoptDraft).
     setDemo(false);const d=ensureDraft();d.quick=true;S.ui.acct='draft';saveState();
     if(h!=='wuensche')history.replaceState(null,'',location.pathname+location.search+'#wuensche');
     S.ui.view='wuensche';
