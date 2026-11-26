@@ -455,5 +455,5 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Auftrag: Jann im Projekt, Auswertung für heute und sehen, wo Besucher vor dem Konto abspringen
 - Geändert: src/admin/usage.js, src/admin/admin.css, api/_lib/event.js (`step`, `:` in Labels), src/render.js, src/actions.js, src/lib/auth.js (`errKind()`), datenschutz.html (Abschnitt 8), supabase/migrations/0033_admin_funnel.sql
 - Geprüft: ESLint, Build, npm test, Abfrage der Funktion als lesendes SQL gegen die Datenbank
-- Datenbank und Dienste: 0033 (nur lesende Funktion), keine Cookies
+- Datenbank und Dienste: 0033 (nur lesende Funktion) am 26.11. nach Freigabe von Jann eingespielt, keine Cookies
 - Zurücknehmen: Merge-Commit reverten, `drop function public.admin_funnel(int, text)`
