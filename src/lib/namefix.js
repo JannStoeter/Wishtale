@@ -15,7 +15,7 @@ import { kwOf } from './util.js';
 import { imgFill } from './imgfill.js';
 import { priceFill } from './pricefill.js';
 
-const ONCE = 'wishtale:namefix-v1';
+const ONCE = 'wishtale:namefix-v2';
 const read = () => { try { return JSON.parse(localStorage.getItem(ONCE) || '[]'); } catch { return []; } };
 const write = v => { try { localStorage.setItem(ONCE, JSON.stringify(v)); } catch { /* dann versucht es die nächste Sitzung erneut */ } };
 
@@ -33,7 +33,9 @@ export function nameFixOnce(onChange) {
   if (!S.auth.user || !m || !m.dbId || !Array.isArray(m.wishes)) return;
   const done = read();
   if (done.includes(m.dbId)) return;
-  const todo = m.wishes.filter(placeholderName).slice(0, 10);
+  // Dazu Amazon-Wünsche, deren Name vielleicht zu stark gekürzt wurde (Buchreihe ohne Titel): ersetzt wird nur, wenn der gefundene Name mit dem jetzigen beginnt
+  const amz = w => !!w && !!w.link && /amazon\.|amzn\./i.test(w.link) && (w.status || 'offen') === 'offen';
+  const todo = m.wishes.filter(w => placeholderName(w) || amz(w)).slice(0, 10);
   done.push(m.dbId); write(done.slice(-50));
   if (!todo.length) return;
   setTimeout(async () => {
@@ -41,6 +43,8 @@ export function nameFixOnce(onChange) {
     for (const w of todo) {
       const t = w.t, r = await linkTitle(w.link);
       if (!r || !r.title || w.t !== t) continue;
+      const longer = r.title.length > t.length && r.title.toLowerCase().startsWith(t.toLowerCase());
+      if (!placeholderName(w) && !longer) continue;
       w.t = r.title.slice(0, 120); w.kw = kwOf(w.t);
       if (w.c === 'sonstiges' || !w.c) { const c = guessCategory(w.t, ''); if (c) { w.c = c; if (w.kind !== 'erlebnis') w.a = cat(c).a; w.tone = cat(c).t; } }
       fixed.push(w);

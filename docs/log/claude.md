@@ -418,3 +418,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine neue Tabelle; zusätzliche Brave-Suchen zählen in `guardSearch()`
 - Zurücknehmen: Merge-Commit reverten
 
+## 2026-11-26 · 134 · Nachtrag: Bild und Preis für Amazon-Wünsche von Otto
+- Auftrag: Jann im Projekt-Chat („Produkttitel rauskopieren … nochmal bei Otto suchen und das Bild nehmen“)
+- Geändert: api/_lib/imgsearch.js (`ottoHit()`, in `imageForWish()` und `priceForWish()`, `shortTitle()` ohne Schnitt an „ - “), src/lib/imgfill.js, src/lib/pricefill.js (Amazon-Wünsche immer versuchen, neue Versuchsschlüssel), src/lib/namefix.js (v2), tests/linktitle.test.mjs, CLAUDE.md
+- Geprüft: ESLint, Build, npm test (42 bestanden)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+

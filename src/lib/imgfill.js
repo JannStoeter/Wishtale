@@ -11,7 +11,7 @@ import { fetchWishImage, storeImage } from './wishimg.js';
 import { scheduleSync } from './remote.js';
 import { loadMatch } from './ideas.js';
 
-const TRIED = 'wishtale:img-tried5', DAY = 'wishtale:img-day';
+const TRIED = 'wishtale:img-tried6', DAY = 'wishtale:img-day';
 const key = w => String(w.t || '').toLowerCase().replace(/\s+/g, ' ').trim() + '|' + (w.link || '');
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch { return d; } };
 const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* dann sucht die nächste Sitzung erneut */ } };
@@ -19,8 +19,10 @@ const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 /* Ohne eigenen Shop-Link entscheidet die Produkterkennung (wie im Wunsch-Dialog, mode=match, Zwischenspeicher): Nur wenn sie sicher genau
    ein Produkt erkennt oder eine feste Marke im Wunsch steht, suchen wir ein Bild. Allgemeine Wünsche wie „Großer Reisekoffer 4 Rollen“ behalten ihr Symbol (Jann, 114). */
 const ownLink = w => !!w.link && !/amazon\.|amzn\./i.test(w.link);
+const amazonLink = w => !!w.link && /amazon\.|amzn\./i.test(w.link) && !/^Wunsch von /.test(w.t || '');
 async function target(w) {
   if (ownLink(w)) return w;
+  if (amazonLink(w)) return { t: w.t, q: '', brand: '', link: w.link, imgHint: '' }; // Name aus dem Amazon-Link ist sicher: Otto, dann Hersteller (134)
   const h = S.me?.handle;
   if (!h || !/^[a-z0-9-]{3,31}$/.test(h)) return null;
   const m = await loadMatch(h, w.t).catch(() => null);
@@ -33,7 +35,7 @@ async function target(w) {
 
 /** Kommt der Wunsch für ein gesuchtes Bild in Frage? Nur Produkte ohne Bild, die genau genug benannt sind oder einen Shop-Link haben. */
 export const wantsImage = w => !!w && !w.img && w.kind !== 'erlebnis' && w.kind !== 'kategorie' && w.kind !== 'frei'
-  && ['offen', 'plan'].includes(w.status || 'offen') && (isSpecific(w) || (!!w.link && !/amazon\.|amzn\./i.test(w.link)));
+  && ['offen', 'plan'].includes(w.status || 'offen') && (isSpecific(w) || !!w.link);
 
 /** Die Person hat das Bild selbst entfernt: für diesen Wunsch nicht mehr automatisch suchen. */
 export function skipImage(w) { if (!w) return; const tried = read(TRIED, []); if (!tried.includes(key(w))) { tried.push(key(w)); write(TRIED, tried.slice(-400)); } }

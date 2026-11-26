@@ -82,6 +82,7 @@ export async function imageForWish({ t, q, brand, link, img } = {}, deps = {}) {
   if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
     try { const p = await read(link); if (p?.imageUrl) return { ...(await load(p.imageUrl)), source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
   }
+  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(t, deps); if (o?.image) return { ...o.image, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
   if (!look) return null;
   // Bild der Seite, die die Produkterkennung schon gefunden hat (Herstellerseite), dann braucht es keine neue Suche
   if (img && /^https:\/\//i.test(img) && !STOCK.test(host(img))) { try { const im = await load(img); if (await look(im)) return { ...im, via: 'erkannt' }; } catch { /* weiter */ } }
@@ -229,6 +230,7 @@ export async function priceForWish({ t, q, brand, link } = {}, deps = {}) {
     try { const p = await read(link); const price = eur(p); if (price) return { price, source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
     if (!deps.searchAfterLink) return null; // der eigene Link hat Vorrang: hat die Seite keinen Preis, raten wir nicht über andere Seiten
   }
+  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(t, deps); if (o?.price) return { price: o.price, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
   const query = clean(q || t);
   if (!query) return null;
   const json = await webJson(query, deps);
@@ -367,8 +369,9 @@ const SHOP_TAIL = /\s*(?::\s*amazon\.[a-z.]+.*|\|\s*[^|]{2,40}$|\s[–—-]\s*(?
 /** Kürzt lange Shop-Titel auf den Produktnamen: „LEGO DUPLO Classic Bauplatte in Grün 10460 Spielzeug ab 1 Jahr für Jungen …“ wird
  *  „LEGO DUPLO Classic Bauplatte in Grün 10460“. Geschnitten wird nur, wenn davor mindestens drei Wörter stehen. */
 export function shortTitle(raw) {
-  let t = String(raw || '').replace(/^amazon\.[a-z.]+\s*:\s*/i, '').replace(SHOP_TAIL, '').replace(/\s*(\.\.\.|…)$/, '').replace(/\s+/g, ' ').trim();
-  const cuts = [/,\s/, /\s[|–—]\s/, /\s-\s/, /\s(?:spielzeug\s+|geschenk\s+)?ab\s+\d+(?:[.,]\d+)?\s*(?:jahr|jahre|jahren|monat|monaten|j\.)\b/i, /\s(?:für|fuer)\s+(?:jungen|mädchen|maedchen|kinder|kleinkinder|babys?|damen|herren|männer|frauen|erwachsene)\b/i, /\s(?:geschenk|geschenkidee)\b/i];
+  let t = String(raw || '').replace(/^amazon\.[a-z.]+\s*:\s*/i, '').replace(SHOP_TAIL, '').replace(/\s[–—-]\s*(?:buch|taschenbuch|hardcover|gebundene ausgabe|pappbilderbuch|e-?book|hörbuch|hörbuch-download|cd|dvd|blu-ray)\s*$/i, '').replace(/\s*(\.\.\.|…)$/, '').replace(/\s+/g, ' ').trim();
+  // Kein Schnitt an „ - “: bei Büchern trennt er Reihe und Titel („Meine erste Kinderbibliothek - Meine ersten Gutenacht-Geschichten“)
+  const cuts = [/,\s/, /\s\|\s/, /\s(?:spielzeug\s+|geschenk\s+)?ab\s+\d+(?:[.,]\d+)?\s*(?:jahr|jahre|jahren|monat|monaten|j\.)\b/i, /\s(?:für|fuer)\s+(?:jungen|mädchen|maedchen|kinder|kleinkinder|babys?|damen|herren|männer|frauen|erwachsene)\b/i, /\s(?:geschenk|geschenkidee)\b/i];
   for (const c of cuts) { const m = c.exec(t); if (m && t.slice(0, m.index).trim().split(/\s+/).length >= 3) t = t.slice(0, m.index).trim(); }
   const w = t.split(/\s+/);
   return (w.length > 14 ? w.slice(0, 14).join(' ') : t).replace(/[\s,;:–—-]+$/, '').slice(0, 120);
@@ -400,4 +403,17 @@ export async function titleForLink(link, { fetchJson } = {}) {
     return { title: t, host: k.host, imageUrl: /^https:\/\//i.test(img) && !STOCK.test(host(img)) ? img.slice(0, 600) : '', via: 'suche' };
   }
   return null;
+}
+
+/*
+ * Amazon-Wünsche (Jann, 2026-11-26: „Produkttitel rauskopieren … nochmal bei Otto suchen und das Bild nehmen“): Amazon-Bilder dürfen wir
+ * ohne die offizielle Schnittstelle nicht zeigen. Der Name aus dem Amazon-Link ist aber sicher, darum sucht Wishtale dasselbe Produkt bei
+ * Otto und nimmt Bild und Preis von dort, wenn der Otto-Titel eng passt (alle Angaben mit Ziffern, mindestens 60 Prozent der Wörter).
+ */
+export async function ottoHit(t, { fetchJson, read = inspect, load = fetchImage } = {}) {
+  const q = clean(t);
+  if (!q || q.split(' ').length < 2 || (!process.env.BRAVE_SEARCH_API_KEY && !fetchJson)) return null;
+  const hits = await searchOtto(q, { fetchJson, read, load, max: 3 }).catch(() => null);
+  const digits = toks(q).filter(w => /\d/.test(w));
+  return (hits || []).find(h => { const b = new Set(toks(h.t)); return digits.every(w => b.has(w)) && overlap(q, h.t) >= 0.6; }) || null;
 }

@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { shortTitle, linkKey, titleForLink } from '../api/_lib/imgsearch.js';
+import { shortTitle, linkKey, titleForLink, ottoHit, imageForWish } from '../api/_lib/imgsearch.js';
 
 test('shortTitle: langer Amazon-Titel wird zum Produktnamen', () => {
   assert.equal(shortTitle('LEGO DUPLO Classic Bauplatte in Grün 10460 Spielzeug ab 1 Jahr für Jungen und Mädchen, Baumodell für Kleinkinder : Amazon.de: Spielzeug'), 'LEGO DUPLO Classic Bauplatte in Grün 10460');
   assert.equal(shortTitle('Der kleine Drache Kokosnuss - Buch | Thalia'), 'Der kleine Drache Kokosnuss');
+  assert.equal(shortTitle('Meine erste Kinderbibliothek - Meine ersten Gutenacht-Geschichten : Amazon.de: Bücher'), 'Meine erste Kinderbibliothek - Meine ersten Gutenacht-Geschichten');
   assert.equal(shortTitle('tonies Hörfigur Peppa Pig'), 'tonies Hörfigur Peppa Pig');
 });
 
@@ -27,4 +28,18 @@ test('titleForLink: nur Treffer mit derselben Produktnummer zählen', async () =
   const thalia = await titleForLink('https://www.thalia.de/shop/home/artikeldetails/A1068913389', { fetchJson: async () => ({ web: { results: [{ url: 'https://www.thalia.de/shop/home/artikeldetails/A1068913389', title: 'Gregs Tagebuch 19 - Buch | Thalia', thumbnail: { original: 'https://images.thalia.media/x.jpg' } }] } }) });
   assert.equal(thalia.title, 'Gregs Tagebuch 19');
   assert.equal(thalia.imageUrl, 'https://images.thalia.media/x.jpg');
+});
+
+test('Amazon-Wunsch: Bild und Name von Otto, nur wenn der Titel eng passt', async () => {
+  const img = { data: 'eA==', type: 'image/jpeg' };
+  const fetchJson = async () => ({ web: { results: [
+    { url: 'https://www.otto.de/p/lego-duplo-bauplatte-gruen-10460-S0ABC/', title: 'LEGO DUPLO Classic Bauplatte in Grün 10460 | OTTO' },
+  ] } });
+  const read = async () => ({ title: 'LEGO DUPLO Classic Bauplatte in Grün 10460', price: 12.99, currency: 'EUR', imageUrl: 'https://i.otto.de/x.jpg' });
+  const load = async () => img;
+  const hit = await ottoHit('LEGO DUPLO Classic Bauplatte in Grün 10460', { fetchJson, read, load });
+  assert.equal(hit.price, 12.99);
+  assert.equal(await ottoHit('LEGO DUPLO Classic Bauplatte in Grün 10461', { fetchJson, read, load }), null); // andere Nummer
+  const im = await imageForWish({ t: 'LEGO DUPLO Classic Bauplatte in Grün 10460', link: 'https://www.amazon.de/dp/B0BXQK2M5T' }, { fetchJson, read, load, look: async () => false });
+  assert.equal(im.via, 'otto');
 });
