@@ -98,6 +98,10 @@ import('./lib/promo.js').then(async({loadPromo,safeUrl})=>{
 /* Statistik: Aufruf der Seite und Klicks auf die Knöpfe zur App. UTM-Kürzel aus der Adresse reisen in den Links zur App mit, damit neue Konten einer Aktion zugeordnet werden können. */
 import('./lib/track.js').then(({track,utmFromUrl})=>{
   track('view',{once:true});
+  // 138: ob jemand weiterliest (halbe Seite) und welche Folie der Show angetippt wird, je Seitenaufruf einmal
+  const onScroll=()=>{if(scrollY+innerHeight>=document.documentElement.scrollHeight*0.5){track('step',{label:'scroll50',once:true});removeEventListener('scroll',onScroll)}};
+  addEventListener('scroll',onScroll,{passive:true});
+  document.querySelectorAll('.lp-show [role=tab]').forEach((t,i)=>t.addEventListener('click',()=>track('step',{label:'show:'+(i+1),once:true})));
   const u=utmFromUrl(),qs=new URLSearchParams();
   for(const k of Object.keys(u))qs.set('utm_'+k,u[k]);
   document.querySelectorAll('a[href^="app/"]').forEach(a=>{

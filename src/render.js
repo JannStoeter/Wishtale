@@ -150,6 +150,7 @@ export function route(){
   S.ui.menu=false;
   S.ui.modal=null;
   if(h==='start'&&anon)track('start',{once:true,path:'/app/'});
+  if(h==='ohne-konto'&&anon)track('step',{label:'ohne_konto',once:true,path:'/app/'}); // Funnel: Weg ohne Konto gewählt (138)
   if(S.ui.view==='login'&&anon&&S.ui.authTab!=='forgot')track('step',{label:S.ui.authTab==='up'?'register_view':'login_view',once:true,path:'/app/'}); // Funnel: Konto-Seite gesehen
   if(S.ui.view==='gast'){ // Aufruf über den geteilten Link /w/<kürzel> trägt ?via=link, die Markierung verschwindet danach aus der Adresse (105)
     const via=new URLSearchParams(location.search).get('via')==='link';

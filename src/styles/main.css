@@ -1589,6 +1589,7 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .btn.gbtn:hover{background:#F8F6F1;border-color:#BDB5A6}
 .auth-or{display:flex;align-items:center;gap:12px;margin:14px 0;font-size:13px;color:var(--muted)}
 .auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.authfree{display:flex;width:100%;justify-content:center;margin-top:10px}.authfree-note{font-size:13px;margin:6px 0 0;text-align:center}
 
 /* Listen für besondere Anlässe (Dev 009) */
 .occ-intro{font-size:14.5px;line-height:1.5;margin:0 0 14px}

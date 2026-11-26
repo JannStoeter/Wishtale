@@ -467,3 +467,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Zurücknehmen: Merge-Commit reverten
 - Nachtrag: Wünsche ohne Konto im Browser (`guestDraft()`, `SaveHint()`, `adoptDraft()` übernimmt Wünsche, `draftPayload` mit Wünschen), Wunschdialog ohne Konto nur Formular, datenschutz.html Abschnitt 7. Geprüft mit simuliertem Ablauf: Wunsch ohne Konto, Neuladen, Teilen, Rückkehr von Google, Wunsch wird ins Konto geschrieben.
 - Nachtrag 2: `#start` wieder Registrierung zuerst, „Erst einmal ohne Konto anfangen“ (`#ohne-konto`), Hinweise auf die KI mit Konto im Wunschdialog, in `SaveHint()` und auf der Registrierungsseite.
+
+## 2026-11-26 · 138 · Einstieg für Werbung
+- Auftrag: Jann im Projekt („Ja“ auf den Vorschlag nach der Auswertung)
+- Geändert: src/landing.js (`CAMPAIGN`, Scroll- und Show-Messung), src/views/auth.js (`.authfree`), src/render.js, src/actions.js, src/styles/main.css, datenschutz.html, CLAUDE.md
+- Geprüft: ESLint, Build, npm test, Ansicht iPhone 13 (Startseite heute und Weihnachten, Konto-Seite mit Google), Ereignisse im Netzwerk
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
