@@ -11,6 +11,7 @@ import dns from 'node:dns';
 import net from 'node:net';
 import zlib from 'node:zlib';
 import { HttpError } from './auth.js';
+import { cleanShopTitle } from '../../src/lib/linkname.js';
 
 const MAX_BYTES = 1_500_000, MAX_HOPS = 4, TIMEOUT = 7000;
 
@@ -184,6 +185,7 @@ export function extractProduct(html, pageUrl = '') {
   let host = ''; try { host = new URL(pageUrl).hostname.replace(/^www\./, ''); } catch { /* ohne Host */ }
   let imageUrl = '';
   try { const iu = new URL(String(image || ''), pageUrl || undefined); if (iu.protocol === 'https:') imageUrl = iu.href.slice(0, 600); } catch { /* ohne Bild */ }
+  title = cleanShopTitle(title); // „… online kaufen“, „| OTTO“ und ähnliche Werbezusätze weg (Jann, 2026-11-26)
   return { title, price, currency: price ? (String(currency).toUpperCase() || 'EUR') : '', brand, size, description: desc, host, source, hasImage: !!imageUrl, imageUrl };
 }
 
@@ -222,8 +224,12 @@ export async function inspect(raw, doRequest = request) {
 
 /* ---------- Produktbild holen ---------- */
 const IMG_MAX = 2_500_000;
-/** Bilder von Amazon dürfen wir nicht übernehmen (Teilnahmebedingungen, Bilder nur über die offizielle Schnittstelle). */
-const AMAZON_IMG = /(^|\.)(amazon|amzn|media-amazon|ssl-images-amazon)\.|(^|\.)(amzn\.(to|eu))$/i;
+/*
+ * Amazon-Seiten lesen wir nie. Produktbilder vom Bildserver von Amazon (m.media-amazon.com) übernimmt Wishtale seit dem 2026-11-26
+ * auf Janns Entscheidung („nimm einfach die Amazon-Infos“), obwohl die Partnerbedingungen Bilder nur über die offizielle Schnittstelle
+ * erlauben. Bewusst in Kauf genommenes Risiko für die Partner-ID, rückgängig durch Wiederaufnehmen der Bildserver in diese Liste.
+ */
+const AMAZON_IMG = /(^|\.)amazon\.[a-z.]+$|(^|\.)amzn\.(to|eu)$|^a\.co$/i;
 
 export function checkImageUrl(raw) {
   let u;
@@ -231,7 +237,7 @@ export function checkImageUrl(raw) {
   if (u.protocol !== 'https:' || (u.port && u.port !== '443') || u.username || u.password) throw new HttpError(400, 'Dieses Bild können wir nicht laden.');
   const host = u.hostname.toLowerCase();
   if (net.isIP(host) || host === 'localhost' || !host.includes('.') || /\.(local|internal|localhost|lan|home)$/.test(host)) throw new HttpError(400, 'Dieses Bild können wir nicht laden.');
-  if (AMAZON_IMG.test(host)) throw new HttpError(422, 'Bilder von Amazon dürfen wir nicht übernehmen.');
+  if (AMAZON_IMG.test(host)) throw new HttpError(422, 'Dieses Bild können wir nicht laden.');
   return u;
 }
 

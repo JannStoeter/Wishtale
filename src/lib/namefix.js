@@ -9,6 +9,7 @@ import { S } from '../state.js';
 import { cat } from '../data/content.js';
 import { guessCategory } from './category.js';
 import { parseAmazonInput } from './shops.js';
+import { cleanShopTitle } from './linkname.js';
 import { linkTitle } from './inspect.js';
 import { scheduleSync } from './remote.js';
 import { kwOf } from './util.js';
@@ -28,9 +29,25 @@ export function placeholderName(w) {
   return !!r.title && r.title === w.t;
 }
 
+/* Werbezusätze aus Shop-Titeln („… online kaufen“, „| OTTO“) bei älteren Wünschen entfernen (Jann, 2026-11-26). Einmal je Sitzung und Profil. */
+const tidied = new Set();
+export function tidyNames(m) {
+  if (!m || !m.dbId || tidied.has(m.dbId) || !Array.isArray(m.wishes)) return false;
+  tidied.add(m.dbId);
+  let n = 0;
+  for (const w of m.wishes) {
+    if (!w || !w.t || !w.link) continue;
+    const t = cleanShopTitle(w.t);
+    if (t !== w.t) { w.t = t.slice(0, 120); w.kw = kwOf(w.t); n++; }
+  }
+  if (n) scheduleSync();
+  return n > 0;
+}
+
 export function nameFixOnce(onChange) {
   const m = S.me;
   if (!S.auth.user || !m || !m.dbId || !Array.isArray(m.wishes)) return;
+  if (tidyNames(m)) setTimeout(() => onChange && onChange(), 0);
   const done = read();
   if (done.includes(m.dbId)) return;
   // Dazu Amazon-Wünsche, deren Name vielleicht zu stark gekürzt wurde (Buchreihe ohne Titel): ersetzt wird nur, wenn der gefundene Name mit dem jetzigen beginnt
