@@ -1,6 +1,7 @@
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource-variable/schibsted-grotesk/index.css';
+import '@fontsource/caveat/500.css';
 import './styles/main.css';
 import { initContent } from './cms/content.js';
 import { illustration } from './lib/art.js';
@@ -15,6 +16,39 @@ document.querySelectorAll('.art[data-kind]').forEach(el=>el.insertAdjacentHTML('
   const upd=()=>{const on=heroOut&&!endIn;bar.classList.toggle('show',on);bar.setAttribute('aria-hidden',on?'false':'true');bar.querySelector('a').tabIndex=on?0:-1};
   new IntersectionObserver(es=>{heroOut=!es[0].isIntersecting&&es[0].boundingClientRect.top<0;upd()}).observe(hero);
   if(end)new IntersectionObserver(es=>{endIn=es[0].isIntersecting;upd()}).observe(end);
+})();
+
+/* Einstieg als Show (135): Reiter wechseln die Folien, sie laufen von selbst weiter, solange niemand eingreift.
+   Halt bei Maus darüber, Fokus oder verstecktem Tab; nach einem Klick oder Wischen läuft nichts mehr von selbst. Ohne JavaScript bleibt die Wunschliste stehen. */
+(function(){
+  const show=document.querySelector('.lp-show');if(!show)return;
+  const tabs=[...show.querySelectorAll('[role=tab]')],slides=[...show.querySelectorAll('[role=tabpanel]')];
+  const MS=6500,still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cur=0,timer=0,auto=!still,hold=false;
+  show.style.setProperty('--show-ms',MS+'ms');
+  const go=(i,focus)=>{
+    cur=(i+slides.length)%slides.length;
+    tabs.forEach((t,j)=>{const on=j===cur;t.classList.toggle('on',on);t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1});
+    slides.forEach((s,j)=>{const on=j===cur;s.classList.toggle('on',on);s.hidden=!on});
+    if(focus)tabs[cur].focus();
+    plan();
+  };
+  const plan=()=>{clearTimeout(timer);show.classList.toggle('run',auto);if(!auto||hold)return;
+    const t=tabs[cur].querySelector('i');if(t){t.style.animation='none';void t.offsetWidth;t.style.animation=''}
+    timer=setTimeout(()=>go(cur+1),MS)};
+  const stop=()=>{auto=false;plan()};
+  const pause=on=>{hold=on;show.classList.toggle('hold',on);if(on)clearTimeout(timer);else plan()};
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>{stop();go(i)});
+    t.addEventListener('keydown',e=>{const d={ArrowRight:1,ArrowLeft:-1}[e.key];if(d){e.preventDefault();stop();go(cur+d,true)}else if(e.key==='Home'||e.key==='End'){e.preventDefault();stop();go(e.key==='Home'?0:slides.length-1,true)}});
+  });
+  show.addEventListener('mouseenter',()=>pause(true));show.addEventListener('mouseleave',()=>pause(false));
+  show.addEventListener('focusin',()=>pause(true));show.addEventListener('focusout',e=>{if(!show.contains(e.relatedTarget))pause(false)});
+  document.addEventListener('visibilitychange',()=>pause(document.hidden));
+  let x0=null;const st=show.querySelector('.lp-stage');
+  st.addEventListener('pointerdown',e=>{x0=e.clientX});
+  st.addEventListener('pointerup',e=>{if(x0===null)return;const dx=e.clientX-x0;x0=null;if(Math.abs(dx)>40){stop();go(cur+(dx<0?1:-1))}});
+  go(0);
 })();
 
 /* Geschichte: Schritt für Schritt einblenden, sobald er sichtbar wird. Ohne JavaScript bleibt alles sichtbar. */

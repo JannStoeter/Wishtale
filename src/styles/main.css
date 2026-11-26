@@ -1760,3 +1760,37 @@ body.lp{background:#FFFDFA}
 @media(max-width:560px){.aivars .aiv-acts .idea-add{flex-basis:100%}.aivars .aiv-acts .qa-soft{margin-left:0}}
 
 .aivars .idea-top{justify-content:flex-start}
+
+/* Einstieg als kleine Show (135, Jann): Wunschliste, passende Ideen, Kinder. Reiter oben, Folien liegen übereinander, die höchste bestimmt die Höhe. */
+.lp .lp-show{display:flex;flex-direction:column;align-items:stretch}
+.lp .lp-tabs{position:relative;z-index:2;display:flex;gap:6px;justify-content:center;margin:0 auto 14px;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:99px;box-shadow:0 10px 24px -18px rgba(31,27,22,.4)}
+.lp .lp-tabs button{position:relative;overflow:hidden;font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);background:none;border:0;border-radius:99px;padding:8px 14px;cursor:pointer;white-space:nowrap}
+.lp .lp-tabs button.on{background:var(--accent);color:var(--accent-ink)}
+.lp .lp-tabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.lp .lp-tabs i{position:absolute;left:14px;right:14px;bottom:4px;height:2px;border-radius:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;opacity:0}
+.lp .lp-show.run .lp-tabs button.on i{opacity:1;animation:lpTick var(--show-ms,6500ms) linear forwards}
+.lp .lp-show.hold .lp-tabs button.on i{animation-play-state:paused}
+@keyframes lpTick{to{transform:scaleX(1)}}
+.lp .lp-stage{display:grid;position:relative;z-index:1;touch-action:pan-y}
+.lp .lp-slide{grid-area:1/1;display:flex;flex-direction:column;justify-content:center}
+.lp .lp-slide[hidden]{display:flex;visibility:hidden;opacity:0;pointer-events:none}
+.lp .lp-slide.on{animation:lpSlide .45s cubic-bezier(.2,.7,.2,1) both}
+@keyframes lpSlide{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.lp .lp-list-k.lp-k-sug{display:flex;align-items:center;gap:6px;color:#2D5A3B}
+.lp .lp-k-sug svg,.lp .lp-hint svg,.lp .lp-zettel svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;flex:none}
+.lp .lp-ideas{background:#F3F7F0;border-color:#C9D3BD}
+.lp .lp-vague{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:center;padding:14px 4px;border-bottom:1px solid #C9D3BD}
+.lp .lp-vague b{display:block;font-weight:600;font-size:15.5px}
+.lp .lp-hint{display:inline-flex;align-items:center;gap:6px;margin-top:5px;font-size:13px;font-weight:600;color:#2D5A3B;background:#D7E6DA;padding:3px 10px;border-radius:99px}
+.lp .lp-sugs li{grid-template-columns:56px 1fr;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
+.lp .lp-sugs li:last-child{border-bottom:1px solid var(--line);margin-bottom:12px}
+.lp .lp-sugs b{font-family:var(--disp);font-weight:400;font-size:21px;line-height:1.1}
+.lp .lp-why{font-size:13.5px;line-height:1.45;color:var(--ink);margin:6px 0 0}
+.lp .lp-why em{font-style:normal;font-weight:600;color:#2D5A3B}
+.lp .lp-free{background:#D7E6DA;color:#2D5A3B;font-weight:600;font-size:13px;padding:6px 12px;border-radius:99px;flex:none}
+.lp .lp-zettel{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin:12px 4px 2px}
+.lp .lp-hand b{font-family:'Caveat',var(--disp);font-weight:500;font-size:25px;line-height:1.1}
+.lp .lp-glyph.g2{background:#F4DCCB;color:#8A3F1F}.lp .lp-glyph.g4{background:#F6E6BF;color:#80580F}
+.lp .lp-parents{font-size:13px;color:var(--muted);margin:4px 4px 14px;padding-top:12px;border-top:1px solid var(--line)}
+@media(max-width:400px){.lp .lp-tabs button{padding:8px 10px;font-size:12.5px}}
+@media(prefers-reduced-motion:reduce){.lp .lp-slide.on{animation:none}.lp .lp-show.run .lp-tabs button.on i{animation:none}}

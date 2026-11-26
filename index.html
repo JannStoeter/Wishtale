@@ -38,7 +38,14 @@
       <div class="lp-actions herocta"><a class="btn pri big" href="app/#start"><span data-edit="hero.cta">Kostenlos Wunschliste anlegen</span> <svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="lp-quiet" href="app/#p/jonas" data-edit="hero.link1">Beispiel ansehen</a></div>
       <p class="lp-mini" data-edit="hero.mini">Kostenlos und ohne App-Download, in wenigen Minuten fertig</p>
     </div>
-    <figure class="lp-visual" aria-label="Beispiel einer Wunschliste in Wishtale">
+    <figure class="lp-visual lp-show" aria-roledescription="Karussell" aria-label="Was Wishtale kann, an einem Beispiel">
+      <div class="lp-tabs" role="tablist" aria-label="Beispiele">
+        <button type="button" role="tab" id="show-t1" aria-controls="show-p1" aria-selected="true" class="on"><span data-edit="show.t1">Wunschliste</span><i aria-hidden="true"></i></button>
+        <button type="button" role="tab" id="show-t2" aria-controls="show-p2" aria-selected="false" tabindex="-1"><span data-edit="show.t2">Passende Ideen</span><i aria-hidden="true"></i></button>
+        <button type="button" role="tab" id="show-t3" aria-controls="show-p3" aria-selected="false" tabindex="-1"><span data-edit="show.t3">Für Kinder</span><i aria-hidden="true"></i></button>
+      </div>
+      <div class="lp-stage">
+      <div class="lp-slide on" role="tabpanel" id="show-p1" aria-labelledby="show-t1">
       <div class="lp-list">
         <div class="lp-list-hd"><div><p class="lp-list-k">Wunschliste</p><p class="lp-list-t">Mias Wünsche</p></div><span class="lp-share" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg>Teilen</span></div>
         <ul class="lp-rows">
@@ -47,6 +54,30 @@
           <li><span class="lp-glyph g3"><svg viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h12v15H7a2 2 0 00-2 2z"/><path d="M5 20a2 2 0 002 1h12v-3M9 7h6"/></svg></span><div><b>Ein Buch zum Schmökern</b><small>Wishtale hat Ideen dazu</small></div><i class="lp-imp" title="Wichtig">●●<em>●</em></i></li>
           <li class="is-res"><span class="lp-glyph g1"><svg viewBox="0 0 24 24"><path d="M3 7h18v3.5a1.5 1.5 0 000 3V17H3v-3.5a1.5 1.5 0 000-3z"/><path d="M15 7v10" stroke-dasharray="1.5 2"/></svg></span><div><b>Ein Kochkurs zu zweit</b><small>Ein Erlebnis</small></div><i class="lp-imp" title="Nice to have">●<em>●●</em></i></li>
         </ul>
+      </div>
+      </div>
+      <div class="lp-slide" role="tabpanel" id="show-p2" aria-labelledby="show-t2" hidden>
+        <div class="lp-list lp-ideas">
+          <div class="lp-list-hd"><div><p class="lp-list-k lp-k-sug"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><span data-edit="show.k2">Vorschläge von Wishtale</span></p><p class="lp-list-t" data-edit="show.h2">Ideen für Mia</p></div></div>
+          <div class="lp-vague"><span class="lp-glyph g3"><svg viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h12v15H7a2 2 0 00-2 2z"/><path d="M5 20a2 2 0 002 1h12v-3M9 7h6"/></svg></span><div><b data-edit="show.w2">Ein Buch zum Schmökern</b><small class="lp-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><span data-edit="show.hint2">Wishtale hat Ideen dazu</span></small></div></div>
+          <ul class="lp-rows lp-sugs">
+            <li><img src="/photos/book-600.jpg" alt="" width="56" height="56" loading="lazy"><div><b data-edit="show.i1">Buch übers Kaffeerösten</b><small data-edit="show.i1p">Vorschlag · ca. 20 bis 30 €</small><p class="lp-why"><em data-edit="show.why">Passt, weil</em> <span data-edit="show.i1w">Mia gern Kaffee mahlt und sich ein Buch wünscht.</span></p></div></li>
+            <li><img src="/photos/lamp-600.jpg" alt="" width="56" height="56" loading="lazy"><div><b data-edit="show.i2">Leselampe für den Sessel</b><small data-edit="show.i2p">Vorschlag · ca. 40 bis 70 €</small><p class="lp-why"><em data-edit="show.why2">Passt, weil</em> <span data-edit="show.i2w">Mia abends gern in Ruhe liest.</span></p></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="lp-slide" role="tabpanel" id="show-p3" aria-labelledby="show-t3" hidden>
+        <div class="lp-list lp-kids">
+          <div class="lp-list-hd"><div><p class="lp-list-k" data-edit="show.k3">Konto für Kinder</p><p class="lp-list-t" data-edit="show.h3">Paulas Wunschzettel</p></div><span class="lp-free" data-edit="show.free">Kostenlos</span></div>
+          <p class="lp-zettel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><span data-edit="show.zettel">Aus dem Foto vom Wunschzettel gelesen, Paulas Worte bleiben</span></p>
+          <ul class="lp-rows lp-hand">
+            <li><span class="lp-glyph g2"><svg viewBox="0 0 24 24"><path d="M4 18h16M6 18V9l6-4 6 4v9M10 18v-5h4v5"/></svg></span><div><b data-edit="show.c1">die große Feuerwehr mit Leiter</b></div></li>
+            <li><span class="lp-glyph g4"><svg viewBox="0 0 24 24"><path d="M14 4l6 6-9 9H5v-6z"/><path d="M12 6l6 6"/></svg></span><div><b data-edit="show.c2">Glitzerstifte, ganz viele</b></div></li>
+            <li><span class="lp-glyph g3"><svg viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h12v15H7a2 2 0 00-2 2z"/><path d="M5 20a2 2 0 002 1h12v-3M9 7h6"/></svg></span><div><b data-edit="show.c3">ein Buch über Pferde</b></div></li>
+          </ul>
+          <p class="lp-parents" data-edit="show.p3">Du verwaltest Paulas Profil, gern zusammen mit dem zweiten Elternteil.</p>
+        </div>
+      </div>
       </div>
       <figcaption class="lp-note" data-edit="hero.demo">Beispielansicht mit einer erfundenen Person und Beispielpreisen</figcaption>
     </figure>
