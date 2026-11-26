@@ -3,6 +3,7 @@ import { recatOnce } from './lib/smartcats.js';
 import { amzBackfillOnce } from './lib/amzfill.js';
 import { imgBackfill } from './lib/imgfill.js';
 import { priceBackfill } from './lib/pricefill.js';
+import { nameFixOnce } from './lib/namefix.js';
 import { loadIdeas, gkey, skey } from './lib/ideas.js';
 import { isSpecific } from './lib/products.js';
 import { guestPerson } from './state.js';
@@ -59,6 +60,7 @@ export function render(top){
   if(S.auth.user&&v==='wuensche'&&!S.ui.preview)recatOnce(()=>{if(!S.ui.modal)render()}); // einmal je Profil neu einordnen (100)
   if(S.auth.user&&v==='wuensche'&&!S.ui.preview)amzBackfillOnce(()=>{if(!S.ui.modal)render()}); // genaue Wünsche ohne Link einmal direkt mit Amazon verlinken (111)
   if(S.auth.user&&v==='wuensche'&&!S.ui.preview)imgBackfill(()=>{if(!S.ui.modal)render()}); // ältere Wünsche ohne Bild nach und nach mit echtem Produktbild (höchstens 8 je Tag)
+  if(S.auth.user&&v==='wuensche'&&!S.ui.preview)nameFixOnce(()=>{if(!S.ui.modal)render()}); // ältere „Wunsch von …“ und Amazon-Suchwörter einmal durch den echten Namen ersetzen
   if(S.auth.user&&v==='wuensche'&&!S.ui.preview)priceBackfill(()=>{if(!S.ui.modal)render()}); // ältere Wünsche ohne Preis nach und nach mit echtem Preis einer Produktseite (höchstens 8 je Tag)
   if(S.auth.user&&S.me.handle&&v!=='gast'&&!S.me.occasion){if(v!=='entdecken'&&inspirationOn()&&(v!=='wuensche'||(!S.ui.preview&&homeIdeasVisible())))loadIdeas(skey(S.me.handle),{h:S.me.handle,mode:'self',n:signalCount()},()=>{if((S.ui.view==='entdecken'||(S.ui.view==='wuensche'&&!S.ui.preview&&homeIdeasVisible()))&&!S.ui.modal)render()})}
   if((v==='geschmack'||v==='wuensche')&&S.auth.user&&S.me.dbId&&!S.me.managed)loadAnswers().then(fresh=>{if(fresh&&S.ui.view===v&&!S.ui.modal&&!document.activeElement?.matches?.('input,textarea,select'))render()}).catch(()=>{});

@@ -1,6 +1,6 @@
 import { requireUser, send, fail, HttpError } from './_lib/auth.js';
 import { inspect, fetchImage } from './_lib/inspect.js';
-import { findProductImage, amazonDirect, imageForWish, priceForWish, searchProducts, lookFor } from './_lib/imgsearch.js';
+import { findProductImage, amazonDirect, imageForWish, priceForWish, searchProducts, lookFor, titleForLink } from './_lib/imgsearch.js';
 import { guardSearch } from './_lib/limits.js';
 
 const searchOn = () => !!process.env.BRAVE_SEARCH_API_KEY;
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       return send(res, 200, { image: await fetchImage(iu) });
     }
     // Alles, was Brave fragt, zählt gegen die Tagesgrenzen (nur mit Schlüssel, sonst gibt es ohnehin null)
-    if ((req.body?.imageQuery || req.body?.amazonQuery || req.body?.imageFor || req.body?.priceFor || req.body?.searchQuery) && searchOn()) await guardSearch(id);
+    if ((req.body?.imageQuery || req.body?.amazonQuery || req.body?.imageFor || req.body?.priceFor || req.body?.searchQuery || req.body?.titleFor) && searchOn()) await guardSearch(id);
     if (req.body?.searchQuery) { // Produktsuche im Wunschdialog (124): Treffer mit Name, Preis und Bild, nur zum Anzeigen
       const q = String(req.body.searchQuery).trim().slice(0, 120);
       if (q.length < 2) throw new HttpError(400, 'Bitte gib einen Suchbegriff ein.');
@@ -43,9 +43,22 @@ export default async function handler(req, res) {
       console.log('preis-wunsch', JSON.stringify({ via: price?.via || 'keins', quelle: price?.source || '', preis: price?.price || null }));
       return send(res, 200, { price });
     }
+    if (req.body?.titleFor) { // Name zu einem Link, den wir nicht lesen (Amazon): nur die Titelzeile der Suchmaschine zur Produktnummer
+      const t = await titleForLink(String(req.body.titleFor).slice(0, 1000)).catch(() => null);
+      console.log('titel-link', JSON.stringify({ treffer: !!t, titel: t?.title || '' }));
+      return send(res, 200, { title: t });
+    }
     if (req.body?.amazonQuery) return send(res, 200, { amazon: await amazonDirect(req.body.amazonQuery) }); // direkter Amazon-Link über die Websuche (nur mit Schlüssel), sonst null
     const url = String(req.body?.url || '').trim();
     if (!url || url.length > 1000) throw new HttpError(400, 'Bitte füge einen Link ein.');
-    return send(res, 200, { product: await inspect(url) });
+    try { return send(res, 200, { product: await inspect(url) }); }
+    catch (e) { // Seite sperrt das Lesen (Thalia) oder zeigt kein Produkt: Name über die Suchmaschine zur Produktnummer der Adresse
+      if (e.status !== 422 || !searchOn() || /amazon\.|amzn\./i.test(url)) throw e;
+      await guardSearch(id).catch(() => { throw e; });
+      const t = await titleForLink(url).catch(() => null);
+      console.log('titel-link', JSON.stringify({ treffer: !!t, titel: t?.title || '', grund: e.message }));
+      if (!t) throw e;
+      return send(res, 200, { product: { title: t.title, price: null, currency: '', brand: '', size: '', description: '', host: t.host, source: 'suche', hasImage: !!t.imageUrl, imageUrl: t.imageUrl, url } });
+    }
   } catch (e) { return fail(res, e); }
 }

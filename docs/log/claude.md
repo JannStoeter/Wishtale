@@ -410,3 +410,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geändert: src/lib/iglink.js (neu, `withSiteLink()`), api/_lib/instagram.js (Beitrag und Reel bekommen beim Veröffentlichen die Adresse, falls sie fehlt), src/admin/instagram.js (beim Erstellen Abschlussfolie und Adresse, Hinweis unter der Bildunterschrift), src/admin/ideas.js (Texte nennen wishtale.de), tests/instagram.test.mjs
 - Geprüft: ESLint, Build, npm test (38 bestanden)
 - Datenbank und Dienste: keine
+
+## 2026-11-26 · 134 · Namen, Bilder und Preise bei Links
+- Auftrag: Jann im Projekt-Chat („Wunsch von Amazon“, „Wunsch von Thalia“, LEGO-Bauplatte mit falschem Namen, ohne Bild und Preis)
+- Geändert: api/_lib/imgsearch.js (`titleForLink()`, `shortTitle()`, `linkKey()`), api/inspect.js (op `titleFor`, Rückfall bei gesperrten Seiten), src/lib/inspect.js (`linkTitle()`), src/actions.js (Amazon-Link sucht den Namen, Hinweis ohne Namen), src/lib/linkname.js (nie „Wunsch von …“), src/lib/namefix.js (neu, Reparatur älterer Wünsche), src/render.js, tests/linktitle.test.mjs, tests/linkname.test.mjs, CLAUDE.md
+- Geprüft: ESLint, Build, npm test
+- Datenbank und Dienste: keine neue Tabelle; zusätzliche Brave-Suchen zählen in `guardSearch()`
+- Zurücknehmen: Merge-Commit reverten
+

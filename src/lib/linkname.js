@@ -1,9 +1,8 @@
 /*
  * Name aus einem Shop-Link, wenn die Seite selbst nichts verrät (Wunsch ohne Namen gespeichert). Aus dem längsten lesbaren Teil der
- * Adresse („/de/p/sony-wh-1000xm5-kopfhoerer-schwarz/123456“ wird „Sony Wh 1000xm5 Kopfhoerer Schwarz“), sonst „Wunsch von <Shop>“.
+ * Adresse („/de/p/sony-wh-1000xm5-kopfhoerer-schwarz/123456“ wird „Sony Wh 1000xm5 Kopfhoerer Schwarz“). Steht dort nichts
+ * Lesbares, kommt kein Name zurück, und die Person trägt kurz selbst ein, was es ist (nie „Wunsch von <Shop>“, Jann 2026-11-26).
  */
-const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
-
 const SMALL = new Set(['mit', 'und', 'für', 'fuer', 'von', 'aus', 'in', 'im', 'der', 'die', 'das', 'ohne', 'zum', 'zur', 'the', 'and', 'with', 'for', 'of']);
 
 export function nameFromLink(raw) {
@@ -18,6 +17,5 @@ export function nameFromLink(raw) {
     const t = words.map((w, i) => /^[a-zäöü]/.test(w) && (i === 0 || !SMALL.has(w)) ? w[0].toUpperCase() + w.slice(1) : w).join(' ').slice(0, 120);
     if (t.length >= 5) return t;
   }
-  const h = host(u.href);
-  return h ? `Wunsch von ${h}` : '';
+  return '';
 }
