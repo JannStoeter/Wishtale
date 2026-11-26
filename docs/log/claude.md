@@ -397,3 +397,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Tests
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-26 · 130 · Nachtrag: Gruppe Social Media im Menü
+- Auftrag: Jann im Projekt-Chat (Social Media wieder als Gruppe, damit man sieht, dass man Konten verbinden kann)
+- Geändert: src/views/menu.js, CLAUDE.md
+- Geprüft: ESLint, Build, Tests, Bildschirmfoto Handy
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
