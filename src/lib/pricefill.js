@@ -12,7 +12,7 @@ import { fetchWishPrice } from './wishimg.js';
 import { scheduleSync } from './remote.js';
 import { loadMatch } from './ideas.js';
 
-const TRIED = 'wishtale:price-tried1', DAY = 'wishtale:price-day';
+const TRIED = 'wishtale:price-tried2', DAY = 'wishtale:price-day';
 const key = w => String(w.t || '').toLowerCase().replace(/\s+/g, ' ').trim() + '|' + (w.link || '');
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch { return d; } };
 const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* dann versucht es die nächste Sitzung erneut */ } };
@@ -20,10 +20,12 @@ const ownLink = w => !!w.link && /^https:\/\//i.test(w.link) && !/amazon\.|amzn\
 
 /** Kommt der Wunsch für einen Preis in Frage? Nur Produkte ohne Preis, die einen eigenen Shop-Link haben oder genau benannt sind. */
 export const wantsPrice = w => !!w && !w.price && w.kind !== 'erlebnis' && w.kind !== 'kategorie' && w.kind !== 'frei'
-  && ['offen', 'plan'].includes(w.status || 'offen') && (ownLink(w) || isSpecific(w));
+  && ['offen', 'plan'].includes(w.status || 'offen') && (ownLink(w) || amazonLink(w) || isSpecific(w));
 
+const amazonLink = w => !!w.link && /amazon\.|amzn\./i.test(w.link) && !/^Wunsch von /.test(w.t || '');
 async function target(w) {
   if (ownLink(w)) return { goal: { t: w.t, link: w.link } };
+  if (amazonLink(w)) return { goal: { t: w.t, link: w.link } }; // Name aus dem Amazon-Link ist sicher: Preis bei Otto, dann Hersteller (134)
   const h = S.me?.handle;
   if (!h || !/^[a-z0-9-]{3,31}$/.test(h)) return null;
   const m = await loadMatch(h, w.t).catch(() => null);
