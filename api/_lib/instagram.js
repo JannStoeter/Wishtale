@@ -17,8 +17,24 @@ async function call(path, { method = 'GET', params = {} } = {}, fetchImpl) {
   const url = `${HOST()}/${VERSION()}/${path}`;
   const r = await fetchImpl(method === 'GET' ? `${url}?${q}` : url, method === 'GET' ? {} : { method, headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: q });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok || j.error) throw new HttpError(502, `Instagram: ${(j.error && (j.error.error_user_msg || j.error.message)) || r.status}`);
+  if (!r.ok || j.error) {
+    const e = j.error || {};
+    console.error('instagram', r.status, JSON.stringify({ path: path.replace(/\d{6,}/g, '<id>'), code: e.code, subcode: e.error_subcode, type: e.type, msg: e.message, trace: e.fbtrace_id }));
+    throw new HttpError(502, igMessage(e, r.status));
+  }
   return j;
+}
+
+/** Macht aus einem Meta-Fehler eine verständliche Meldung samt Code, damit klar ist, wo es hakt. */
+export function igMessage(e = {}, status = 0) {
+  const text = e.error_user_msg || e.message || String(status || 'unbekannter Fehler');
+  const code = e.code ? ` (Code ${e.code}${e.error_subcode ? '/' + e.error_subcode : ''})` : '';
+  let hint = '';
+  if (e.code === 190) hint = ' Der Zugangsschlüssel ist abgelaufen oder ungültig. Bitte in Meta einen neuen erzeugen und META_ACCESS_TOKEN in Vercel ersetzen.';
+  else if (e.code === 200 && /blocked/i.test(e.message || '')) hint = ' Meta hat den Zugriff gesperrt. Meist ist die Meta-App eingeschränkt oder das Instagram-Konto muss eine Sicherheitsprüfung bestätigen. Bitte in der Instagram-App und unter developers.facebook.com › Meine Apps nachsehen.';
+  else if ([10, 200].includes(e.code) || (e.code >= 200 && e.code < 300)) hint = ' Der Schlüssel hat nicht die nötige Berechtigung (instagram_content_publish).';
+  else if ([4, 17, 32, 613].includes(e.code) || e.error_subcode === 2207042) hint = ' Instagram bremst gerade, bitte später noch einmal versuchen.';
+  return `Instagram: ${text}${code}.${hint}`.replace(/\.\./g, '.');
 }
 
 async function waitReady(id, fetchImpl, tries = 12, delay = 2000) {
