@@ -4,6 +4,7 @@
  * Voraussetzung: Instagram-Geschäftskonto, Meta-App, Token mit instagram_content_publish. Bilder müssen öffentlich als JPEG erreichbar sein.
  */
 import { HttpError } from './auth.js';
+import { withSiteLink } from '../../src/lib/iglink.js';
 
 const HOST = () => process.env.META_API_HOST || 'https://graph.facebook.com';
 const VERSION = () => process.env.META_GRAPH_VERSION || 'v23.0';
@@ -54,6 +55,7 @@ export async function account(fetchImpl = fetch) {
 }
 
 export async function publish({ imageUrls, caption }, fetchImpl = fetch, opts = {}) {
+  caption = withSiteLink(caption);
   if (!igConfigured()) throw new HttpError(400, 'Instagram ist noch nicht verbunden.');
   if (!imageUrls?.length) throw new HttpError(400, 'Der Beitrag hat noch keine Bilder.');
   if (imageUrls.length > 10) throw new HttpError(400, 'Ein Karussell darf höchstens 10 Bilder haben.');
@@ -100,7 +102,7 @@ export async function startReel({ videoUrl, caption }, fetchImpl = fetch) {
   if (!igConfigured()) throw new HttpError(400, 'Instagram ist noch nicht verbunden.');
   if (!/^https:\/\//.test(videoUrl || '')) throw new HttpError(400, 'Das Reel hat noch kein Video.');
   const c = igConfig();
-  const r = await call(`${c.userId}/media`, { method: 'POST', params: { media_type: 'REELS', video_url: videoUrl, caption: caption || '', share_to_feed: 'true' } }, fetchImpl);
+  const r = await call(`${c.userId}/media`, { method: 'POST', params: { media_type: 'REELS', video_url: videoUrl, caption: withSiteLink(caption), share_to_feed: 'true' } }, fetchImpl);
   return r.id;
 }
 
