@@ -425,3 +425,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 
+## 2026-11-26 · 134 · Nachtrag 2: Vorschlagskarten und Bildquote
+- Auftrag: Jann im Projekt-Chat („zu ton in ton“, „Bilder immer noch so lala“)
+- Geändert: src/views/wishmodal.js (`AiVariants()` neu), src/views/inspiration.js (`IdeaIcon` exportiert), src/styles/main.css (`.aivars`), api/_lib/imgsearch.js (`ottoHit()` mit Modellnummer, `modelQuery()`, `searchOtto` mit `maxBytes`, Bildersuche mit Modellnummer, Log), src/lib/imgfill.js (`img-tried7`), tests/linktitle.test.mjs
+- Geprüft: ESLint, Build, npm test (43 bestanden), Bildschirmfotos der Karten (Handy, Computer)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+

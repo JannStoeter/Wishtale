@@ -86,7 +86,13 @@ export async function imageForWish({ t, q, brand, link, img } = {}, deps = {}) {
   if (!look) return null;
   // Bild der Seite, die die Produkterkennung schon gefunden hat (Herstellerseite), dann braucht es keine neue Suche
   if (img && /^https:\/\//i.test(img) && !STOCK.test(host(img))) { try { const im = await load(img); if (await look(im)) return { ...im, via: 'erkannt' }; } catch { /* weiter */ } }
-  return (q || t) ? findProductImage(q || t, { ...deps, check, look, images: { look, ...(deps.images || {}) } }) : null;
+  if (!(q || t)) return null;
+  const found = await findProductImage(q || t, { ...deps, check, look, images: { look, ...(deps.images || {}) } });
+  if (found) return found;
+  const mq = modelQuery(q || t); // Bildersuche nur mit Marke und Modellnummer, der Titel muss trotzdem zum ganzen Namen passen
+  const r = mq ? await searchImage(mq, { check, look, ...(deps.images || {}) }).catch(() => null) : null;
+  console.log('bild-schritte', JSON.stringify({ t: (q || t).slice(0, 60), modell: mq, treffer: !!r }));
+  return r;
 }
 
 const SEEN = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -336,7 +342,7 @@ export async function pictures(items, q, { images = braveImages, load = fetchIma
  * Otto: Produktseiten aus der Websuche, gelesen wie bei „Link lesen“ (Name, Preis, Bild der Seite). Klappt das Lesen nicht, bleibt der
  * Treffer mit Titel und dem Vorschaubild der Suchmaschine. Bilder lädt unser Server, der Link wird beim Anzeigen zum Awin-Partnerlink.
  */
-export async function searchOtto(q, { fetchJson, read = inspect, load = fetchImage, max = 6 } = {}) {
+export async function searchOtto(q, { fetchJson, read = inspect, load = fetchImage, max = 6, maxBytes = 600000 } = {}) {
   const json = await braveWeb('site:otto.de ' + q, 20, fetchJson);
   if (!json) return null;
   const seen = new Set();
@@ -352,7 +358,7 @@ export async function searchOtto(q, { fetchJson, read = inspect, load = fetchIma
     const p = await within(read(c.url), 6500);
     const img = (p && p.imageUrl) || c.thumb;
     const image = img ? await within(load(img), 5000) : null;
-    return { t: String((p && p.title) || c.title).slice(0, 160), price: p ? eur(p) : null, url: c.url, host: 'otto.de', image: image && image.data.length <= 600000 ? image : null };
+    return { t: String((p && p.title) || c.title).slice(0, 160), price: p ? eur(p) : null, url: c.url, host: 'otto.de', image: image && image.data.length <= maxBytes ? image : null };
   }));
   return out;
 }
@@ -413,7 +419,17 @@ export async function titleForLink(link, { fetchJson } = {}) {
 export async function ottoHit(t, { fetchJson, read = inspect, load = fetchImage } = {}) {
   const q = clean(t);
   if (!q || q.split(' ').length < 2 || (!process.env.BRAVE_SEARCH_API_KEY && !fetchJson)) return null;
-  const hits = await searchOtto(q, { fetchJson, read, load, max: 3 }).catch(() => null);
-  const digits = toks(q).filter(w => /\d/.test(w));
-  return (hits || []).find(h => { const b = new Set(toks(h.t)); return digits.every(w => b.has(w)) && overlap(q, h.t) >= 0.6; }) || null;
+  const digits = toks(q).filter(w => /\d/.test(w) && w.length >= 3);
+  const ok = h => { const b = new Set(toks(h.t)); return digits.every(w => b.has(w)) && (overlap(q, h.t) >= 0.6 || (digits.length && fits(q, h.t))); };
+  // Erst mit dem ganzen Namen, dann nur Marke und Modellnummer („LEGO 10460“): Shops schreiben Namen oft anders
+  const tries = [q]; if (digits.length) tries.push([q.split(' ')[0], ...digits].join(' '));
+  for (const query of tries) {
+    const hits = await searchOtto(query, { fetchJson, read, load, max: 3, maxBytes: 2_400_000 }).catch(() => null);
+    const hit = (hits || []).find(h => ok(h) && (h.image || h.price));
+    console.log('otto-treffer', JSON.stringify({ q: query, treffer: (hits || []).length, passt: !!hit, bild: !!hit?.image }));
+    if (hit) return hit;
+  }
+  return null;
 }
+/** Kurzer Suchbegriff aus Marke und Modellnummer, wenn der Name eine hat („LEGO 10460“), sonst null. */
+export const modelQuery = t => { const w = clean(t).split(' '), d = w.filter(x => /\d{3,}/.test(x)); return d.length && w.length > d.length + 1 ? [w[0], ...d].join(' ') : null; };
