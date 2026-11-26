@@ -78,7 +78,7 @@ function Promo(){
 
 export const ideaPrice=i=>i.to?(i.from?`ca. ${i.from} bis ${i.to} €`:`bis ca. ${i.to} €`):'';
 /** Symbol einer Idee im selben Stil wie Wünsche ohne Bild (112): Stichwort im Namen, sonst die geschätzte Kategorie. */
-function IdeaIcon(i){
+export function IdeaIcon(i){
   const c=i.exp?'erlebnisse':guessCategory(i.t),tone=(cat(c).t??0)%6;
   return `<span class="idea-ic art mono t${tone}" aria-hidden="true">${wishGlyph(i.exp?'erlebnis':i.t,c)}</span>`;
 }

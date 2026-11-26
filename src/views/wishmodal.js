@@ -11,7 +11,8 @@ import { ideasOf, aiStatus } from '../lib/ideas.js';
 import { viaName } from '../lib/invite.js';
 import { AiLoading } from './ailoading.js';
 import { isSpecific } from '../lib/products.js';
-import { searchUrl, partnerOf, shopHost, partnerLink } from '../lib/shops.js';
+import { searchUrl, partnerOf, shopHost, partnerLink, ideaShops } from '../lib/shops.js';
+import { IdeaIcon, ideaPrice } from './inspiration.js';
 import { RememberNote } from './given.js';
 
 const REL = 'noopener noreferrer sponsored nofollow';
@@ -58,10 +59,13 @@ function AiVariants(w, ctx) {
   if (!list.length) return '';
   const guestFree = ctx === 'guest' && !w.res && !w.bought;
   const sim = isSpecific(w);
-  return `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${sim ? 'Ähnliche Produkte, falls es das Gewünschte nicht gibt' : w.kind === 'produkt' ? 'Weitere passende Produkte von Wishtale' : 'Passende Produkte von Wishtale'}</p>${list.map(i => {
-    const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === i.t;
-    return `<div class="aivar ${chosen ? 'chosen' : ''}"><div><span class="eyebrow">Vorschlag von Wishtale</span><strong class="ot">${esc(i.t)}</strong>${i.to ? `<span class="muted" style="font-size:13px;display:block">${i.from ? `ca. ${i.from} bis ${i.to} €` : `bis ca. ${i.to} €`}, grobe Schätzung</span>` : ''}<span class="why" style="display:block;margin-top:4px">${esc(i.why)}</span>${chosen ? `<span class="chip ok" style="margin-top:6px">${ic('check', 'sm')}Deine Wahl</span>` : ''}</div><div class="idea-acts">${guestFree ? `<button class="qa qa-add" data-act="aichoose" data-wid="${w.id}" data-t="${esc(i.t)}">Diesen wählen</button>` : ''}${ctx === 'own' ? `<button class="qa qa-add" data-act="aiuse" data-wid="${w.id}" data-t="${esc(i.t)}" title="Dieser Vorschlag ersetzt den Wunsch, du kannst es gleich rückgängig machen">Dieses Produkt übernehmen</button>` : ''}<a class="qa" href="${searchUrl.amazon(i.q)}" target="_blank" rel="${REL}">Bei Amazon suchen (Anzeige)</a>${ctx === 'own' ? `<button class="qa qa-mute" data-act="aivhave" data-wid="${w.id}" data-t="${esc(i.t)}">Habe ich schon</button>` : ''}</div></div>`;
-  }).join('')}</section>`;
+  // Eigene, salbeigrüne Fläche mit weißen Karten wie bei den übrigen Vorschlägen von Wishtale (Jann, 2026-11-26: „zu ton in ton“)
+  return `<section class="wm-sec ideas-zone aivars"><p class="eyebrow zone-eb">${ic('spark', 'sm')}${sim ? 'Ähnliche Produkte, falls es das Gewünschte nicht gibt' : w.kind === 'produkt' ? 'Weitere passende Produkte von Wishtale' : 'Passende Produkte von Wishtale'}</p><div class="aivar-list">${list.map(i => {
+    const chosen = S.ui.chosen && S.ui.chosen[w.id] && S.ui.chosen[w.id].t === i.t, t = esc(i.t), price = ideaPrice(i);
+    return `<article class="aivar ${chosen ? 'chosen' : ''}"><div class="idea-top">${IdeaIcon(i)}<div class="idea-ht"><strong class="ot">${t}</strong>${price ? `<span class="aiv-price" title="Grobe Schätzung, den aktuellen Preis siehst du im Shop">${price}</span>` : ''}</div></div>
+      <p class="why">${esc(i.why)}</p>${chosen ? `<span class="chip ok" style="margin-top:6px">${ic('check', 'sm')}Deine Wahl</span>` : ''}
+      <div class="aiv-acts">${guestFree ? `<button class="idea-add" data-act="aichoose" data-wid="${w.id}" data-t="${t}">Diesen wählen</button>` : ''}${ctx === 'own' ? `<button class="idea-add" data-act="aiuse" data-wid="${w.id}" data-t="${t}" title="Dieser Vorschlag ersetzt den Wunsch, du kannst es gleich rückgängig machen">${ic('check', 'sm')}Dieses Produkt übernehmen</button>` : ''}${ideaShops(i, ctx === 'own' ? 'wunsch' : 'gast', 'shop-pill')}${ctx === 'own' ? `<button class="qa-soft" data-act="aivhave" data-wid="${w.id}" data-t="${t}">Habe ich schon</button>` : ''}</div></article>`;
+  }).join('')}</div></section>`;
 }
 
 /** Macht klar, was ein Vorschlag von Wishtale ist und was ein Wunsch der Person selbst. */

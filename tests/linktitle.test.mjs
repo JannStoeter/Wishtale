@@ -43,3 +43,15 @@ test('Amazon-Wunsch: Bild und Name von Otto, nur wenn der Titel eng passt', asyn
   const im = await imageForWish({ t: 'LEGO DUPLO Classic Bauplatte in Grün 10460', link: 'https://www.amazon.de/dp/B0BXQK2M5T' }, { fetchJson, read, load, look: async () => false });
   assert.equal(im.via, 'otto');
 });
+
+test('modelQuery und Otto mit Marke und Modellnummer', async () => {
+  const { modelQuery } = await import('../api/_lib/imgsearch.js');
+  assert.equal(modelQuery('LEGO DUPLO 10460 Classic Bauplatte in Grün'), 'LEGO 10460');
+  assert.equal(modelQuery('Tonies Figur Benjamin Blümchen'), null);
+  const seen = [];
+  const fetchJson = async q => { seen.push(q); return q.includes('LEGO 10460') && !q.includes('Classic') ? { web: { results: [{ url: 'https://www.otto.de/p/lego-10460-S0X/', title: 'LEGO® DUPLO® Konstruktionsspielsteine Classic Bauplatte in Grün (10460) | OTTO' }] } } : { web: { results: [] } }; };
+  const read = async () => ({ title: 'LEGO® DUPLO® Konstruktionsspielsteine Classic Bauplatte in Grün (10460)', price: 11.99, currency: 'EUR', imageUrl: 'https://i.otto.de/x.jpg' });
+  const hit = await ottoHit('LEGO DUPLO 10460 Classic Bauplatte in Grün', { fetchJson, read, load: async () => ({ data: 'x'.repeat(900000), type: 'image/jpeg' }) });
+  assert.ok(hit && hit.image, 'großes Otto-Bild bleibt erhalten');
+  assert.equal(seen.length, 2);
+});

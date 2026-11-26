@@ -1744,3 +1744,19 @@ body.lp{background:#FFFDFA}
 .lp .hdr{background:color-mix(in srgb,#F6F1E7 94%,transparent)}
 .lp .lp-visual .lp-note{background:#FFFDFA}
 .ss-bm.sm{padding:6px 12px;font-size:14px}
+
+/* 134: Vorschläge zum Wunsch auf eigener Fläche mit weißen Karten, Symbol, Preis und klarem Hauptknopf (Jann: „zu ton in ton“) */
+.ideas-zone.aivars{margin:18px 0;padding:18px 14px}
+.aivars .zone-eb{margin-bottom:10px}
+.aivars .aivar-list{display:grid;gap:10px}
+.aivars .aivar{display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:0;padding:14px 16px;background:#fff;border:0;border-radius:18px;box-shadow:0 1px 3px rgba(31,27,22,.08);margin:0}
+.aivars .aivar.chosen{box-shadow:0 0 0 2px var(--accent)}
+.aivars .aivar .ot{font-size:18px;margin:1px 0 0;overflow-wrap:anywhere}
+.aivars .aiv-price{display:inline-block;margin-top:5px;padding:2px 9px;border-radius:99px;background:#F3EFE6;color:var(--ink);font-size:12.5px;font-weight:600}
+.aivars .aivar .why{margin:10px 0 0;font-size:14px;line-height:1.45;color:var(--muted);display:-webkit-box!important;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.aivars .aiv-acts{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:8px 10px;margin-top:12px}
+.aivars .aiv-acts .idea-add{width:auto;flex:1 1 220px}
+.aivars .aiv-acts .qa-soft{margin-left:auto}
+@media(max-width:560px){.aivars .aiv-acts .idea-add{flex-basis:100%}.aivars .aiv-acts .qa-soft{margin-left:0}}
+
+.aivars .idea-top{justify-content:flex-start}

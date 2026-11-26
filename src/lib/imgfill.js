@@ -11,7 +11,7 @@ import { fetchWishImage, storeImage } from './wishimg.js';
 import { scheduleSync } from './remote.js';
 import { loadMatch } from './ideas.js';
 
-const TRIED = 'wishtale:img-tried6', DAY = 'wishtale:img-day';
+const TRIED = 'wishtale:img-tried7', DAY = 'wishtale:img-day';
 const key = w => String(w.t || '').toLowerCase().replace(/\s+/g, ' ').trim() + '|' + (w.link || '');
 const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch { return d; } };
 const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* dann sucht die nächste Sitzung erneut */ } };
