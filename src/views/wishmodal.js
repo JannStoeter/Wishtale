@@ -1,5 +1,5 @@
 /* Detail-Fenster zu einem Wunsch: Vorschlag ansehen, Alternativen vergleichen, wählen oder weitersuchen. */
-import { WishArt } from './card.js';
+import { WishArt, wPrice } from './card.js';
 import { S, guestPerson } from '../state.js';
 import { esc, ic, gen } from '../lib/util.js';
 import { criteriaText } from '../lib/fit.js';
@@ -23,6 +23,9 @@ export function sameItem(a, b) {
   const [s, l] = A.length <= B.length ? [A, new Set(B)] : [B, new Set(A)];
   return s.filter(x => l.has(x)).length / s.length >= 0.8;
 }
+
+/** Ist das Angebot der Wunsch selbst (eigener Link oder die genaue Suche nach dem Namen)? */
+const isSelf = (pr, w) => pr.source === 'link' || (pr.source === 'erzeugt' && sameItem(pr.t, w.t));
 
 function Offer(pr, w, ctx, role) {
   const guestFree = ctx === 'guest' && !w.res && !w.bought;
@@ -48,6 +51,40 @@ function Offer(pr, w, ctx, role) {
     ${guestFree ? `<button class="${quiet ? 'qa qa-add' : 'btn pri sm'}" data-act="choose" data-wid="${w.id}" data-pid="${esc(pr.id)}">Diesen wählen</button>` : ''}
    </div>
   </div>`;
+}
+
+/*
+ * Kaufweg für den Wunsch selbst (Jann, 2026-11-26: „Preis bei Amazon … Zu otto.de … das verwirrt alles“): ein Kasten mit höchstens
+ * einem Preis und klar beschrifteten Knöpfen. Der eigene Shop-Link steht zuerst, Amazon und Otto immer daneben, einmal „Anzeige“.
+ * Ersetzt für den Wunsch selbst die frühere Angebotskarte, die Otto-Zeile und „Auch bei Amazon“.
+ */
+function BuyBox(w, main, ctx) {
+  const own = main && main.source === 'link' ? main : null;
+  const host = own ? String(own.host || '').replace(/^www\./, '') : '';
+  const isAmz = /(^|\.)amazon\./.test(host), isOtto = /(^|\.)otto\.de$/.test(host);
+  const ref = ctx === 'guest' ? 'gast' : 'eigen';
+  const shops = [];
+  if (own && !isAmz && !isOtto) shops.push({ url: own.url, label: `Bei ${esc(host)} ansehen`, ad: !!partnerOf(own.url) });
+  const amz = { url: own && isAmz ? own.url : searchUrl.amazon(w.t), label: 'Bei Amazon ansehen', ad: true };
+  const otto = { url: own && isOtto ? own.url : searchUrl.otto(w.t, ref), label: 'Bei Otto ansehen', ad: true };
+  if (isOtto) shops.push(otto, amz); else shops.push(amz, otto);
+  const price = wPrice(w);
+  const guestFree = ctx === 'guest' && !w.res && !w.bought && main;
+  return `<section class="wm-sec buybox">
+   ${price ? `<div class="bb-price"><b>${price}</b><span>${price.startsWith('ca.') ? 'Ungefährer Preis, den aktuellen siehst du im Shop.' : 'Preis laut Shop, er kann sich ändern.'}</span></div>` : ''}
+   <div class="bb-shops">${shops.map((s, i) => `<a class="btn ${i === 0 ? 'amz' : 'sec'} sm" href="${esc(s.url)}" target="_blank" rel="${REL}" data-place="wunsch">${s.label} ${ic('arrow', 'sm')}</a>`).join('')}</div>
+   <p class="bb-ad">${shops.some(s => s.ad) ? 'Anzeige' : ''}</p>
+   ${!own && ctx === 'own' && w.kind === 'produkt' ? `<button class="qa" data-act="wamz" data-id="${w.id}" ${S.ui.amzBusy === w.id ? 'disabled' : ''}>${S.ui.amzBusy === w.id ? 'Suche läuft …' : 'Genaues Produkt bei Amazon finden'}</button>` : ''}
+   ${guestFree ? `<button class="btn pri sm bb-choose" data-act="choose" data-wid="${w.id}" data-pid="${esc(main.id)}">Diesen wählen</button>` : ''}
+  </section>`;
+}
+
+/** Herkunft des Bildes in Worten: Bildserver von Amazon heißt „Amazon“, die Bildersuche selbst ist keine Herkunft. */
+function imgFrom(src) {
+  const h = String(src || '').toLowerCase();
+  if (!h || /search\.brave\.com$/.test(h)) return '';
+  if (/(media-amazon|images-amazon|amazon)\./.test(h)) return 'Amazon';
+  return h.replace(/^www\./, '').slice(0, 60);
 }
 
 /** Varianten von der KI zu einem ungenauen Wunsch (api/ideas.js, mode=wish). */
@@ -85,14 +122,6 @@ function Suggest(p, w, o, ctx) {
  * sonst die genaue Suche bei Amazon. Nie ein Vorschlag von Wishtale, damit es nicht wie die Wahl der Person aussieht.
  * Bewusst ein Textlink in einem ganzen Satz, mit „Laden deiner Wahl“ als ehrlicher Alternative.
  */
-/* Neben Amazon auch Otto (über Awin), wie bei den Ideenkarten (110): eine leise Zeile unter dem Kaufweg, wenn der Wunsch zu Amazon führt. */
-function OttoLine(w, o, byAi, ctx) {
-  if (w.kind !== 'produkt' || w.status === 'selbst') return '';
-  const amz = byAi || (o.main && /(^|\.)amazon\./.test(o.main.host || '') && ['link', 'erzeugt', 'amz'].includes(o.main.source));
-  if (!amz) return '';
-  return `<p class="also-shop">Auch <a class="qa" href="${esc(searchUrl.otto(w.t, ctx === 'guest' ? 'gast' : 'eigen'))}" target="_blank" rel="${REL}" data-place="wunsch">bei Otto suchen</a> <span class="ad-note">Anzeige</span></p>`;
-}
-
 function BuyLine(w, o, byAi, chosen) {
   if (w.kind === 'erlebnis' || w.kind === 'frei') return '';
   let host = 'amazon.de';
@@ -146,7 +175,7 @@ export function WishModal() {
      <h2 id="mt">${esc(w.t)}</h2>
      ${w.note ? `<p class="muted" style="margin-top:6px">${esc(w.note)}</p>` : ''}
      ${w.via ? `<span class="chip gold" style="margin-top:8px">Tipp von ${esc(viaName(w.via))}</span>` : ''}
-     ${w.img && w.imgSrc ? `<p class="muted tiny" style="margin-top:6px">Bild von ${esc(String(w.imgSrc).slice(0, 60))}</p>` : ''}
+     ${w.img && imgFrom(w.imgSrc) ? `<p class="muted tiny" style="margin-top:6px">Bild von ${esc(imgFrom(w.imgSrc))}</p>` : ''}
     </div>
    </div>
    ${ctx === 'preview' ? `<div class="banner green">${ic('eye')}<span>So sehen Schenkende diesen Wunsch.</span></div>` : ''}
@@ -154,10 +183,8 @@ export function WishModal() {
    ${footer ? `<div class="row wm-actions">${footer}</div>` : ''}
    ${w.noSuggest ? `<div class="sugg"><b>Keine Vorschläge</b><span>Hierfür werden auf Wunsch von ${esc(p.managed ? (p.parent || (ctx === 'own' && S.accounts && S.accounts.me && S.accounts.me.name) || 'der Familie') : p.name)} keine Vorschläge generiert.</span>${ctx === 'own' ? `<button class="btn ghost sm" style="margin-top:8px" data-act="wnosug" data-id="${w.id}">Vorschläge wieder erlauben</button>` : ''}</div>` : ''}
    ${byAi || w.noSuggest ? '' : Suggest(p, w, o, ctx)}
-   ${byAi && w.kind === 'produkt' ? `<section class="wm-sec">${Offer({ id: 'exact', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'erzeugt', a: 'gift' }, w, 'view', 'main')}</section>` : ''}
-   ${o.main && !byAi ? `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>` : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
-   ${OttoLine(w, o, byAi, ctx)}
-   ${w.link && o.main && o.main.source === 'link' && !/(^|\.)amazon\./.test(o.main.host) ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">Auch bei Amazon</p>${Offer({ id: 'amz', t: w.t, url: searchUrl.amazon(w.t), host: 'amazon.de', source: 'amz', a: 'gift' }, w, 'view', 'alt')}</section>` : ''}
+   ${byAi && w.kind === 'produkt' ? BuyBox(w, null, ctx) : ''}
+   ${o.main && !byAi ? (isSelf(o.main, w) ? BuyBox(w, o.main, ctx) : `<section class="wm-sec">${Offer(o.main, w, ctx, 'main')}</section>`) : (w.kind === 'erlebnis' ? `<p class="muted" style="margin:14px 0">Für ein Erlebnis brauchst du kein Produkt. Überlege am besten mit anderen Freunden, was sich organisieren lässt, und reserviere den Wunsch hier, damit niemand doppelt plant.</p>` : '')}
    ${(o.alts = o.alts.filter(a => !sameItem(a.t, w.t))).length && !byAi && !ideasOf('wish:' + w.id).length && aiStatus('wish:' + w.id) !== 'loading' ? `<section class="wm-sec"><p class="eyebrow" style="margin-bottom:8px">${w.kind === 'frei' ? 'Ideen von Wishtale zu diesem Wunsch' : o.main && o.main.source === 'link' ? 'Alternativen von Wishtale' : 'Weitere Vorschläge von Wishtale'}</p>${o.alts.map(a => Offer(a, w, ctx, 'alt')).join('')}</section>` : ''}
    ${AiVariants(w, ctx)}
    ${o.over ? `<p class="muted" style="font-size:13px">${o.over} Produkt${o.over > 1 ? 'e' : ''} über dem Budget ausgeblendet.</p>` : ''}

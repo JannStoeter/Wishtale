@@ -42,7 +42,7 @@ function wishLine(w,p){
 
 /* Ohne eigenen Shop-Link (oder mit Amazon-Link) ist der Preis ungefähr: Amazon-Preise lesen wir nicht, er stammt aus dem Eintrag oder von einer anderen Seite (Jann, 2026-11-25). */
 const approx=w=>!w.link||/amazon\.|amzn\./i.test(w.link);
-const wPrice=w=>w.price?(approx(w)?'ca. ':'')+money(w.price):w.kind==='kategorie'&&w.budget?'bis '+money(w.budget):'';
+export const wPrice=w=>w.price?(approx(w)?'ca. ':'')+money(w.price):w.kind==='kategorie'&&w.budget?'bis '+money(w.budget):'';
 const cardPrice=wPrice;
 
 /** Listenzeile für viele Wünsche: kleines Bild, Titel, Zeile, Preis, Status und Priorität in einer Reihe. */

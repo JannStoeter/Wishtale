@@ -474,3 +474,11 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, npm test, Ansicht iPhone 13 (Startseite heute und Weihnachten, Konto-Seite mit Google), Ereignisse im Netzwerk
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-26 · 139 · Wunschfenster vereinfachen, Amazon-Infos nutzen
+- Auftrag: Jann im Projekt („Preis bei Amazon / Zu Otto.de … das verwirrt alles. Bitte nehme einfach die Amazon Infos“)
+- Geändert: src/views/wishmodal.js (`BuyBox()` statt Angebotskarte, `OttoLine` und „Auch bei Amazon“, `imgFrom()`), src/views/card.js (`wPrice` exportiert), src/lib/linkname.js (`cleanShopTitle()`), src/lib/namefix.js (`tidyNames()`), src/actions.js (Amazon-Bild im Wunschdialog), api/_lib/inspect.js (Bildserver von Amazon erlaubt, Titel gesäubert), api/_lib/imgsearch.js (`amazonImg()`, Amazon-Bild in `titleForLink`, `imageForWish`, `searchAmazon`), src/styles/main.css, tests/shoptitle.test.mjs, tests/linktitle.test.mjs
+- Geprüft: ESLint, Build, npm test (47), Wunschfenster am Handy mit Otto- und Amazon-Wunsch (simuliertes Konto)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+

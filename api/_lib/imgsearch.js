@@ -4,6 +4,7 @@
  * keine Amazon-Hosts) und vom Browser in unseren eigenen Speicher kopiert. Ohne Schlüssel bleibt alles aus.
  */
 import { fetchImage, inspect } from './inspect.js';
+import { cleanShopTitle } from '../../src/lib/linkname.js';
 
 const clean = q => String(q || '').replace(/\s+/g, ' ').trim().slice(0, 120);
 
@@ -82,6 +83,11 @@ export async function imageForWish({ t, q, brand, link, img } = {}, deps = {}) {
   const look = deps.look || (await lookFor(q || t));
   if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
     try { const p = await read(link); if (p?.imageUrl) return { ...(await load(p.imageUrl)), source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
+  }
+  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
+    // Amazon-Wunsch: das Produktbild von Amazon aus der Suchmaschine (über die ASIN, also genau dieses Produkt), sonst Otto
+    const a = await titleForLink(link, deps).catch(() => null);
+    if (a?.imageUrl) { try { return { ...(await load(a.imageUrl)), source: 'amazon.de', via: 'amazon' }; } catch { /* weiter mit Otto */ } }
   }
   if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(q || t, deps); if (o?.image) return { ...o.image, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
   if (!look) return null;
@@ -175,6 +181,12 @@ export function fullTitle(title, path = '') {
   return cut && toks(slug).length > toks(base).length ? slug : base;
 }
 
+/* Produktbild eines Amazon-Treffers aus der Suchmaschine (nur der Bildserver von Amazon, Entscheidung Jann 2026-11-26). */
+export function amazonImg(r) {
+  const u = String(r?.thumbnail?.original || r?.thumbnail?.src || '');
+  try { return /^https:$/.test(new URL(u).protocol) && /(^|\.)(media-amazon|ssl-images-amazon|images-amazon)\.com$/i.test(new URL(u).hostname) ? u.slice(0, 600) : ''; } catch { return ''; }
+}
+
 function amazonItems(json, q) {
   console.log('amazon-direkt', JSON.stringify({ q, treffer: (json?.web?.results || []).slice(0, 8).map(r => { try { const u = new URL(r.url); return u.hostname + u.pathname.slice(0, 40) + ' | ' + String(r.title).slice(0, 60); } catch { return ''; } }) }));
   const items = [];
@@ -183,7 +195,7 @@ function amazonItems(json, q) {
     if (!/(^|\.)amazon\.de$/i.test(u.hostname)) continue;
     const asin = (u.pathname + '/').match(ASIN)?.[1];
     if (!asin || items.some(x => x.asin === asin)) continue;
-    items.push({ asin, title: fullTitle(String(r.title || '').replace(/^Amazon\.de\s*:\s*/i, '').replace(/:\s*Amazon\.de.*$/i, ''), u.pathname).slice(0, 160) });
+    items.push({ asin, title: fullTitle(String(r.title || '').replace(/^Amazon\.de\s*:\s*/i, '').replace(/:\s*Amazon\.de.*$/i, ''), u.pathname).slice(0, 160), thumb: amazonImg(r) });
   }
   return items;
 }
@@ -237,6 +249,11 @@ export async function priceForWish({ t, q, brand, link } = {}, deps = {}) {
   if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
     try { const p = await read(link); const price = eur(p); if (price) return { price, source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
     if (!deps.searchAfterLink) return null; // der eigene Link hat Vorrang: hat die Seite keinen Preis, raten wir nicht über andere Seiten
+  }
+  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
+    // Amazon-Wunsch: das Produktbild von Amazon aus der Suchmaschine (über die ASIN, also genau dieses Produkt), sonst Otto
+    const a = await titleForLink(link, deps).catch(() => null);
+    if (a?.imageUrl) { try { return { ...(await load(a.imageUrl)), source: 'amazon.de', via: 'amazon' }; } catch { /* weiter mit Otto */ } }
   }
   if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(q || t, deps); if (o?.price) return { price: o.price, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
   const query = clean(q || t);
@@ -302,8 +319,10 @@ export async function searchAmazon(q, { fetchJson, images = fetchJson ? async ()
   const json = await braveWeb('site:amazon.de ' + q, 20, fetchJson);
   if (!json) return null;
   const items = amazonItems(json, q).filter(x => x.title && relevant(q, x.title)).slice(0, max)
-    .map(x => ({ t: x.title.slice(0, 160), price: null, url: `https://www.amazon.de/dp/${x.asin}`, host: 'amazon.de', image: null }));
-  await Promise.race([pictures(items, q, { images, load }).catch(() => {}), new Promise(r => setTimeout(r, 9000))]); // die Funktion darf höchstens 20 Sekunden laufen, Bilder, die bis dahin fehlen, bleiben weg
+    .map(x => ({ t: shortTitle(x.title) || x.title.slice(0, 160), price: null, url: `https://www.amazon.de/dp/${x.asin}`, host: 'amazon.de', image: null, thumb: x.thumb }));
+  // Zuerst das Bild von Amazon selbst (Entscheidung Jann 2026-11-26), für Treffer ohne Bild danach die Bildersuche
+  await Promise.all(items.map(async it => { if (it.thumb) it.image = await Promise.race([Promise.resolve(load(it.thumb)).catch(() => null), new Promise(r => setTimeout(() => r(null), 4500))]); delete it.thumb; }));
+  await Promise.race([pictures(items.filter(x => !x.image), q, { images, load }).catch(() => {}), new Promise(r => setTimeout(r, 9000))]); // die Funktion darf höchstens 20 Sekunden laufen, Bilder, die bis dahin fehlen, bleiben weg
   return items;
 }
 
@@ -353,14 +372,14 @@ export async function searchOtto(q, { fetchJson, read = inspect, load = fetchIma
     if (!/(^|\.)otto\.de$/i.test(u.hostname) || !/^\/p\//.test(u.pathname)) return null;
     const id = u.pathname.replace(/\/$/, '');
     if (seen.has(id)) return null; seen.add(id);
-    return { url: 'https://www.otto.de' + u.pathname, title: String(r.title || '').replace(/\s*[|–-]\s*OTTO\s*$/i, '').trim(), thumb: r?.thumbnail?.src || r?.thumbnail?.original || '' };
+    return { url: 'https://www.otto.de' + u.pathname, title: cleanShopTitle(String(r.title || '').replace(/\s*[|–-]\s*OTTO\s*$/i, '')), thumb: r?.thumbnail?.src || r?.thumbnail?.original || '' };
   }).filter(c => c && c.title && relevant(q, c.title)).slice(0, max);
   const within = (p, ms) => Promise.race([p.catch(() => null), new Promise(r => setTimeout(() => r(null), ms))]);
   const out = await Promise.all(cands.map(async c => {
     const p = await within(read(c.url), 6500);
     const img = (p && p.imageUrl) || c.thumb;
     const image = img ? await within(load(img), 5000) : null;
-    return { t: String((p && p.title) || c.title).slice(0, 160), price: p ? eur(p) : null, url: c.url, host: 'otto.de', image: image && image.data.length <= maxBytes ? image : null };
+    return { t: cleanShopTitle((p && p.title) || c.title).slice(0, 160), price: p ? eur(p) : null, url: c.url, host: 'otto.de', image: image && image.data.length <= maxBytes ? image : null };
   }));
   return out;
 }
@@ -377,7 +396,7 @@ const SHOP_TAIL = /\s*(?::\s*amazon\.[a-z.]+.*|\|\s*[^|]{2,40}$|\s[–—-]\s*(?
 /** Kürzt lange Shop-Titel auf den Produktnamen: „LEGO DUPLO Classic Bauplatte in Grün 10460 Spielzeug ab 1 Jahr für Jungen …“ wird
  *  „LEGO DUPLO Classic Bauplatte in Grün 10460“. Geschnitten wird nur, wenn davor mindestens drei Wörter stehen. */
 export function shortTitle(raw) {
-  let t = String(raw || '').replace(/^amazon\.[a-z.]+\s*:\s*/i, '').replace(SHOP_TAIL, '').replace(/\s[–—-]\s*(?:buch|taschenbuch|hardcover|gebundene ausgabe|pappbilderbuch|e-?book|hörbuch|hörbuch-download|cd|dvd|blu-ray)\s*$/i, '').replace(/\s*(\.\.\.|…)$/, '').replace(/\s+/g, ' ').trim();
+  let t = cleanShopTitle(raw).replace(/^amazon\.[a-z.]+\s*:\s*/i, '').replace(SHOP_TAIL, '').replace(/\s[–—-]\s*(?:buch|taschenbuch|hardcover|gebundene ausgabe|pappbilderbuch|e-?book|hörbuch|hörbuch-download|cd|dvd|blu-ray)\s*$/i, '').replace(/\s*(\.\.\.|…)$/, '').replace(/\s+/g, ' ').trim();
   // Kein Schnitt an „ - “: bei Büchern trennt er Reihe und Titel („Meine erste Kinderbibliothek - Meine ersten Gutenacht-Geschichten“)
   const cuts = [/,\s/, /\s\|\s/, /\s(?:spielzeug\s+|geschenk\s+)?ab\s+\d+(?:[.,]\d+)?\s*(?:jahr|jahre|jahren|monat|monaten|j\.)\b/i, /\s(?:für|fuer)\s+(?:jungen|mädchen|maedchen|kinder|kleinkinder|babys?|damen|herren|männer|frauen|erwachsene)\b/i, /\s(?:geschenk|geschenkidee)\b/i];
   for (const c of cuts) { const m = c.exec(t); if (m && t.slice(0, m.index).trim().split(/\s+/).length >= 3) t = t.slice(0, m.index).trim(); }
@@ -407,8 +426,8 @@ export async function titleForLink(link, { fetchJson } = {}) {
     let path = ''; try { path = new URL(r.url).pathname; } catch { /* ohne Adresse */ }
     const t = shortTitle(k.amazon ? fullTitle(String(r.title).replace(/^Amazon\.[a-z.]+\s*:\s*/i, '').replace(/:\s*Amazon\.[a-z.]+.*$/i, ''), path) : r.title);
     if (t.split(/\s+/).length < 2 || /^(amazon|thalia)/i.test(t) && t.split(/\s+/).length < 3) continue;
-    const img = k.amazon ? '' : String(r?.thumbnail?.original || '');
-    return { title: t, host: k.host, imageUrl: /^https:\/\//i.test(img) && !STOCK.test(host(img)) ? img.slice(0, 600) : '', via: 'suche' };
+    const img = k.amazon ? amazonImg(r) : String(r?.thumbnail?.original || '');
+    return { title: t, host: k.host, imageUrl: k.amazon ? img : /^https:\/\//i.test(img) && !STOCK.test(host(img)) ? img.slice(0, 600) : '', via: 'suche' };
   }
   return null;
 }

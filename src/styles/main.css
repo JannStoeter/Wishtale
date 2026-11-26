@@ -1806,3 +1806,15 @@ body.lp{background:#FFFDFA}
 .sh-acts{display:flex;gap:8px;flex-wrap:wrap}
 .sh-acts .btn.gbtn{width:auto}
 @media (max-width:719px){.sh-acts{width:100%}.sh-acts .btn{flex:1 1 auto}}
+
+/* Kaufweg im Wunschfenster (Jann, 2026-11-26): ein Preis, klar beschriftete Knöpfe, einmal „Anzeige“. */
+.buybox{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--line);border-radius:var(--r);background:#fff}
+.buybox .bb-price{display:flex;flex-direction:column;gap:2px}
+.buybox .bb-price b{font-size:22px;font-weight:700}
+.buybox .bb-price span{font-size:13px;color:var(--muted)}
+.buybox .bb-shops{display:flex;flex-wrap:wrap;gap:8px}
+.buybox .bb-shops .btn{flex:1 1 180px;justify-content:center}
+.buybox .bb-ad{margin:-4px 0 0;font-size:11.5px;color:var(--muted)}
+.buybox .bb-ad:empty{display:none}
+.buybox .qa{align-self:flex-start}
+.buybox .bb-choose{align-self:stretch}

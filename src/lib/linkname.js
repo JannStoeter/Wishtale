@@ -19,3 +19,23 @@ export function nameFromLink(raw) {
   }
   return '';
 }
+
+/*
+ * Shop-Titel säubern (Jann, 2026-11-26: „BOSS Eau de Toilette »Boss Bottled« online kaufen“): Seitentitel tragen oft Werbezusätze
+ * wie „online kaufen“, „| OTTO“ oder „bei Thalia“. Übrig bleibt nur der Produktname. Wird beim Lesen eines Links (Server) und für
+ * ältere Wünsche (tidyNames in namefix.js) genutzt. Ändert nichts, wenn danach weniger als zwei Zeichen übrig wären.
+ */
+const SHOPS = 'otto|thalia|hugendubel|weltbild|douglas|zalando|mediamarkt|media markt|saturn|galaxus|kaufland|ikea|lidl|tchibo|bonprix|baur|conrad|cyberport|notebooksbilliger|jpc|osiander|decathlon|globetrotter|bergfreunde|about you|lego|mytoys|smyths toys|rossmann|dm|flaconi|parfumdreams|bücher\\.de|buecher\\.de';
+const TAIL = [
+  new RegExp(`\\s*(?:[|–—:-]|\\bbei|\\bim|\\bvon)\\s*(?:${SHOPS})(?:\\.de|\\.com)?(?:\\s*(?:online)?[- ]?shop)?\\s*$`, 'i'),
+  /\s*(?:[|–—-]\s*)?(?:jetzt\s+)?(?:(?:günstig|guenstig|bequem|sicher)\s+)?(?:online\s+)?(?:kaufen|bestellen|shoppen)(?:\s*[!.])?\s*$/i,
+  /\s*(?:[|–—-]\s*)?(?:im|in unserem)\s+online[- ]?shop\s*$/i,
+  /\s*[|–—-]\s*(?:online[- ]?shop|shop)\s*$/i,
+];
+export function cleanShopTitle(raw) {
+  let t = String(raw || '').replace(/\s+/g, ' ').trim();
+  const orig = t;
+  for (let i = 0; i < 4; i++) { const before = t; for (const re of TAIL) t = t.replace(re, '').trim(); if (t === before) break; }
+  t = t.replace(/[»«]/g, '').replace(/\s+/g, ' ').replace(/[\s,;:|–—-]+$/, '').trim();
+  return t.length >= 2 ? t : orig;
+}

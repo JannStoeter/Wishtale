@@ -22,7 +22,7 @@ test('titleForLink: nur Treffer mit derselben Produktnummer zählen', async () =
   ] } } : null);
   const r = await titleForLink('https://www.amazon.de/dp/B0BXQK2M5T?tag=jannst-21', { fetchJson });
   assert.equal(r.title, 'LEGO DUPLO Classic Bauplatte in Grün 10460');
-  assert.equal(r.imageUrl, ''); // nie ein Amazon-Bild
+  assert.equal(r.imageUrl, 'https://m.media-amazon.com/x.jpg'); // Bild vom Bildserver von Amazon (Entscheidung Jann, 2026-11-26)
   const none = await titleForLink('https://www.amazon.de/dp/B0BXQK2M5T', { fetchJson: async () => ({ web: { results: [{ url: 'https://www.amazon.de/x/dp/B000000001', title: 'Anderes' }] } }) });
   assert.equal(none, null);
   const thalia = await titleForLink('https://www.thalia.de/shop/home/artikeldetails/A1068913389', { fetchJson: async () => ({ web: { results: [{ url: 'https://www.thalia.de/shop/home/artikeldetails/A1068913389', title: 'Gregs Tagebuch 19 - Buch | Thalia', thumbnail: { original: 'https://images.thalia.media/x.jpg' } }] } }) });

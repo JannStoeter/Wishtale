@@ -278,7 +278,7 @@ async function readLinkNow(f,raw0){
     say('Wir suchen den Namen zu diesem Amazon-Link …');
     const found=await linkTitle(r.url);if(f.elements.link.value!==r.url)return;
     const title=(found&&found.title)||r.title;
-    if(title){const cand={t:title,q:title,price:null,src:'amazon'};showCand(cand,typed);candImage(cand);autoTake(cand);say(`Der Amazon-Link ist übernommen${found?'':', den Namen haben wir aus der Adresse gelesen, prüf ihn kurz'}. Amazon gibt keinen Preis heraus, darum sucht Wishtale ihn nach dem Speichern bei anderen Shops.`)}
+    if(title){const cand={t:title,q:title,price:null,src:'amazon'};showCand(cand,typed);candImage(cand,found&&found.imageUrl||undefined);autoTake(cand);say(`Der Amazon-Link ist übernommen${found?'':', den Namen haben wir aus der Adresse gelesen, prüf ihn kurz'}. Den Preis siehst du bei Amazon, Wishtale sucht nach dem Speichern noch einen ungefähren Preis.`)}
     else{setRec({st:'none',msg:''});say(typed?'Der Amazon-Link ist gespeichert und gehört zu deinem Wunsch.':'Der Amazon-Link ist gespeichert. Den Namen konnten wir nicht finden, trag oben kurz ein, was es ist.')}
     return;
   }
