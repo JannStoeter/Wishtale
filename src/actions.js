@@ -896,6 +896,7 @@ document.addEventListener('submit',e=>{
         if(w&&wantsPrice(w))setTimeout(()=>priceFill([w],()=>{if(!S.ui.modal)render()}),1200); // ohne Preis: echten Preis der Produktseite holen
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
+      if(!S.auth.user&&S.ui.acct==='draft')track('step',{label:'draft_wish',once:true,path:'/app/'}); // Funnel: erster Wunsch ohne Konto (138)
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
       if(!f.elements.c?.dataset.touched){const nw=S.me.wishes[0];setTimeout(()=>smartCats([nw],()=>{if(!S.ui.modal)render()}),300)} // nur wenn niemand die Kategorie selbst gewählt hat (100)
       {const nw=S.me.wishes[0];if(removed)skipImage(nw);else if(wantsImage(nw))setTimeout(()=>imgFill([nw],()=>{if(!S.ui.modal)render()}),50)} // echtes Produktbild im Hintergrund, eigenes Foto bleibt immer

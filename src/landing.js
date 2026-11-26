@@ -5,6 +5,18 @@ import '@fontsource/caveat/500.css';
 import './styles/main.css';
 import { initContent } from './cms/content.js';
 import { illustration } from './lib/art.js';
+/* Passender Einstieg für Werbung (138): Wer über eine Anzeige mit utm_campaign=weihnachten… kommt, sieht Überschrift, Unterzeile und Knopf zum Versprechen der Anzeige,
+   und die Show beginnt bei „Passende Ideen“. Eigene Schlüssel kampagne.*, damit das CMS die Texte getrennt überschreiben kann. Läuft vor initContent(). */
+const CAMPAIGN={weihnachten:{show:1,t:{
+  'hero.h11':['kampagne.weihnachten.h1','Deine Wunschliste für *Weihnachten*'],
+  'hero.p2':['kampagne.weihnachten.p2','Schreib deine Wünsche auf und teile sie mit einem Link. Wishtale schlägt dir passende Ideen vor, und deine Familie sieht, was schon reserviert ist, damit nichts doppelt unter dem Baum liegt.'],
+  'hero.cta':['kampagne.weihnachten.cta','Weihnachtswunschliste anlegen'],
+}}};
+const campaign=(()=>{const c=(new URLSearchParams(location.search).get('utm_campaign')||'').toLowerCase();return Object.keys(CAMPAIGN).find(k=>c.startsWith(k))})();
+if(campaign){
+  for(const [key,[nk,txt]] of Object.entries(CAMPAIGN[campaign].t)){const el=document.querySelector(`[data-edit="${key}"]`);if(!el)continue;el.dataset.edit=nk;el.innerHTML=txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*([^*]+)\*/g,'<em>$1</em>')}
+  document.body.dataset.campaign=campaign;
+}
 
 document.querySelectorAll('.art[data-kind]').forEach(el=>el.insertAdjacentHTML('afterbegin',illustration(el.dataset.kind)));
 
@@ -48,7 +60,7 @@ document.querySelectorAll('.art[data-kind]').forEach(el=>el.insertAdjacentHTML('
   let x0=null;const st=show.querySelector('.lp-stage');
   st.addEventListener('pointerdown',e=>{x0=e.clientX});
   st.addEventListener('pointerup',e=>{if(x0===null)return;const dx=e.clientX-x0;x0=null;if(Math.abs(dx)>40){stop();go(cur+(dx<0?1:-1))}});
-  go(0);
+  go(campaign?CAMPAIGN[campaign].show||0:0);
 })();
 
 /* Geschichte: Schritt für Schritt einblenden, sobald er sichtbar wird. Ohne JavaScript bleibt alles sichtbar. */
@@ -86,6 +98,10 @@ import('./lib/promo.js').then(async({loadPromo,safeUrl})=>{
 /* Statistik: Aufruf der Seite und Klicks auf die Knöpfe zur App. UTM-Kürzel aus der Adresse reisen in den Links zur App mit, damit neue Konten einer Aktion zugeordnet werden können. */
 import('./lib/track.js').then(({track,utmFromUrl})=>{
   track('view',{once:true});
+  // 138: ob jemand weiterliest (halbe Seite) und welche Folie der Show angetippt wird, je Seitenaufruf einmal
+  const onScroll=()=>{if(scrollY+innerHeight>=document.documentElement.scrollHeight*0.5){track('step',{label:'scroll50',once:true});removeEventListener('scroll',onScroll)}};
+  addEventListener('scroll',onScroll,{passive:true});
+  document.querySelectorAll('.lp-show [role=tab]').forEach((t,i)=>t.addEventListener('click',()=>track('step',{label:'show:'+(i+1),once:true})));
   const u=utmFromUrl(),qs=new URLSearchParams();
   for(const k of Object.keys(u))qs.set('utm_'+k,u[k]);
   document.querySelectorAll('a[href^="app/"]').forEach(a=>{
