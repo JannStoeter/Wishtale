@@ -354,3 +354,50 @@ export async function searchOtto(q, { fetchJson, read = inspect, load = fetchIma
   }));
   return out;
 }
+
+/*
+ * Name zu einem Link, den wir nicht lesen können (Jann, 2026-11-26: „Wunsch von amazon.de“ war ein Buch, „LEGO 10460 Kleinkinder
+ * Ausstellen Geburtstag“ war die DUPLO-Bauplatte). Amazon lesen wir nicht, und manche Shops (Thalia) sperren das Lesen. Die Suchmaschine
+ * kennt die Seite aber meist: Wir suchen nach der Produktnummer aus der Adresse (ASIN bei Amazon, sonst der Teil mit Ziffern) und nehmen
+ * nur einen Treffer, dessen Adresse genau diese Nummer enthält. Übernommen wird nur die Titelzeile (bei Amazon nie ein Bild).
+ */
+const AMZ_HOST = /(^|\.)(amazon\.[a-z.]+|amzn\.(to|eu))$/i;
+const SHOP_TAIL = /\s*(?::\s*amazon\.[a-z.]+.*|\|\s*[^|]{2,40}$|\s[–—-]\s*(?:thalia|hugendubel|weltbild|buecher\.de|bücher\.de|otto|ebay|kaufland|mediamarkt|saturn|galaxus|osiander|jpc|douglas|zalando|ikea|lego(?:\.com)?)[^–—-]{0,30}$)/i;
+
+/** Kürzt lange Shop-Titel auf den Produktnamen: „LEGO DUPLO Classic Bauplatte in Grün 10460 Spielzeug ab 1 Jahr für Jungen …“ wird
+ *  „LEGO DUPLO Classic Bauplatte in Grün 10460“. Geschnitten wird nur, wenn davor mindestens drei Wörter stehen. */
+export function shortTitle(raw) {
+  let t = String(raw || '').replace(/^amazon\.[a-z.]+\s*:\s*/i, '').replace(SHOP_TAIL, '').replace(/\s*(\.\.\.|…)$/, '').replace(/\s+/g, ' ').trim();
+  const cuts = [/,\s/, /\s[|–—]\s/, /\s-\s/, /\s(?:spielzeug\s+|geschenk\s+)?ab\s+\d+(?:[.,]\d+)?\s*(?:jahr|jahre|jahren|monat|monaten|j\.)\b/i, /\s(?:für|fuer)\s+(?:jungen|mädchen|maedchen|kinder|kleinkinder|babys?|damen|herren|männer|frauen|erwachsene)\b/i, /\s(?:geschenk|geschenkidee)\b/i];
+  for (const c of cuts) { const m = c.exec(t); if (m && t.slice(0, m.index).trim().split(/\s+/).length >= 3) t = t.slice(0, m.index).trim(); }
+  const w = t.split(/\s+/);
+  return (w.length > 14 ? w.slice(0, 14).join(' ') : t).replace(/[\s,;:–—-]+$/, '').slice(0, 120);
+}
+
+/** Produktnummer aus der Adresse: ASIN bei Amazon, sonst der längste Adressteil mit Ziffern (Thalia „A1068913389“, ISBN …). */
+export function linkKey(link) {
+  let u; try { u = new URL(link); } catch { return null; }
+  const h = u.hostname.replace(/^www\./, '').toLowerCase();
+  if (AMZ_HOST.test(h)) { const a = (u.pathname + '/').match(/\/(?:dp|gp\/product|gp\/aw\/d|exec\/obidos\/asin)\/([A-Z0-9]{10})(?:[/?]|$)/i); return a ? { amazon: true, id: a[1].toUpperCase(), host: h } : null; }
+  const parts = u.pathname.split('/').map(p => p.replace(/\.(html?|php|aspx?)$/i, '')).filter(p => /\d{4,}/.test(p) && p.length <= 80);
+  const id = parts.map(p => (p.match(/[a-z]*\d[\da-z]{4,}/gi) || []).sort((a, b) => b.length - a.length)[0] || '').sort((a, b) => b.length - a.length)[0];
+  return id && id.length >= 6 ? { amazon: false, id, host: h } : null;
+}
+
+export async function titleForLink(link, { fetchJson } = {}) {
+  const k = linkKey(link);
+  if (!k) return null;
+  const has = r => { try { const u = new URL(r.url); return (u.pathname + u.search).toLowerCase().includes(k.id.toLowerCase()) && (k.amazon ? /(^|\.)amazon\./i.test(u.hostname) : u.hostname.replace(/^www\./, '').toLowerCase() === k.host); } catch { return false; } };
+  const queries = k.amazon ? ['site:amazon.de ' + k.id, k.id + ' amazon'] : ['site:' + k.host + ' ' + k.id, k.id];
+  for (const q of queries) {
+    const json = await webJson(q, { fetchJson });
+    const r = (json?.web?.results || []).find(x => has(x) && x.title);
+    if (!r) continue;
+    let path = ''; try { path = new URL(r.url).pathname; } catch { /* ohne Adresse */ }
+    const t = shortTitle(k.amazon ? fullTitle(String(r.title).replace(/^Amazon\.[a-z.]+\s*:\s*/i, '').replace(/:\s*Amazon\.[a-z.]+.*$/i, ''), path) : r.title);
+    if (t.split(/\s+/).length < 2 || /^(amazon|thalia)/i.test(t) && t.split(/\s+/).length < 3) continue;
+    const img = k.amazon ? '' : String(r?.thumbnail?.original || '');
+    return { title: t, host: k.host, imageUrl: /^https:\/\//i.test(img) && !STOCK.test(host(img)) ? img.slice(0, 600) : '', via: 'suche' };
+  }
+  return null;
+}

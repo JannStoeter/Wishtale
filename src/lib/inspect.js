@@ -27,3 +27,14 @@ export function summary(p) {
   if (p.size) bits.push(p.size);
   return bits.join(' · ');
 }
+
+/** Name zu einem Link, den Wishtale nicht liest (Amazon): Titelzeile der Suchmaschine zur Produktnummer, oder null. Höchstens 8 Sekunden. */
+export async function linkTitle(link) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session || !link) return null;
+  try {
+    const r = await fetch('/api/inspect', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + session.access_token }, body: JSON.stringify({ titleFor: String(link).slice(0, 1000) }), signal: AbortSignal.timeout(8000) });
+    if (!r.ok) return null;
+    return (await r.json().catch(() => ({}))).title || null;
+  } catch { return null; }
+}

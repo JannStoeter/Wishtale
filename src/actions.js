@@ -15,7 +15,7 @@ import { guessCategory } from './lib/category.js';
 import { parseAmazonInput, searchUrl, normUrl } from './lib/shops.js';
 import { parsePinterest, parseInstagram, givePinConsent, revokePinConsent } from './lib/social.js';
 import { sb } from './lib/supabase.js';
-import { inspectLink, priceField, summary } from './lib/inspect.js';
+import { inspectLink, priceField, summary, linkTitle } from './lib/inspect.js';
 import { homeIdeasVisible, setHomeIdeasVisible } from './lib/homeideas.js';
 import { hidePromo } from './views/inspiration.js';
 import { track } from './lib/track.js';
@@ -174,7 +174,7 @@ function prepWish(f){
     if(wform()!==f)return false;
     if(!tEl.value.trim()){
       const r=S.ui.wr,name=(r&&r.cand&&r.cand.t)||nameFromLink((f.elements.link?.value||'').trim());
-      if(!name){tEl.classList.add('attn');tEl.focus();const st=f.querySelector('#wdup');if(st){st.hidden=false;st.textContent='Schreib kurz, was du dir wünschst, oder füge einen Link ein.'}return false}
+      if(!name){tEl.classList.add('attn');tEl.focus();const st=f.querySelector('#wdup');if(st){st.hidden=false;st.textContent=lk?'Den Namen konnten wir aus diesem Link nicht lesen. Schreib oben kurz, was es ist, der Link bleibt dabei.':'Schreib kurz, was du dir wünschst, oder füge einen Link ein.'}return false}
       tEl.value=name.slice(0,160);
     }
     return true;
@@ -273,8 +273,13 @@ async function readLinkNow(f,raw0){
     const r=await amazonRead(raw);
     if(r.error){say(r.error);return}
     f.elements.link.value=r.url;f.dataset.read=raw+'\n'+r.url;
-    if(r.title){const cand={t:r.title,q:r.title,price:null,src:'amazon'};showCand(cand,typed);candImage(cand);autoTake(cand);say('Der Amazon-Link ist übernommen, den Namen haben wir aus der Adresse gelesen. Amazon gibt keinen Preis heraus, darum sucht Wishtale ihn nach dem Speichern auf der Seite des Herstellers.')}
-    else{setRec({st:'none',msg:''});say(typed?'Der Amazon-Link ist gespeichert und gehört zu deinem Wunsch.':'Der Amazon-Link ist gespeichert. Trag oben noch kurz ein, was es ist, mehr ist nicht nötig.')}
+    // Die Adresse trägt oft nur Suchwörter („LEGO 10460 Kleinkinder Ausstellen Geburtstag“) oder gar keinen Namen. Den echten Produktnamen
+    // findet die Suchmaschine über die Produktnummer (ASIN), Amazon selbst lesen wir nicht (Jann, 2026-11-26).
+    say('Wir suchen den Namen zu diesem Amazon-Link …');
+    const found=await linkTitle(r.url);if(f.elements.link.value!==r.url)return;
+    const title=(found&&found.title)||r.title;
+    if(title){const cand={t:title,q:title,price:null,src:'amazon'};showCand(cand,typed);candImage(cand);autoTake(cand);say(`Der Amazon-Link ist übernommen${found?'':', den Namen haben wir aus der Adresse gelesen, prüf ihn kurz'}. Amazon gibt keinen Preis heraus, darum sucht Wishtale ihn nach dem Speichern bei anderen Shops.`)}
+    else{setRec({st:'none',msg:''});say(typed?'Der Amazon-Link ist gespeichert und gehört zu deinem Wunsch.':'Der Amazon-Link ist gespeichert. Den Namen konnten wir nicht finden, trag oben kurz ein, was es ist.')}
     return;
   }
   say('Wir lesen den Link …');setRec({st:'loading',t:typed,seq:(S.ui.wr?.seq||0)+1});
@@ -283,6 +288,7 @@ async function readLinkNow(f,raw0){
     const pf=priceField(p),cand={t:p.title.slice(0,160),q:p.title,price:pf?+pf.replace(',','.'):null,est:false,src:'link',size:p.size};
     showCand(cand,typed);if(p.imageUrl)candImage(cand,p.imageUrl);autoTake(cand);
     if(p.size&&f.elements.note&&!/gr(ö|oe)ße:/i.test(f.elements.note.value))f.elements.note.value=(f.elements.note.value.trim()?f.elements.note.value.trim()+'\n':'')+`Größe: ${p.size}`;
+    if(p.source==='suche'){say(`Die Seite lässt automatisches Lesen nicht zu, den Namen haben wir über die Suche gefunden: ${p.title}. Prüf ihn kurz, den Preis trägst du am besten selbst ein.`);return}
     say(`Link gelesen und übernommen: ${summary(p)}. Du kannst alles noch ändern, und der Preis im Shop kann sich ändern.${p.price&&p.currency&&p.currency!=='EUR'?' Der Preis steht nicht in Euro, bitte passe ihn an.':''}`);
   }catch(e){setRec({st:'none',msg:''});say(e.message||'Diese Seite konnten wir nicht lesen. Dein Wunsch und der Link bleiben trotzdem gespeichert.')}
  }
