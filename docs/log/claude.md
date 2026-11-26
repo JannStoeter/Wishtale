@@ -404,3 +404,9 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Tests, Bildschirmfoto Handy
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-26 · 131 · Nachtrag: Link zu wishtale.de in jedem Beitrag
+- Auftrag: Jann im Projekt-Chat („Wir sollten am Ende des Karussels oder der Reels immer irgendwie einen Link haben, auch wenn nur in der Beschreibung“)
+- Geändert: src/lib/iglink.js (neu, `withSiteLink()`), api/_lib/instagram.js (Beitrag und Reel bekommen beim Veröffentlichen die Adresse, falls sie fehlt), src/admin/instagram.js (beim Erstellen Abschlussfolie und Adresse, Hinweis unter der Bildunterschrift), src/admin/ideas.js (Texte nennen wishtale.de), tests/instagram.test.mjs
+- Geprüft: ESLint, Build, npm test (38 bestanden)
+- Datenbank und Dienste: keine

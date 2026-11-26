@@ -76,7 +76,7 @@ export const IDEAS = [
   { id: 'k-tante', group: 'Kinder', title: 'Karussell: Wenn die Tante fragt, was sich dein Kind wünscht', desc: 'Säule „Familien-Alltag“: Info-Welt mit Interessen, Größe, „Hat schon“ und „Lieber nicht“, damit auch Geschenke ohne Wunsch passen.', fields: [['kind', 'Name des Kindes (Beispiel)', 'Emil']],
     build: v => ({
       title: 'Wenn die Tante fragt, was sich dein Kind wünscht',
-      caption: `Die Tante fragt, was sich ${v.kind} wünscht, und du weißt es gerade selbst nicht so genau? In Wishtale steht neben den Wünschen auch, was ${v.kind} gerade mag, welche Größe ${v.kind} trägt, was schon da ist und was lieber nicht kommen soll. So passt auch ein Geschenk, das auf keiner Liste stand.\n\nDen Link findest du in der Bio.\n\n${TAGS} #geschenkideenkinder #familienleben #weihnachtenmitkindern`,
+      caption: `Die Tante fragt, was sich ${v.kind} wünscht, und du weißt es gerade selbst nicht so genau? In Wishtale steht neben den Wünschen auch, was ${v.kind} gerade mag, welche Größe ${v.kind} trägt, was schon da ist und was lieber nicht kommen soll. So passt auch ein Geschenk, das auf keiner Liste stand.\n\nDen Link findest du in der Bio und unter wishtale.de.\n\n${TAGS} #geschenkideenkinder #familienleben #weihnachtenmitkindern`,
       slides: [
         S({ eyebrow: 'Familien-Alltag', title: 'Wenn die Tante fragt, was sich dein Kind wünscht, und du es selbst nicht weißt' }),
         S({ type: 'screen', scene: 'kinfo', eyebrow: `Über ${v.kind}`, title: `Im Wishtale steht, was ${v.kind} gerade mag` }),
@@ -88,7 +88,7 @@ export const IDEAS = [
   { id: 'r-zweit', format: 'reel', group: 'Kinder', title: 'Reel: Zu zweit eine Liste pflegen', desc: 'Säule „So geht’s“: das zweite Elternteil verwaltet mit, beide sehen, was reserviert ist. Highlight „Kind-Konto“.', fields: [['kind', 'Name des Kindes (Beispiel)', 'Emil']],
     build: v => ({
       title: 'Reel: Zu zweit eine Liste pflegen',
-      caption: `Ihr pflegt die Wunschliste für ${v.kind} zu zweit, und keiner kauft doppelt. Das zweite Elternteil bekommt einen Einladungslink, danach könnt ihr beide Wünsche eintragen und seht, was schon reserviert ist. ${v.kind} sieht davon nichts.\n\nDen Link findest du in der Bio.\n\n${TAGS} #elternsein #familienleben #weihnachtenmitkindern`,
+      caption: `Ihr pflegt die Wunschliste für ${v.kind} zu zweit, und keiner kauft doppelt. Das zweite Elternteil bekommt einen Einladungslink, danach könnt ihr beide Wünsche eintragen und seht, was schon reserviert ist. ${v.kind} sieht davon nichts.\n\nDen Link findest du in der Bio und unter wishtale.de.\n\n${TAGS} #elternsein #familienleben #weihnachtenmitkindern`,
       slides: [
         S({ eyebrow: 'Für Eltern', title: 'Ihr pflegt die Liste zu zweit, und keiner kauft doppelt' }),
         S({ type: 'screen', scene: 'kind', eyebrow: 'Mitverwalten', title: 'Das zweite Elternteil verwaltet mit', sub: 'Die Einladung ist ein Link, den du selbst verschickst.' }),
@@ -99,7 +99,7 @@ export const IDEAS = [
   { id: 'k-alter12', group: 'Kinder', title: 'Karussell: Ideen für 1- bis 2-Jährige', desc: 'Säule „Ideen nach Alter“, zum Speichern. Nur Arten von Spielzeug, keine Produkte und keine Links, darum ohne „Anzeige“. Ideen vor dem Posten selbst prüfen.', fields: [],
     build: () => ({
       title: 'Ideen für 1- bis 2-Jährige',
-      caption: 'Geschenke für Kinder zwischen einem und zwei Jahren, die nicht nach zwei Tagen in der Ecke liegen: Dinge zum Stapeln und Sortieren, feste Pappbilderbücher, etwas zum Schieben und Laufen, einfache Instrumente und Spielzeug für die Badewanne.\n\nSpeichere dir den Beitrag, und trag deine Favoriten in die Wunschliste deines Kindes ein. Den Link findest du in der Bio.\n\n' + TAGS + ' #geschenkideenkinder #kleinkind #spielideen #weihnachtenmitkindern',
+      caption: 'Geschenke für Kinder zwischen einem und zwei Jahren, die nicht nach zwei Tagen in der Ecke liegen: Dinge zum Stapeln und Sortieren, feste Pappbilderbücher, etwas zum Schieben und Laufen, einfache Instrumente und Spielzeug für die Badewanne.\n\nSpeichere dir den Beitrag, und trag deine Favoriten in die Wunschliste deines Kindes ein. Den Link findest du in der Bio und unter wishtale.de.\n\n' + TAGS + ' #geschenkideenkinder #kleinkind #spielideen #weihnachtenmitkindern',
       slides: [
         S({ eyebrow: 'Ideen nach Alter', title: 'Geschenke für 1- bis 2-Jährige, die nicht in der Ecke liegen', sub: 'Zum Speichern für die nächste Frage aus der Familie.' }),
         S({ type: 'chips', eyebrow: 'Stapeln und Sortieren', title: 'Dinge, die man stapeln, stecken und wieder ausräumen kann', chips: ['*Stapelbecher', 'Steckwürfel', 'Holzpuzzle mit Knöpfen'] }),
@@ -112,7 +112,7 @@ export const IDEAS = [
   { id: 'k-alter4', group: 'Kinder', title: 'Karussell: Was Kinder mit vier wirklich bespielen', desc: 'Säule „Ideen nach Alter“: nach Spielart statt nach Marke, ohne Produkte und ohne Links. Ideen vor dem Posten selbst prüfen.', fields: [],
     build: () => ({
       title: 'Was Kinder mit vier wirklich bespielen',
-      caption: 'Mit vier wird gespielt, als wäre alles echt: Kaufladen, Verkleiden und Puppenküche, dazu Bauen, Malen und Basteln, die ersten einfachen Brettspiele und alles, was sich bewegt. Wer nach der Spielart schaut statt nach der Marke, findet leichter etwas, das lange bleibt.\n\nSpeichere dir den Beitrag, und trag deine Favoriten in die Wunschliste deines Kindes ein. Den Link findest du in der Bio.\n\n' + TAGS + ' #geschenkideenkinder #kindergartenkind #spielideen #weihnachtenmitkindern',
+      caption: 'Mit vier wird gespielt, als wäre alles echt: Kaufladen, Verkleiden und Puppenküche, dazu Bauen, Malen und Basteln, die ersten einfachen Brettspiele und alles, was sich bewegt. Wer nach der Spielart schaut statt nach der Marke, findet leichter etwas, das lange bleibt.\n\nSpeichere dir den Beitrag, und trag deine Favoriten in die Wunschliste deines Kindes ein. Den Link findest du in der Bio und unter wishtale.de.\n\n' + TAGS + ' #geschenkideenkinder #kindergartenkind #spielideen #weihnachtenmitkindern',
       slides: [
         S({ eyebrow: 'Ideen nach Alter', title: 'Was Kinder mit vier wirklich bespielen', sub: 'Nach Spielart sortiert, nicht nach Marke.' }),
         S({ type: 'chips', eyebrow: 'So tun als ob', title: 'Rollenspiele, bei denen alles echt ist', chips: ['*Kaufladen', 'Verkleidungskiste', 'Kinderküche'] }),
@@ -172,7 +172,7 @@ export const IDEAS = [
   { id: 'r-reservieren', format: 'reel', group: 'Erklären', title: 'Reel: Schenken, ohne etwas zu verraten', desc: 'Zeigt das Reservieren aus Sicht der Gäste und warum die beschenkte Person nichts davon sieht.', fields: [['name', 'Name der beschenkten Person', 'Mia'], ['helper', 'Name der schenkenden Person', 'Lena']],
     build: v => ({
       title: 'Reel: Schenken, ohne etwas zu verraten',
-      caption: `${v.helper} öffnet ${gen(v.name)} Wunschliste, reserviert einen Wunsch, und alle anderen sehen, dass er vergeben ist. Gekauft ist er danach mit einem Tipp direkt im Shop, und nur ${v.name} sieht davon nichts, und am Geburtstag ist es trotzdem eine Überraschung.\n\nSo schenkt niemand doppelt und niemand muss heimlich in einer Gruppe nachfragen. Den Link findest du in der Bio.\n\n${TAGS} #geschenkideen #überraschung`,
+      caption: `${v.helper} öffnet ${gen(v.name)} Wunschliste, reserviert einen Wunsch, und alle anderen sehen, dass er vergeben ist. Gekauft ist er danach mit einem Tipp direkt im Shop, und nur ${v.name} sieht davon nichts, und am Geburtstag ist es trotzdem eine Überraschung.\n\nSo schenkt niemand doppelt und niemand muss heimlich in einer Gruppe nachfragen. Den Link findest du in der Bio und unter wishtale.de.\n\n${TAGS} #geschenkideen #überraschung`,
       slides: [
         S({ eyebrow: 'Die Überraschung bleibt', title: 'Von einer Wunschliste schenken, ohne etwas zu verraten' }),
         S({ type: 'screen', scene: 'gast', eyebrow: 'Der Link', title: `${v.helper} öffnet ${gen(v.name)} Link und sieht, was noch frei ist` }),
@@ -185,7 +185,7 @@ export const IDEAS = [
   { id: 'r-kind', format: 'reel', group: 'Kinder', title: 'Reel: Eine Wunschliste für dein Kind', desc: 'Für Eltern bis Weihnachten: Kind-Konto, Wunschzettel abfotografieren, Link in den Familienchat. Zeigt kein echtes Kind.', fields: [['kind', 'Name des Kindes (Beispiel)', 'Emil']],
     build: v => ({
       title: 'Reel: Eine Wunschliste für dein Kind',
-      caption: `Der Wunschzettel klebt am Kühlschrank, und Oma fragt zum dritten Mal, was ${v.kind} sich wünscht? Mit Wishtale bekommt dein Kind eine eigene Wunschliste mit eigenem Link. Den gemalten Zettel fotografierst du einfach ab, und die Familie reserviert, ohne dass etwas doppelt kommt.\n\nDen Link findest du in der Bio.\n\n${TAGS} #wunschzettel #weihnachtenmitkindern #geschenkideenkinder #familienleben #mamaleben #papaleben`,
+      caption: `Der Wunschzettel klebt am Kühlschrank, und Oma fragt zum dritten Mal, was ${v.kind} sich wünscht? Mit Wishtale bekommt dein Kind eine eigene Wunschliste mit eigenem Link. Den gemalten Zettel fotografierst du einfach ab, und die Familie reserviert, ohne dass etwas doppelt kommt.\n\nDen Link findest du in der Bio und unter wishtale.de.\n\n${TAGS} #wunschzettel #weihnachtenmitkindern #geschenkideenkinder #familienleben #mamaleben #papaleben`,
       slides: [
         S({ eyebrow: 'Für Eltern', title: 'Eine eigene Wunschliste für dein Kind', sub: 'Damit Oma, Opa und die Patentante nicht mehr raten müssen.' }),
         S({ type: 'screen', scene: 'kind', eyebrow: 'Kind-Konto', title: 'Jedes Kind bekommt eine eigene Liste mit eigenem Link', sub: 'Du pflegst sie, und das zweite Elternteil kann mitverwalten.' }),
@@ -198,7 +198,7 @@ export const IDEAS = [
   { id: 'r-speichern', format: 'reel', group: 'Erklären', title: 'Reel: Wünsche aus jedem Shop', desc: 'Link einfügen, und Name, Preis und Bild sind da, oder direkt in Wishtale suchen. Für Leute, die schon Wunschlisten in Shops haben.', fields: [],
     build: () => ({
       title: 'Reel: Wünsche aus jedem Shop',
-      caption: 'Du hast etwas Schönes entdeckt und willst es nicht vergessen? Kopier den Link in Wishtale, und Name, Preis und Bild sind sofort da. Oder du suchst direkt in Wishtale, und am Ende steht alles auf einer Liste, egal aus welchem Shop.\n\nDen Link findest du in der Bio.\n\n' + TAGS + ' #onlineshopping',
+      caption: 'Du hast etwas Schönes entdeckt und willst es nicht vergessen? Kopier den Link in Wishtale, und Name, Preis und Bild sind sofort da. Oder du suchst direkt in Wishtale, und am Ende steht alles auf einer Liste, egal aus welchem Shop.\n\nDen Link findest du in der Bio und unter wishtale.de.\n\n' + TAGS + ' #onlineshopping',
       slides: [
         S({ eyebrow: 'Kennst du das', title: 'Du siehst etwas Schönes und willst es nicht vergessen' }),
         S({ type: 'screen', scene: 'eingeben', eyebrow: 'Mit Link', title: 'Link einfügen, und Name, Preis und Bild sind da' }),
@@ -210,7 +210,7 @@ export const IDEAS = [
   { id: 'k-schritte', group: 'Erklären', title: 'Karussell: In fünf Schritten zum Wishtale', desc: 'Sieben Folien mit Handy-Ansichten: eintragen, suchen, Geschmack, teilen, reservieren. Gut zum Anpinnen oben im Profil.', fields: [],
     build: () => ({
       title: 'In fünf Schritten zum Wishtale',
-      caption: 'So legst du dein Wishtale an: Wünsche eintragen oder suchen, kurz erzählen, was dir gefällt und was du schon hast, und den Link teilen. Wer dir etwas schenkt, reserviert, und du bekommst nichts doppelt.\n\nSpeichere dir den Beitrag, falls du später anfangen möchtest. Den Link findest du in der Bio.\n\n' + TAGS + ' #wunschzettel #anleitung',
+      caption: 'So legst du dein Wishtale an: Wünsche eintragen oder suchen, kurz erzählen, was dir gefällt und was du schon hast, und den Link teilen. Wer dir etwas schenkt, reserviert, und du bekommst nichts doppelt.\n\nSpeichere dir den Beitrag, falls du später anfangen möchtest. Den Link findest du in der Bio und unter wishtale.de.\n\n' + TAGS + ' #wunschzettel #anleitung',
       slides: [
         S({ eyebrow: 'Anleitung', title: 'In fünf Schritten zum eigenen Wishtale', sub: 'Wisch nach links, es dauert nur ein paar Minuten.' }),
         S({ type: 'screen', scene: 'eingeben', eyebrow: 'Schritt 1', title: 'Trag deine Wünsche ein, mit Link oder ohne' }),
@@ -224,7 +224,7 @@ export const IDEAS = [
   { id: 'k-ideen', group: 'Erklären', title: 'Karussell: Wenn dir nichts einfällt', desc: 'Erklärt die Ideen von Wishtale: passend zum Geschmack, immer als Vorschlag erkennbar, nur was du übernimmst, landet auf der Liste.', fields: [],
     build: () => ({
       title: 'Wenn dir nichts einfällt',
-      caption: 'Was wünsche ich mir eigentlich? Wenn dir nichts einfällt, hat Wishtale Ideen, die zu dem passen, was du magst und was du schon hast. Sie stehen immer getrennt von deinen eigenen Wünschen, und auf deine Liste kommt nur, was du selbst übernimmst.\n\nDen Link findest du in der Bio.\n\n' + TAGS + ' #geschenkideen #wunschzettel',
+      caption: 'Was wünsche ich mir eigentlich? Wenn dir nichts einfällt, hat Wishtale Ideen, die zu dem passen, was du magst und was du schon hast. Sie stehen immer getrennt von deinen eigenen Wünschen, und auf deine Liste kommt nur, was du selbst übernimmst.\n\nDen Link findest du in der Bio und unter wishtale.de.\n\n' + TAGS + ' #geschenkideen #wunschzettel',
       slides: [
         S({ eyebrow: 'Kennst du das', title: 'Was wünsche ich mir eigentlich?', sub: 'Die Frage kommt jedes Jahr, meistens kurz vor Weihnachten.' }),
         S({ type: 'screen', scene: 'geschmack', eyebrow: 'Zuerst du', title: 'Du erzählst, was dir gefällt und was du schon hast' }),
@@ -293,7 +293,7 @@ export const IDEAS = [
     fields: [['name', 'Name der Person', 'Jonas'], ['helper', 'Name der schenkenden Person', 'Lena'], ['interests', 'Interessen (mit Komma)', 'Kaffee brühen, Kochen, Einrichten'], ['brands', 'Marken (mit Komma)', 'Hario, Fellow'], ['wishes', 'Wünsche (mit Komma)', 'Handkaffeemühle, Wasserkocher, Kochkurs'], ['owned', 'Schon vorhanden (mit Komma)', 'Siebträgermaschine, Gusseisenpfanne'], ['pick', 'Das schenkt die Person', 'die Waage und den Kurs'], ['tale', 'Kleine Geschichte (Zitat)', 'liebt guten Kaffee. Für den perfekten Espresso nimmt sich die Person am Sonntag gern etwas mehr Zeit.']],
     build: v => ({
       title: `So lebt dein Tale: ${v.name}`,
-      caption: `${v.helper} sucht ein Geschenk für ${v.name}. Wishtale zeigt, was sich ${v.name} wünscht, was ${v.name} schon hat und was dazu noch passen könnte, und für ${v.name} bleibt es trotzdem eine Überraschung.\n\nWie sieht dein Wishtale aus? Den Link findest du in der Bio.\n\n${TAGS} #geschenkideen`,
+      caption: `${v.helper} sucht ein Geschenk für ${v.name}. Wishtale zeigt, was sich ${v.name} wünscht, was ${v.name} schon hat und was dazu noch passen könnte, und für ${v.name} bleibt es trotzdem eine Überraschung.\n\nWie sieht dein Wishtale aus? Den Link findest du in der Bio und unter wishtale.de.\n\n${TAGS} #geschenkideen`,
       slides: [
         S({ eyebrow: 'So lebt dein Tale', title: `Lernen wir ${v.name} kennen`, sub: `${v.name} hat ein Wishtale angelegt, und auf den nächsten Folien siehst du, wie daraus ein Geschenk wird, das wirklich passt.` }),
         S({ type: 'chips', eyebrow: 'Der Anfang', title: `Zuerst erzählt ${v.name}, was ${v.name} gefällt`, sub: 'Ein paar freundliche Fragen am Anfang, ganz ohne Formular.', chips: [...split(v.interests).map((c, i) => (i ? '' : '*') + c), ...split(v.brands)] }),
@@ -308,7 +308,7 @@ export const IDEAS = [
   { id: 'mehr', title: 'Mehr als eine Wunschliste', desc: 'Erklärt in sechs Folien, was Wishtale von einer normalen Wunschliste unterscheidet.', fields: [],
     build: () => ({
       title: 'Mehr als eine Wunschliste',
-      caption: 'Eine Wunschliste sagt dir, was du dir wünschst, aber sie erzählt nicht, warum und was du längst zu Hause hast. Wishtale erzählt auch das, und deine Freunde finden Geschenke, die wirklich passen.\n\nDen Link findest du in der Bio.\n\n' + TAGS,
+      caption: 'Eine Wunschliste sagt dir, was du dir wünschst, aber sie erzählt nicht, warum und was du längst zu Hause hast. Wishtale erzählt auch das, und deine Freunde finden Geschenke, die wirklich passen.\n\nDen Link findest du in der Bio und unter wishtale.de.\n\n' + TAGS,
       slides: [
         S({ eyebrow: 'Wishtale', title: 'Mehr als eine Wunschliste', sub: 'Neben deinen Wünschen erzählt Wishtale, was dich ausmacht.' }),
         S({ type: 'chips', eyebrow: 'Dein Geschmack', title: 'Deine Interessen und Lieblingsmarken', sub: 'Daran erkennen deine Freunde, was zu dir passt.', chips: ['*Kaffee brühen', 'Wandern', 'Lesen', 'Hario', 'Patagonia'] }),
@@ -321,7 +321,7 @@ export const IDEAS = [
   { id: 'kennt', title: 'Die Wunschliste, die dich kennt', desc: 'Kurzer, allgemeiner Beitrag für neue Leute: Was ist Wishtale und wofür ist es gut?', fields: [],
     build: () => ({
       title: 'Die Wunschliste, die dich kennt',
-      caption: 'Jede Wunschliste zeigt, was du dir wünschst. Deine zeigt auch, wer du bist.\n\nLege dein Wishtale an und lass deine Freunde das passende Geschenk finden. Den Link findest du in der Bio.\n\n' + TAGS,
+      caption: 'Jede Wunschliste zeigt, was du dir wünschst. Deine zeigt auch, wer du bist.\n\nLege dein Wishtale an und lass deine Freunde das passende Geschenk finden. Den Link findest du in der Bio und unter wishtale.de.\n\n' + TAGS,
       slides: [
         S({ eyebrow: 'Wishtale', title: 'Die Wunschliste, die dich kennt', sub: 'Eine kleine Geschichte über dich, für Geschenke, die wirklich passen.' }),
         S({ eyebrow: 'Das Problem', title: 'Zum Geburtstag heißt es oft: Ich wünsche mir nichts Besonderes', sub: 'Und deine Freunde stehen ratlos vor dem Regal.' }),
@@ -333,7 +333,7 @@ export const IDEAS = [
   { id: 'fragen', title: 'Drei Fragen für bessere Geschenke', desc: 'Lehrreicher Beitrag mit drei Fragen, die jedem Geschenk helfen.', fields: [],
     build: () => ({
       title: 'Drei Fragen für bessere Geschenke',
-      caption: 'Drei Fragen, und das nächste Geschenk sitzt: Was macht die Person in ihrer freien Zeit, was hat sie schon, und was möchte sie lieber nicht bekommen?\n\nIn deinem Wishtale beantwortest du sie einmal, und deine Freunde finden alles auf einer Seite. Den Link findest du in der Bio.\n\n' + TAGS,
+      caption: 'Drei Fragen, und das nächste Geschenk sitzt: Was macht die Person in ihrer freien Zeit, was hat sie schon, und was möchte sie lieber nicht bekommen?\n\nIn deinem Wishtale beantwortest du sie einmal, und deine Freunde finden alles auf einer Seite. Den Link findest du in der Bio und unter wishtale.de.\n\n' + TAGS,
       slides: [
         S({ eyebrow: 'Geschenke-Tipp', title: 'Drei Fragen, und das nächste Geschenk sitzt', sub: 'Mit diesen Fragen wird aus Raten ein Treffer.' }),
         S({ eyebrow: 'Frage 1', title: 'Was macht die Person am liebsten in der freien Zeit?', sub: 'Daran erkennst du, wofür sich Freude lohnt.' }),
@@ -345,7 +345,7 @@ export const IDEAS = [
   { id: 'xmas', title: 'Weihnachten ohne Rätselraten', desc: 'Saisonbeitrag mit Countdown bis Heiligabend (die Tage werden beim Erstellen berechnet).', fields: [],
     build: () => ({
       title: 'Weihnachten ohne Rätselraten',
-      caption: `Noch ${daysToXmas()} Tage bis Heiligabend. Genug Zeit, um ein Wishtale anzulegen und deinen Liebsten das Schenken leichter zu machen.\n\nDen Link findest du in der Bio.\n\n${TAGS} #weihnachten #weihnachtsgeschenke`,
+      caption: `Noch ${daysToXmas()} Tage bis Heiligabend. Genug Zeit, um ein Wishtale anzulegen und deinen Liebsten das Schenken leichter zu machen.\n\nDen Link findest du in der Bio und unter wishtale.de.\n\n${TAGS} #weihnachten #weihnachtsgeschenke`,
       slides: [
         S({ eyebrow: 'Weihnachten', title: `Noch ${daysToXmas()} Tage bis Heiligabend`, sub: 'Genug Zeit für Geschenke, die wirklich passen.' }),
         S({ eyebrow: 'Der Plan', title: 'Leg dein Wishtale an und teile den Link', sub: 'Deine Familie und deine Freunde sehen sofort, was dir gefällt und was du schon hast.' }),
@@ -372,7 +372,7 @@ export const IDEAS = [
       const world = cat(WORLD_OF_CAT[x.cat] || 'wohnen').n, ad = !/^n/i.test(String(v.anzeige || 'ja'));
       return {
         title: `Wunsch-Idee: ${x.t}`, product: x.id,
-        caption: `${ad ? 'Anzeige | ' : ''}${v.intro}:\n\n${x.t}${x.brand ? ` von ${x.brand}` : ''}. ${(x.pros || []).slice(0, 2).join(' ')}\n\nVielleicht ist das ein Wunsch für deinen Wunschzettel? In deinem Wishtale sammelst du alles, worüber du dich freuen würdest, und deine Freunde finden es ohne Nachfragen. Den Link findest du in der Bio.${ad ? '\n\nAls Amazon-Partner verdiene ich an qualifizierten Verkäufen.' : ''}\n\n${TAGS} #wunschzettel${ad ? ' #werbung' : ''}`,
+        caption: `${ad ? 'Anzeige | ' : ''}${v.intro}:\n\n${x.t}${x.brand ? ` von ${x.brand}` : ''}. ${(x.pros || []).slice(0, 2).join(' ')}\n\nVielleicht ist das ein Wunsch für deinen Wunschzettel? In deinem Wishtale sammelst du alles, worüber du dich freuen würdest, und deine Freunde finden es ohne Nachfragen. Den Link findest du in der Bio und unter wishtale.de.${ad ? '\n\nAls Amazon-Partner verdiene ich an qualifizierten Verkäufen.' : ''}\n\n${TAGS} #wunschzettel${ad ? ' #werbung' : ''}`,
         slides: [
           S({ eyebrow: 'Wünsch dir was', title: v.intro, sub: 'Eine Idee für deinen Wunschzettel.' }),
           S({ type: 'photo', photoKey: x.a, eyebrow: x.brand || world, title: x.t, sub: x.price ? `Bei Amazon zuletzt ca. ${x.price.toFixed(2).replace('.', ',')} € gesehen (Stand ${PRICE_DATE}), der Preis kann abweichen.` : 'Den aktuellen Preis siehst du bei Amazon.' }),
@@ -394,7 +394,7 @@ export function buildCampaignPost(c, ctx = {}) {
   const head = c.headline || c.title;
   return {
     title: `Aktion: ${c.title}`, campaignId: c.id,
-    caption: `${head}\n\n${c.body || ''}\n\nLege dein Wishtale an und teile den Link mit deinen Liebsten. Den Link findest du in der Bio.\n\n${TAGS} #wunschzettel${prods.length ? ' #werbung' : ''}`.replace(/\n\n\n/g, '\n\n'),
+    caption: `${head}\n\n${c.body || ''}\n\nLege dein Wishtale an und teile den Link mit deinen Liebsten. Den Link findest du in der Bio und unter wishtale.de.\n\n${TAGS} #wunschzettel${prods.length ? ' #werbung' : ''}`.replace(/\n\n\n/g, '\n\n'),
     slides: [
       S({ eyebrow: 'Wünsch dir was', title: head, sub: '' }),
       ...(c.body ? [S({ eyebrow: 'Dein Wunschzettel', title: 'So geht das mit deinem Wishtale', sub: c.body })] : []),

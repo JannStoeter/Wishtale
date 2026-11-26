@@ -5,6 +5,7 @@ import { drawSlide, loadFonts, blank, blob, TYPES, THEMES, FORMATS } from './can
 import { makeReel } from './reel.js';
 import { IDEAS } from './ideas.js';
 import { SCENES } from './scenes.js';
+import { withSiteLink } from '../lib/iglink.js';
 import { PHOTOS, photoUrl } from '../data/photos.js';
 
 const STATUS = { draft: 'Entwurf', ready: 'Bereit', posted: 'Gepostet' };
@@ -86,7 +87,7 @@ export async function mount(el) {
      <div class="fld"><label for="p-fmt">Format</label><select id="p-fmt" data-p="format" class="sel">${Object.entries(FORMATS).map(([k, v]) => `<option value="${k}" ${(cur.format || 'post') === k ? 'selected' : ''}>${v.label}</option>`).join('')}</select></div>
      <div class="fld"><label for="p-st">Status</label><select id="p-st" data-p="status" class="sel">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}" ${cur.status === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
      <div class="fld"><label for="p-sc">Geplant für</label><input id="p-sc" data-p="scheduled_for" type="datetime-local" class="inp" value="${toLocal(cur.scheduled_for)}"></div>
-     <div class="fld wide"><label for="p-c">Bildunterschrift</label><textarea id="p-c" data-p="caption" class="ta" rows="9" maxlength="2200">${esc(cur.caption)}</textarea><p class="hint"><span id="cc">${cur.caption.length}</span>/2200 Zeichen</p></div></div></div>
+     <div class="fld wide"><label for="p-c">Bildunterschrift</label><textarea id="p-c" data-p="caption" class="ta" rows="9" maxlength="2200">${esc(cur.caption)}</textarea><p class="hint"><span id="cc">${cur.caption.length}</span>/2200 Zeichen. Fehlt „wishtale.de“, ergänzt Wishtale beim Veröffentlichen eine Zeile mit der Adresse.</p></div></div></div>
      ${slideForm()}${reviseBox()}</div>
     <div><div class="canvaswrap ${cur.format && cur.format !== 'post' ? 'tallc' : ''}"><canvas id="cv" role="img" aria-label="Vorschau der Folie ${sel + 1}"></canvas></div>
      <div class="thumbs ${cur.format && cur.format !== 'post' ? 'tallc' : ''}">${cur.slides.map((_, i) => `<button class="thumb ${i === sel ? 'on' : ''}" data-a="pick" data-i="${i}" aria-label="Folie ${i + 1} auswählen"><canvas></canvas></button>`).join('')}<button class="thumb add" data-a="add" aria-label="Folie hinzufügen">+</button></div>
@@ -176,7 +177,7 @@ export async function mount(el) {
   /** Ohne Assistent: ein schlichter Entwurf aus der Idee, den du von Hand weiterbearbeitest. */
   const plainDraft = (text, goal) => {
     const t = String(text).trim();
-    return { title: t.slice(0, 60), caption: `${t}\n\nIn deinem Wishtale sammelst du alles, worüber du dich freuen würdest, und deine Freunde finden es ohne Nachfragen. Den Link findest du in der Bio.\n\n#wishtale #wunschliste #geschenkideen #wunschzettel`,
+    return { title: t.slice(0, 60), caption: `${t}\n\nIn deinem Wishtale sammelst du alles, worüber du dich freuen würdest, und deine Freunde finden es ohne Nachfragen. Den Link findest du in der Bio und unter wishtale.de.\n\n#wishtale #wunschliste #geschenkideen #wunschzettel`,
       slides: [{ ...blank('cover'), eyebrow: 'Wünsch dir was', title: t.slice(0, 110) }, { ...blank('chips'), eyebrow: 'Dein Wishtale', title: goal === 'bestehend' ? 'Damit deine Freunde das Passende für dich finden' : 'Alles, was dich ausmacht, auf einer Seite', chips: ['*Deine Wünsche', 'Interessen', 'Lieblingsmarken', 'Schon vorhanden', 'Bitte nicht'] }, blank('cta')] };
   };
   const token = async () => (await sb.auth.getSession()).data.session.access_token;
@@ -234,6 +235,9 @@ export async function mount(el) {
   };
   const createFrom = async (i, v) => {
     const out = i.build(v, ctx);
+    // Jeder Beitrag und jedes Reel endet mit der Abschlussfolie samt Adresse, die Bildunterschrift nennt wishtale.de
+    if ((v.format || 'post') !== 'story' && out.slides.length && out.slides[out.slides.length - 1].type !== 'cta') out.slides.push({ ...blank('cta') });
+    out.caption = (v.format || 'post') === 'story' ? out.caption : withSiteLink(out.caption);
     cur = { title: out.title, status: 'draft', caption: out.caption, slides: out.slides, scheduled_for: null, image_urls: [], format: v.format || 'post' };
     resetReel();
     mode = 'list'; idea = null; sel = 0; imgs.clear(); draw(); status(); toast('Die Folien sind erstellt. Jetzt kannst du alles bearbeiten.');
@@ -245,7 +249,7 @@ export async function mount(el) {
       busy = 'ai'; draw();
       try {
         const out = aiOk() ? await askAI({ mode: 'draft', idea: idea0, format, goal }) : plainDraft(idea0, goal);
-        cur = { title: out.title, status: 'draft', caption: out.caption, slides: out.slides, scheduled_for: null, image_urls: [], format }; own = false; mode = 'list'; sel = 0; imgs.clear(); resetReel(); undo = null;
+        cur = { title: out.title, status: 'draft', caption: format === 'story' ? out.caption : withSiteLink(out.caption), slides: out.slides, scheduled_for: null, image_urls: [], format }; own = false; mode = 'list'; sel = 0; imgs.clear(); resetReel(); undo = null;
         toast(aiOk() ? 'Fertig. Lies alles in Ruhe durch und passe an, was nicht passt.' : 'Der Entwurf steht. Schreibe ihn jetzt von Hand fertig.');
       } catch (err) { toast('Das hat nicht geklappt: ' + (err.message || err), true); }
       finally { busy = ''; draw(); if (cur) status(); }

@@ -12,3 +12,5 @@ Umsetzung: Neue Folienart „App-Ansicht (Handy)“ (`src/admin/scenes.js`, auf 
 Nachtrag (Jann, 25.11.2026): „Bei Vorschau Gäste müssen wir eine slide haben dass es direkt im Shop gekauft werden kann“. Neue Szene `kaufen` in `k-gaeste` und `r-reservieren`.
 
 Nachtrag (Jann, 25.11.2026): Plan „Wishtale für Kinder“ eingearbeitet, zehn weitere Ideen mit Kinder-Schwerpunkt, Gründer-Beitrag „Ihr habt gefragt, ich habe es gebaut“, Highlight-Storys.
+
+Nachtrag (Jann, 26.11.2026): „Wir sollten am Ende des Karussels oder der Reels immer irgendwie einen Link haben, auch wenn nur in der Beschreibung“. Jede Bildunterschrift nennt wishtale.de (`withSiteLink()`, auch serverseitig beim Veröffentlichen), Beiträge und Reels enden mit der Abschlussfolie samt Adresse.
