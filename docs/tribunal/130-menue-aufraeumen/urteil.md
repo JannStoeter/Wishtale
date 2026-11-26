@@ -3,8 +3,10 @@ topic: 130-menue-aufraeumen
 status: entschieden
 option: umsetzen
 datum: 2026-11-25
-umgesetzt: offen
+umgesetzt: 871f5a3
 ---
 **Jann im Projekt:** Die Profile kommen im Menü nach oben, der Rest wird geclustert.
 
 Umsetzung (`src/views/menu.js`): Oben „Profile“ mit eigenem Profil, Kind-Konten und Listen für besondere Anlässe (Haken beim aktiven Profil), darunter zwei leise Knöpfe „+ Kind-Konto“ und „+ Liste für einen Anlass“. Danach vier Gruppen als weiße Karten ohne Unterzeilen: Wunschliste (Meine Wünsche, Aus jedem Shop speichern, Wunschzettel hochladen), Über mich (Profil, Geschmack schärfen, Inspiration, Vorschläge ein- oder ausblenden), Teilen und Schenken (Link teilen, Wer sieht was, Jemanden einladen, Verschenkt und bekommen), Konto (Mein Plan, Einstellungen, Wishtale als App, Hilfe und FAQ, Abmelden). Der Eintrag „Social Media“ entfällt, er liegt im Profil.
+
+Nachtrag (Jann, 26.11.2026: „Mach Social Media ruhig wieder als Gruppe … damit man direkt sieht, dass ich Konten verbinden kann“): eigene Gruppe „Social Media“ mit „Instagram und Pinterest verbinden“, führt zum Abschnitt im Profil.
