@@ -59,7 +59,7 @@ async function boot(){
       setTimeout(()=>toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`),500);
     }else if(adopted){
       history.replaceState(null,'',location.pathname+'#wuensche');
-      // Neues Konto ohne Profil: die leere Wunschliste mit ihrem einen Feld ist der erste Bildschirm, ohne Fenster darüber (136)
+      // Neues Konto ohne Profil: die leere Wunschliste mit ihrem einen Feld ist der erste Bildschirm, ohne Fenster darüber (137)
       if(adopted&&adopted.wishes)setTimeout(()=>toast(savedMsg(adopted.wishes)),500);
       else if(adopted==='quick'){if(fromLink&&!viaOAuth(session.user))setTimeout(()=>toast('Deine E-Mail ist bestätigt. Schreib jetzt einfach deinen ersten Wunsch auf.'),500)}
       else setTimeout(()=>toast(fromLink&&!viaOAuth(session.user)?'Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.':'Dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.'),400);

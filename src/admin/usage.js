@@ -8,21 +8,49 @@ const DEV = { mobile: 'Handy', desktop: 'Computer', tablet: 'Tablet', unbekannt:
 const day = d => new Date(d + 'T12:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
 
 export async function mount(el) {
-  let days = 30, data = null, err = '';
+  let days = 1, src = '', data = null, err = '';
   const load = async () => {
     el.innerHTML = head() + '<p class="muted">Wird geladen …</p>';
-    const [{ data: d, error }, dv] = await Promise.all([sb.rpc('admin_usage', { p_days: days }), sb.rpc('admin_usage_devices', { p_days: days })]);
-    if (error) { err = error.message; data = null; } else { data = d; data.byArea = dv.error ? null : dv.data; err = ''; }
+    const [{ data: d, error }, dv, fn] = await Promise.all([sb.rpc('admin_usage', { p_days: days }), sb.rpc('admin_usage_devices', { p_days: days }), sb.rpc('admin_funnel', { p_days: days, p_source: src || null })]);
+    if (error) { err = error.message; data = null; } else { data = d; data.byArea = dv.error ? null : dv.data; data.fn = fn.error ? null : fn.data; err = ''; }
     draw();
   };
-  const head = () => `<div class="head"><div><h1>Auswertung</h1><p class="muted">So wird Wishtale genutzt. Die Zahlen kommen ohne Cookies und ohne Wiedererkennung einzelner Menschen zustande.</p></div>
-    <div class="seg" role="group" aria-label="Zeitraum">${[7, 30, 90].map(n => `<button class="btn ${days === n ? 'pri' : 'sec'} sm" data-days="${n}">${n} Tage</button>`).join(' ')}</div></div>`;
+  const head = () => `<div class="head"><div><h1>Auswertung</h1><p class="muted">${days === 1 ? `Heute seit Mitternacht, Stand ${new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr. ` : ''}So wird Wishtale genutzt. Die Zahlen kommen ohne Cookies und ohne Wiedererkennung einzelner Menschen zustande.</p></div>
+    <div class="seg" role="group" aria-label="Zeitraum">${[1, 7, 30, 90].map(n => `<button class="btn ${days === n ? 'pri' : 'sec'} sm" data-days="${n}">${n === 1 ? 'Heute' : n + ' Tage'}</button>`).join(' ')}</div></div>`;
   const bars = (rows, key, label) => {
     const max = Math.max(1, ...rows.map(r => +r[key]));
     return `<div class="bars" role="img" aria-label="${label}">${rows.map(r => `<span class="cbar" title="${day(r.d)}: ${nf(r[key])}"><i style="height:${Math.max(2, Math.round(+r[key] / max * 100))}%"></i></span>`).join('')}</div>
      <div class="barsx"><span>${day(rows[0].d)}</span><span>${day(rows[rows.length - 1].d)}</span></div>`;
   };
   const table = (title, rows, cols) => `<section class="card"><h2>${title}</h2>${rows.length ? `<table><tbody>${rows.map(r => `<tr>${cols.map((c, i) => `<td ${i ? 'style="text-align:right"' : ''}>${c(r)}</td>`).join('')}</tr>`).join('')}</tbody></table>` : '<p class="muted">Noch keine Daten.</p>'}</section>`;
+  const ERR = { exists: 'E-Mail schon registriert', password: 'Passwort zu kurz oder zu einfach', email: 'E-Mail ungültig', ratelimit: 'Zu viele Mails in kurzer Zeit', network: 'Keine Verbindung', other: 'Anderer Fehler' };
+  const CTA = l => { const [w, z] = String(l).split(':'); return `${{ kopfzeile: 'Kopfzeile', start: 'Einstieg', seite: 'Seite' }[w] || w} → ${{ start: 'Wishtale erstellen', anmelden: 'Anmelden', registrieren: 'Registrieren', app: 'App' }[z] || z || 'App'}`; };
+  const funnel = F => {
+    const s = F.steps;
+    const steps = [
+      ['Seite besucht', s.landing, 'Landingpage oder Ratgeber'],
+      ['Hauptknopf geklickt', s.cta, 'Wishtale erstellen, Anmelden oder Registrieren'],
+      ['Einrichtung gestartet', s.start, ''],
+      ['Vorname eingegeben', s.name, ''],
+      ['Konto-Seite gesehen', s.register_view, 'Hier entscheidet sich, ob jemand ein Konto anlegt.'],
+      ['Registrierung abgeschickt', s.submit + s.google, `${nf(s.submit)} mit E-Mail, ${nf(s.google)} mit Google`],
+      ['„Schau in dein Postfach“ gesehen', s.sent, 'Danach fehlt nur noch der Klick auf den Link in der Mail.'],
+      ['Neue Konten (bestätigt)', F.accounts, 'Aus der Datenbank, inklusive Google'],
+      ['Davon mit mindestens einem Wunsch', F.with_wish, ''],
+    ];
+    const top = Math.max(1, ...steps.map(x => +x[1] || 0));
+    let worst = -1, wv = 101;
+    steps.forEach(([, n], i) => { if (i && i < 7 && steps[i - 1][1] >= 5) { const p = n / steps[i - 1][1] * 100; if (p < wv) { wv = p; worst = i; } } });
+    const opts = ['', ...F.sources.map(x => x.source)];
+    if (src && !opts.includes(src)) opts.push(src);
+    return `<section class="card"><div class="head" style="margin:0 0 8px"><h2 style="margin:0">Wo Besucher abspringen</h2>
+      <label class="muted" style="display:flex;gap:6px;align-items:center">Herkunft <select class="inp sm" data-src style="width:auto">${opts.map(o => `<option value="${esc(o)}" ${o === src ? 'selected' : ''}>${o ? esc(o) + ` (${nf((F.sources.find(x => x.source === o) || {}).visitors)})` : 'Alle'}</option>`).join('')}</select></label></div>
+     <ol class="funnel">${steps.map(([l, n, h], i) => `<li${i === worst ? ' class="fworst"' : ''}><div class="frow"><span>${esc(l)}</span><b>${nf(n)}</b></div><div class="fbar"><i style="width:${Math.min(100, Math.round(n / top * 100))}%"></i></div><small class="muted">${i ? `${pct(n, steps[i - 1][1])} vom Schritt davor` : ''}${h ? (i ? ' · ' : '') + esc(h) : ''}</small></li>`).join('')}</ol>
+     ${worst > 0 ? `<p class="hint"><b>Größter Verlust:</b> zwischen „${esc(steps[worst - 1][0])}“ und „${esc(steps[worst][0])}“, hier gehen ${Math.round(100 - wv)} % verloren.</p>` : ''}
+     <p class="hint">Bei der Einrichtung wählten ${nf(s.quick)} „Direkt Wünsche aufschreiben“ und ${nf(s.profile)} „Erst mein Profil einrichten“. Schritte innerhalb eines Tages gehören zusammen, über Tage hinweg erkennt Wishtale niemanden wieder. Konten werden der Herkunft über das Kürzel utm_source zugeordnet.</p>
+     ${F.errors.length ? `<p class="hint"><b>Fehler bei der Registrierung:</b> ${F.errors.map(e => `${esc(ERR[e.kind] || e.kind)} (${nf(e.n)})`).join(', ')}</p>` : ''}
+     ${F.ctas.length ? `<p class="hint"><b>Geklickte Knöpfe:</b> ${F.ctas.map(c => `${esc(CTA(c.label))} (${nf(c.visitors)})`).join(', ')}</p>` : ''}</section>`;
+  };
   const draw = () => {
     if (err) { el.innerHTML = head() + `<div class="banner warn2" role="alert"><b>Die Auswertung konnte nicht geladen werden.</b> ${esc(err)}<br>Falls die Datenbank-Änderung <code>0011_usage.sql</code> noch fehlt, wende sie zuerst an.</div>`; bind(); return; }
     const f = data.funnel, t = data.totals;
@@ -37,17 +65,17 @@ export async function mount(el) {
     const top = Math.max(1, f.visitors, f.accounts);
     el.innerHTML = head() + `
     <div class="stats">${[['Besucher', f.visitors], ['Neue Konten', f.accounts], ['Mit erstem Wunsch', f.with_wish], ['Neue Wünsche', t.wishes_period], ['Gast-Aufrufe', t.guest_views], ['Reservierungen', t.reserved]].map(([l, n]) => `<div class="stat"><b>${nf(n)}</b><span>${l}</span></div>`).join('')}</div>
-    <section class="card"><h2>Der Weg vom Besuch zum Wunsch</h2>
+    ${data.fn ? funnel(data.fn) : `<section class="card"><h2>Der Weg vom Besuch zum Wunsch</h2>
      <ol class="funnel">${steps.map(([l, n, h], i) => `<li><div class="frow"><span>${esc(l)}</span><b>${nf(n)}</b></div><div class="fbar"><i style="width:${Math.min(100, Math.round(n / top * 100))}%"></i></div><small class="muted">${i ? `${pct(n, steps[i - 1][1])} vom Schritt davor` : ''}${h ? (i ? ' · ' : '') + esc(h) : ''}</small></li>`).join('')}</ol>
-     <p class="hint">Bei der Einrichtung wählten ${nf(f.quick)} „Direkt Wünsche aufschreiben“ und ${nf(f.profile)} „Erst mein Profil einrichten“. Besucher, die „Do Not Track“ nutzen, werden nicht gezählt, die Zahlen sind deshalb etwas niedriger als die Wirklichkeit.</p></section>
+     <p class="hint">Bei der Einrichtung wählten ${nf(f.quick)} „Direkt Wünsche aufschreiben“ und ${nf(f.profile)} „Erst mein Profil einrichten“. Besucher, die „Do Not Track“ nutzen, werden nicht gezählt, die Zahlen sind deshalb etwas niedriger als die Wirklichkeit.</p></section>`}
     ${data.byArea && data.byArea.links ? (() => { const L = data.byArea.links; return `<section class="card"><h2>Geteilte Links</h2>
      <div class="stats">${[['Geöffnet', L.opens], ['Verschiedene Menschen', L.visitors], ['Davon am Handy', L.visitors ? pct(L.mobile, L.visitors) : '–'], ['Alle Gastaufrufe', L.guest_all]].map(([l, n]) => `<div class="stat"><b>${typeof n === 'number' ? nf(n) : n}</b><span>${l}</span></div>`).join('')}</div>
-     ${bars(L.daily, 'n', 'Geöffnete geteilte Links pro Tag')}
+     ${days > 1 ? bars(L.daily, 'n', 'Geöffnete geteilte Links pro Tag') : ''}
      <p class="hint">Gezählt wird, wie oft jemand über einen geteilten Link (wishtale.de/w/…) eine Wunschliste geöffnet hat. Links aus der Zeit vor dem 22.11.2026 und direkt aufgerufene Gastansichten zählen nur unter „Alle Gastaufrufe“. Menschen mit „Do Not Track“ fehlen, Admins zählen nicht mit.</p></section>`; })() : ''}
-    <div class="grid2">
+    ${days > 1 ? `<div class="grid2">
      <section class="card"><h2>Besucher pro Tag</h2>${bars(data.daily, 'visitors', 'Besucher pro Tag')}</section>
      <section class="card"><h2>Neue Konten pro Tag</h2>${bars(data.daily, 'signups', 'Neue Konten pro Tag')}</section>
-    </div>
+    </div>` : ''}
     <div class="grid2">
      ${table('Woher die Besucher kommen', data.sources, [r => esc(r.source), r => nf(r.visitors)])}
      ${table('Woher die neuen Konten kommen', data.account_sources, [r => esc(r.source), r => nf(r.accounts)])}
@@ -69,6 +97,9 @@ export async function mount(el) {
      <li><b>Was nicht gemessen wird:</b> Wer die Seite nach einer Woche wieder besucht, ist für uns ein neuer Besucher. Das schützt die Privatsphäre, macht aber „Wer kommt zurück?“ unscharf. Dafür helfen die Konten: Wie viele Wünsche legen sie an?</li></ul></section>`;
     bind();
   };
-  const bind = () => { el.querySelectorAll('[data-days]').forEach(b => { b.onclick = () => { days = +b.dataset.days; load(); }; }); };
+  const bind = () => {
+    el.querySelectorAll('[data-days]').forEach(b => { b.onclick = () => { days = +b.dataset.days; load(); }; });
+    const sel = el.querySelector('[data-src]'); if (sel) sel.onchange = () => { src = sel.value; load(); };
+  };
   await load();
 }

@@ -48,7 +48,7 @@ const kidText=st=>{const n=esc(S.me.name||'das Kind');const T={
  alts:{t:'Und wenn den Schenkenden gar nichts einfällt?',h:`Dann freut sich ${n} vielleicht über einen Gutschein oder einen gemeinsamen Ausflug.`},
 };return T[st.k]||{t:st.t,h:st.h}};
 const STEPS_ON=()=>STEPS.filter(x=>worldsOn()||x.k!=='cats');
-// Mit Konto ist die Einrichtung freiwillig und beginnt direkt bei den Interessen (136). Ohne Konto führt #start inzwischen sofort zur Registrierung.
+// Mit Konto ist die Einrichtung freiwillig und beginnt direkt bei den Interessen (137). Ohne Konto führt #start inzwischen sofort zur Registrierung.
 export const steps=()=>S.auth.user?STEPS_ON():[NAME_STEP,CHOICE_STEP,...STEPS_ON()];
 export function Start(){
   const list0=steps(),anon=!S.auth.user;

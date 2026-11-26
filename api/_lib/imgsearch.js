@@ -73,6 +73,7 @@ export async function searchOfficialImage(query, { fetchJson, read = inspect, lo
  * Herstellerseite, dann die Bildersuche. Ohne guten Treffer null, dann bleibt das Symbol.
  */
 export async function imageForWish({ t, q, brand, link, img } = {}, deps = {}) {
+  q = await realName(t, q, link, deps); // Amazon-Wunsch mit eigenem, ungenauem Namen („Messerset“): echter Produktname aus der ASIN
   const read = deps.read || inspect, load = deps.load || fetchImage;
   // Treffer muss zum Wunsch oder zum erkannten Produktnamen passen (deutsch „Bewegungsmelder“ oder englisch „Motion Sensor“)
   const check = (title, site) => fits(t || q, title, site, brand) || (!!q && q !== t && fits(q, title, site, brand));
@@ -82,7 +83,7 @@ export async function imageForWish({ t, q, brand, link, img } = {}, deps = {}) {
   if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
     try { const p = await read(link); if (p?.imageUrl) return { ...(await load(p.imageUrl)), source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
   }
-  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(t, deps); if (o?.image) return { ...o.image, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
+  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(q || t, deps); if (o?.image) return { ...o.image, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
   if (!look) return null;
   // Bild der Seite, die die Produkterkennung schon gefunden hat (Herstellerseite), dann braucht es keine neue Suche
   if (img && /^https:\/\//i.test(img) && !STOCK.test(host(img))) { try { const im = await load(img); if (await look(im)) return { ...im, via: 'erkannt' }; } catch { /* weiter */ } }
@@ -231,12 +232,13 @@ const eur = p => (p && p.price && (!p.currency || p.currency === 'EUR') && p.pri
  * (fits und mindestens 70 Prozent der Wörter). Nur Euro. Ohne sicheren Treffer null.
  */
 export async function priceForWish({ t, q, brand, link } = {}, deps = {}) {
+  q = await realName(t, q, link, deps);
   const read = deps.read || inspect;
   if (link && /^https:\/\//i.test(link) && !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
     try { const p = await read(link); const price = eur(p); if (price) return { price, source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
     if (!deps.searchAfterLink) return null; // der eigene Link hat Vorrang: hat die Seite keinen Preis, raten wir nicht über andere Seiten
   }
-  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(t, deps); if (o?.price) return { price: o.price, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
+  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(q || t, deps); if (o?.price) return { price: o.price, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
   const query = clean(q || t);
   if (!query) return null;
   const json = await webJson(query, deps);
@@ -433,3 +435,10 @@ export async function ottoHit(t, { fetchJson, read = inspect, load = fetchImage 
 }
 /** Kurzer Suchbegriff aus Marke und Modellnummer, wenn der Name eine hat („LEGO 10460“), sonst null. */
 export const modelQuery = t => { const w = clean(t).split(' '), d = w.filter(x => /\d{3,}/.test(x)); return d.length && w.length > d.length + 1 ? [w[0], ...d].join(' ') : null; };
+
+/** Bei Amazon-Links ohne erkannten Namen: der echte Produktname über die ASIN (titleForLink), sonst bleibt q, wie es ist. */
+async function realName(t, q, link, deps = {}) {
+  if (q || !link || !/(^|\.)(amazon\.|amzn\.)/i.test(host(link))) return q;
+  const r = await titleForLink(link, deps).catch(() => null);
+  return r?.title && r.title.toLowerCase() !== String(t || '').toLowerCase() ? r.title : q;
+}

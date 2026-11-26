@@ -128,7 +128,7 @@ export function route(){
   else if(!anon&&h==='neues-passwort'){S.ui.view='recovery'}
   else if(anon&&h==='demo'){setDemo(true);history.replaceState(null,'',location.pathname+'#wuensche');S.ui.view='wuensche'}
   else if(anon&&h==='start'){
-    // Einstieg ohne Abfrage (136): „Wunschliste anlegen“ führt zur Registrierung, Google zuerst. Danach geht es in die leere Wunschliste mit Suche, Erkennung und Ideen.
+    // Einstieg ohne Abfrage (137): „Wunschliste anlegen“ führt zur Registrierung, Google zuerst. Danach geht es in die leere Wunschliste mit Suche, Erkennung und Ideen.
     setDemo(false);const d=ensureDraft();d.quick=true;saveState();
     S.ui.authTab='up';S.ui.view='login';
   }
@@ -150,6 +150,7 @@ export function route(){
   S.ui.menu=false;
   S.ui.modal=null;
   if(h==='start'&&anon)track('start',{once:true,path:'/app/'});
+  if(S.ui.view==='login'&&anon&&S.ui.authTab!=='forgot')track('step',{label:S.ui.authTab==='up'?'register_view':'login_view',once:true,path:'/app/'}); // Funnel: Konto-Seite gesehen
   if(S.ui.view==='gast'){ // Aufruf über den geteilten Link /w/<kürzel> trägt ?via=link, die Markierung verschwindet danach aus der Adresse (105)
     const via=new URLSearchParams(location.search).get('via')==='link';
     track('guest_view',{once:true,path:'/app/',label:via?'link':undefined});

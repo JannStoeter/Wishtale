@@ -99,7 +99,7 @@ const DRAFT_KEY='wishtale:draft';
 export const blankDraft=()=>({id:'draft',name:'',tone:2,interests:[],cats:[],brands:[],tries:[],nogos:[],alts:[],style:[],
  vis:{interests:'giver',cats:'giver',brands:'giver',tries:'giver',nogos:'giver',alts:'giver'},wishes:[],history:[],inbox:[],invited:[],about:''});
 export const draftHasData=()=>{const d=S.accounts.draft;return !!d&&(d.interests.length+d.cats.length+d.brands.length+d.tries.length+d.nogos.length+d.alts.length+(d.wishes||[]).length>0||!!d.name||!!d.quick)};
-/** Eigene Wunschliste ohne Konto (136): Die Wünsche liegen im Entwurf in diesem Browser, bis ein Konto angelegt wird. */
+/** Eigene Wunschliste ohne Konto (137): Die Wünsche liegen im Entwurf in diesem Browser, bis ein Konto angelegt wird. */
 export const guestDraft=()=>!S.auth.user&&S.ui.acct==='draft';
 export function ensureDraft(){
   if(!S.accounts.draft){

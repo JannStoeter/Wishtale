@@ -22,6 +22,17 @@ export function friendly(err) {
   return m || 'Das hat nicht geklappt. Bitte versuche es noch einmal.';
 }
 
+/** Grobe Art eines Fehlers bei der Registrierung für die Statistik (Funnel), nie die Meldung selbst. */
+export function errKind(err) {
+  const m = (err && (err.message || String(err))) || '', c = err && err.code;
+  if (/already registered|already been registered/i.test(m)) return 'exists';
+  if (/password should be at least|weak/i.test(m)) return 'password';
+  if (c === 'over_email_send_rate_limit' || /rate limit|too many/i.test(m)) return 'ratelimit';
+  if (/invalid.*email|unable to validate email/i.test(m)) return 'email';
+  if (/failed to fetch|network/i.test(m)) return 'network';
+  return 'other';
+}
+
 export const signIn = (email, password) => sb.auth.signInWithPassword({ email, password });
 /** Der Entwurf aus der Einrichtung reist im Konto mit. So geht nichts verloren, auch wenn der Bestätigungslink auf einem anderen Gerät oder in einem anderen Browser geöffnet wird. */
 const draftPayload = () => {

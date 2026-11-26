@@ -47,8 +47,8 @@ export function Login(){
   if(tab==='forgot')return Forgot(m,busy);
   const msg=m?`<div class="banner ${m.type==='ok'?'green':''}" role="status" style="margin-bottom:14px"><span>${esc(m.text)}</span></div>`:'';
   const err=S.auth.error?`<div class="banner" style="margin-bottom:14px"><span>${esc(S.auth.error)}</span></div>`:'';
-  const dr=tab==='up'&&draftHasData()&&!S.accounts.draft.quick?S.accounts.draft:null; // beim schnellen Einstieg kein Zusatztext (136)
-  const nw=S.accounts.draft&&S.accounts.draft.quick?(S.accounts.draft.wishes||[]).filter(w=>w.status==='offen'||w.status==='plan').length:0; // Wünsche ohne Konto kommen mit (136)
+  const dr=tab==='up'&&draftHasData()&&!S.accounts.draft.quick?S.accounts.draft:null; // beim schnellen Einstieg kein Zusatztext (137)
+  const nw=S.accounts.draft&&S.accounts.draft.quick?(S.accounts.draft.wishes||[]).filter(w=>w.status==='offen'||w.status==='plan').length:0; // Wünsche ohne Konto kommen mit (137)
   const note=dr?`<div class="banner green" role="status" style="margin-bottom:14px"><span>${dr.name?`Dein Wishtale ist fast fertig, ${esc(dr.name)}. `:'Dein Wishtale ist fast fertig. '}Lege jetzt ein Konto an, damit nichts verloren geht.</span></div>`:'';
   return `<div class="wrap"><div class="authcard">
    <p class="eyebrow">Wishtale</p>

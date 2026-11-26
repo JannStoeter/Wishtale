@@ -443,7 +443,22 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Zurücknehmen: git revert f69d1bc
 - Offen: Ob die Show die Klicks auf „Kostenlos Wunschliste anlegen“ erhöht, zeigt die Auswertung (Ereignis `cta`).
 
-## 2026-11-26 · 136 · Registrierung ohne Pflicht-Abfrage
+## 2026-11-26 · 134 · Nachtrag 3: echter Name für ungenaue Amazon-Wünsche
+- Auftrag: eigene Nachprüfung nach Nachtrag 2 (Jann: Bildquote verbessern)
+- Geändert: api/_lib/imgsearch.js (`realName()` in `imageForWish()`/`priceForWish()`), src/lib/imgfill.js (`img-tried8`), src/lib/pricefill.js (`price-tried3`), tests/linktitle.test.mjs
+- Geprüft: ESLint, Build, npm test (44 bestanden)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+
+
+## 2026-11-26 · 136 · Auswertung „Heute“ und Funnel bis zum Konto
+- Auftrag: Jann im Projekt, Auswertung für heute und sehen, wo Besucher vor dem Konto abspringen
+- Geändert: src/admin/usage.js, src/admin/admin.css, api/_lib/event.js (`step`, `:` in Labels), src/render.js, src/actions.js, src/lib/auth.js (`errKind()`), datenschutz.html (Abschnitt 8), supabase/migrations/0033_admin_funnel.sql
+- Geprüft: ESLint, Build, npm test, Abfrage der Funktion als lesendes SQL gegen die Datenbank
+- Datenbank und Dienste: 0033 (nur lesende Funktion), keine Cookies
+- Zurücknehmen: Merge-Commit reverten, `drop function public.admin_funnel(int, text)`
+
+## 2026-11-26 · 137 · Registrierung ohne Pflicht-Abfrage
 - Commits: siehe Pull Request (Branch: claude/project-thread-16kuo8)
 - Auftrag: Jann im Chat („Einstieg von Landing in die Wunschliste muss zack zack gehen“)
 - Geändert: src/render.js (`#start` → Registrierung), src/state.js (`draftHasData` mit `quick`), src/lib/auth.js (`quick` nur bei leerem Konto), src/main.js (kein Wunschfenster nach der Anmeldung), src/views/auth.js (kürzerer Text), src/views/profile.js und src/actions.js (Einrichtung mit Konto ohne Startwahl, „Später“), src/lib/steps.js und src/views/steps.js (Profil als zweiter Schritt, „Als Nächstes“), src/views/inspiration.js (Hinweis führt zur Einrichtung), src/styles/main.css

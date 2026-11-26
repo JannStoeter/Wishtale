@@ -55,3 +55,10 @@ test('modelQuery und Otto mit Marke und Modellnummer', async () => {
   assert.ok(hit && hit.image, 'großes Otto-Bild bleibt erhalten');
   assert.equal(seen.length, 2);
 });
+
+test('Amazon-Wunsch mit ungenauem Namen sucht mit dem echten Produktnamen', async () => {
+  const seen = [];
+  const fetchJson = async q => { seen.push(q); return q.startsWith('site:amazon.de') ? { web: { results: [{ url: 'https://www.amazon.de/x/dp/B0G1YAAAAA', title: 'WMF Messerset 6-teilig Spitzenklasse Plus : Amazon.de: Küche' }] } } : { web: { results: [] } }; };
+  await imageForWish({ t: 'Messerset', link: 'https://www.amazon.de/dp/B0G1YAAAAA' }, { fetchJson, read: async () => null, load: async () => null, look: async () => false });
+  assert.ok(seen.some(q => q.includes('WMF Messerset 6-teilig Spitzenklasse Plus')), seen.join(' | '));
+});

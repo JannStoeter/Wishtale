@@ -1797,7 +1797,7 @@ body.lp{background:#FFFDFA}
 @media(max-width:400px){.lp .lp-tabs button{padding:8px 10px;font-size:12.5px}}
 @media(prefers-reduced-motion:reduce){.lp .lp-slide.on{animation:none}.lp .lp-show.run .lp-tabs button.on i{animation:none}}
 
-/* Wunschliste ohne Konto: Hinweis zum Sichern (136) */
+/* Wunschliste ohne Konto: Hinweis zum Sichern (137) */
 .savehint{display:flex;gap:14px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:6px 0 16px}
 .savehint h2{font-size:17px;font-family:inherit;font-weight:600;margin:0 0 2px}
 .savehint p{margin:0;font-size:14.5px;color:var(--muted);max-width:52ch}

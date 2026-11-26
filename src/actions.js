@@ -44,7 +44,7 @@ import { ZmRow } from './views/zettel.js';
 import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
 import { guestRpc, guestToken } from './lib/remote.js';
-import { signIn, signUp, magicLink, signOut, friendly, resendSignup, resetPassword, setPassword, signInGoogle } from './lib/auth.js';
+import { signIn, signUp, magicLink, signOut, friendly, errKind, resendSignup, resetPassword, setPassword, signInGoogle } from './lib/auth.js';
 
 export const MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 export 
@@ -348,6 +348,7 @@ const A={
  next(){
   if(S.ui.view==='start'&&S.ui.step===1&&!S.auth.user)track('choice',{label:'profile',once:true,path:'/app/'});
   if(!S.auth.user&&S.ui.step===0&&!(S.me.name||'').trim()){toast('Magst du uns zuerst deinen Vornamen verraten?');document.getElementById('dn')?.focus();return}
+  if(!S.auth.user&&S.ui.view==='start'&&S.ui.step===0)track('step',{label:'name_ok',once:true,path:'/app/'});
   S.ui.step++;render(true)},prev(){S.ui.step--;render(true)},
  finish(){
   if(!S.auth.user){S.me.name=(S.me.name||'').trim();saveState();S.ui.step=0;location.hash='#registrieren';return}
@@ -398,7 +399,7 @@ const A={
  newpw(){S.ui.modal=null;location.hash='#neues-passwort'},
  authback(){S.ui.authSent=null;S.ui.authResent=null;S.ui.authMsg=null;render()},
  authtab(el){S.ui.authSent=null;S.ui.authMsg=null;location.hash=el.dataset.v==='up'?'#registrieren':'#anmelden'},
- google(){S.ui.authBusy=true;render();signInGoogle().then(({error})=>{if(error){S.ui.authBusy=false;S.ui.authMsg={type:'err',text:friendly(error)};render()}})},
+ google(){track('step',{label:S.ui.authTab==='up'?'google_up':'google_in',path:'/app/'});S.ui.authBusy=true;render();signInGoogle().then(({error})=>{if(error){S.ui.authBusy=false;S.ui.authMsg={type:'err',text:friendly(error)};render()}})},
  demo(){S.ui.authMsg=null;track('demo',{once:true,path:'/app/'});location.hash='#demo'},
  tologin(){S.ui.modal=null;S.ui.authMsg=null;location.hash='#start'},
  // Gast ohne Konto will ein eigenes Wishtale: UTM-Kürzel in die Adresse, damit signUp sie beim Konto speichert (Datenschutz Abschnitt 8)
@@ -409,7 +410,7 @@ const A={
  logout(){signOut().finally(()=>{location.hash='';location.reload()})},
  guestretry(){S.guest=null;route()},
 share(){
-  if(guestDraft()){S.ui.authMsg={type:'ok',text:'Leg schnell ein Konto an, dann bekommst du deinen Link zum Teilen. Deine Wünsche kommen mit.'};location.hash='#registrieren';return} // ohne Konto gibt es noch keinen Link (136)
+  if(guestDraft()){S.ui.authMsg={type:'ok',text:'Leg schnell ein Konto an, dann bekommst du deinen Link zum Teilen. Deine Wünsche kommen mit.'};location.hash='#registrieren';return} // ohne Konto gibt es noch keinen Link (137)
   markStep('share');markShared();
   // Echte Konten teilen den kurzen Link /w/<kürzel>: Er zeigt in WhatsApp und Co. eine Vorschau mit Namen und leitet zur Gastansicht (102)
   const url=S.auth.user&&S.me.handle&&!/^(localhost|127\.)/.test(location.hostname)?`${location.origin}/w/${S.me.handle}`:`${location.origin}${location.pathname}#p/${S.me.handle||S.ui.acct}`;
@@ -752,13 +753,14 @@ document.addEventListener('submit',e=>{
     const job=kind==='signin'?signIn(email,pw):kind==='signup'?signUp((fd.get('name')||'').trim(),email,pw):magicLink(email);
     job.then(({data,error})=>{
       S.ui.authBusy=false;
-      if(error){S.ui.authMsg={type:'error',text:friendly(error)};render();return}
+      if(error){if(kind==='signup')track('step',{label:'signup_err:'+errKind(error),path:'/app/'});S.ui.authMsg={type:'error',text:friendly(error)};render();return}
       // Schon registrierte Adresse: Supabase meldet keinen Fehler, schickt aber auch keine Mail
-      if(kind==='signup'&&data&&data.user&&data.user.identities&&data.user.identities.length===0){S.ui.authMsg={type:'error',text:friendly({message:'already registered'})};render();return}
+      if(kind==='signup'&&data&&data.user&&data.user.identities&&data.user.identities.length===0){track('step',{label:'signup_err:exists',path:'/app/'});S.ui.authMsg={type:'error',text:friendly({message:'already registered'})};render();return}
+      if(kind==='signup')track('step',{label:'signup_sent',path:'/app/'});
       if(kind==='signup'&&!data.session)S.ui.authSent={kind:'signup',email};
       else if(kind==='magic')S.ui.authSent={kind:'magic',email};
       render();
-    }).catch(e=>{S.ui.authBusy=false;S.ui.authMsg={type:'error',text:friendly(e)};render()});
+    }).catch(e=>{S.ui.authBusy=false;if(kind==='signup')track('step',{label:'signup_err:'+errKind(e),path:'/app/'});S.ui.authMsg={type:'error',text:friendly(e)};render()});
     return;
   }
   if(kind==='invitemake'){
