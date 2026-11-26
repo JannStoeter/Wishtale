@@ -2,7 +2,7 @@
 
 Diese Datei spiegelt Janns Urteile aus der Entwickler-Seite ins Repository, damit auch ChatGPT sie kennt. Sie gelten als Produktentscheidungen: Wer ihnen widerspricht, braucht ein neues, begründetes Tribunal. Claude aktualisiert sie beim Abgleich (Quelle ist die Tabelle `tribunal_verdicts`).
 
-Stand: 2026-11-25
+Stand: 2026-11-26
 
 ## Grundsätze des Produkts
 - **Kern bleibt frei:** Profil, Wunschliste, Gast-Link, anonymes Reservieren und Kind-Konten ohne Zahlenlimit. Darüber ziehen wir die Grenze nach Kosten: Der Katalog ist das kostenlose Niveau, KI-Funktionen gehören zu Plus.
@@ -119,6 +119,7 @@ Stand: 2026-11-25
 | 132 | Landingpage, nur Wünsche im Fokus | **Jann im Projekt:** „Beim Ankommen soll es nur um Wünsche gehen… alles andere beim Scrollen oder auf Click zu Rubriken“. Einstieg mit einem Knopf und Beispielliste, Rest als Rubriken, Hauptnavigation am Computer. | ja, `d77d966` |
 | 133 | Instagram meldet „API access blocked“ | **Jann im Projekt:** „Instagram api Access Blocked“. Sperre liegt bei Meta (Code 200, am 6.11. ging es noch). Fehlermeldung mit Code und Hinweis, Log mit fbtrace_id; Schritte in Meta bei Jann. | ja, `c5a4dc8` |
 | 134 | Namen, Bilder, Preise bei Links | **Jann im Projekt:** „„Wunsch von Amazon“ war eigentlich ein Buch … Warum heißt der falsch und hat kein Foto? Warum hat der keinen Preis?“ Name über die Produktnummer aus der Suche, nie mehr „Wunsch von …“, ältere Wünsche einmal repariert. | ja, `a7435b8` |
+| 135 | Einstieg als Show | **Jann im Chat:** „den Hero … als interaktives Modul was eine Liste zeigt, dann diese ‚Geschenkideen, die wirklich passen‘ und Kinderkonten“. Drei Reiter mit Wunschliste, passenden Ideen und Kind-Konto, ersetzt aus 132 „keine Vorführung mit Reitern“. | ja, `f69d1bc` |
 | 009 | Listen für besondere Anlässe | **Jann im Projekt:** Option A als eigene Funktion, aber im Menü statt im Fokus; Wünsche werden nicht getaggt, die eigene Liste bleibt der Kern. | ja, `5348918` (Migration 0032 eingespielt) |
 | 116 | Wünsche aus anderen Shops | **Jann im Projekt-Thread: Option A bauen und das Menü aufräumen.** Kurzbefehl am iPhone, Lesezeichen-Knopf am Rechner, neues Fenster „Aus jedem Shop speichern“, Menü neu gruppiert. Nachtrag: Hinweis am Computer und Chrome-Erweiterung (`extension/`), Store-Konto offen. Store-App offen. | ja, `cbaabc4` |
 

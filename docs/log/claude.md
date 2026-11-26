@@ -432,3 +432,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 
+
+## 2026-11-26 · 135 · Einstieg der Landingpage als Show
+- Commits: f69d1bc (Branch: main)
+- Auftrag: Jann im Chat („den Hero … als interaktives Modul … 2-4 Highlights in einer Show“)
+- Geändert: index.html (`.lp-show` mit Reitern und drei Folien, Schlüssel `show.*`), src/landing.js (Show-Steuerung, Caveat-Schrift), src/styles/main.css (`.lp-tabs`, `.lp-stage`, `.lp-slide`, `.lp-ideas`, `.lp-kids`), CLAUDE.md, docs/tribunal/135-einstieg-als-show/
+- Warum: Die passenden Ideen und die Kinder-Konten sollen beim Ankommen sichtbar sein, passend zur Anzeige in ChatGPT.
+- Geprüft: ESLint, Build, Ansicht 390 und 1280 px mit allen drei Folien, keine Fehler in der Konsole; nicht geprüft: echtes Gerät, axe
+- Datenbank und Dienste: keine (Eintrag in `tribunal_verdicts` steht noch aus)
+- Zurücknehmen: git revert f69d1bc
+- Offen: Ob die Show die Klicks auf „Kostenlos Wunschliste anlegen“ erhöht, zeigt die Auswertung (Ereignis `cta`).
