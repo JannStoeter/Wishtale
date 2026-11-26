@@ -28,3 +28,20 @@ test('Amazon-Wunsch: zuerst das Amazon-Bild über die ASIN', async () => {
   assert.equal(im.via, 'amazon');
   assert.equal(im.source, 'amazon.de');
 });
+
+import { parseAmazon } from '../api/_lib/inspect.js';
+import { priceForWish } from '../api/_lib/imgsearch.js';
+
+test('Amazon-Seite: Name, Preis und Bild, Captcha-Seite gibt null', () => {
+  const p = parseAmazon('<span id="productTitle"> BOSS Bottled 100 ml </span><div id="corePrice_feature_div"><span class="a-offscreen">54,95&nbsp;€</span></div>"hiRes":"https://m.media-amazon.com/images/I/71x.jpg"');
+  assert.equal(p.title, 'BOSS Bottled 100 ml');
+  assert.equal(p.price, 54.95);
+  assert.equal(p.imageUrl, 'https://m.media-amazon.com/images/I/71x.jpg');
+  assert.equal(parseAmazon('<title>Robot Check</title> captcha'), null);
+});
+
+test('Amazon-Wunsch: Preis zuerst von der Amazon-Seite', async () => {
+  const r = await priceForWish({ t: 'BOSS Bottled', link: 'https://www.amazon.de/dp/B000000001' }, { amazon: async () => ({ title: 'BOSS Bottled', price: 54.95 }), fetchJson: async () => ({ web: { results: [] } }) });
+  assert.equal(r.price, 54.95);
+  assert.equal(r.via, 'amazon');
+});
