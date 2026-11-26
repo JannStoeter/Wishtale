@@ -351,3 +351,49 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Tests, Bildschirmfotos Handy und Computer
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 131 · Instagram-Erklärserie
+- Auftrag: Jann im Projekt-Chat („baue gute reels und Posts und Storys die wir direkt über unser cms raushauen können“)
+- Geändert: src/admin/scenes.js (neu, App-Szenen als gezeichnetes Handy), src/admin/canvas.js (Folienart `screen`), src/admin/instagram.js (Auswahl der Szene, Assistent überspringt Handy-Folien), src/admin/ideas.js (elf neue Ideen), CLAUDE.md
+- Geprüft: ESLint, Build, alle neuen Ideen in Beitrag, Story und Reel mit Playwright gerendert und angesehen
+- Datenbank und Dienste: keine, nichts veröffentlicht
+
+## 2026-11-25 · 132 · Landingpage, nur Wünsche im Fokus
+- Auftrag: Jann im Projekt-Chat („Beim Ankommen soll es nur um Wünsche gehen“), Nachtrag zu Sprungmarken bei Google
+- Geändert: index.html (Einstieg, Rubriken, Navigation, `alternateName`), src/landing.js (Vorführung raus, Rubriken per Anker), src/styles/main.css (Block `body.lp`), CLAUDE.md
+- Geprüft: ESLint, Build, Bildschirmfotos Handy und Computer
+- Datenbank und Dienste: keine (bestehende Textänderungen in `site_content` für schritte.p3/p4 bleiben gültig)
+- Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-25 · 131 · Nachtrag: Kaufen im Shop für Gäste
+- Auftrag: Jann im Projekt-Chat („Bei Vorschau Gäste müssen wir eine slide haben dass es direkt im Shop gekauft werden kann“)
+- Geändert: src/admin/scenes.js (Szene `kaufen`: reservierter Wunsch mit „Bei Amazon ansehen“, „Bei Otto“, „Anzeige“), src/admin/ideas.js (`k-gaeste` und `r-reservieren` zeigen sie)
+- Geprüft: ESLint, Build, Folien gerendert und angesehen
+- Datenbank und Dienste: keine
+
+## 2026-11-25 · 131 · Nachtrag: CMS lädt nach Deploy neu
+- Auftrag: Jann (Bildschirmfoto „Importing a module script failed“ im Instagram-Studio nach dem Deploy)
+- Geändert: src/admin/main.js (fehlt ein Programmteil nach neuem Deploy, lädt das CMS einmal selbst neu, sonst Hinweis „Bitte lade die Seite neu“)
+- Geprüft: ESLint, Build
+- Datenbank und Dienste: keine
+
+## 2026-11-25 · 131 · Nachtrag: Plan „Wishtale für Kinder“ eingearbeitet
+- Auftrag: Jann im Projekt-Chat („Verbinde dich bitte mit dem Thread Strategie für Kinder - da liegt ein Artefakt zur Instagram Strategie“)
+- Geändert: src/admin/scenes.js (Kinder-Szenen kgast, kreserviert, kkaufen, kinfo), src/admin/ideas.js (zehn Ideen nach den vier Säulen des Plans, Highlight-Storys „Für Großeltern“ und „Fragen“)
+- Geprüft: ESLint, Build, alle neuen Ideen gerendert und angesehen
+- Datenbank und Dienste: keine
+
+## 2026-11-25 · Dev 116 · Hinweis am Computer und Chrome-Erweiterung
+- Was: Einmaliger Hinweis zum Lesezeichen-Knopf über der Wunschliste (nur Computer), Chrome-Erweiterung `extension/` (activeTab, kleines Fenster mit dem Wunschdialog), `npm run ext:zip`, Store-Texte, Datenschutz Abschnitt 11
+- Warum: Jann möchte Wishtale oben im Browser, ohne dass es nervt; Entscheidungskarte „Erweiterung bauen, Hinweis jetzt“
+- Geprüft: ESLint, Build, 33 Tests, Bildschirmfoto Desktop, Erweiterung in Chromium geladen und Klick nachgestellt (öffnet `wishtale.de/app/?share_url=…&share_title=…`)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-26 · Dev 133 · Instagram „API access blocked“
+- Auftrag: Jann im Projekt-Chat („Instagram api Access Blocked“)
+- Befund: Beitrag vom 26.11. scheitert mit Meta-Code 200 „API access blocked“, am 6.11. gingen drei Beiträge mit denselben Schlüsseln durch. Sperre liegt bei Meta, nicht im Code.
+- Geändert: api/_lib/instagram.js (`igMessage()`, Log mit Code und fbtrace_id), tests/instagram.test.mjs
+- Geprüft: ESLint, Build, Tests
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten

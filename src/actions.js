@@ -616,6 +616,7 @@ readlink(el,auto){
   if(id==='kids'){S.ui.modal='accounts';render();setTimeout(()=>document.querySelector('form[data-form=child] input')?.focus(),60);return}
   if(id==='share'){A.share();render();return}
   if(id==='guestown'){A.guestcta({dataset:{c:'tipp'}});return}
+  if(id==='bookmark'){S.ui.modal='shopsave';render();return}
   if(id==='coparent'){S.ui.scrollTo='managers';location.hash='#profil';return}
   render()},
  tipno(el){markDone(el.dataset.id);render();toast('Alles klar, dann zeigen wir das nicht mehr.')},
@@ -716,6 +717,7 @@ window.addEventListener('focus',()=>{
 });
 document.addEventListener('input',e=>{const f=e.target.dataset?.prof;if(f){S.me[f]=e.target.value;if(f==='birthdate'){const ag=ageOf(e.target.value);if(ag!=null)S.me.age=ag}saveState()}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('[role=button][data-act]')){e.preventDefault();e.target.click()}});
+document.addEventListener('dragend',e=>{if(e.target?.closest?.('[data-tipbm]')&&e.dataTransfer?.dropEffect!=='none'){markDone('bookmark');render();toast('Schön, ab jetzt reicht ein Klick auf „Zu Wishtale“ in deiner Lesezeichenleiste.')}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(S.ui.guide){A.guideend();return}if(S.ui.menu)A.menuclose();else if(S.ui.modal)A.close()}});
 document.addEventListener('submit',e=>{
   const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();

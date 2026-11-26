@@ -44,8 +44,16 @@ async function show() {
   const key = (location.hash.replace('#', '') || 'start'), el = shell.view;
   shell.current(MODS[key] ? key : 'start');
   el.onclick = el.onsubmit = el.onchange = null;
-  try { key === 'start' || !MODS[key] ? await dashboard(el) : await (await MODS[key]()).mount(el); }
-  catch (e) { el.innerHTML = `<div class="banner warn2" role="alert"><b>Das konnte nicht geladen werden.</b> ${esc(e.message || e)}<br>Falls die Datenbank-Änderung <code>0005_cms.sql</code> noch fehlt, wende sie zuerst an.</div>`; console.error(e); }
+  try { key === 'start' || !MODS[key] ? await dashboard(el) : await (await MODS[key]()).mount(el); try { sessionStorage.removeItem('wishtale:cms-reload'); } catch { /* ohne Speicher */ } }
+  catch (e) {
+    // Nach einem neuen Deploy fehlen die alten Programmteile: einmal neu laden, dann passt alles wieder
+    const stale = /module script|dynamically imported module|Importing a module/i.test(String(e && e.message || e));
+    let tried = false; try { tried = sessionStorage.getItem('wishtale:cms-reload') === key; if (stale && !tried) sessionStorage.setItem('wishtale:cms-reload', key); } catch { /* ohne Speicher */ }
+    if (stale && !tried) { location.reload(); return; }
+    try { sessionStorage.removeItem('wishtale:cms-reload'); } catch { /* */ }
+    if (stale) { el.innerHTML = '<div class="banner warn2" role="alert"><b>Es gibt eine neue Version des CMS.</b> Bitte lade die Seite neu.</div>'; return; }
+    el.innerHTML = `<div class="banner warn2" role="alert"><b>Das konnte nicht geladen werden.</b> ${esc(e.message || e)}<br>Falls die Datenbank-Änderung <code>0005_cms.sql</code> noch fehlt, wende sie zuerst an.</div>`; console.error(e);
+  }
 }
 
 async function boot() {
