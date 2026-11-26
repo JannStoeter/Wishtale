@@ -96,7 +96,7 @@ export function adoptDraft() {
     for (const k of ['interests', 'cats', 'brands', 'tries', 'nogos', 'alts']) a[k] = [...d[k]];
     took = d.interests.length + d.cats.length + d.brands.length + d.tries.length + d.nogos.length + d.alts.length > 0;
   }
-  const quick = !!d.quick && !took;
+  const quick = !!d.quick && !took && !(a && a.wishes.length); // ein Konto mit Wünschen ist kein Neuanfang
   clearDraft();
   return quick ? 'quick' : took;
 }

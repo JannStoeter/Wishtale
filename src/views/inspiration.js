@@ -125,7 +125,7 @@ function AiSelf(home=false){
   const list=ideasOf(skey(h));if(!list.length)return '';
   return `<section class="psec ideas-quiet${home?' homeideas-list':''}" style="margin-bottom:18px">${home?'':'<p class="eyebrow">Vorschläge von Wishtale</p><h3 aria-level="2">Ideen, die zu dir passen</h3>'}
    ${home?'':'<p class="muted" style="font-size:14.5px;margin:6px 0 12px">Wishtale schreibt sie nach dem, was du über dich angegeben hast. Was dir gefällt, setzt du mit einem Tipp auf deine Wunschliste.</p>'}
-   ${thinProfile(S.me)?`<p class="thinnote">${ic('spark','sm')}<span>Dein Profil ist noch recht leer, darum sind diese Ideen noch allgemein. Wenn du ein paar Interessen und Lieblingsmarken ergänzt, werden sie spürbar persönlicher. <a href="#profil" class="linkbtn">Profil ergänzen</a></span></p>`:''}
+   ${thinProfile(S.me)?`<p class="thinnote">${ic('spark','sm')}<span>Diese Ideen sind noch recht allgemein. Wenn du Wishtale ein wenig über dich erzählst, werden sie spürbar persönlicher. <button type="button" class="linkbtn" data-act="edit">Profil ergänzen</button></span></p>`:''}
    <div class="recs grid">${list.map(IdeaRow).join('')}</div></section>`;
 }
 

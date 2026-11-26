@@ -58,7 +58,8 @@ async function boot(){
       setTimeout(()=>toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`),500);
     }else if(adopted){
       history.replaceState(null,'',location.pathname+'#wuensche');
-      if(adopted==='quick')setTimeout(()=>{toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;S.ui.wtab='eingeben';render()},500);
+      // Neues Konto ohne Profil: die leere Wunschliste mit ihrem einen Feld ist der erste Bildschirm, ohne Fenster darüber (136)
+      if(adopted==='quick'){if(fromLink&&!viaOAuth(session.user))setTimeout(()=>toast('Deine E-Mail ist bestätigt. Schreib jetzt einfach deinen ersten Wunsch auf.'),500)}
       else setTimeout(()=>toast(fromLink&&!viaOAuth(session.user)?'Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.':'Dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.'),400);
     }else if(fromLink||!location.hash||['#login','#anmelden','#registrieren','#demo'].includes(location.hash)){
       history.replaceState(null,'',location.pathname+'#wuensche');
@@ -91,7 +92,7 @@ async function boot(){
         route();
         openShared();countOpen();
         if(cod)toast(`Du verwaltest jetzt gemeinsam mit ${cod.from} das Wishtale von ${cod.kid}.`);
-        else if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;S.ui.wtab='eingeben';render()}
+        else if(adopted==='quick'){if(waiting)toast('Deine E-Mail ist bestätigt. Schreib jetzt einfach deinen ersten Wunsch auf.')}
         else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);
         else if(adopted)toast('Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
         else if(waiting)toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.');

@@ -98,7 +98,7 @@ const DRAFT_KEY='wishtale:draft';
 /* ---- Entwurf: Wer ohne Konto sein Wishtale einrichtet, arbeitet in einem eigenen Entwurf (nie in den Demo-Daten). ---- */
 export const blankDraft=()=>({id:'draft',name:'',tone:2,interests:[],cats:[],brands:[],tries:[],nogos:[],alts:[],style:[],
  vis:{interests:'giver',cats:'giver',brands:'giver',tries:'giver',nogos:'giver',alts:'giver'},wishes:[],history:[],inbox:[],invited:[],about:''});
-export const draftHasData=()=>{const d=S.accounts.draft;return !!d&&(d.interests.length+d.cats.length+d.brands.length+d.tries.length+d.nogos.length+d.alts.length>0||!!d.name)};
+export const draftHasData=()=>{const d=S.accounts.draft;return !!d&&(d.interests.length+d.cats.length+d.brands.length+d.tries.length+d.nogos.length+d.alts.length>0||!!d.name||!!d.quick)};
 export function ensureDraft(){
   if(!S.accounts.draft){
     let d=null;

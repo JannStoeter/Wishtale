@@ -353,7 +353,7 @@ const A={
   if(!S.auth.user){S.me.name=(S.me.name||'').trim();saveState();S.ui.step=0;location.hash='#registrieren';return}
   toast('Geschafft! Dein Wishtale ist startklar.');location.hash='#wuensche'},
  pedit(el){S.ui.editK=S.ui.editK===el.dataset.k?null:el.dataset.k;render()},
- edit(){S.ui.step=S.auth.user?1:0;location.hash='#start'},
+ edit(){S.ui.step=0;location.hash='#start'},
  quick(){
   // Direkt zur Wunschliste. Ohne Konto wird zuerst eines angelegt, danach geht es mit dem ersten Wunsch weiter.
   track('choice',{label:'quick',once:true,path:'/app/'});

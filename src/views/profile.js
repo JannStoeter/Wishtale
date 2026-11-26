@@ -48,7 +48,8 @@ const kidText=st=>{const n=esc(S.me.name||'das Kind');const T={
  alts:{t:'Und wenn den Schenkenden gar nichts einfällt?',h:`Dann freut sich ${n} vielleicht über einen Gutschein oder einen gemeinsamen Ausflug.`},
 };return T[st.k]||{t:st.t,h:st.h}};
 const STEPS_ON=()=>STEPS.filter(x=>worldsOn()||x.k!=='cats');
-export const steps=()=>S.auth.user?[CHOICE_STEP,...STEPS_ON()]:[NAME_STEP,CHOICE_STEP,...STEPS_ON()];
+// Mit Konto ist die Einrichtung freiwillig und beginnt direkt bei den Interessen (136). Ohne Konto führt #start inzwischen sofort zur Registrierung.
+export const steps=()=>S.auth.user?STEPS_ON():[NAME_STEP,CHOICE_STEP,...STEPS_ON()];
 export function Start(){
   const list0=steps(),anon=!S.auth.user;
   S.ui.step=Math.max(0,Math.min(S.ui.step,list0.length-1));
@@ -67,7 +68,7 @@ export function Start(){
    ${S.me.managed?`<div class="banner green" style="margin-top:10px">${ic('user')}<span>Du richtest gerade das Profil für ${esc(S.me.name)} ein. Am schönsten wird es, wenn ihr es zusammen macht.</span></div>`:''}
    <h1>${S.me.managed?kidText(st).t:st.t}</h1><p class="muted" style="font-size:17px">${S.me.managed?kidText(st).h:st.h}</p>
    ${body}
-   <div class="obnav">${i?`<button class="btn ghost" data-act="prev">${ic('back','sm')}Zurück</button>`:anon?`<a class="btn ghost" href="../">${ic('back','sm')}Zur Startseite</a>`:`<button class="btn ghost" data-act="go" data-v="profil">${ic('back','sm')}Abbrechen</button>`}
+   <div class="obnav">${i?`<button class="btn ghost" data-act="prev">${ic('back','sm')}Zurück</button>`:anon?`<a class="btn ghost" href="../">${ic('back','sm')}Zur Startseite</a>`:`<button class="btn ghost" data-act="go" data-v="wuensche">${ic('back','sm')}Später</button>`}
    ${st.choice?'':`<button class="btn pri" data-act="${last?'finish':'next'}">${last?(anon?'Fertig, weiter zu meinem Konto':'Fertig, zeig mir mein Profil'):'Weiter'} ${ic('arrow','sm')}</button>`}</div>
   </div></div>`;
 }

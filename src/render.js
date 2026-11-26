@@ -119,7 +119,7 @@ export function route(){
   const inv=h.match(/^einladung\/([0-9a-f]{16,100})$/i);
   const co=h.match(/^mitverwalten\/([0-9a-f]{16,100})$/i);
   const anon=!S.auth.user;
-  if(!(anon&&h==='start')&&S.ui.acct==='draft')S.ui.acct='me';
+  if(S.ui.acct==='draft')S.ui.acct='me';
   if(co&&validCo(co[1])){S.ui.view='mitverwalten';startCo(co[1])}
   else if(inv){S.ui.view='einladung';startInvite(inv[1])}
   else if(guest){
@@ -127,7 +127,11 @@ export function route(){
   }
   else if(!anon&&h==='neues-passwort'){S.ui.view='recovery'}
   else if(anon&&h==='demo'){setDemo(true);history.replaceState(null,'',location.pathname+'#wuensche');S.ui.view='wuensche'}
-  else if(anon&&h==='start'){setDemo(false);ensureDraft();S.ui.acct='draft';S.ui.view='start'}
+  else if(anon&&h==='start'){
+    // Einstieg ohne Abfrage (136): „Wunschliste anlegen“ führt direkt zum Konto, danach geht es in die leere Wunschliste. Das Profil ist freiwillig und kommt später.
+    setDemo(false);const d=ensureDraft();d.quick=true;saveState();
+    S.ui.authTab='up';S.ui.view='login';
+  }
   else if(anon&&(h==='registrieren'||h==='anmelden'||h==='passwort-vergessen'||!S.auth.demo)){
     // Anmelden und Registrieren sind eigene Seiten und beenden die Demo
     setDemo(false);ensureDraft();
@@ -139,7 +143,7 @@ export function route(){
   if(prevView==='wuensche'&&S.ui.view!=='wuensche')S.ui.homeY=prevY;
   S.ui.menu=false;
   S.ui.modal=null;
-  if(S.ui.view==='start'&&anon)track('start',{once:true,path:'/app/'});
+  if(h==='start'&&anon)track('start',{once:true,path:'/app/'});
   if(S.ui.view==='gast'){ // Aufruf über den geteilten Link /w/<kürzel> trägt ?via=link, die Markierung verschwindet danach aus der Adresse (105)
     const via=new URLSearchParams(location.search).get('via')==='link';
     track('guest_view',{once:true,path:'/app/',label:via?'link':undefined});

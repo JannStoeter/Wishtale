@@ -940,6 +940,8 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .fs-sum::after{content:'+';font-size:22px;color:var(--muted);order:3}
 .fsteps[open] .fs-sum::after{content:'\2212'}
 .fs-count{font-size:13px;font-weight:600;color:var(--muted);margin-left:auto;margin-right:10px}
+.fs-next{font-size:13.5px;color:var(--muted)}
+.fsteps[open] .fs-next{display:none}
 .fs-bar{height:5px;border-radius:99px;background:var(--line);overflow:hidden}
 .fs-bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
 .fs-list{list-style:none;margin:0;padding:0;display:grid}
