@@ -457,3 +457,13 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, npm test, Abfrage der Funktion als lesendes SQL gegen die Datenbank
 - Datenbank und Dienste: 0033 (nur lesende Funktion) am 26.11. nach Freigabe von Jann eingespielt, keine Cookies
 - Zurücknehmen: Merge-Commit reverten, `drop function public.admin_funnel(int, text)`
+
+## 2026-11-26 · 137 · Registrierung ohne Pflicht-Abfrage
+- Commits: siehe Pull Request (Branch: claude/project-thread-16kuo8)
+- Auftrag: Jann im Chat („Einstieg von Landing in die Wunschliste muss zack zack gehen“)
+- Geändert: src/render.js (`#start` → Registrierung), src/state.js (`draftHasData` mit `quick`), src/lib/auth.js (`quick` nur bei leerem Konto), src/main.js (kein Wunschfenster nach der Anmeldung), src/views/auth.js (kürzerer Text), src/views/profile.js und src/actions.js (Einrichtung mit Konto ohne Startwahl, „Später“), src/lib/steps.js und src/views/steps.js (Profil als zweiter Schritt, „Als Nächstes“), src/views/inspiration.js (Hinweis führt zur Einrichtung), src/styles/main.css
+- Geprüft: ESLint, Build, Ansicht 390 und 1280 px mit simuliertem Google-Konto (Registrierung, leere Liste, erster Wunsch, Erste Schritte, Einrichtung)
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
+- Nachtrag: Wünsche ohne Konto im Browser (`guestDraft()`, `SaveHint()`, `adoptDraft()` übernimmt Wünsche, `draftPayload` mit Wünschen), Wunschdialog ohne Konto nur Formular, datenschutz.html Abschnitt 7. Geprüft mit simuliertem Ablauf: Wunsch ohne Konto, Neuladen, Teilen, Rückkehr von Google, Wunsch wird ins Konto geschrieben.
+- Nachtrag 2: `#start` wieder Registrierung zuerst, „Erst einmal ohne Konto anfangen“ (`#ohne-konto`), Hinweise auf die KI mit Konto im Wunschdialog, in `SaveHint()` und auf der Registrierungsseite.

@@ -1,6 +1,6 @@
 import { sb, SUPABASE_URL } from './supabase.js';
 import { SUPABASE_KEY } from './config.js';
-import { S, draftHasData, ensureDraft, clearDraft } from '../state.js';
+import { S, W, draftHasData, ensureDraft, clearDraft } from '../state.js';
 import { loadMine } from './remote.js';
 import { utmFromUrl } from './track.js';
 import { invitePayload } from './invite.js';
@@ -39,7 +39,9 @@ const draftPayload = () => {
   const d = S.accounts.draft;
   if (!draftHasData() || !d) return undefined;
   const cut = a => (a || []).slice(0, 30).map(x => String(x).slice(0, 60));
-  return { interests: cut(d.interests), cats: cut(d.cats), brands: cut(d.brands), tries: cut(d.tries), nogos: cut(d.nogos), alts: cut(d.alts), quick: !!d.quick };
+  // Wünsche ohne Konto reisen mit (nur Text, Link und Preis, keine Bilder), damit sie auch ankommen, wenn der Bestätigungslink auf einem anderen Gerät geöffnet wird
+  const wishes = (d.wishes || []).filter(w => w.status === 'offen' || w.status === 'plan').slice(0, 40).map(w => ({ id: w.id, t: String(w.t || '').slice(0, 120), link: String(w.link || '').slice(0, 500), price: w.price || null, note: String(w.note || '').slice(0, 300), c: w.c, kind: w.kind, prio: w.prio, status: w.status, vis: w.vis }));
+  return { interests: cut(d.interests), cats: cut(d.cats), brands: cut(d.brands), tries: cut(d.tries), nogos: cut(d.nogos), alts: cut(d.alts), quick: !!d.quick, wishes };
 };
 export const signUp = (name, email, password) =>
   sb.auth.signUp({ email, password, options: { data: { full_name: name, draft: draftPayload(), utm: utmFromUrl(), invite: invitePayload() }, emailRedirectTo: redirectUrl() } });
@@ -95,7 +97,8 @@ export function adoptDraft() {
   if (!d && meta && typeof meta === 'object') {
     // Kein Entwurf in diesem Browser (zum Beispiel Link am Handy geöffnet): aus dem Konto nehmen
     const list = v => (Array.isArray(v) ? v.filter(x => typeof x === 'string').slice(0, 30).map(x => x.slice(0, 60)) : []);
-    d = { quick: !!meta.quick, name: S.auth.user.user_metadata.full_name || '', interests: list(meta.interests), cats: list(meta.cats), brands: list(meta.brands), tries: list(meta.tries), nogos: list(meta.nogos), alts: list(meta.alts) };
+    const ws = Array.isArray(meta.wishes) ? meta.wishes.filter(w => w && typeof w.t === 'string' && w.t.trim()).slice(0, 40).map(w => W({ id: /^[0-9a-f-]{36}$/i.test(String(w.id)) ? w.id : undefined, t: w.t.slice(0, 120), link: typeof w.link === 'string' ? w.link.slice(0, 500) : '', price: typeof w.price === 'number' ? w.price : null, note: typeof w.note === 'string' ? w.note.slice(0, 300) : '', c: typeof w.c === 'string' ? w.c : 'sonstiges', kind: ['produkt', 'kategorie', 'erlebnis', 'frei'].includes(w.kind) ? w.kind : 'produkt', prio: [1, 2, 3].includes(w.prio) ? w.prio : 2, status: w.status === 'plan' ? 'plan' : 'offen', vis: w.vis === 'privat' ? 'privat' : 'alle' })) : [];
+    d = { quick: !!meta.quick, name: S.auth.user.user_metadata.full_name || '', interests: list(meta.interests), cats: list(meta.cats), brands: list(meta.brands), tries: list(meta.tries), nogos: list(meta.nogos), alts: list(meta.alts), wishes: ws };
   }
   if (meta) sb.auth.updateUser({ data: { draft: null } }).catch(() => {}); // einmal übernommen, dann weg
   const a = S.accounts.me;
@@ -107,7 +110,17 @@ export function adoptDraft() {
     for (const k of ['interests', 'cats', 'brands', 'tries', 'nogos', 'alts']) a[k] = [...d[k]];
     took = d.interests.length + d.cats.length + d.brands.length + d.tries.length + d.nogos.length + d.alts.length > 0;
   }
-  const quick = !!d.quick && !took;
+  // Wünsche, die ohne Konto entstanden sind, kommen dazu. Was schon gleich heißt, wird nicht doppelt angelegt, nichts im Konto wird überschrieben.
+  let moved = 0;
+  if (a && (d.wishes || []).length) {
+    const have = new Set(a.wishes.map(w => String(w.t).trim().toLowerCase()));
+    const ids = new Set(a.wishes.map(w => w.id));
+    const add = d.wishes.filter(w => (w.status === 'offen' || w.status === 'plan') && w.t && !have.has(String(w.t).trim().toLowerCase()) && !ids.has(w.id))
+      .map(w => ({ ...w, img: /^https:\/\//.test(w.img || '') ? w.img : null, res: null, bought: false }));
+    if (add.length) { a.wishes = [...add, ...a.wishes]; moved = add.length; }
+  }
+  const quick = !!d.quick && !took && !moved && !(a && a.wishes.length); // ein Konto mit Wünschen ist kein Neuanfang
   clearDraft();
+  if (moved) return { wishes: moved };
   return quick ? 'quick' : took;
 }

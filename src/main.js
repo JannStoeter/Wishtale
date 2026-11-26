@@ -17,6 +17,7 @@ import { track, setStatsOff, watchShopClicks } from './lib/track.js';
 import { loadGiven, migrateGiven } from './lib/given.js';
 
 initPwa();
+const savedMsg=n=>`Geschafft, ${n===1?'dein Wunsch ist':`deine ${n} Wünsche sind`} jetzt in deinem Konto gespeichert und bereit zum Teilen.`;
 /** Ein an Wishtale geteilter Link (Android) öffnet nach der Anmeldung den Wunschdialog und wird dort eingelesen. */
 function openShared(){
   const sh=pendingShare();if(!sh)return;
@@ -58,7 +59,9 @@ async function boot(){
       setTimeout(()=>toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`),500);
     }else if(adopted){
       history.replaceState(null,'',location.pathname+'#wuensche');
-      if(adopted==='quick')setTimeout(()=>{toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;S.ui.wtab='eingeben';render()},500);
+      // Neues Konto ohne Profil: die leere Wunschliste mit ihrem einen Feld ist der erste Bildschirm, ohne Fenster darüber (137)
+      if(adopted&&adopted.wishes)setTimeout(()=>toast(savedMsg(adopted.wishes)),500);
+      else if(adopted==='quick'){if(fromLink&&!viaOAuth(session.user))setTimeout(()=>toast('Deine E-Mail ist bestätigt. Schreib jetzt einfach deinen ersten Wunsch auf.'),500)}
       else setTimeout(()=>toast(fromLink&&!viaOAuth(session.user)?'Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.':'Dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.'),400);
     }else if(fromLink||!location.hash||['#login','#anmelden','#registrieren','#demo'].includes(location.hash)){
       history.replaceState(null,'',location.pathname+'#wuensche');
@@ -67,7 +70,7 @@ async function boot(){
   }else if(fromLink){
     history.replaceState(null,'',location.pathname+'#anmelden');
   }
-  if(!session){await loadGiven().catch(()=>{});googleOn().then(v=>{S.ui.google=v;if(v&&!S.auth.user&&S.ui.view==='login'&&!document.activeElement?.matches?.('input'))render()})}
+  if(!session){await loadGiven().catch(()=>{});googleOn().then(v=>{S.ui.google=v;if(v&&!S.auth.user&&(S.ui.view==='login'||S.ui.acct==='draft')&&!S.ui.modal&&!document.activeElement?.matches?.('input'))render()})}
   window.addEventListener('hashchange',route);
   watchShopClicks(); // Klicks zu Shops zählen, ohne Produkt (111)
   route();
@@ -91,7 +94,8 @@ async function boot(){
         route();
         openShared();countOpen();
         if(cod)toast(`Du verwaltest jetzt gemeinsam mit ${cod.from} das Wishtale von ${cod.kid}.`);
-        else if(adopted==='quick'){toast('Schön, dass du da bist. Schreib jetzt deinen ersten Wunsch auf.');S.ui.modal='wish';S.ui.editWish=null;S.ui.wtab='eingeben';render()}
+        else if(adopted&&adopted.wishes)toast(savedMsg(adopted.wishes));
+        else if(adopted==='quick'){if(waiting)toast('Deine E-Mail ist bestätigt. Schreib jetzt einfach deinen ersten Wunsch auf.')}
         else if(invd&&invd.n)toast(`Willkommen bei Wishtale. ${invd.from} hat dir ${invd.n===1?'einen Tipp':'ein paar Tipps'} mitgebracht, du findest ${invd.n===1?'ihn':'sie'} in deiner Wunschliste.`);
         else if(adopted)toast('Deine E-Mail ist bestätigt, du bist angemeldet und dein Wishtale ist angelegt. Jetzt fehlen nur noch deine Wünsche.');
         else if(waiting)toast('Deine E-Mail ist bestätigt und du bist jetzt angemeldet. Willkommen bei Wishtale.');
