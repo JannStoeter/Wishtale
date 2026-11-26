@@ -3,7 +3,7 @@ topic: 134-link-namen-bilder-preise
 status: entschieden
 option: umsetzen
 datum: 2026-11-26
-umgesetzt: PENDING
+umgesetzt: a7435b8
 ---
 **Jann im Projekt:** Namen, Bilder und Preise bei Links sollen stimmen.
 
