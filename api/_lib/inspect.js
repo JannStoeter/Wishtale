@@ -66,7 +66,7 @@ export function request(u, test = {}) {
   return new Promise((resolve, reject) => {
     const req = https.request(u, {
       method: 'GET', lookup: test.lookup || safeLookup, timeout: TIMEOUT, ...(test.insecure ? { rejectUnauthorized: false } : {}),
-      headers: { 'user-agent': 'Mozilla/5.0 (compatible; WishtaleLinkReader/1.0; +https://wishtale.de)', accept: 'text/html,application/xhtml+xml', 'accept-language': 'de-DE,de;q=0.9', 'accept-encoding': 'gzip, br, deflate' },
+      headers: { 'user-agent': 'Mozilla/5.0 (compatible; WishtaleLinkReader/1.0; +https://wishtale.de)', accept: 'text/html,application/xhtml+xml', 'accept-language': 'de-DE,de;q=0.9', 'accept-encoding': 'gzip, br, deflate', ...(test.headers || {}) },
     }, res => {
       const status = res.statusCode || 0;
       if (status >= 300 && status < 400 && res.headers.location) { res.resume(); return resolve({ status, location: res.headers.location }); }
@@ -275,3 +275,37 @@ export async function fetchImage(raw, doRequest = requestImage) {
   }
   throw new HttpError(422, 'Das Bild leitet zu oft weiter.');
 }
+
+/*
+ * Amazon-Produktseite lesen (Jann, 2026-11-26: „Zieh bitte die Infos von Amazon, auch wenn es nicht erlaubt ist“). Die Bedingungen von
+ * Amazon und des Partnerprogramms verbieten das automatische Lesen, Jann nimmt das Risiko für die Partner-ID bewusst in Kauf (Dev 139).
+ * Nur genau eine Seite je Wunsch (amazon.de/dp/<ASIN>), mit Browserkennung, ohne Anmeldung. Amazon zeigt Rechenzentren oft eine
+ * Captcha-Seite, dann kommt null zurück und Wishtale nimmt wie bisher Suchmaschine und Otto. Liefert Name, Preis (Euro) und Bild.
+ */
+const AMZ_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+export function parseAmazon(html) {
+  const h = String(html || '');
+  if (!h || /captcha|api-services-support@amazon|Robot Check/i.test(h.slice(0, 20000)) && !/id="productTitle"/.test(h)) return null;
+  const title = clean((/id="productTitle"[^>]*>([\s\S]*?)<\/span>/i.exec(h) || [])[1], 200);
+  // Preis: zuerst der Hauptpreis-Bereich, dann die Datenfelder der Seite
+  const core = (/id="(?:corePrice_feature_div|corePriceDisplay_desktop_feature_div|apex_desktop|corePrice_desktop)"[\s\S]{0,4000}/i.exec(h) || [''])[0];
+  let price = parsePrice((/class="a-offscreen">\s*([^<]*\d[^<]*)</i.exec(core) || [])[1]);
+  if (!price) { const m = /class="a-price-whole">\s*([\d.]+)[\s\S]{0,120}?class="a-price-fraction">\s*(\d{2})/i.exec(core || h); if (m) price = parsePrice(m[1].replace(/\./g, '') + ',' + m[2]); }
+  if (!price) price = parsePrice((/"priceAmount"\s*:\s*([\d.]+)/.exec(h) || [])[1]);
+  const img = (/"hiRes"\s*:\s*"(https:\/\/m\.media-amazon\.com\/images\/[^"]+)"/.exec(h) || /data-old-hires="(https:\/\/m\.media-amazon\.com\/images\/[^"]+)"/.exec(h) || /id="landingImage"[^>]*src="(https:\/\/m\.media-amazon\.com\/images\/[^"]+)"/.exec(h) || [])[1] || '';
+  if (!title && !price) return null;
+  return { title, price: price || null, currency: price ? 'EUR' : '', imageUrl: img.slice(0, 600), host: 'amazon.de', source: 'amazon' };
+}
+export async function amazonPage(asin, doRequest = request) {
+  if (!/^[A-Z0-9]{10}$/i.test(String(asin || ''))) return null;
+  let u = new URL(`https://www.amazon.de/dp/${String(asin).toUpperCase()}`);
+  for (let hop = 0; hop <= 2; hop++) {
+    let r;
+    try { r = await doRequest(u, { headers: { 'user-agent': AMZ_UA, accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' } }); } catch { return null; }
+    if (r.location) { try { const n = new URL(r.location, u); if (!/(^|\.)amazon\.de$/i.test(n.hostname) || n.protocol !== 'https:') return null; u = n; continue; } catch { return null; } }
+    console.log('amazon-seite', JSON.stringify({ asin, status: r.status, laenge: (r.body || '').length }));
+    return r.status === 200 ? parseAmazon(r.body) : null;
+  }
+  return null;
+}
+

@@ -1,6 +1,6 @@
 import { requireUser, send, fail, HttpError } from './_lib/auth.js';
 import { inspect, fetchImage } from './_lib/inspect.js';
-import { findProductImage, amazonDirect, imageForWish, priceForWish, searchProducts, lookFor, titleForLink } from './_lib/imgsearch.js';
+import { findProductImage, amazonDirect, imageForWish, priceForWish, searchProducts, lookFor, titleForLink, amazonInfo, shortTitle } from './_lib/imgsearch.js';
 import { guardSearch } from './_lib/limits.js';
 
 const searchOn = () => !!process.env.BRAVE_SEARCH_API_KEY;
@@ -44,7 +44,10 @@ export default async function handler(req, res) {
       return send(res, 200, { price });
     }
     if (req.body?.titleFor) { // Name zu einem Link, den wir nicht lesen (Amazon): nur die Titelzeile der Suchmaschine zur Produktnummer
-      const t = await titleForLink(String(req.body.titleFor).slice(0, 1000)).catch(() => null);
+      const link = String(req.body.titleFor).slice(0, 1000);
+      // Bei Amazon zusätzlich die Seite selbst (Name, Preis, Bild; 139, Jann), parallel zur Suchmaschine
+      const [found, pg] = await Promise.all([titleForLink(link).catch(() => null), amazonInfo(link).catch(() => null)]);
+      const t = found || pg ? { ...(found || { host: 'amazon.de', via: 'amazon' }), title: (found && found.title) || shortTitle(pg.title || ''), price: pg?.price || null, imageUrl: pg?.imageUrl || found?.imageUrl || '' } : null;
       console.log('titel-link', JSON.stringify({ treffer: !!t, titel: t?.title || '' }));
       return send(res, 200, { title: t });
     }

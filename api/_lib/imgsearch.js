@@ -3,7 +3,7 @@
  * Brave-Search-API (BRAVE_SEARCH_API_KEY, nur in Vercel). Die Treffer werden über fetchImage geladen (SSRF-Schutz,
  * keine Amazon-Hosts) und vom Browser in unseren eigenen Speicher kopiert. Ohne Schlüssel bleibt alles aus.
  */
-import { fetchImage, inspect } from './inspect.js';
+import { fetchImage, inspect, amazonPage } from './inspect.js';
 import { cleanShopTitle } from '../../src/lib/linkname.js';
 
 const clean = q => String(q || '').replace(/\s+/g, ' ').trim().slice(0, 120);
@@ -85,7 +85,9 @@ export async function imageForWish({ t, q, brand, link, img } = {}, deps = {}) {
     try { const p = await read(link); if (p?.imageUrl) return { ...(await load(p.imageUrl)), source: host(link), via: 'link' }; } catch { /* weiter mit der Suche */ }
   }
   if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
-    // Amazon-Wunsch: das Produktbild von Amazon aus der Suchmaschine (über die ASIN, also genau dieses Produkt), sonst Otto
+    // Amazon-Wunsch: zuerst das Bild der Amazon-Seite selbst (139, Jann), dann das Amazon-Bild aus der Suchmaschine (über die ASIN), sonst Otto
+    const pg = await amazonInfo(link, deps);
+    if (pg?.imageUrl) { try { return { ...(await load(pg.imageUrl)), source: 'amazon.de', via: 'amazon' }; } catch { /* weiter */ } }
     const a = await titleForLink(link, deps).catch(() => null);
     if (a?.imageUrl) { try { return { ...(await load(a.imageUrl)), source: 'amazon.de', via: 'amazon' }; } catch { /* weiter mit Otto */ } }
   }
@@ -181,6 +183,14 @@ export function fullTitle(title, path = '') {
   return cut && toks(slug).length > toks(base).length ? slug : base;
 }
 
+/** Amazon-Seite zu einem Link (über die ASIN), höchstens 6 Sekunden, sonst null. deps.amazon ersetzt den Abruf in Tests. */
+export async function amazonInfo(link, deps = {}) {
+  const k = linkKey(link);
+  if (!k || !k.amazon) return null;
+  const get = deps.amazon || (deps.fetchJson ? async () => null : amazonPage);
+  return Promise.race([Promise.resolve(get(k.id)).catch(() => null), new Promise(r => setTimeout(() => r(null), 6000))]);
+}
+
 /* Produktbild eines Amazon-Treffers aus der Suchmaschine (nur der Bildserver von Amazon, Entscheidung Jann 2026-11-26). */
 export function amazonImg(r) {
   const u = String(r?.thumbnail?.original || r?.thumbnail?.src || '');
@@ -251,10 +261,13 @@ export async function priceForWish({ t, q, brand, link } = {}, deps = {}) {
     if (!deps.searchAfterLink) return null; // der eigene Link hat Vorrang: hat die Seite keinen Preis, raten wir nicht über andere Seiten
   }
   if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) {
-    // Amazon-Wunsch: das Produktbild von Amazon aus der Suchmaschine (über die ASIN, also genau dieses Produkt), sonst Otto
+    // Amazon-Wunsch: zuerst das Bild der Amazon-Seite selbst (139, Jann), dann das Amazon-Bild aus der Suchmaschine (über die ASIN), sonst Otto
+    const pg = await amazonInfo(link, deps);
+    if (pg?.imageUrl) { try { return { ...(await load(pg.imageUrl)), source: 'amazon.de', via: 'amazon' }; } catch { /* weiter */ } }
     const a = await titleForLink(link, deps).catch(() => null);
     if (a?.imageUrl) { try { return { ...(await load(a.imageUrl)), source: 'amazon.de', via: 'amazon' }; } catch { /* weiter mit Otto */ } }
   }
+  if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const pg = await amazonInfo(link, deps); if (pg?.price) return { price: pg.price, source: 'amazon.de', via: 'amazon', title: String(pg.title || '').slice(0, 80) }; } // Preis der Amazon-Seite (139, Jann)
   if (link && /(^|\.)(amazon\.|amzn\.)/i.test(host(link))) { const o = await ottoHit(q || t, deps); if (o?.price) return { price: o.price, source: 'otto.de', via: 'otto', title: o.t.slice(0, 80) }; }
   const query = clean(q || t);
   if (!query) return null;

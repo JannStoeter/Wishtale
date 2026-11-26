@@ -481,4 +481,4 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, npm test (47), Wunschfenster am Handy mit Otto- und Amazon-Wunsch (simuliertes Konto)
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
-
+- Nachtrag: Amazon-Seite lesen (`amazonPage()`, `parseAmazon()` in api/_lib/inspect.js, `amazonInfo()` in api/_lib/imgsearch.js, `op titleFor` in api/inspect.js, src/actions.js, src/lib/pricefill.js `price-tried4`), Tests ergänzt (49).
