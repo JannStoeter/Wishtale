@@ -10,7 +10,7 @@ Supabase › Authentication › Emails (oder „Email Templates“). Pro Vorlage
 | Confirm signup | Bestätige dein Wishtale | `confirm-signup.html` |
 | Magic Link | Dein Link zu Wishtale | `magic-link.html` |
 | Reset password | Neues Passwort für dein Wishtale | `recovery.html` |
-| Change email address | Bestätige deine neue E-Mail-Adresse | `email-change.html` |
+| Change email address | Bestätige deine E-Mail-Adresse für Wishtale | `email-change.html` |
 | Invite user | Du wurdest zu Wishtale eingeladen | `invite.html` |
 | Reauthentication | Dein Bestätigungscode für Wishtale | `reauthentication.html` |
 

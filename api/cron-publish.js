@@ -1,5 +1,7 @@
 import { timingSafeEqual } from 'node:crypto';
 import { rest, send, fail, HttpError } from './_lib/auth.js';
+import { sweepGhosts } from './_lib/ghosts.js';
+import { removeImages } from './account.js';
 import { publish, publishStories, startReel, containerStatus, finish, igConfigured } from './_lib/instagram.js';
 
 /**
@@ -17,6 +19,7 @@ export default async function handler(req, res) {
     if (key) await rest(key)(`events?ts=lt.${new Date(Date.now() - 400 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // Statistik nach etwa 13 Monaten löschen
     if (key) await rest(key)(`invites?expires_at=lt.${new Date(Date.now() - 7 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // abgelaufene Einladungen nach einer Woche löschen
     if (key) await rest(key)(`invites?used_at=lt.${new Date(Date.now() - 30 * 864e5).toISOString()}`, { method: 'DELETE' }).catch(() => {}); // eingelöste nach 30 Tagen
+    if (key) await sweepGhosts(key, removeImages).catch(() => 0); // Gastkonten ohne Sicherung 30 Tage nach der letzten Änderung löschen (141)
     if (!key || !igConfigured()) return send(res, 200, { ok: true, skipped: 'nicht verbunden' });
     const db = rest(key);
     const due = await db(`social_posts?status=eq.ready&scheduled_for=lte.${new Date().toISOString()}&select=*&order=scheduled_for.asc&limit=3`);

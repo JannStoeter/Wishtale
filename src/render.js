@@ -8,7 +8,7 @@ import { loadIdeas, gkey, skey } from './lib/ideas.js';
 import { isSpecific } from './lib/products.js';
 import { guestPerson } from './state.js';
 import { signalCount } from './lib/signals.js';
-import { S, saveState, setDemo, ensureDraft } from './state.js';
+import { S, saveState, setDemo, ensureDraft, ghost } from './state.js';
 import { $, esc } from './lib/util.js';
 import { Header, GuestHeader, LoginHeader, LegalFoot } from './views/shared.js';
 import { Start, Profil } from './views/profile.js';
@@ -127,17 +127,19 @@ export function route(){
   }
   else if(!anon&&h==='neues-passwort'){S.ui.view='recovery'}
   else if(anon&&h==='demo'){setDemo(true);history.replaceState(null,'',location.pathname+'#wuensche');S.ui.view='wuensche'}
-  else if(anon&&h==='start'){
-    // Einstieg ohne Abfrage (137): „Wunschliste anlegen“ führt zur Registrierung, Google zuerst. Danach geht es in die leere Wunschliste mit Suche, Erkennung und Ideen.
-    setDemo(false);const d=ensureDraft();d.quick=true;saveState();
-    S.ui.authTab='up';S.ui.view='login';
-  }
-  else if(anon&&(h==='ohne-konto'||(!S.auth.demo&&(h===''||h==='wuensche')&&(ensureDraft().wishes||[]).length&&S.accounts.draft.quick))){
-    // Wer lieber erst ohne Konto anfängt: Wünsche liegen im Browser (Entwurf) und wandern bei der Registrierung mit (adoptDraft).
+  else if(anon&&(h==='start'||h==='abfotografieren'||h==='ohne-konto'||(!S.auth.demo&&(h===''||h==='wuensche')&&(ensureDraft().wishes||[]).length&&S.accounts.draft.quick))){
+    // Einstieg direkt in die Wunschliste (141): „Wunschliste anlegen“ öffnet sofort die eigene Liste. main.js legt still ein Gastkonto an (Suche, Ideen, Fotoimport wie mit Konto),
+    // bis dahin und falls Supabase das nicht erlaubt, liegen die Wünsche im Entwurf im Browser (137) und wandern später mit (adoptDraft).
     setDemo(false);const d=ensureDraft();d.quick=true;S.ui.acct='draft';saveState();
     if(h!=='wuensche')history.replaceState(null,'',location.pathname+location.search+'#wuensche');
     S.ui.view='wuensche';
+    window.dispatchEvent(new CustomEvent('wishtale:ghost',{detail:h||'wuensche'}));
   }
+  else if(ghost()&&(h==='registrieren'||h==='anmelden'||h==='passwort-vergessen')){
+    // Gastkonto sichern oder in ein bestehendes Konto wechseln (141)
+    S.ui.authTab=h==='registrieren'?'up':h==='passwort-vergessen'?'forgot':'in';S.ui.view='login';
+  }
+  else if(!anon&&h==='abfotografieren'){S.ui.view='wuensche';history.replaceState(null,'',location.pathname+'#wuensche');S.ui.after='zettel'}
   else if(anon&&(h==='registrieren'||h==='anmelden'||h==='passwort-vergessen'||!S.auth.demo)){
     // Anmelden und Registrieren sind eigene Seiten und beenden die Demo
     setDemo(false);ensureDraft();
@@ -150,14 +152,16 @@ export function route(){
   S.ui.menu=false;
   S.ui.modal=null;
   if(h==='start'&&anon)track('start',{once:true,path:'/app/'});
+  if(h==='abfotografieren'&&anon)track('start',{once:true,label:'foto',path:'/app/'}); // Einstieg über „Wunschzettel abfotografieren“ (141)
   if(h==='ohne-konto'&&anon)track('step',{label:'ohne_konto',once:true,path:'/app/'}); // Funnel: Weg ohne Konto gewählt (138)
-  if(S.ui.view==='login'&&anon&&S.ui.authTab!=='forgot')track('step',{label:S.ui.authTab==='up'?'register_view':'login_view',once:true,path:'/app/'}); // Funnel: Konto-Seite gesehen
+  if(S.ui.view==='login'&&(anon||ghost())&&S.ui.authTab!=='forgot')track('step',{label:S.ui.authTab==='up'?'register_view':'login_view',once:true,path:'/app/'}); // Funnel: Konto-Seite gesehen
   if(S.ui.view==='gast'){ // Aufruf über den geteilten Link /w/<kürzel> trägt ?via=link, die Markierung verschwindet danach aus der Adresse (105)
     const via=new URLSearchParams(location.search).get('via')==='link';
     track('guest_view',{once:true,path:'/app/',label:via?'link':undefined});
     if(via)history.replaceState(null,'',location.pathname+location.hash);
   }
   render(true);
+  if(S.ui.after==='zettel'&&S.auth.user){S.ui.after=null;S.ui.zt=null;S.ui.modal='zettel';render()}
 }
 
 /* Gast-Profil aus der Datenbank laden. Gibt es das Handle dort nicht, greifen die lokalen Demo-Profile. */

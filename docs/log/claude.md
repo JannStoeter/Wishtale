@@ -503,3 +503,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, Folien gerendert
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-27 · 141 · Einstieg direkt in die Wunschliste (Gastkonto)
+- Auftrag: Jann im Projekt („Wenn jemand auf Wunschliste anlegen klickt kommt er in seine Wunschliste … Wenn er rausgeht oder es teilen will braucht er ein Konto“)
+- Geändert: src/lib/auth.js (`startGhost`, `ghostGoogle`, `ghostEmail`, `stashGhost`, `nameFromUser`, `viaOAuth`), src/state.js (`ghost`, `unsaved`), src/render.js, src/main.js (`beginGhost`, `guardLeave`), src/actions.js, src/views/{auth,shared,wishes,modals,menu}.js, src/styles/main.css, index.html (`hero.foto`, `weihnachten.foto`), api/_lib/ghosts.js, api/cron-publish.js, scripts/build-mails.mjs, supabase/email-templates/email-change.html, datenschutz.html, tests/ghosts.test.mjs
+- Geprüft: ESLint, Build, npm test, Ablauf am Handy mit nachgestelltem Supabase (Playwright)
+- Datenbank und Dienste: keine Migration; in Supabase anonyme Anmeldung und manuelles Verknüpfen einschalten, Mailvorlage „Change email address“ ersetzen
+- Zurücknehmen: Merge-Commit reverten (ohne Schalter in Supabase greift ohnehin der Entwurf im Browser)

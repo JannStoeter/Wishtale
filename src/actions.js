@@ -6,7 +6,7 @@ import { smartCats } from './lib/smartcats.js';
 import { promptInstall } from './lib/pwa.js';
 import { dismissAppHint } from './views/appinstall.js';
 import { demoStart, demoStop, demoGo, demoStep, demoPlay } from './views/iosdemo.js';
-import { S, W, switchTo, resetState, guestPerson, saveState, guestDraft } from './state.js';
+import { S, W, switchTo, resetState, guestPerson, saveState, ghost, unsaved } from './state.js';
 import { $, toast, kwOf, nid, money, overlap } from './lib/util.js';
 import { CATALOG, PRIO, cat } from './data/content.js';
 import { check } from './logic.js';
@@ -44,7 +44,7 @@ import { ZmRow } from './views/zettel.js';
 import { createInvite, listInvites, revokeInvite, inviteLink, saveLocal, adoptInvite } from './lib/invite.js';
 import { showScene, stopWelcome, markWelcomed } from './views/welcome.js';
 import { guestRpc, guestToken } from './lib/remote.js';
-import { signIn, signUp, magicLink, signOut, friendly, errKind, resendSignup, resetPassword, setPassword, signInGoogle } from './lib/auth.js';
+import { signIn, signUp, magicLink, signOut, friendly, errKind, resendSignup, resetPassword, setPassword, signInGoogle, ghostGoogle, ghostEmail, stashGhost } from './lib/auth.js';
 
 export const MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 export 
@@ -399,7 +399,12 @@ const A={
  newpw(){S.ui.modal=null;location.hash='#neues-passwort'},
  authback(){S.ui.authSent=null;S.ui.authResent=null;S.ui.authMsg=null;render()},
  authtab(el){S.ui.authSent=null;S.ui.authMsg=null;location.hash=el.dataset.v==='up'?'#registrieren':'#anmelden'},
- google(){track('step',{label:S.ui.authTab==='up'?'google_up':'google_in',path:'/app/'});S.ui.authBusy=true;render();signInGoogle().then(({error})=>{if(error){S.ui.authBusy=false;S.ui.authMsg={type:'err',text:friendly(error)};render()}})},
+ google(el){
+  // Gastkonto (141): „Sichern“ hängt Google an dasselbe Konto, „Anmelden“ wechselt in ein bestehendes Konto und nimmt die Wünsche mit
+  const up=el?.dataset?.v==='up'||S.ui.view!=='login'||S.ui.authTab==='up';
+  if(ghost()){track('step',{label:up?'ghost_save:google'+(S.ui.saveWhy&&S.ui.modal==='sichern'?'-'+S.ui.saveWhy:''):'google_in',path:'/app/'});S.ui.authBusy=true;render();
+   (up?ghostGoogle():(stashGhost(),signInGoogle())).then(({error})=>{if(error){S.ui.authBusy=false;S.ui.modal=null;S.ui.authMsg={type:'err',text:friendly(error)};location.hash='#registrieren';render()}});return}
+  track('step',{label:S.ui.authTab==='up'?'google_up':'google_in',path:'/app/'});S.ui.authBusy=true;render();signInGoogle().then(({error})=>{if(error){S.ui.authBusy=false;S.ui.authMsg={type:'err',text:friendly(error)};render()}})},
  demo(){S.ui.authMsg=null;track('demo',{once:true,path:'/app/'});location.hash='#demo'},
  tologin(){S.ui.modal=null;S.ui.authMsg=null;location.hash='#start'},
  // Gast ohne Konto will ein eigenes Wishtale: UTM-Kürzel in die Adresse, damit signUp sie beim Konto speichert (Datenschutz Abschnitt 8)
@@ -407,10 +412,12 @@ const A={
   try{history.replaceState(history.state,'',`/app/?utm_source=wishtale&utm_medium=gast&utm_campaign=${c}${location.hash}`)}catch{/* Adresse bleibt */}
   track('cta',{label:'gast-'+c,path:'/app/'});A.tologin()},
  exitdemo(){S.ui.modal=null;S.ui.authMsg=null;location.hash='#start'},
+ savemail(){track('step',{label:'ghost_save:email-'+(S.ui.saveWhy||'menu'),path:'/app/'});S.ui.modal=null},
+ saveopen(el){S.ui.saveWhy=el?.dataset?.v||'menu';S.ui.modal='sichern';track('step',{label:'save_prompt:'+S.ui.saveWhy,path:'/app/'});render()},
  logout(){signOut().finally(()=>{location.hash='';location.reload()})},
  guestretry(){S.guest=null;route()},
 share(){
-  if(guestDraft()){S.ui.authMsg={type:'ok',text:'Leg schnell ein Konto an, dann bekommst du deinen Link zum Teilen. Deine Wünsche kommen mit.'};location.hash='#registrieren';return} // ohne Konto gibt es noch keinen Link (137)
+  if(unsaved()){S.ui.menu=false;A.saveopen({dataset:{v:'share'}});return} // ohne Konto gibt es noch keinen Link: erst sichern, Google in einem Klick (137, 141)
   markStep('share');markShared();
   // Echte Konten teilen den kurzen Link /w/<kürzel>: Er zeigt in WhatsApp und Co. eine Vorschau mit Namen und leitet zur Gastansicht (102)
   const url=S.auth.user&&S.me.handle&&!/^(localhost|127\.)/.test(location.hostname)?`${location.origin}/w/${S.me.handle}`:`${location.origin}${location.pathname}#p/${S.me.handle||S.ui.acct}`;
@@ -421,7 +428,7 @@ share(){
  },
  // Wunschliste als Bild für die Instagram-Story (Dev 140): Bild entsteht im Browser, Link-Sticker setzt die Person in Instagram selbst
  async storyshare(){
-  if(guestDraft()||!S.me.handle){A.share();return}
+  if(unsaved()||!S.me.handle){A.share();return}
   markStep('share');markShared();track('cta',{label:'story-bild',path:'/app/'});
   const url=S.auth.user&&!/^(localhost|127\.)/.test(location.hostname)?`${location.origin}/w/${S.me.handle}`:`${location.origin}${location.pathname}#p/${S.me.handle}`;
   toast('Dein Story-Bild entsteht gerade …');
@@ -765,9 +772,15 @@ document.addEventListener('submit',e=>{
     const email=(fd.get('email')||'').trim(),pw=fd.get('password')||'';
     if(kind==='signup')track('signup_submit',{path:'/app/'});
     S.ui.authBusy=true;S.ui.authMsg=null;S.ui.authEmail=email;render();
-    const job=kind==='signin'?signIn(email,pw):kind==='signup'?signUp((fd.get('name')||'').trim(),email,pw):magicLink(email);
+    const g=ghost();
+    if(g&&kind!=='signup')stashGhost(); // in ein bestehendes Konto wechseln: Wünsche aus dem Gastkonto kommen mit (141)
+    const job=g&&kind==='signup'?ghostEmail((fd.get('name')||'').trim(),email):kind==='signin'?signIn(email,pw):kind==='signup'?signUp((fd.get('name')||'').trim(),email,pw):magicLink(email);
     job.then(({data,error})=>{
       S.ui.authBusy=false;
+      if(g&&!error){
+        if(kind==='signup'){track('step',{label:'ghost_save:email',path:'/app/'});S.ui.authSent={kind:'ghost',email};render();return}
+        if(kind==='signin'){location.hash='#wuensche';location.reload();return}
+      }
       if(error){if(kind==='signup')track('step',{label:'signup_err:'+errKind(error),path:'/app/'});S.ui.authMsg={type:'error',text:friendly(error)};render();return}
       // Schon registrierte Adresse: Supabase meldet keinen Fehler, schickt aber auch keine Mail
       if(kind==='signup'&&data&&data.user&&data.user.identities&&data.user.identities.length===0){track('step',{label:'signup_err:exists',path:'/app/'});S.ui.authMsg={type:'error',text:friendly({message:'already registered'})};render();return}
@@ -912,6 +925,8 @@ document.addEventListener('submit',e=>{
         S.ui.editWish=null;S.ui.modal=null;toast('Gespeichert.');render();return;
       }
       if(!S.auth.user&&S.ui.acct==='draft')track('step',{label:'draft_wish',once:true,path:'/app/'}); // Funnel: erster Wunsch ohne Konto (138)
+      else if(ghost())track('step',{label:'ghost_wish',once:true,path:'/app/'}); // Funnel: erster Wunsch im Gastkonto (141)
+      setTimeout(()=>window.dispatchEvent(new Event('wishtale:wishadded')),0);
       S.me.wishes.unshift(W({noSuggest,t,c,kind:k,prio:+fd.get('prio'),link,price:parsePrice(fd.get('price')),occ:fd.getAll('occ'),budget:+fd.get('budget')||null,note:(fd.get('note')||'').trim(),vis:plan?'privat':fd.get('vis'),status:plan?'plan':'offen',a:k==='erlebnis'?'ticket':cat(c).a,tone:cat(c).t,img,imgSrc:imgSrc||''}));
       if(!f.elements.c?.dataset.touched){const nw=S.me.wishes[0];setTimeout(()=>smartCats([nw],()=>{if(!S.ui.modal)render()}),300)} // nur wenn niemand die Kategorie selbst gewählt hat (100)
       {const nw=S.me.wishes[0];if(removed)skipImage(nw);else if(wantsImage(nw))setTimeout(()=>imgFill([nw],()=>{if(!S.ui.modal)render()}),50)} // echtes Produktbild im Hintergrund, eigenes Foto bleibt immer
