@@ -3,7 +3,7 @@ topic: 140-instagram-1000-follower
 status: entschieden
 option: teil-1-umsetzen
 datum: 2026-11-27
-umgesetzt: PENDING
+umgesetzt: fde2ef3
 ---
 **Jann im Projekt:** „Wir brauche mind 1000 follower. Arbeite daran bitte“
 
