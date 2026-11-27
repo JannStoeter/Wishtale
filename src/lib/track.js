@@ -53,3 +53,11 @@ export function watchShopClicks(path = '/app/') {
     if (label) track('shop_click', { label, path });
   }, true);
 }
+
+/** Klicks auf „Wishtale auf Instagram folgen“ (Dev 140) zählen als `cta` mit Label `instagram:<stelle>`. */
+export function watchIgClicks(path = '/') {
+  document.addEventListener('click', e => {
+    const a = e.target && e.target.closest && e.target.closest('a[data-ig]');
+    if (a) track('cta', { label: 'instagram:' + String(a.dataset.ig || 'seite').slice(0, 20), path });
+  }, true);
+}

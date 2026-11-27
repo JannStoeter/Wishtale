@@ -3,8 +3,9 @@ import '@fontsource-variable/schibsted-grotesk/index.css';
 import './styles/main.css';
 
 /* Ratgeberseiten (Dev 115): Aufruf und Klicks zur App zählen wie auf der Startseite, UTM-Kürzel reisen in den Links zur App mit. */
-import('./lib/track.js').then(({track,utmFromUrl})=>{
+import('./lib/track.js').then(({track,utmFromUrl,watchIgClicks})=>{
   track('view',{once:true});
+  watchIgClicks(location.pathname);
   const u=utmFromUrl(),qs=new URLSearchParams();
   for(const k of Object.keys(u))qs.set('utm_'+k,u[k]);
   document.querySelectorAll('a[href^="/app/"]').forEach(a=>{
