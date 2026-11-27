@@ -270,11 +270,12 @@ export const IDEAS = [
         cta('Probier es aus', 'Den Link findest du in unserer Bio.'),
       ],
     }) },
-  { id: 's-kind', format: 'story', group: 'Kinder', title: 'Story-Folge: Wunschzettel fürs Kind', desc: 'Drei Stories für Eltern: Zettel abfotografieren, eigene Kinderliste, Link an die Familie.', fields: [],
+  { id: 's-kind', format: 'story', group: 'Kinder', title: 'Story-Folge: Wunschzettel fürs Kind', desc: 'Vier Stories für Eltern: Handy fotografiert den Zettel, Wünsche werden gelesen, eigene Kinderliste, Link an die Familie.', fields: [],
     build: () => ({
       title: 'Story: Wunschzettel fürs Kind', caption: '',
       slides: [
-        S({ type: 'screen', scene: 'zettel', eyebrow: 'Für Eltern', title: 'Den Wunschzettel einfach abfotografieren' }),
+        S({ type: 'screen', scene: 'kamera', eyebrow: 'Für Eltern', title: 'Den Wunschzettel einfach mit dem Handy abfotografieren' }),
+        S({ type: 'screen', scene: 'zettel', eyebrow: 'Wishtale liest mit', title: 'Wishtale liest die Wünsche im Wortlaut deines Kindes heraus' }),
         S({ type: 'screen', scene: 'kind', eyebrow: 'Kind-Konto', title: 'Daraus wird eine eigene Liste für dein Kind' }),
         S({ type: 'screen', scene: 'linkkind', eyebrow: 'Die Familie', title: 'Und Oma und Opa wissen endlich, was passt' }),
         cta('Weihnachten kann kommen', 'Den Link findest du in unserer Bio.'),

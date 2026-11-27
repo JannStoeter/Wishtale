@@ -496,3 +496,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, npm test (51), Story-Bild und Gewinnspiel-Folien gerendert
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commits reverten
+
+## 2026-11-27 · 131 · Kamera-Folie in der Story „Wunschzettel fürs Kind“
+- Auftrag: Jann im Projekt (Folie mit Handy, das einen Zettel abfotografiert)
+- Geändert: src/admin/scenes.js (Szene `kamera`, `drawCamera()`), src/admin/ideas.js (`s-kind` mit vier Stories)
+- Geprüft: ESLint, Build, Folien gerendert
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten
