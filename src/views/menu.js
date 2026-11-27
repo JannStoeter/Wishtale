@@ -8,6 +8,7 @@ import { esc, ic } from '../lib/util.js';
 import { homeIdeasVisible } from '../lib/homeideas.js';
 import { inspirationOn } from '../lib/flags.js';
 import { isOcc, occLine } from './occasion.js';
+import { IG_URL } from '../lib/iglink.js';
 
 /** Ein Eintrag. `go` wechselt die Ansicht (optional zu einem Abschnitt), `do` ruft eine vorhandene Aktion auf. */
 const item = (icon, label, a, cur, note = '') => `<li><button class="mi${cur ? ' on' : ''}" ${a}${cur ? ' aria-current="page"' : ''}>${ic(icon)}<span>${label}${note ? `<small>${note}</small>` : ''}</span></button></li>`;
@@ -35,7 +36,7 @@ export function Menu() {
     ${m.occasion ? g(esc(m.name), item('star', 'Wünsche dieser Liste', go('wuensche'), v === 'wuensche') + item('user', 'Liste bearbeiten', dd('occedit'), false) + item('link', 'Link teilen', dd('share'), false)) : ''}
     ${m.occasion ? '' : g('Wunschliste', item('star', 'Meine Wünsche', go('wuensche'), v === 'wuensche') + item('bag', 'Aus jedem Shop speichern', dd('shopsave'), false) + (u ? item('camera', 'Wunschzettel hochladen', dd('modal', 'data-v="zettel"'), false) : ''))}
     ${m.occasion ? '' : g('Über mich', item('user', 'Profil', go('profil'), v === 'profil') + item('spark', 'Geschmack schärfen', go('geschmack'), v === 'geschmack') + (inspirationOn() ? item('gift', 'Inspiration', go('entdecken'), v === 'entdecken') : '') + (u ? item('eye', homeIdeasVisible() ? 'Vorschläge ausblenden' : 'Vorschläge einblenden', dd('homeideastoggle'), false) : ''))}
-    ${m.occasion ? '' : g('Social Media', item('globe', 'Instagram und Pinterest verbinden', go('profil', 'social'), false))}
+    ${m.occasion ? '' : g('Social Media', item('globe', 'Instagram und Pinterest verbinden', go('profil', 'social'), false) + `<li><a class="mi" href="${IG_URL}" target="_blank" rel="noopener" data-ig="menue">${ic('insta')}<span>Wishtale auf Instagram folgen<small>Ideen und Neuigkeiten von @wishtale.de</small></span></a></li>`)}
     ${m.occasion ? '' : g('Teilen und Schenken', item('link', 'Link teilen', dd('share'), false) + item('lock', 'Wer sieht was', go('profil', 'vis'), false) + (u ? item('mail', 'Jemanden einladen', dd('inviteopen'), false) : '') + item('clock', 'Verschenkt und bekommen', go('historie'), v === 'historie'))}
     ${g('Konto', (u ? item('bag', 'Mein Plan', go('plan'), v === 'plan') + item('filter', 'Einstellungen', dd('modal', 'data-v="accounts"'), false) : '') + (offerInstall() ? item('phone', 'Wishtale als App', dd('appinstall'), false) : '') + item('help', 'Hilfe und FAQ', dd('modal', 'data-v="tour" data-help="faq"'), false) + (u ? item('back', 'Abmelden', dd('logout'), false) : item('arrow', 'Eigenes Wishtale anlegen', dd('exitdemo'), false)))}
    </nav></aside></div>`;

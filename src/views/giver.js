@@ -14,6 +14,7 @@ import { PastGifts } from './given.js';
 import { ideasOf, aiStatus, gkey } from '../lib/ideas.js';
 import { AiLoading } from './ailoading.js';
 import { occLine } from './occasion.js';
+import { IG_URL } from '../lib/iglink.js';
 
 /* Gast-Ansicht: ein Freund öffnet den Link und sieht nur dieses eine Profil. */
 export function Gast(){
@@ -51,6 +52,7 @@ export function GuestOwn(p){
    <h2 id="gown-h">Was wünschst du dir eigentlich</h2>
    <p>Mit Wishtale schreibst du deine Wünsche in wenigen Minuten auf oder fotografierst einfach deinen Wunschzettel ab. Dann wissen auch die Menschen, die dir etwas schenken möchten, was dich wirklich freut, so wie du es gerade bei ${esc(p.name)} siehst.</p>
    <div class="row" style="gap:12px;align-items:center"><button class="btn pri" data-act="guestcta" data-c="ende">Meine Wunschliste anlegen</button><span class="muted gown-s">Kostenlos, und es reicht der Browser.</span></div>
+   <p class="gown-ig">Geschenkideen und kleine Geschichten rund ums Schenken findest du auch bei <a href="${IG_URL}" target="_blank" rel="noopener" data-ig="gast">@wishtale.de auf Instagram</a>.</p>
   </section>`;
 }
 

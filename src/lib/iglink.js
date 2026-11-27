@@ -14,3 +14,7 @@ export function withSiteLink(caption) {
   if (m) return `${c.slice(0, m.index)}\n\n${SITE_LINE}\n\n${m[1].trim()}`;
   return `${c}\n\n${SITE_LINE}`;
 }
+
+/** Das Instagram-Konto von Wishtale (Dev 140). Folgen-Links auf Landingpage, Ratgeber, Gastansicht und im Menü. */
+export const IG_HANDLE = 'wishtale.de';
+export const IG_URL = 'https://www.instagram.com/wishtale.de/';

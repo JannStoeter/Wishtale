@@ -13,7 +13,7 @@ import { route, render } from './render.js';
 import './actions.js';
 import { loadPromo } from './lib/promo.js';
 import { initPwa, takeShare, pendingShare, standalone } from './lib/pwa.js';
-import { track, setStatsOff, watchShopClicks } from './lib/track.js';
+import { track, setStatsOff, watchShopClicks, watchIgClicks } from './lib/track.js';
 import { loadGiven, migrateGiven } from './lib/given.js';
 
 initPwa();
@@ -73,6 +73,7 @@ async function boot(){
   if(!session){await loadGiven().catch(()=>{});googleOn().then(v=>{S.ui.google=v;if(v&&!S.auth.user&&(S.ui.view==='login'||S.ui.acct==='draft')&&!S.ui.modal&&!document.activeElement?.matches?.('input'))render()})}
   window.addEventListener('hashchange',route);
   watchShopClicks(); // Klicks zu Shops zählen, ohne Produkt (111)
+  watchIgClicks('/app/'); // Folgen-Links zu Instagram (140)
   route();
   if(session){openShared();countOpen()}
   /* Kein Willkommens-Rundgang mehr: Der erste Bildschirm ist die Wunschliste mit einem Feld (Feedback der ersten Testerinnen). */

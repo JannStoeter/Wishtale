@@ -482,3 +482,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
 - Nachtrag: Amazon-Seite lesen (`amazonPage()`, `parseAmazon()` in api/_lib/inspect.js, `amazonInfo()` in api/_lib/imgsearch.js, `op titleFor` in api/inspect.js, src/actions.js, src/lib/pricefill.js `price-tried4`), Tests ergänzt (49).
+
+## 2026-11-27 · 140 · Wege zu Instagram (1000 Follower, Teil 1)
+- Auftrag: Jann im Projekt („Wir brauche mind 1000 follower. Arbeite daran bitte“)
+- Geändert: src/lib/iglink.js (`IG_URL`, `IG_HANDLE`), src/lib/track.js (`watchIgClicks()`), src/main.js, src/landing.js, src/ratgeber.js, src/views/menu.js, src/views/giver.js, src/lib/util.js (Symbol `insta`), src/styles/main.css, index.html (`footer.ig`, `sameAs`), ratgeber/*.html, impressum.html, datenschutz.html, barrierefreiheit.html
+- Geprüft: ESLint, Build, npm test (49), Gastansicht und Fußzeile am Handy
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commit reverten

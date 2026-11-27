@@ -1818,3 +1818,6 @@ body.lp{background:#FFFDFA}
 .buybox .bb-ad:empty{display:none}
 .buybox .qa{align-self:flex-start}
 .buybox .bb-choose{align-self:stretch}
+/* Folgen-Hinweis am Ende der Gastansicht (Dev 140) */
+.gown p.gown-ig{font-size:14px;margin-top:4px}
+.gown-ig a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
