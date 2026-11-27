@@ -118,6 +118,8 @@ export const SCENES = {
     r('Buch über Dinos', 'Neuer Wunsch', 'book', 2, { check: true }),
     r('Bastelset mit Perlen', 'Neuer Wunsch', 'gift', 0, { check: true }),
   ] },
+  // Kamera-Ansicht (Jann, 27.11.): Das Handy fotografiert einen Wunschzettel, gezeichnet in drawCamera()
+  kamera: { label: 'Kamera: Wunschzettel fotografieren', avatar: 'A', camera: { title: 'Mein Wunschzettel', lines: ['Laufrad', 'Buch über Dinos', 'Bastelset mit Perlen'] }, blocks: [] },
   geschmack: { label: 'Profil und Geschmack', avatar: 'M', blocks: [
     { k: 'bar' }, { k: 'h', t: 'Über Mia' },
     { k: 'label', t: 'Interessen' }, { k: 'chips', items: ['*Kaffee', 'Wandern', 'Keramik', 'Krimis'] },
@@ -334,6 +336,48 @@ function drawBlock(ctx, b, x, y, w, sc) {
  * Zeichnet ein Handy mit der Szene. x, y: obere linke Ecke des Bildschirms auf der Folie, w: Bildschirmbreite in Pixeln.
  * visH: wie viel vom Bildschirm sichtbar ist (bis zum unteren Rand der Folie oder der sicheren Zone), das Handy läuft unten aus dem Bild.
  */
+/** Kamerabild: Tisch, schräg liegender Wunschzettel, Fokusrahmen und Auslöser. `vis` ist die sichtbare Höhe in logischen Punkten. */
+function drawCamera(ctx, cam, vis, full) {
+  ctx.fillStyle = '#151311'; ctx.fillRect(0, 0, LW, full);
+  const top = 52, bot = vis - 112, vh = Math.max(220, bot - top);
+  const g = ctx.createLinearGradient(0, top, LW, top + vh); g.addColorStop(0, '#C7AA86'); g.addColorStop(1, '#A88A66');
+  ctx.fillStyle = g; ctx.fillRect(0, top, LW, vh);
+  ctx.strokeStyle = 'rgba(90,64,40,.18)'; ctx.lineWidth = 1.2;
+  for (let i = 0; i < 7; i++) { const yy = top + 18 + i * vh / 7; ctx.beginPath(); ctx.moveTo(0, yy); ctx.bezierCurveTo(LW * 0.3, yy + 6, LW * 0.6, yy - 6, LW, yy + 3); ctx.stroke(); }
+  // Zettel
+  const pw = 228, ph = Math.min(300, vh - 56), cx = LW / 2, cy = top + vh / 2;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-0.07);
+  ctx.shadowColor = 'rgba(31,27,22,.35)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6;
+  ctx.fillStyle = '#FFFDF6'; ctx.fillRect(-pw / 2, -ph / 2, pw, ph); ctx.shadowColor = 'transparent';
+  ctx.strokeStyle = '#E3D8C2'; ctx.lineWidth = 1;
+  for (let ly = -ph / 2 + 70; ly < ph / 2 - 12; ly += 30) { ctx.beginPath(); ctx.moveTo(-pw / 2 + 12, ly); ctx.lineTo(pw / 2 - 12, ly); ctx.stroke(); }
+  ctx.strokeStyle = '#E9B8B0'; ctx.beginPath(); ctx.moveTo(-pw / 2 + 30, -ph / 2); ctx.lineTo(-pw / 2 + 30, ph / 2); ctx.stroke();
+  font(ctx, `italic 400 27px ${DISP}`); ctx.fillStyle = '#B5473A'; ctx.fillText(cam.title, -pw / 2 + 40, -ph / 2 + 46);
+  font(ctx, `italic 400 23px ${DISP}`); ctx.fillStyle = '#2E557A';
+  cam.lines.forEach((l, i) => { const ly = -ph / 2 + 96 + i * 30; if (ly < ph / 2 - 8) ctx.fillText(`${i + 1}. ${l}`, -pw / 2 + 40, ly - 4); });
+  // kleiner gemalter Stern
+  const sx = pw / 2 - 34, sy = ph / 2 - 34; ctx.strokeStyle = '#D9A441'; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.beginPath();
+  for (let i = 0; i < 10; i++) { const r = i % 2 ? 7 : 16, a = -Math.PI / 2 + i * Math.PI / 5; ctx[i ? 'lineTo' : 'moveTo'](sx + r * Math.cos(a), sy + r * Math.sin(a)); }
+  ctx.closePath(); ctx.stroke();
+  ctx.restore();
+  // Fokusrahmen
+  const fx = cx - pw / 2 - 16, fy = cy - ph / 2 - 16, fw = pw + 32, fh = ph + 32, L = 22;
+  ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  for (const [x0, y0, dx, dy] of [[fx, fy, 1, 1], [fx + fw, fy, -1, 1], [fx, fy + fh, 1, -1], [fx + fw, fy + fh, -1, -1]]) {
+    ctx.beginPath(); ctx.moveTo(x0, y0 + dy * L); ctx.lineTo(x0, y0); ctx.lineTo(x0 + dx * L, y0); ctx.stroke();
+  }
+  // Leiste unten: Modus und Auslöser
+  font(ctx, `600 11px ${BODY}`); ctx.fillStyle = '#D9A441'; ctx.textAlign = 'center';
+  try { ctx.letterSpacing = '2px'; } catch { /* ältere Browser */ }
+  ctx.fillText('FOTO', LW / 2, bot + 24);
+  try { ctx.letterSpacing = '0px'; } catch { /* */ }
+  ctx.textAlign = 'left';
+  const sy2 = bot + 66;
+  ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(LW / 2, sy2, 30, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(LW / 2, sy2, 24, 0, Math.PI * 2); ctx.fill();
+  rr(ctx, 44, sy2 - 18, 36, 36, 8); ctx.fillStyle = '#3A3530'; ctx.fill();
+}
+
 export function drawPhone(ctx, key, x, y, w, visH, bleedTo) {
   const sc = SCENES[key] || SCENES.liste, k = w / LW, bez = Math.round(14 * k / 1.8);
   const fullH = Math.max(visH, bleedTo - y) + 80;
@@ -347,6 +391,7 @@ export function drawPhone(ctx, key, x, y, w, visH, bleedTo) {
   ctx.translate(x, y); ctx.scale(k, k);
   // Kamera-Aussparung
   rr(ctx, LW / 2 - 46, 10, 92, 26, 13); ctx.fillStyle = '#1F1B16'; ctx.fill();
+  if (sc.camera) { drawCamera(ctx, sc.camera, visH / k, fullH / k); ctx.restore(); return; }
   let yy = 44;
   ctx.textBaseline = 'alphabetic';
   for (const b of sc.blocks) { if (b.k === 'toast') continue; yy += drawBlock(ctx, b, P, yy, LW - P * 2, sc); }
