@@ -1,4 +1,4 @@
-import { S, guestDraft } from '../state.js';
+import { S, guestDraft, ghost } from '../state.js';
 import { esc, ic, money } from '../lib/util.js';
 import { WishCard, WishRow } from './card.js';
 import { V, cat, occL, PRIO } from '../data/content.js';
@@ -52,12 +52,12 @@ function EmptyWishes(m){
    <p class="fw-alt">Schon eine Liste auf Papier oder bei Amazon? <button type="button" class="linkbtn" data-act="modal" data-v="zettel">Liste einlesen</button></p>
   </section>`;
 }
-const GLOGO='<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>';
+export const GLOGO='<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>';
 /** Wunschliste ohne Konto (137): ein ruhiger Hinweis über der Liste, sichern geht mit Google in einem Klick oder per E-Mail. */
 function SaveHint(n){
   return `<section class="savehint" aria-labelledby="sh-h"><div class="sh-txt"><h2 id="sh-h">${n===1?'Dein erster Wunsch steht':'Deine Wunschliste wächst'}</h2>
-   <p>Bisher liegt deine Wunschliste nur in diesem Browser. Mit einem Konto ist sie sicher, du kannst sie teilen, und Wishtale findet Bild, Preis und passende Ideen zu deinen Wünschen.</p></div>
-   <div class="sh-acts">${S.ui.google?`<button type="button" class="btn gbtn" data-act="google">${GLOGO}<span>Mit Google sichern</span></button><a class="btn sec" href="#registrieren">Mit E-Mail</a>`:`<a class="btn pri" href="#registrieren">Konto anlegen</a>`}</div></section>`;
+   <p>${ghost()?'Bisher liegt deine Wunschliste nur in diesem Browser. Mit einem Konto bleibt sie sicher, und du kannst sie teilen.':'Bisher liegt deine Wunschliste nur in diesem Browser. Mit einem Konto ist sie sicher, du kannst sie teilen, und Wishtale findet Bild, Preis und passende Ideen zu deinen Wünschen.'}</p></div>
+   <div class="sh-acts">${S.ui.google?`<button type="button" class="btn gbtn" data-act="google" data-v="up">${GLOGO}<span>Mit Google sichern</span></button><a class="btn sec" href="#registrieren">Mit E-Mail</a>`:`<a class="btn pri" href="#registrieren">Konto anlegen</a>`}</div></section>`;
 }
 /* Das Band „Jetzt neu“ bleibt nur, bis man es benutzt oder wegklickt (103). Hochladen gibt es danach weiter im Wunschdialog und im Menü. */
 const NB='wishtale:newbar-done';
@@ -74,12 +74,12 @@ export function Wuensche(){
   if(!m.wishes.length)return `<div class="wrap first">${m.managed&&!m.occasion?Tip():''}${EmptyWishes(m)}</div>`; // im leeren Kind-Konto passt nur der Elternteil-Hinweis (106)
   const active=(u.wc!=='alle'?1:0)+((u.wsort||'prio')!=='prio'?1:0);
   const filt=m.wishes.length>=6?`<details class="fsort"><summary>${ic('filter','sm')}Filtern und sortieren${active?` <span class="chip gold">${active}</span>`:''}</summary><div class="fsort-body">${used.length>1?`<label class="sortsel"><span class="vh">Kategorie</span><select class="sel sm" data-wc="1" aria-label="Kategorie"><option value="alle">Alle Kategorien</option>${used.map(c=>`<option value="${c}" ${u.wc===c?'selected':''}>${cat(c).n}</option>`).join('')}</select></label>`:''}${sortSeg()}${PrioKey()}<span class="desk-only">${densSeg(list.length)}</span></div></details>`:'';
-  const draft=guestDraft(),occ=!!m.occasion,tip=occ||draft?'':Tip(); // Hinweis im passenden Moment steht über der Liste und ersetzt solange die übrigen (104)
+  const draft=guestDraft()||ghost(),occ=!!m.occasion,tip=occ||draft?'':Tip(); // Hinweis im passenden Moment steht über der Liste und ersetzt solange die übrigen (104)
   const note=m.managed?`Als Elternteil siehst du, was reserviert oder gekauft ist. ${esc(m.name)} sieht es nicht.`:'Die Überraschung bleibt: Du siehst nie, ob jemand einen deiner Wünsche reserviert oder gekauft hat.';
   return `<div class="wrap">
    <div class="pagehead">${occ?`<p class="eyebrow">${occLine(m)} · <button type="button" class="linkbtn" data-act="occedit">Bearbeiten</button></p><h1>${esc(m.name)}</h1>`:`<p class="eyebrow">Meine Wünsche</p><h1${open&&!m.managed?' class="oneline"':''}>${open===0?(m.managed?`Hier beginnt die Wunschliste von ${esc(m.name)}`:'Hier beginnt deine Wunschliste'):m.managed?`${open} Wünsche von ${esc(m.name)}`:open===1?'1 Ding, über das ich mich freuen würde':`${open} Dinge, über die ich mich freuen würde`}</h1>`}</div>
-   <div class="row homebar">${ViewSeg()}${m.handle||!S.auth.user?`<button class="btn gold sm" data-act="share">Teilen</button>`:""}</div>
-   ${draft?SaveHint(open):''}
+   <div class="row homebar">${ViewSeg()}${m.handle||!S.auth.user||draft?`<button class="btn gold sm" data-act="share">Teilen</button>`:""}</div>
+   ${draft&&!S.ui.ghosting?SaveHint(open):''}
    ${newbarDone()||occ||draft?'':`<div class="newbar-wrap"><button class="newbar" data-act="newbar"><span class="nb-tag">Jetzt neu</span><span class="nb-t"><b>Einfach Wunschliste hochladen</b><small>Foto vom Wunschzettel oder Text, Wishtale macht daraus Wünsche</small></span>${ic('arrow','sm')}</button><button class="newbar-x" data-act="newbarx" aria-label="Hinweis ausblenden">×</button></div>`}
    ${tip}
    ${filt}

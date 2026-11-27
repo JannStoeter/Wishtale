@@ -19,6 +19,7 @@ import { PinsModal } from './pins.js';
 import { IdeaModal } from './inspiration.js';
 import { AMAZON_DISCLOSURE, searchUrl } from '../lib/shops.js';
 import { OccModal, isOcc } from './occasion.js';
+import { GLOGO } from './wishes.js';
 
 export function AcctModal(){
   const rows=Object.entries(S.accounts).filter(([,a])=>!isOcc(a)).map(([id,a])=>`<div class="altrow" style="grid-template-columns:44px 1fr auto"><span class="av t${a.tone}" style="width:44px;height:44px">${initials(a.name)}</span><div><strong>${esc(a.name)}${a.age?`, ${a.age}`:''}</strong><br><span class="muted" style="font-size:13.5px">${a.shared?'Kind-Konto, gemeinsam mitverwaltet':a.managed?`Kind-Konto, verwaltet von ${esc(S.accounts.me.name)}`:'Hauptkonto'}</span></div>${S.ui.acct===id?'<span class="chip ok">Aktiv</span>':`<button class="btn sec sm" data-act="acct" data-id="${id}">Wechseln</button>`}</div>`).join('');
@@ -70,6 +71,7 @@ export function Modal(){
   if(m==='shopsave')return ShopSaveModal();
   if(m==='mailme')return MailMeModal();
   if(m==='fulfilled')return FulfilledModal();
+  if(m==='sichern')return SaveModal();
   if(m==='about')return AboutModal();
   if(m==='tour')return TourModal();
   if(m==='amazon')return AmazonModal();
@@ -124,6 +126,19 @@ export function Modal(){
 }
 
 /* 108: Ein Wunsch wurde selbst erfüllt. Kleines Fenster mit Glückwunsch, Fundort und Rückweg. */
+/** Wunschliste sichern (141): erscheint beim Teilen und beim Verlassen, solange die Liste noch ohne Konto ist. Google ist ein Klick, E-Mail geht auch. */
+function SaveModal(){
+  const why=S.ui.saveWhy||'share',n=(S.me.wishes||[]).filter(w=>w.status==='offen'||w.status==='plan').length;
+  const h=why==='share'?'Sichere deine Wunschliste, dann bekommst du deinen Link':why==='exit'?'Bevor du gehst, sichere deine Wunschliste':'Sichere deine Wunschliste';
+  const p=why==='share'?'Mit einem Konto bleibt alles, was du eingetragen hast, und du kannst die Liste mit allen teilen, die dir etwas schenken möchten.'
+   :`Bisher ${n===1?'liegt dein Wunsch':n?`liegen deine ${n} Wünsche`:'liegt deine Liste'} nur in diesem Browser. Mit einem Konto findest du alles auf jedem Gerät wieder.`;
+  return `<div class="scrim" data-act="closebg"><div class="sheet narrow savesheet" role="dialog" aria-modal="true" aria-labelledby="mt">
+   <h2 id="mt">${h}</h2>
+   <p class="muted">${p}</p>
+   <div class="save-a">${S.ui.google?`<button type="button" class="btn gbtn" data-act="google" data-v="up">${GLOGO}<span>Mit Google sichern</span></button><a class="btn sec" href="#registrieren" data-act="savemail">Mit E-Mail sichern</a>`:`<a class="btn pri" href="#registrieren" data-act="savemail">Konto anlegen</a>`}
+    <button type="button" class="btn ghost" data-act="close">${why==='exit'?'Später':'Noch nicht'}</button></div>
+  </div></div>`;
+}
 function FulfilledModal(){
   const w=(S.me.wishes||[]).find(x=>x.id===S.ui.ff?.id);
   if(!w||w.status!=='selbst'){S.ui.modal=null;return ''}

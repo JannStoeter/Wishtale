@@ -1821,3 +1821,10 @@ body.lp{background:#FFFDFA}
 /* Folgen-Hinweis am Ende der Gastansicht (Dev 140) */
 .gown p.gown-ig{font-size:14px;margin-top:4px}
 .gown-ig a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+
+/* Wunschliste sichern (141) */
+.savesheet h2{margin:0 0 6px}
+.savesheet .muted{margin:0 0 16px}
+.save-a{display:grid;gap:10px}
+.save-a .btn{width:100%;justify-content:center}
+.hdrsave{white-space:nowrap}

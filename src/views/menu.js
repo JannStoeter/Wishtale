@@ -2,7 +2,7 @@
  * Menü hinter dem Avatar (Dev 075): zentraler Zugang zu allem außer der Wunschliste, die der feste Startpunkt ist.
  * Gäste ohne Konto sehen es nie, eingeloggte Schenkende öffnen darüber das eigene Menü.
  */
-import { S, initials } from '../state.js';
+import { S, initials, ghost } from '../state.js';
 import { offerInstall } from '../lib/pwa.js';
 import { esc, ic } from '../lib/util.js';
 import { homeIdeasVisible } from '../lib/homeideas.js';
@@ -29,7 +29,7 @@ export function Menu() {
   const adds = `<div class="madd"><button class="madd-b" ${dd('modal', 'data-v="accounts"')}>${ic('plus', 'sm')}Kind-Konto</button>${u ? `<button class="madd-b" ${dd('occnew')}>${ic('plus', 'sm')}Liste für einen Anlass</button>` : ''}</div>`;
   const g = (t, body, extra = '') => body.trim() ? `<section class="mgrp"><h3>${t}</h3><ul>${body}</ul>${extra}</section>` : '';
   return `<div class="scrim menu-scrim" data-act="menuclosebg"><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="menu-t">
-   <div class="drawer-head"><div class="mhead"><strong id="menu-t">Menü</strong><span class="muted">${u ? esc(u.email || '') : 'Demo, nur in diesem Browser'}</span></div>
+   <div class="drawer-head"><div class="mhead"><strong id="menu-t">Menü</strong><span class="muted">${ghost() ? 'Noch nicht gesichert' : u ? esc(u.email || '') : 'Demo, nur in diesem Browser'}</span></div>
     <button class="sheet-x mclose" data-act="menuclose" aria-label="Menü schließen">×</button></div>
    <nav aria-label="Menü">
     ${g('Profile', profiles, adds)}
@@ -38,7 +38,7 @@ export function Menu() {
     ${m.occasion ? '' : g('Über mich', item('user', 'Profil', go('profil'), v === 'profil') + item('spark', 'Geschmack schärfen', go('geschmack'), v === 'geschmack') + (inspirationOn() ? item('gift', 'Inspiration', go('entdecken'), v === 'entdecken') : '') + (u ? item('eye', homeIdeasVisible() ? 'Vorschläge ausblenden' : 'Vorschläge einblenden', dd('homeideastoggle'), false) : ''))}
     ${m.occasion ? '' : g('Social Media', item('globe', 'Instagram und Pinterest verbinden', go('profil', 'social'), false) + `<li><a class="mi" href="${IG_URL}" target="_blank" rel="noopener" data-ig="menue">${ic('insta')}<span>Wishtale auf Instagram folgen<small>Ideen und Neuigkeiten von @wishtale.de</small></span></a></li>`)}
     ${m.occasion ? '' : g('Teilen und Schenken', item('link', 'Link teilen', dd('share'), false) + (u && m.handle ? item('insta', 'Als Instagram-Story teilen', dd('storyshare'), false) : '') + item('lock', 'Wer sieht was', go('profil', 'vis'), false) + (u ? item('mail', 'Jemanden einladen', dd('inviteopen'), false) : '') + item('clock', 'Verschenkt und bekommen', go('historie'), v === 'historie'))}
-    ${g('Konto', (u ? item('bag', 'Mein Plan', go('plan'), v === 'plan') + item('filter', 'Einstellungen', dd('modal', 'data-v="accounts"'), false) : '') + (offerInstall() ? item('phone', 'Wishtale als App', dd('appinstall'), false) : '') + item('help', 'Hilfe und FAQ', dd('modal', 'data-v="tour" data-help="faq"'), false) + (u ? item('back', 'Abmelden', dd('logout'), false) : item('arrow', 'Eigenes Wishtale anlegen', dd('exitdemo'), false)))}
+    ${g('Konto', (ghost() ? item('lock', 'Wunschliste sichern', dd('saveopen', 'data-v="menu"'), false) : '') + (u && !ghost() ? item('bag', 'Mein Plan', go('plan'), v === 'plan') + item('filter', 'Einstellungen', dd('modal', 'data-v="accounts"'), false) : '') + (offerInstall() ? item('phone', 'Wishtale als App', dd('appinstall'), false) : '') + item('help', 'Hilfe und FAQ', dd('modal', 'data-v="tour" data-help="faq"'), false) + (ghost() ? item('back', 'Ich habe schon ein Konto', go('anmelden'), false) : u ? item('back', 'Abmelden', dd('logout'), false) : item('arrow', 'Eigenes Wishtale anlegen', dd('exitdemo'), false)))}
    </nav></aside></div>`;
 }
 

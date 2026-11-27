@@ -44,9 +44,10 @@ export const TEMPLATES = {
     preheader: 'Lege mit einem Tipp ein neues Passwort fest.', title: 'Neues Passwort festlegen',
     body: 'Du hast ein neues Passwort angefordert. Tippe auf den Knopf und wähle eines, das du dir gut merken kannst. Der Link gilt eine Stunde.',
     button: 'Passwort festlegen', link: URL, note: `Wenn du kein neues Passwort angefordert hast, ist nichts passiert. Dein bisheriges Passwort bleibt gültig.` }) },
-  'email-change': { name: 'Change email address', subject: 'Bestätige deine neue E-Mail-Adresse', html: layout({
-    preheader: 'Bestätige die neue Adresse für dein Wishtale.', title: 'Neue E-Mail-Adresse bestätigen',
-    body: 'Du möchtest deine E-Mail-Adresse für Wishtale von {{ .Email }} auf {{ .NewEmail }} ändern. Bestätige das mit einem Tipp.',
+  // Auch für Wunschlisten, die ohne Konto begonnen wurden (141): Dann gibt es noch keine alte Adresse ({{ .Email }} ist leer).
+  'email-change': { name: 'Change email address', subject: 'Bestätige deine E-Mail-Adresse für Wishtale', html: layout({
+    preheader: 'Bestätige die Adresse für dein Wishtale.', title: 'E-Mail-Adresse bestätigen',
+    body: '{{ if .Email }}Du möchtest deine E-Mail-Adresse für Wishtale von {{ .Email }} auf {{ .NewEmail }} ändern. Bestätige das mit einem Tipp.{{ else }}Du möchtest deine Wunschliste mit der Adresse {{ .NewEmail }} sichern. Bestätige das mit einem Tipp, dann ist dein Konto fertig und deine Wünsche bleiben.{{ end }}',
     button: 'Adresse bestätigen', link: URL, note: `Wenn du das nicht angefordert hast, ignoriere diese Mail. Dein Konto bleibt unverändert.` }) },
   'invite': { name: 'Invite user', subject: 'Du wurdest zu Wishtale eingeladen', html: layout({
     preheader: 'Nimm die Einladung an und lege dein Wishtale an.', title: 'Willkommen bei Wishtale',

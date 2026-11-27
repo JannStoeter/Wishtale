@@ -68,8 +68,45 @@ export async function googleOn() {
     return !!(j && j.external && j.external.google);
   } catch { return false; }
 }
+/* ---- Stilles Gastkonto (141): Wer „Wunschliste anlegen“ tippt, bekommt sofort ein anonymes Supabase-Konto. Damit laufen Suche, Ideen, Bilder und Fotoimport wie mit Konto.
+   Sichern mit Google (linkIdentity) oder E-Mail (updateUser) macht daraus ein echtes Konto, dieselbe Nutzer-ID, nichts zieht um. ---- */
+/** Noch ohne echtes Konto (anonym angemeldet)? */
+export const isGhost = user => !!(user && user.is_anonymous);
+/** Gastkonto anlegen. Gibt false zurück, wenn Supabase anonyme Anmeldung nicht erlaubt; dann bleibt der Entwurf im Browser (137). */
+export async function startGhost() {
+  try {
+    const { data, error } = await sb.auth.signInAnonymously({ options: { data: { utm: utmFromUrl() } } });
+    if (error || !data || !data.session) return false;
+    return data.session.user;
+  } catch { return false; }
+}
+/** Die Wünsche des Gastkontos als Entwurf im Browser ablegen. Falls am Ende ein anderes, schon bestehendes Konto angemeldet wird, übernimmt adoptDraft() sie dorthin. */
+export function stashGhost() {
+  if (!isGhost(S.auth.user) || !S.accounts.me) return;
+  const me = S.accounts.me, d = ensureDraft();
+  d.quick = true;
+  d.wishes = me.wishes.filter(w => w.status === 'offen' || w.status === 'plan').slice(0, 60).map(w => ({ ...w }));
+  for (const k of ['interests', 'cats', 'brands', 'tries', 'nogos', 'alts']) d[k] = [...(me[k] || [])];
+  try { localStorage.setItem('wishtale:draft', JSON.stringify(d)); } catch { /* ohne Speicher bleibt nur das Gastkonto */ }
+}
+/** Gastkonto mit Google sichern. Gehört das Google-Konto schon jemandem, meldet boot() sich danach normal an und übernimmt den Entwurf. */
+export const ghostGoogle = () => {
+  stashGhost();
+  try { sessionStorage.setItem('wishtale:ghostlink', '1'); } catch { /* egal */ }
+  return sb.auth.linkIdentity({ provider: 'google', options: { redirectTo: redirectUrl(), queryParams: { prompt: 'select_account' } } });
+};
+/** Gastkonto per E-Mail sichern: Supabase schickt eine Bestätigung an die Adresse, danach ist es ein normales Konto (Anmelden per Link, Passwort jederzeit über „Passwort vergessen“). */
+export const ghostEmail = (name, email) => sb.auth.updateUser({ email, data: { full_name: name } }, { emailRedirectTo: redirectUrl() });
+/** Profilname nach dem Sichern: Gastkonten heißen „Ich“, bis ein Name bekannt ist. */
+export function nameFromUser(user) {
+  const m = user && user.user_metadata || {};
+  const idn = ((user && user.identities) || []).map(i => i.identity_data || {}).find(d => d.full_name || d.name || d.given_name) || {};
+  const full = String(m.full_name || m.name || idn.given_name || idn.full_name || idn.name || '').trim();
+  return full ? (viaOAuth(user) || idn.given_name ? full.split(/\s+/)[0] : full).slice(0, 60) : '';
+}
+
 /** Über Google angemeldet (nicht per E-Mail und Passwort)? */
-export const viaOAuth = user => { const p = user && user.app_metadata && user.app_metadata.provider; return !!p && p !== 'email'; };
+export const viaOAuth = user => { const a = (user && user.app_metadata) || {}; return [a.provider, ...(a.providers || [])].some(p => p && p !== 'email' && p !== 'anonymous'); };
 
 /** Nach dem Login: eigene Daten laden. */
 export async function enter(user) {

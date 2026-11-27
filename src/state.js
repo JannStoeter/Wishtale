@@ -101,6 +101,10 @@ export const blankDraft=()=>({id:'draft',name:'',tone:2,interests:[],cats:[],bra
 export const draftHasData=()=>{const d=S.accounts.draft;return !!d&&(d.interests.length+d.cats.length+d.brands.length+d.tries.length+d.nogos.length+d.alts.length+(d.wishes||[]).length>0||!!d.name||!!d.quick)};
 /** Eigene Wunschliste ohne Konto (137): Die Wünsche liegen im Entwurf in diesem Browser, bis ein Konto angelegt wird. */
 export const guestDraft=()=>!S.auth.user&&S.ui.acct==='draft';
+/** Stilles Gastkonto (141): angemeldet, aber noch ohne Google oder E-Mail. */
+export const ghost=()=>!!(S.auth.user&&S.auth.user.is_anonymous);
+/** Wunschliste noch nicht gesichert: Entwurf im Browser oder Gastkonto. Teilen braucht dann ein Konto. */
+export const unsaved=()=>guestDraft()||ghost();
 export function ensureDraft(){
   if(!S.accounts.draft){
     let d=null;
