@@ -489,3 +489,10 @@ Einträge nach `docs/log/README.md`, neue Einträge ans Ende.
 - Geprüft: ESLint, Build, npm test (49), Gastansicht und Fußzeile am Handy
 - Datenbank und Dienste: keine
 - Zurücknehmen: Merge-Commit reverten
+
+## 2026-11-27 · 140 · Story-Bild und Gewinnspiel (Teil 2)
+- Auftrag: Jann im Projekt (Entscheidungskarte „Story-Bild und Gewinnspiel“)
+- Geändert: src/lib/storyimg.js, src/lib/glyphcanvas.js (aus scenes.js), src/actions.js (`storyshare`), src/views/menu.js, src/admin/ideas.js (`k-gewinnspiel`, `s-gewinnspiel`, `k-gewinner`), gewinnspiel.html, vite.config.js, public/sitemap.xml, datenschutz.html (Abschnitt 12), tests/storyimg.test.mjs
+- Geprüft: ESLint, Build, npm test (51), Story-Bild und Gewinnspiel-Folien gerendert
+- Datenbank und Dienste: keine
+- Zurücknehmen: Merge-Commits reverten

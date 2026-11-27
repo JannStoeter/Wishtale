@@ -385,6 +385,36 @@ export const IDEAS = [
     } },
   { id: 'aktion', title: 'Aktion aus dem CMS', desc: 'Baut aus einer deiner Aktionen (zum Beispiel Black Week oder Weihnachten) ein Karussell, das ums Wünschen geht.', fields: [['campaign', 'Aktion', '']], ctx: true,
     build: (v, ctx) => buildCampaignPost((ctx.campaigns || []).find(x => x.id === v.campaign) || (ctx.campaigns || [])[0], ctx) },
+  /* Gewinnspiel (Dev 140, Jann: „Story-Bild und Gewinnspiel“). Preis, Ende und Link trägst du selbst ein. Nur nach Freigabe veröffentlichen. */
+  { id: 'k-gewinnspiel', group: 'Gewinnspiel', title: 'Karussell: Gewinnspiel ankündigen', desc: 'Verlosung für neue Follower. Preis, Ende und Link zu den Teilnahmebedingungen bitte selbst eintragen. Folgen und Kommentieren sind Bedingung, Teilen in der Story bleibt freiwillig (Regeln von Meta).', fields: [['preis', 'Preis (mit Artikel)', 'einen Gutschein über 50 Euro'], ['ende', 'Teilnahme bis (Datum)', '14. Dezember'], ['link', 'Teilnahmebedingungen unter', 'wishtale.de/gewinnspiel']],
+    build: v => ({
+      title: `Gewinnspiel: ${v.preis}`,
+      caption: `Wir verlosen ${v.preis}. So machst du mit: Folge @wishtale.de und schreib uns in die Kommentare, wem du dieses Jahr eine besondere Freude machen möchtest. Wenn du magst, markierst du die Person dazu, ein Muss ist das nicht. Mitmachen kannst du bis zum ${v.ende} um 23:59 Uhr.\n\nKurz das Wichtigste: Teilnehmen kannst du ab 18 Jahren mit Wohnsitz in Deutschland, und kaufen musst du nichts. Wer gewinnt, wird zufällig gezogen und bekommt eine Nachricht von @wishtale.de. Wir fragen dabei nie nach Passwörtern oder Bankdaten. Instagram steht in keiner Verbindung zu diesem Gewinnspiel. Alle Teilnahmebedingungen findest du unter ${v.link}.\n\n${TAGS} #gewinnspiel #verlosung #weihnachtsgeschenke`,
+      slides: [
+        S({ theme: 'gruen', eyebrow: 'Gewinnspiel', title: `Wir verlosen ${v.preis}`, sub: `Mitmachen kannst du bis zum ${v.ende}.` }),
+        S({ type: 'chips', eyebrow: 'So machst du mit', title: 'Zwei kleine Schritte, und du bist dabei', sub: 'Den Beitrag in deiner Story zu teilen ist schön, aber freiwillig.', chips: ['*Folge @wishtale.de', '*Kommentiere, wem du eine Freude machen möchtest'] }),
+        S({ type: 'screen', scene: 'liste', eyebrow: 'Und für deine eigenen Wünsche', title: 'Mit Wishtale steht deine Wunschliste in wenigen Minuten' }),
+        cta('Wir drücken dir die Daumen', `Teilnahme ab 18 Jahren bis zum ${v.ende}, 23:59 Uhr. Alle Bedingungen unter ${v.link}.`),
+      ],
+    }) },
+  { id: 's-gewinnspiel', format: 'story', group: 'Gewinnspiel', title: 'Story-Folge: Hinweis auf das Gewinnspiel', desc: 'Drei Stories, die auf den Gewinnspiel-Beitrag führen. Den Beitrag danach in der Instagram-App als Sticker in die letzte Story legen.', fields: [['preis', 'Preis (mit Artikel)', 'einen Gutschein über 50 Euro'], ['ende', 'Teilnahme bis (Datum)', '14. Dezember']],
+    build: v => ({
+      title: 'Story: Gewinnspiel', caption: '',
+      slides: [
+        S({ theme: 'gruen', eyebrow: 'Gewinnspiel', title: `Wir verlosen ${v.preis}` }),
+        S({ type: 'chips', eyebrow: 'So machst du mit', title: 'Folge uns und kommentiere den neuen Beitrag', chips: ['*Folge @wishtale.de', '*Kommentiere den Beitrag'] }),
+        cta(`Mitmachen bis zum ${v.ende}`, 'Alles Weitere steht im neuen Beitrag auf unserem Profil.'),
+      ],
+    }) },
+  { id: 'k-gewinner', group: 'Gewinnspiel', title: 'Beitrag: Gewinn verkünden', desc: 'Nach der Ziehung. Vorher die gewinnende Person per Nachricht fragen, ob der Name genannt werden darf. Der Hinweis auf falsche Konten schützt vor Betrug in den Kommentaren.', fields: [['gewinner', 'Instagram-Name der gewinnenden Person', '@name'], ['preis', 'Preis (mit Artikel)', 'einen Gutschein über 50 Euro']],
+    build: v => ({
+      title: 'Gewinnspiel: Gezogen',
+      caption: `Danke an alle, die mitgemacht haben, wir haben jeden Kommentar gelesen und uns über so viele schöne Geschichten gefreut. Gewonnen hat ${v.gewinner}, herzlichen Glückwunsch zu ${v.preis}.\n\nWir melden uns ausschließlich von @wishtale.de. Nachrichten von Konten mit ähnlichem Namen sind nicht von uns, bitte antworte darauf nicht.\n\n${TAGS} #gewinnspiel`,
+      slides: [
+        S({ theme: 'gruen', eyebrow: 'Gewinnspiel', title: `Wir haben gezogen, und gewonnen hat ${v.gewinner}`, sub: 'Herzlichen Glückwunsch, wir haben dir eine Nachricht geschickt.' }),
+        cta('Danke fürs Mitmachen', 'Deine eigene Wunschliste legst du über den Link in unserer Bio an.'),
+      ],
+    }) },
 ];
 
 /** Karussell zu einer Aktion: Es geht immer ums Wünschen, nicht ums Kaufen. */
