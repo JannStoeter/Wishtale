@@ -419,6 +419,21 @@ share(){
   else if(navigator.clipboard?.writeText){navigator.clipboard.writeText(url).then(done,()=>toast(url))}
   else toast(url);
  },
+ // Wunschliste als Bild für die Instagram-Story (Dev 140): Bild entsteht im Browser, Link-Sticker setzt die Person in Instagram selbst
+ async storyshare(){
+  if(guestDraft()||!S.me.handle){A.share();return}
+  markStep('share');markShared();track('cta',{label:'story-bild',path:'/app/'});
+  const url=S.auth.user&&!/^(localhost|127\.)/.test(location.hostname)?`${location.origin}/w/${S.me.handle}`:`${location.origin}${location.pathname}#p/${S.me.handle}`;
+  toast('Dein Story-Bild entsteht gerade …');
+  const {storyImage}=await import('./lib/storyimg.js');
+  const file=await storyImage(S.me,url.replace(/^https?:\/\//,'')).catch(()=>null);
+  if(!file){toast('Das Bild hat leider nicht geklappt. Magst du es noch einmal versuchen?');return}
+  navigator.clipboard?.writeText?.(url).catch(()=>{});
+  const tip='Dein Link ist kopiert. Setz ihn in Instagram als Link-Sticker auf das Bild, dann kommt man mit einem Tipp zu deiner Liste.';
+  if(navigator.canShare?.({files:[file]})){navigator.share({files:[file]}).then(()=>toast(tip),()=>{});return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast('Das Bild ist gespeichert. '+tip);
+ },
  azopen(){
   /* Steht im Wunschformular schon ein Name, suchen wir damit direkt bei Amazon und tragen ihn im Fenster ein. */
   const q=(document.querySelector('form[data-form=wish] [name=t]')?.value||'').trim().slice(0,120);
